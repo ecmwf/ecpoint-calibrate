@@ -1,6 +1,7 @@
 const { resolve } = require('path');
 
 const webpack = require('webpack');
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const config = {
   devtool: 'cheap-module-eval-source-map',
@@ -113,6 +114,10 @@ const config = {
       },
     }),
     new webpack.optimize.ModuleConcatenationPlugin(),
+    new CopyWebpackPlugin([
+      { from: 'index.html', to: '.' },
+      { from: 'assets', to: './assets' }
+    ]),
   ],
 };
 
