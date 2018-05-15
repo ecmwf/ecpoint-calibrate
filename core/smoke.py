@@ -8,7 +8,7 @@ def run_smoke_tests():
         )
 
     try:
-        import eccodes
+        import eccodes  # noqa: F401
     except ImportError:
         raise RuntimeError(
             'Smoke test failed: eccodes package is not installed.'
