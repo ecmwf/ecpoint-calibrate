@@ -34,7 +34,10 @@ setup(
     install_requires=[
         'kivy',
     ],
-    extras_require={  # Optional
+    dependency_links=[
+        "https://github.com/kivy/kivy/archive/master.zip#egg=kivy",
+    ],
+    extras_require={
         'dev': ['check-manifest'],
         'test': ['coverage', 'pytest'],
     },
