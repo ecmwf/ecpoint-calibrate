@@ -32,8 +32,6 @@ setup(
     keywords='ecmwf ecpoint weather forecast',
     packages=find_packages(exclude=['tests']),
     install_requires=[
-        'cython',
-        'pygame',
         'kivy',
     ],
     extras_require={  # Optional
