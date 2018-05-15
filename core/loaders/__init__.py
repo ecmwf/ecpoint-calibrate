@@ -1,7 +1,7 @@
 import importlib
 
 
-def get_loader_cls(_type):
+def get_loader_cls(_type: str) -> 'BaseLoader':
     """Get the loader class corresponding to a given type.
 
     This function allows us to dynamically import loader classes, without
