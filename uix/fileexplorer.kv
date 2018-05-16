@@ -31,15 +31,15 @@ Root:
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             DataLoaderButton:
                 text: 'GRIB'
-                on_release: root.show_load(self.text, 'observation')
+                on_release: root.show_load(self.text, 'forecast')
 
             DataLoaderButton:
                 text: 'NetCDF'
-                on_release: root.show_load(self.text, 'observation')
+                on_release: root.show_load(self.text, 'forecast')
 
         Label:
             text_size: cm(6), cm(4)
-            text: root.observation_file
+            text: root.forecast_file
 
         Widget:
             id: separator
@@ -60,15 +60,15 @@ Root:
             spacing: 20
             DataLoaderButton:
                 text: 'Geopoint'
-                on_release: root.show_load(self.text, 'forecast')
+                on_release: root.show_load(self.text, 'observation')
 
             DataLoaderButton:
                 text: 'CSV'
-                on_release: root.show_load(self.text, 'forecast')
+                on_release: root.show_load(self.text, 'observation')
 
         Label:
             text_size: cm(6), cm(4)
-            text: root.forecast_file
+            text: root.observation_file
 
 
 
