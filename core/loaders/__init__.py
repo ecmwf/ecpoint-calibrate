@@ -11,7 +11,8 @@ def get_loader_cls(_type):
     :return: Loader class.
     """
     mapping = {
-        'GRIB': 'GribLoader'
+        'GRIB': 'GribLoader',
+        'Geopoints': 'GeopointsLoader',
     }
 
     module = importlib.import_module(
