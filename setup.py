@@ -34,6 +34,7 @@ setup(
     keywords='ecmwf ecpoint weather forecast',
     packages=find_packages(),
     install_requires=[
+        'attrs==18.1.0',
         'kivy',
     ],
     dependency_links=[
