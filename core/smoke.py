@@ -2,9 +2,9 @@ import sys
 
 
 def runtime_smoke_tests():
-    if sys.version_info.major == 2:
+    if sys.version_info.major == 3:
         raise RuntimeError(
-            'Python 2 is not supported.'
+            'Python 3 is not supported.'
         )
 
     try:
@@ -18,6 +18,11 @@ def runtime_smoke_tests():
 def compile_time_smoke_tests():
     class CompileTimeError(Exception):
         pass
+
+    if sys.version_info.major == 3:
+        raise CompileTimeError(
+            'Python 3 is not supported.'
+        )
 
     try:
         import Cython  # noqa: F401
