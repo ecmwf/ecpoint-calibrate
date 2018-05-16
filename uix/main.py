@@ -11,6 +11,22 @@ class LoadDialog(FloatLayout):
     load = ObjectProperty(None)
     cancel = ObjectProperty(None)
     kind = StringProperty('')
+    datatype = StringProperty('')
+
+    def filter_files(self, folder, filename):
+        expected_exts = FILETYPE_TO_EXT_PATTERN_MAPPING[self.datatype]
+        received_ext = os.path.splitext(filename)[1]
+        return any(ext == received_ext for ext in expected_exts)
+
+
+
+FILETYPE_TO_EXT_PATTERN_MAPPING = {
+    'GRIB': ['.grib'],
+    'CSV': ['.csv'],
+    'NetCDF': ['.nc'],
+    'Geopoint': ['.geo'],
+}
+
 
 
 class Root(FloatLayout):
@@ -22,7 +38,7 @@ class Root(FloatLayout):
         self._popup.dismiss()
 
     def show_load(self, text, kind):
-        content = LoadDialog(load=self.load, cancel=self.dismiss_popup, kind=kind)
+        content = LoadDialog(load=self.load, cancel=self.dismiss_popup, kind=kind, datatype=text)
         self._popup = Popup(title="Load file", content=content,
                             size_hint=(0.9, 0.9))
         self._popup.open()
