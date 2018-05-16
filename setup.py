@@ -1,4 +1,5 @@
 from setuptools import setup, find_packages
+
 # To use a consistent encoding
 from codecs import open
 from os import path
@@ -11,6 +12,7 @@ compile_time_smoke_tests()
 # Get the long description from the README file
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
+
 
 setup(
     name='ecpoint-cal',
@@ -30,12 +32,12 @@ setup(
         'Programming Language :: Python :: 3.6',
     ],
     keywords='ecmwf ecpoint weather forecast',
-    packages=find_packages(exclude=['tests']),
+    packages=find_packages(),
     install_requires=[
         'kivy',
     ],
     dependency_links=[
-        "https://github.com/kivy/kivy/archive/master.zip#egg=kivy",
+        "https://github.com/onyb/kivy/archive/fix-setupconfig-bug.zip#egg=kivy",
     ],
     extras_require={
         'dev': ['check-manifest'],
