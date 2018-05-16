@@ -9,3 +9,7 @@ class BaseLoader(object):
     @abstractmethod
     def read(self):
         pass
+
+    @abstractmethod
+    def validate(self):
+        pass

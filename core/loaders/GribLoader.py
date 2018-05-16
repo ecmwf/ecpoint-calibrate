@@ -9,3 +9,6 @@ class GribLoader(BaseLoader):
 
     def read(self):
         return GribFile(self.path)
+
+    def validate(self):
+        pass
