@@ -31,11 +31,11 @@ Root:
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             DataLoaderButton:
                 text: 'GRIB'
-                on_release: root.show_load('GRIB', 'observation')
+                on_release: root.show_load(self.text, 'observation')
 
             DataLoaderButton:
-                text: 'netCDF'
-                on_release: root.show_load('netCDF', 'observation')
+                text: 'NetCDF'
+                on_release: root.show_load(self.text, 'observation')
 
         Label:
             text_size: cm(6), cm(4)
@@ -59,12 +59,12 @@ Root:
             padding: 20
             spacing: 20
             DataLoaderButton:
-                text: 'Geopoints'
-                on_release: root.show_load('Geopoints', 'forecast')
+                text: 'Geopoint'
+                on_release: root.show_load(self.text, 'forecast')
 
             DataLoaderButton:
                 text: 'CSV'
-                on_release: root.show_load('CSV', 'forecast')
+                on_release: root.show_load(self.text, 'forecast')
 
         Label:
             text_size: cm(6), cm(4)
