@@ -7,23 +7,22 @@ ECMWF caliberation software in Python
 
 ```sh
 $ sudo apt update
-$ sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
-    libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev libsdl2-mixer-dev
+$ sudo apt install python-dev python-numpy python-opengl libsdl-image1.2-dev \
+    libsdl-mixer1.2-dev libsdl-ttf2.0-dev libsmpeg-dev libsdl1.2-dev \
+    libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev libx11-6 \
+    libtiff5-dev libx11-dev fluid-soundfont-gm timgm6mb-soundfont xfonts-base \
+    xfonts-100dpi xfonts-75dpi xfonts-cyrillic fontconfig fonts-freefont-ttf
 ```
-#### Create and activate a Python 3.6 virtual environment with `virtualenv`
+#### Create and activate a Python 2.7 virtual environment with `virtualenv`
 
 ```sh
-$ virtualenv -p python3 ~/env
+$ virtualenv -p python2 ~/env
 $ source ~/env/bin/activate
 ```
 
 #### Install ecPoint-PyCal build requirements
 
-```sh
-$ pip install -I Cython==0.25.2
-$ pip install pygame
-```
-or, do the following if you already have the source cloned locally.
+You must have the source cloned locally.
 
 ```sh
 $ pip install -r build-requirements.txt
@@ -32,5 +31,5 @@ $ pip install -r build-requirements.txt
 #### Install ecPoint-PyCal
 
 ```sh
-$ python setup.py install
+$ pip install .
 ```
