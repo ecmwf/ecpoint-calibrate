@@ -13,7 +13,7 @@ tar -xzf  "$DIR/${ECCODES_SRC_DIR}.tar.gz"
 rm "$DIR/${ECCODES_SRC_DIR}.tar.gz"
 mkdir $DIR/build
 pushd $DIR/build
-cmake -DCMAKE_INSTALL_PREFIX=$DIR/vendor/eccodes -DCMAKE_BUILD_TYPE=Release ../$ECCODES_SRC_DIR
+cmake -DCMAKE_INSTALL_PREFIX=$VIRTUAL_ENV -DCMAKE_BUILD_TYPE=Release ../$ECCODES_SRC_DIR
 make -j$(nproc)
 make install
 popd
