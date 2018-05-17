@@ -1,3 +1,4 @@
+import os
 import sys
 
 
@@ -22,6 +23,11 @@ def compile_time_smoke_tests():
     if sys.version_info.major == 3:
         raise CompileTimeError(
             'Python 3 is not supported.'
+        )
+
+    if 'VIRTUAL_ENV' not in os.environ:
+        raise CompileTimeError(
+            'You need to activate a Python 2 virtualenv.'
         )
 
     try:
