@@ -1,5 +1,6 @@
 from setuptools import setup, find_packages
 from setuptools.command.develop import develop
+from setuptools.command.install import install
 
 # To use a consistent encoding
 from codecs import open
@@ -50,6 +51,7 @@ setup(
     packages=find_packages(),
     cmdclass={
         'develop': get_cmd_cls(develop),
+        'install': get_cmd_cls(install),
     },
     install_requires=[
         'attrs>=18.1.0',

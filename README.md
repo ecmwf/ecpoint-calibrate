@@ -31,5 +31,5 @@ $ pip install -r build-requirements.txt
 #### Install ecPoint-PyCal
 
 ```sh
-$ pip install -e . -vv
+$ pip install . -v
 ```
