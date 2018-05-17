@@ -17,9 +17,10 @@ def get_cmd_cls(base):
     class Cmd(base):
         def run(self):
             # Install eccodes
-            if not path.exists(path.join(here, 'vendor', 'eccodes')):
-                cmd = shlex.split('bash install_eccodes.sh')
-                subprocess.Popen(args=cmd, cwd=here)
+
+            # [TODO] - Rewrite the install_eccodes.sh script in Python
+            cmd = shlex.split('bash install_eccodes.sh')
+            subprocess.Popen(args=cmd, cwd=here)
 
             base.run(self)
     return Cmd
