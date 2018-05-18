@@ -1,4 +1,4 @@
-## Summary
+### Summary of Week 1
 
 Spent a non-trivial amount of time figuring out how to make my development
 environment reproducible. Most of my work is platform-independent, but the
@@ -13,7 +13,7 @@ the Kivy framework.
 
 Data loaders for GRIB and Geopoints have been implemented.
 
-## Build system
+#### Build system
 
 - A setup.py file has been implemented to automatically install project
   dependencies using pip.
@@ -27,7 +27,7 @@ Data loaders for GRIB and Geopoints have been implemented.
   install the binaries, along with the Python bindings.
 
 
-## Loaders
+#### Loaders
 
 - Implemented an interface that all loaders should follow.
 
@@ -41,15 +41,18 @@ Data loaders for GRIB and Geopoints have been implemented.
     * [WIP] Implemented unittests.
     * NOTE: Some .geo files do not follow the METVIEW spec.
 
-## GUI
+#### GUI
 
 - Implemented a very basic GUI (screenshots in Appendix), using the Kivy framework.
 - Implemented a FileSystem browser that can filter files based
   on the type of data being loaded.
 
 
-## Appendix
+### Appendix
 
-<img src="week1_assets/screen1.png" width="100">
-<img src="week1_assets/screen2.png" width="100">
-<img src="week1_assets/screen3.png" width="100">
+#### GUI screenshots
+<p float="left">
+<img src="week1_assets/screen1.png" width="420">
+<img src="week1_assets/screen2.png" width="420">
+<img src="week1_assets/screen3.png" width="420">
+</p>
