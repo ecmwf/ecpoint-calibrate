@@ -1,35 +1,63 @@
+import os
+import shlex
+import subprocess
+import sys
+from codecs import open
+
 from setuptools import setup, find_packages
 from setuptools.command.develop import develop
 from setuptools.command.install import install
 
-# To use a consistent encoding
-from codecs import open
-from os import path
-import subprocess, shlex
+here = os.path.abspath(os.path.dirname(__file__))
 
-from core.smoke import compile_time_smoke_tests
 
-here = path.abspath(path.dirname(__file__))
-compile_time_smoke_tests()
+class PreCompileSmokeTests(object):
+    class PreCompilationError(Exception):
+        pass
+
+    def __call__(self):
+        if sys.version_info.major == 3:
+            raise self.PreCompilationError(
+                'Python 3 is not supported.'
+            )
+
+        if 'VIRTUAL_ENV' not in os.environ:
+            raise self.PreCompilationError(
+                'You need to activate a Python 2 virtualenv.'
+            )
+
+
+def precompile_steps():
+    cmd = shlex.split('pip install -r build-requirements.txt')
+    subprocess.Popen(args=cmd, cwd=here)
+
+
+def extra_install_steps():
+    # Install eccodes
+    # [TODO] - Rewrite the install_eccodes.sh script in Python
+    cmd = shlex.split('bash install_eccodes.sh')
+    subprocess.Popen(args=cmd, cwd=here)
+
+
+PreCompileSmokeTests()
+precompile_steps()
 
 
 def get_cmd_cls(base):
     class Cmd(base):
         def run(self):
-            # Install eccodes
-
-            # [TODO] - Rewrite the install_eccodes.sh script in Python
-            cmd = shlex.split('bash install_eccodes.sh')
-            subprocess.Popen(args=cmd, cwd=here)
-
+            extra_install_steps()
             base.run(self)
+
     return Cmd
 
 
 # Get the long description from the README file
-with open(path.join(here, 'README.md'), encoding='utf-8') as f:
+with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
+cmd = shlex.split('pip install -r build-requirements.txt')
+subprocess.Popen(args=cmd, cwd=here)
 
 setup(
     name='ecpoint-cal',
@@ -57,10 +85,7 @@ setup(
     install_requires=[
         'attrs>=18.1.0',
         'numpy>=1.14.3',
-        'kivy',
-    ],
-    dependency_links=[
-        "https://github.com/onyb/kivy/archive/fix-setupconfig-bug.zip#egg=kivy",
+        'kivy>=1.10.0',
     ],
     extras_require={
         'dev': ['check-manifest'],
