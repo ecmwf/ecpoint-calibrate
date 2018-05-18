@@ -16,34 +16,34 @@ Data loaders for GRIB and Geopoints have been implemented.
 #### Build system
 
 - A setup.py file has been implemented to automatically install project
-  dependencies using pip.
+  dependencies using pip. [[REF]](/setup.py)
 
 - Automatically install the compile-time dependencies, notably cython and
-  pygame, required by kivy.
+  pygame, required by kivy. 
 
-- Perform pre-compilation smoke tests.
+- Perform pre-compilation smoke tests. [[REF]](https://github.com/onyb/ecPoint-PyCal/blob/0ee8dee3dbae67954d9927cb14a349818ba4b218/setup.py#L14)
 
 - Implement a post-installation hook to fetch eccodes source, compile, and
-  install the binaries, along with the Python bindings.
+  install the binaries, along with the Python bindings. [[REF1]](/install_eccodes.sh) [[REF2]](https://github.com/onyb/ecPoint-PyCal/blob/0ee8dee3dbae67954d9927cb14a349818ba4b218/setup.py#L46)
 
 
 #### Loaders
 
-- Implemented an interface that all loaders should follow.
+- Implemented an interface that all loaders should follow. [[REF]](/core/loaders/BaseLoader.py)
 
-- Implemented GribLoader to read GRIB files.
+- Implemented GribLoader to read GRIB files. [[REF]](/core/loaders/GribLoader.py)
     * TODO: write a validator for GRIB data.
     * TODO: write unittests.
 
 - Implemented a full-fledged GeopointsLoader to load .geo files according to
-  the METVIEW standard.
-    * Implemented a validator.
+  the METVIEW standard. [[REF]](/core/loaders/GeopointsLoader.py)
+    * Implemented a validator. [[REF]](https://github.com/onyb/ecPoint-PyCal/blob/0ee8dee3dbae67954d9927cb14a349818ba4b218/core/loaders/GeopointsLoader.py#L55)
     * [WIP] Implemented unittests.
     * NOTE: Some .geo files do not follow the METVIEW spec.
 
 #### GUI
 
-- Implemented a very basic GUI (screenshots in Appendix), using the Kivy framework.
+- Implemented a very basic GUI (screenshots in Appendix), using the Kivy framework. [[REF]](/uix/main.py)
 - Implemented a FileSystem browser that can filter files based
   on the type of data being loaded.
 
