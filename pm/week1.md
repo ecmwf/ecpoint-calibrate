@@ -50,6 +50,6 @@ Data loaders for GRIB and Geopoints have been implemented.
 
 ## Appendix
 
-<img src="screen1.png" width="100">
-<img src="screen2.png" width="100">
-<img src="screen3.png" width="100">
+<img src="week1_assets/screen1.png" width="100">
+<img src="week1_assets/screen2.png" width="100">
+<img src="week1_assets/screen3.png" width="100">
