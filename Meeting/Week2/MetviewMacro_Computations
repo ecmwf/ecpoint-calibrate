@@ -1,0 +1,811 @@
+#Metview Macro
+
+#  **************************** LICENSE START ***********************************
+# 
+#  Copyright 2016 ECMWF. This software is distributed under the terms
+#  of the Apache License version 2.0. In applying this license, ECMWF does not
+#  waive the privileges and immunities granted to it by virtue of its status as
+#  an Intergovernmental Organization or submit itself to any jurisdiction.
+# 
+#  ***************************** LICENSE END ************************************
+# 
+#########################################################################################################
+
+####################
+# INPUT PARAMETERS #
+####################
+
+BaseDateS = 20160101
+BaseDateF = 20160101
+Acc = 12
+LimSU = 2
+Range = 1
+PathOBS = "/vol/ecpoint/ecPoint_DB/Observations/tp"
+PathFC = "/vol/ecpoint/ecPoint_DB/Forecasts/ECMWF_HRES_16km"
+PathOUT = "/vol/ecpoint/ecPoint-Rainfall/Training/Predictors"
+FileNameOUT_predictors = "test.ascii"
+
+
+#######################################
+# DESCRIPTION OF THE INPUT PARAMETERS #
+#######################################
+
+# BaseDateS: start base date of the forecast (in the format "yyyymmdd")
+
+# BaseDateF: final base date of the forecast (in the format "yyyymmdd")
+
+# Acc: accumulation (in hours) of the parameter to post-process
+
+# LimSU: upper limit (in hours) of the window in the forecast with spin-up problems 
+
+# Range: range for the leadtime (in hours)
+
+# PathOBS: path of the database that contains the observations for the parameter to post-process (string)
+
+# PathFC: path of the database that contains the parameter to post-process and the predictors (string)
+
+# PathOUT: output directory (string)
+
+#########################################################################################################
+
+#Set up the input/output parameters
+BaseDateS = date(BaseDateS)
+BaseDateF = date(BaseDateF)
+BaseDateSSTR=string(BaseDateS, "yyyymmdd")
+BaseDateFSTR=string(BaseDateF, "yyyymmdd")
+
+if Acc <10 then
+    AccSTR = "0" & string(Acc)
+else
+    AccSTR = string(Acc)
+end if
+
+precision(4)
+FileNameOUT = "FER" & AccSTR & "h_" & FileNameOUT_predictors
+Output_file = file(PathOUT & "/" & FileNameOUT)
+write(Output_file, "Ppn Forecast Verification for HRES. Base Date for FC from ", BaseDateSSTR, " to ", BaseDateFSTR, ". ", AccSTR, "h FC period.")
+append(Output_file, newline, newline)
+append(Output_file, "'Date' and 'Time' relate to the end of the ", AccSTR, "h FC period")
+append(Output_file, newline, newline)
+append(Output_file, "DATE", tab, "TimeUTC", tab, "OBS", tab, "LatOBS", tab, "LonOBS", tab, "FER", tab, "CPR", tab, "TP", tab, "WSPD700", tab, "CAPE", tab, "SR24h", tab, "TimeLST")
+append(Output_file,newline,newline)
+                
+                    
+#############################################################################################
+
+#PROCESSING MODEL DATA
+print(" ")
+print("****************************************************************************************************")
+print("POST-PROCESSING SOFTWARE TO PRODUCE FORECASTS AT POINTS - ecPoint")
+print("The user is running the ecPoint-RAINFALL family, Operational Version 1")
+print("Forecast Error Ratio (FER) and Predictors for ", Acc, " hour accumulation")
+print(" ")
+print("List of predictors:")
+print("- Convective precipitation ratio, cpr = convective precipitation / total precipitation [-]")
+print("- Total precipitation, tp [mm/" & Acc & "h]")
+print("- Wind speed of steering winds (at 700 mbar), wspd700 [m/s]")
+print("- Convective available potential energy, cape [J/kg]")
+print("- Daily accumulation of clear-sky solar radiation, sr24h [W/m2]")
+print("- Local Solar Time, lst [hours]")
+print("****************************************************************************************************")
+
+#Counter for the BaseDate and BaseTime to avoid repeating the same forecasts in different cases
+counterValidTimes = [0]
+obsTOT = 0
+obsUSED = 0
+
+#Loop over start dates
+for thedate = BaseDateS to BaseDateF do
+    thedateSTR=string(thedate,"yyyymmdd")
+
+    #Loop over start times
+    for thetime = 0 to 12 by 12 do
+        if thetime = 0 then
+            thetimeSTR = "00"
+        else
+            thetimeSTR = "12"
+        end if
+
+        #Loop over start leadtimes
+        for LeadStart = 0 to 23 by Range do #expressed in hours
+        
+            print(" ")   
+            print("FORECAST PARAMETERS")
+            print("BaseDate = ", thedateSTR, " BaseTime = ", thetimeSTR, " UTC (t+", LeadStart, ",t+", (LeadStart+Acc), ")")
+            
+            #Defining the parameters for the forecasts
+            #Case n.1
+            if LeadStart <= LimSU then
+                
+                print("To avoid any spin-up effect at the begining of the forecast, it will be considered...")
+                   
+                if thetime = 0 then
+                    thedateNEW = thedate - 1
+                    thedateNEWSTR = string(thedateNEW,"yyyymmdd")
+                    thetimeNEW = 12
+                    thetimeNEWSTR = "12"
+                else
+                    thedateNEW = thedate
+                    thedateNEWSTR = string(thedateNEW,"yyyymmdd")
+                    thetimeNEW = 0
+                    thetimeNEWSTR = "00"
+                end if
+                
+                LeadStartNEW = LeadStart + 12
+                
+            #Case n.2   
+            else if (LeadStart > LimSU) and (LeadStart <= 12+LimSU) then
+                
+                print("The forecast parameters do not change...")   
+                thedateNEW = thedate
+                thedateNEWSTR=string(thedateNEW,"yyyymmdd")
+                
+                thetimeNEW = thetime
+                if thetime = 0 then
+                    thetimeNEWSTR = "00"
+                else
+                    thetimeNEWSTR = "12"
+                end if
+                
+                LeadStartNEW = LeadStart
+                    
+            #Case n.3    
+            else if LeadStart > (12 + LimSU) then
+            
+                print("A shorter range forecast is considered...")
+                
+                if thetime = 0 then
+                    thedateNEW = thedate
+                    thedateNEWSTR=string(thedateNEW,"yyyymmdd")
+                    thetimeNEW = 12
+                    thetimeNEWSTR = "12"
+                else
+                    thedateNEW = thedate + 1
+                    thedateNEWSTR=string(thedateNEW,"yyyymmdd")
+                    thetimeNEW = 0
+                    thetimeNEWSTR = "00"
+                end if
+                
+                LeadStartNEW = LeadStart - 12
+                
+            end if
+            
+            print("BaseDate = ", thedateNEWSTR, " BaseTime = ", thetimeNEWSTR, " UTC (t+", LeadStartNEW, ",t+", LeadStartNEW+Acc, ")")
+            
+            #Reading the forecasts
+            if (thedateNEW < BaseDateS) or (thedateNEW > BaseDateF) then
+                
+                print(" ")
+                print("IMPORTANT NOTE!!")
+                print("The requested BaseDate is not within the range defined by BaseDateS=", BaseDateSSTR, " and BaseDateF=", BaseDateFSTR)
+                print("Case not considered. Go to the following forecast.")
+            
+            else
+                
+                #Note about the computation of the sr.
+                #The solar radiation is a cumulative variable and its units is J/m2 (which means, W*s/m2).
+                #One wants the 24h. The 24h mean is obtained by taking the difference between the beginning and the end of the 24 hourly period 
+                #and dividing by the number of seconds in that period (24h = 86400 sec). Thus, the unit will be W/m2
+                
+                print(" ")
+                #6 hourly Accumulation
+                if Acc = 6 then
+                    
+                    #Steps
+                    step1 = LeadStartNEW
+                    step2 = LeadStartNEW + Acc
+                    
+                    if step1 < 10 then
+                        step1STR = "0" & string(step1)
+                    else 
+                        step1STR = string(step1)
+                    end if
+                                
+                    if step2 < 10 then
+                        step2STR = "0" & string(step2)
+                    else 
+                        step2STR = string(step2)
+                    end if
+                    
+                    #Defining the parameters for the rainfall observations
+                    validDateF = thedateNEW + (thetimeNEW/24) + (step2/24)
+                    DateVF = string(validDateF, "yyyymmdd")
+                    HourVF = string(validDateF, "HH")
+                    HourVF_num = hour(validDateF)
+                    print("RAINFALL OBS PARAMETERS")
+                    print("Validity date/time (end of the ", AccSTR, " hourly period) = ", validDateF)
+                    
+                    #Looking for no repetions in the computed dates and times
+                    checkNoRepeat = (counterValidTimes = number(validDateF, "yyyymmddHH"))
+                    if sum(vector(checkNoRepeat)) > 0 then
+                        
+                        print("Valid Date and Time already computed.")
+                        print("Case not considered. Go to the following forecast.")
+                        
+                    else
+                        
+                        counterValidTimes = counterValidTimes & [number(validDateF, "yyyymmddHH")]
+                        dirOBS = PathOBS & "/" & AccSTR & "/" & DateVF  & "/"
+                        fileOBS = "PPT" & AccSTR & "_obs_Global_" & DateVF & HourVF
+                
+                        if (not(exist(dirOBS & fileOBS))) then
+                        
+                            print("IMPORTANT NOTE!!")
+                            print("The file ", fileOBS, " do not exist on the database ", PathOBS)
+                            print("Case not considered. Go to the following forecast.")
+                    
+                        else
+                            
+                            #Reading Rainfall Observations
+                            print(" ")
+                            print("READING RAINFALL OBS")
+                            print("Reading... ", dirOBS & fileOBS)
+                            obs=read(dirOBS & fileOBS)
+                            nOBS = count(values(obs))
+                            
+                            if nOBS = 1 then #which will account for the cases of zero obeservation in the geopoint file (because the length of the vector will be forced to 1), 
+                                             #or cases in which there is only one observation in the geopoint file
+                            
+                                print(" ")
+                                print("IMPORTANT NOTE!!")
+                                print("No rainfall observations in ", fileOBS)
+                                print("Case not considered. Go to the following forecast.")
+                        
+                            else
+                                
+                                print(" ")
+                                obsTOT = obsTOT + nOBS
+                                if step2 <= 24 then
+                                    step1sr = 0
+                                    step2sr = 24
+                                else
+                                    step1sr = step2 - 24
+                                    step2sr = step2
+                                end if
+                                        
+                                if step1sr < 10 then
+                                    step1srSTR = "0" & string(step1sr)
+                                else
+                                    step1srSTR = string(step1sr)
+                                end if
+                                            
+                                if step2sr < 10 then
+                                    step2srSTR = "0" & string(step2sr)
+                                else
+                                    step2srSTR = string(step2sr)
+                                end if
+                                
+                                #Reading forecasts
+                                print("READING FORECASTS")
+                                print("Reading... ", PathFC & "/tp/" & thedateNEWSTR & thetimeNEWSTR & "/tp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                tp1 = read(PathFC & "/tp/" & thedateNEWSTR & thetimeNEWSTR & "/tp" & "_" & thedateNEWSTR &  "_" & thetimeNEWSTR & "_" & step1STR)
+                                print("Reading... ", PathFC & "/tp/" & thedateNEWSTR & thetimeNEWSTR & "/tp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
+                                tp2 = read(PathFC & "/tp/" & thedateNEWSTR & thetimeNEWSTR & "/tp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
+                                print("Reading... ", PathFC & "/cp/" & thedateNEWSTR & thetimeNEWSTR & "/cp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                cp1 = read(PathFC & "/cp/" & thedateNEWSTR & thetimeNEWSTR & "/cp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                print("Reading... ", PathFC & "/cp/" & thedateNEWSTR & thetimeNEWSTR & "/cp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
+                                cp2 = read(PathFC & "/cp/" & thedateNEWSTR & thetimeNEWSTR & "/cp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
+                                print("Reading... ", PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                u1 = read(PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                print("Reading... ", PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
+                                u2 = read(PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
+                                print("Reading... ", PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                v1 = read(PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                print("Reading... ", PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
+                                v2 = read(PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
+                                print("Reading... ", PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                cape1 = read(PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                print("Reading... ", PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
+                                cape2 = read(PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
+                                print("Reading... ", PathFC & "/sr/" & thedateNEWSTR & thetimeNEWSTR & "/sr" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1srSTR)
+                                sr1 = read(PathFC & "/sr/" & thedateNEWSTR & thetimeNEWSTR & "/sr" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1srSTR)
+                                print("Reading... ", PathFC & "/sr/" & thedateNEWSTR & thetimeNEWSTR & "/sr" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2srSTR)
+                                sr2 = read(PathFC & "/sr/" & thedateNEWSTR & thetimeNEWSTR & "/sr" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2srSTR)
+                                  
+                                #Compute the 6 hourly fields 
+                                print(" ")
+                                print("COMPUTING")
+                                print("Computing the required parameters (FER, cpr, tp, wspd700, cape, sr)...")
+                                TP = (tp2 - tp1) * 1000
+                                CP = (cp2 - cp1) * 1000
+                                U700 = (u1 + u2) / 2 
+                                V700 = (v1 + v2) / 2 
+                                WSPD = sqrt((U700^2)+(V700^2))
+                                CAPE = (cape1 + cape2) / 2  
+                                SR = (sr2 - sr1) / 86400
+                                
+                                #Select the nearest grid-point from the rainfall observations
+                                print("Selecting the nearest grid point to rainfall obs...")
+                                TP_Ob = nearest_gridpoint(TP,obs)
+                                CP_Ob = nearest_gridpoint(CP,obs)
+                                WSPD_Ob = nearest_gridpoint(WSPD,obs)
+                                CAPE_Ob = nearest_gridpoint(CAPE,obs)
+                                SR_Ob = nearest_gridpoint(SR,obs)
+                                            
+                                #Select only the values that correspond to TP>=1
+                                print("Selecting the values that correspond to tp >= 1 mm/" & Acc & "h...")
+                                TP_Ob1 = filter(TP_Ob,TP_Ob>=1)
+                                if count(values(TP_Ob1)) = 1 then
+                                
+                                    print(" ")
+                                    print("IMPORTANT NOTE!!")
+                                    print("No values of tp >= 1 mm/" & Acc & "h.")
+                                    print("Case not considered. Go to the following forecast.")
+                                    
+                                else
+                                            
+                                    print(" ")
+                                    print("SAVING")
+                                    print("Saving the data in " & PathOUT & "/" & FileNameOUT & " ...")
+                                    CP_Ob1 = filter(CP_Ob,TP_Ob>=1)
+                                    WSPD_Ob1 = filter(WSPD_Ob,TP_Ob>=1)
+                                    CAPE_Ob1 = filter(CAPE_Ob,TP_Ob>=1)
+                                    SR_Ob1 = filter(SR_Ob,TP_Ob>=1)
+                                                
+                                    #Compute other parameters
+                                    obs1 = filter(obs,TP_Ob>=1) 
+                                    latObs_1 = latitudes(obs1)
+                                    lonObs_1 = longitudes(obs1)
+                                    CPr = CP_Ob1 / TP_Ob1
+                                    FER = (obs1 - TP_Ob1) / TP_Ob1
+                                    
+                                    #Compute the Local Solar Time
+                                    temp_lonPos = lonObs_1 * (lonObs_1 >= 0) #Select values at the right of the Greenwich Meridian
+                                    lstPos = HourVF_num + (temp_lonPos/15) #Compute the time difference between the local place and the Greenwich Meridian
+                                    lstPos = lstPos * (temp_lonPos <> 0) #Put back to zero the values that are not part of the subset (lonObs_1 >= 0)
+                                    temp_lstPosMore24 = (lstPos * (lstPos >= 24)) - 24 #Adjust the times that appear bigger than 24 (the time relates to the following day)
+                                    temp_lstPosMore24 = temp_lstPosMore24 * (temp_lstPosMore24>0)
+                                    tempPos = lstPos * (lstPos < 24) + temp_lstPosMore24 #Restore the dataset
+                                    temp_lonNeg = lonObs_1 * (lonObs_1 < 0) #Select values at the left of the Greenwich Meridian
+                                    lstNeg = HourVF_num - abs((temp_lonNeg/15)) #Compute the time difference between the local place and the Greenwich Meridian
+                                    lstNeg = lstNeg * (temp_lonNeg <> 0) #Put back to zero the values that are not part of the subset (lonObs_1 < 0)
+                                    temp_lstNegLess0 = lstNeg * (lstNeg < 0) + 24 #Adjust the times that appear smaller than 24 (the time relates to the previous day)
+                                    temp_lstNegLess0 = temp_lstNegLess0 * (temp_lstNegLess0 <> 24)
+                                    tempNeg = lstNeg * (lstNeg >0) + temp_lstNegLess0 #Restore the dataset
+                                    vals_LST = tempPos + tempNeg #Combine both subsets
+                                        
+                                    #Saving the output file in ascii format
+                                    vals_TP = values(TP_Ob1)
+                                    vals_CP = values(CP_Ob1)
+                                    vals_OB = values(obs1)
+                                    vals_FER = values(FER)
+                                    vals_CPr = values(CPr)
+                                    vals_WSPD = values(WSPD_Ob1)
+                                    vals_CAPE = values(CAPE_Ob1)
+                                    vals_SR = values(SR_Ob1)
+
+                                    n = count(vals_FER)
+                                    obsUSED = obsUSED + n
+                                    for i = 1 to n do
+                                        append(Output_file, DateVF, tab, HourVF, tab, vals_OB[i], tab, latObs_1[i], tab, lonObs_1[i], tab, vals_FER[i], tab, vals_CPr[i], tab, vals_TP[i], tab, vals_WSPD[i], tab, vals_CAPE[i], tab, vals_SR[i], tab, vals_LST[i], newline)
+                                    end for
+                                    
+                                end if
+                                
+                            end if
+                            
+                        end if
+                        
+                    end if
+                            
+                #12 hourly Accumulation
+                else if Acc = 12 then 
+                
+                    #Steps
+                    step1 = LeadStartNEW
+                    step2 = LeadStartNEW + (Acc/2)
+                    step3 = LeadStartNEW + Acc
+                        
+                    if step1 < 10 then
+                        step1STR = "0" & string(step1)
+                    else 
+                        step1STR = string(step1)
+                    end if
+                                    
+                    if step2 < 10 then
+                        step2STR = "0" & string(step2)
+                    else 
+                        step2STR = string(step2)
+                    end if
+                                    
+                    if step3 < 10 then
+                        step3STR = "0" & string(step3)
+                    else 
+                        step3STR = string(step3)
+                    end if
+                        
+                    #Defining the parameters for the rainfall observations
+                    validDateF = thedateNEW + (thetimeNEW/24) + (step3/24)
+                    DateVF = string(validDateF, "yyyymmdd")
+                    HourVF = string(validDateF, "HH")
+                    print("RAINFALL OBS PARAMETERS")
+                    print("Validity date/time (end of the ", AccSTR, " hourly period) = ", validDateF)
+                    
+                    #Looking for no repetions in the computed dates and times
+                    checkNoRepeat = (counterValidTimes = number(validDateF, "yyyymmddHH"))
+                    if sum(vector(checkNoRepeat)) > 0 then
+                        
+                        print("Valid Date and Time already computed.")
+                        print("Case not considered. Go to the following forecast.")
+                        
+                    else
+                        
+                        counterValidTimes = counterValidTimes & [number(validDateF, "yyyymmddHH")]
+                        dirOBS = PathOBS & "/" & AccSTR & "/" & DateVF  & "/"
+                        fileOBS = "PPT" & AccSTR & "_obs_Global_" & DateVF & HourVF
+                            
+                        if (not(exist(dirOBS & fileOBS))) then
+                            
+                            print(" ")
+                            print("IMPORTANT NOTE!!")
+                            print("The file ", fileOBS, " do not exist on the database ", PathOBS)
+                            print("Case not considered. Go to the following forecast.")
+                        
+                        else
+                                
+                            #Reading Rainfall Observations
+                            print(" ")
+                            print("READING RAINFALL OBS")
+                            print("Reading... ", dirOBS & fileOBS)
+                            obs=read(dirOBS & fileOBS)
+                            nOBS = count(values(obs))
+                                
+                            if nOBS = 1 then #which will account for the cases of zero obeservation in the geopoint file (because the length of the vector will be forced to 1), 
+                                             #or cases in which there is only one observation in the geopoint file
+                                    
+                                print(" ")
+                                print("IMPORTANT NOTE!!")
+                                print("No rainfall observations in ", fileOBS)
+                                print("Case not considered. Go to the following forecast.")
+                                
+                            else
+                                
+                                print(" ")   
+                                obsTOT = obsTOT + nOBS 
+                                if step3 <= 24 then
+                                    step1sr = 0
+                                    step3sr = 24
+                                else
+                                    step1sr = step3 - 24
+                                    step3sr = step3
+                                end if
+                                                
+                                if step1sr < 10 then
+                                    step1srSTR = "0" & string(step1sr)
+                                else
+                                    step1srSTR = string(step1sr)
+                                end if
+                                                    
+                                if step3sr < 10 then
+                                    step3srSTR = "0" & string(step3sr)
+                                else
+                                    step3srSTR = string(step3sr)
+                                end if
+                                        
+                                #Reading forecasts
+                                print("READING FORECASTS")
+                                print("Reading... ", PathFC & "/tp/" & thedateNEWSTR & thetimeNEWSTR & "/tp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                tp1 = read(PathFC & "/tp/" & thedateNEWSTR & thetimeNEWSTR & "/tp" & "_" & thedateNEWSTR &  "_" & thetimeNEWSTR & "_" & step1STR)
+                                print("Reading... ", PathFC & "/tp/" & thedateNEWSTR & thetimeNEWSTR & "/tp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
+                                tp3 = read(PathFC & "/tp/" & thedateNEWSTR & thetimeNEWSTR & "/tp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
+                                print("Reading... ", PathFC & "/cp/" & thedateNEWSTR & thetimeNEWSTR & "/cp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                cp1 = read(PathFC & "/cp/" & thedateNEWSTR & thetimeNEWSTR & "/cp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                print("Reading... ", PathFC & "/cp/" & thedateNEWSTR & thetimeNEWSTR & "/cp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
+                                cp3 = read(PathFC & "/cp/" & thedateNEWSTR & thetimeNEWSTR & "/cp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
+                                print("Reading... ", PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                u1 = read(PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                print("Reading... ", PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
+                                u2 = read(PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
+                                print("Reading... ", PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
+                                u3 = read(PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
+                                print("Reading... ", PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                v1 = read(PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                print("Reading... ", PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
+                                v2 = read(PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
+                                print("Reading... ", PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
+                                v3 = read(PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
+                                print("Reading... ", PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                cape1 = read(PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                print("Reading... ", PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
+                                cape2 = read(PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
+                                print("Reading... ", PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
+                                cape3 = read(PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
+                                print("Reading... ", PathFC & "/sr/" & thedateNEWSTR & thetimeNEWSTR & "/sr" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1srSTR)
+                                sr1 = read(PathFC & "/sr/" & thedateNEWSTR & thetimeNEWSTR & "/sr" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1srSTR)
+                                print("Reading... ", PathFC & "/sr/" & thedateNEWSTR & thetimeNEWSTR & "/sr" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3srSTR)
+                                sr3 = read(PathFC & "/sr/" & thedateNEWSTR & thetimeNEWSTR & "/sr" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3srSTR)
+                                        
+                                #Compute the 12 hourly fields
+                                print(" ")
+                                print("COMPUTING")
+                                print("Computing the required parameters (FER, cpr, tp, wspd700, cape, sr)...")
+                                TP = (tp3 - tp1) * 1000
+                                CP = (cp3 - cp1) * 1000
+                                U700 = 0.5 * ((0.5*u1) + u2 + (0.5*u3)) 
+                                V700 = 0.5 * ((0.5*v1) + v2 + (0.5*v3))
+                                WSPD = sqrt((U700^2)+(V700^2))
+                                CAPE = 0.5 * ((0.5*cape1) + cape2 + (0.5*cape3))  
+                                SR = (sr3 - sr1) / 86400
+                                
+                                #Select the nearest grid-point from the rainfall observations
+                                print("Selecting the nearest grid point to rainfall obs...")
+                                TP_Ob = nearest_gridpoint(TP,obs)
+                                CP_Ob = nearest_gridpoint(CP,obs)
+                                WSPD_Ob = nearest_gridpoint(WSPD,obs)
+                                CAPE_Ob = nearest_gridpoint(CAPE,obs)
+                                SR_Ob = nearest_gridpoint(SR,obs)
+                                            
+                                #Select only the values that correspond to TP>=1
+                                print("Selecting the values that correspond to tp >= 1 mm/" & Acc & "h...")
+                                TP_Ob1 = filter(TP_Ob,TP_Ob>=1)
+                                if count(values(TP_Ob1)) = 1 then
+
+                                    print(" ")
+                                    print("IMPORTANT NOTE!!")
+                                    print("No values of tp >= 1 mm/" & Acc & "h.")
+                                    print("Case not considered. Go to the following forecast.")
+                                        
+                                else
+                                            
+                                    print(" ")
+                                    print("SAVING")
+                                    print("Saving the data in " & PathOUT & "/" & FileNameOUT & " ...")
+                                    CP_Ob1 = filter(CP_Ob,TP_Ob>=1)
+                                    WSPD_Ob1 = filter(WSPD_Ob,TP_Ob>=1)
+                                    CAPE_Ob1 = filter(CAPE_Ob,TP_Ob>=1)
+                                    SR_Ob1 = filter(SR_Ob,TP_Ob>=1)
+                                                
+                                    #Compute other parameters
+                                    obs1 = filter(obs,TP_Ob>=1) 
+                                    latObs_1 = latitudes(obs1)
+                                    lonObs_1 = longitudes(obs1)
+                                    CPr = CP_Ob1 / TP_Ob1
+                                    FER = (obs1 - TP_Ob1) / TP_Ob1
+                                            
+                                    #Saving the output file in ascii format
+                                    vals_TP = values(TP_Ob1)
+                                    vals_CP = values(CP_Ob1)
+                                    vals_OB = values(obs1)
+                                    vals_FER = values(FER)
+                                    vals_CPr = values(CPr)
+                                    vals_WSPD = values(WSPD_Ob1)
+                                    vals_CAPE = values(CAPE_Ob1)
+                                    vals_SR = values(SR_Ob1)
+
+                                    n = count(vals_FER)
+                                    obsUSED = obsUSED + n
+                                    for i = 1 to n do
+                                        append(Output_file, DateVF, tab, HourVF, tab, vals_OB[i], tab, latObs_1[i], tab, lonObs_1[i], tab, vals_FER[i], tab, vals_CPr[i], tab, vals_TP[i], tab, vals_WSPD[i], tab, vals_CAPE[i], tab, vals_SR[i], tab, "NaN", newline)
+                                    end for
+                            
+                                end if
+                                        
+                            end if
+                                    
+                        end if
+                        
+                    end if
+                            
+                #24 hourly Accumulation
+                else if Acc = 24 then
+                
+                    #Steps
+                    step1 = LeadStartNEW
+                    step2 = LeadStartNEW + (Acc/4)
+                    step3 = LeadStartNEW + (Acc/2)
+                    step4 = LeadStartNEW + (3*Acc/4)
+                    step5 = LeadStartNEW + Acc
+                            
+                    if step1 < 10 then
+                        step1STR = "0" & string(step1)
+                    else 
+                        step1STR = string(step1)
+                    end if
+                            
+                    if step2 < 10 then
+                        step2STR = "0" & string(step2)
+                    else 
+                        step2STR = string(step2)
+                    end if
+                                        
+                    if step3 < 10 then
+                        step3STR = "0" & string(step3)
+                    else 
+                        step3STR = string(step3)
+                    end if
+                            
+                    if step4 < 10 then
+                        step4STR = "0" & string(step4)
+                    else 
+                        step4STR = string(step4)
+                    end if
+                            
+                    if step5 < 10 then
+                        step5STR = "0" & string(step5)
+                    else 
+                        step5STR = string(step5)
+                    end if
+                            
+                    #Defining the parameters for the rainfall observations
+                    validDateF = thedateNEW + (thetimeNEW/24) + (step5/24)
+                    DateVF = string(validDateF, "yyyymmdd")
+                    HourVF = string(validDateF, "HH")
+                    print("RAINFALL OBS PARAMETERS")
+                    print("Validity date/time (end of the ", AccSTR, " hourly period) = ", validDateF)
+                    
+                    #Looking for no repetions in the computed dates and times
+                    checkNoRepeat = (counterValidTimes = number(validDateF, "yyyymmddHH"))
+                    if sum(vector(checkNoRepeat)) > 0 then
+                        
+                        print("Valid Date and Time already computed.")
+                        print("Case not considered. Go to the following forecast.")
+                        
+                    else
+                        
+                        counterValidTimes = counterValidTimes & [number(validDateF, "yyyymmddHH")]
+                        dirOBS = PathOBS & "/" & AccSTR & "/" & DateVF  & "/"
+                        fileOBS = "PPT" & AccSTR & "_obs_Global_" & DateVF & HourVF
+                                
+                        if (not(exist(dirOBS & fileOBS))) then
+                                
+                            print(" ")
+                            print("IMPORTANT NOTE!!")
+                            print("The file ", fileOBS, " do not exist on the database ", PathOBS)
+                            print("Case not considered. Go to the following forecast.")
+                            
+                        else
+                                    
+                            #Reading Rainfall Observations
+                            print(" ")
+                            print("READING RAINFALL OBS")
+                            print("Reading... ", dirOBS & fileOBS)
+                            obs=read(dirOBS & fileOBS)
+                            nOBS = count(values(obs))
+                                    
+                            if nOBS = 1 then #which will account for the cases of zero obeservation in the geopoint file (because the length of the vector will be forced to 1), 
+                                             #or cases in which there is only one observation in the geopoint file
+                                    
+                                print(" ")
+                                print("IMPORTANT NOTE!!")
+                                print("No rainfall observations in ", fileOBS)
+                                print("Case not considered. Go to the following forecast.")
+                                
+                            else
+                                    
+                                #Reading Forecasts
+                                print(" ")
+                                obsTOT = obsTOT + nOBS
+                                print("READING FORECASTS")
+                                print("Reading... ", PathFC & "/tp/" & thedateNEWSTR & thetimeNEWSTR & "/tp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                tp1 = read(PathFC & "/tp/" & thedateNEWSTR & thetimeNEWSTR & "/tp" & "_" & thedateNEWSTR &  "_" & thetimeNEWSTR & "_" & step1STR)
+                                print("Reading... ", PathFC & "/tp/" & thedateNEWSTR & thetimeNEWSTR & "/tp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step5STR)
+                                tp5 = read(PathFC & "/tp/" & thedateNEWSTR & thetimeNEWSTR & "/tp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step5STR)
+                                print("Reading... ", PathFC & "/cp/" & thedateNEWSTR & thetimeNEWSTR & "/cp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                cp1 = read(PathFC & "/cp/" & thedateNEWSTR & thetimeNEWSTR & "/cp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                print("Reading... ", PathFC & "/cp/" & thedateNEWSTR & thetimeNEWSTR & "/cp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step5STR)
+                                cp5 = read(PathFC & "/cp/" & thedateNEWSTR & thetimeNEWSTR & "/cp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step5STR)
+                                print("Reading... ", PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                u1 = read(PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                print("Reading... ", PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
+                                u2 = read(PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
+                                print("Reading... ", PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
+                                u3 = read(PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
+                                print("Reading... ", PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step4STR)
+                                u4 = read(PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step4STR)
+                                print("Reading... ", PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step5STR)
+                                u5 = read(PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step5STR)
+                                print("Reading... ", PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                v1 = read(PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                print("Reading... ", PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
+                                v2 = read(PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
+                                print("Reading... ", PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
+                                v3 = read(PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
+                                print("Reading... ", PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step4STR)
+                                v4 = read(PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step4STR)
+                                print("Reading... ", PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step5STR)
+                                v5 = read(PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step5STR)
+                                print("Reading... ", PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                cape1 = read(PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                print("Reading... ", PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
+                                cape2 = read(PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
+                                print("Reading... ", PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
+                                cape3 = read(PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
+                                print("Reading... ", PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step4STR)
+                                cape4 = read(PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step4STR)
+                                print("Reading... ", PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step5STR)
+                                cape5 = read(PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step5STR)
+                                print("Reading... ", PathFC & "/sr/" & thedateNEWSTR & thetimeNEWSTR & "/sr" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                sr1 = read(PathFC & "/sr/" & thedateNEWSTR & thetimeNEWSTR & "/sr" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
+                                print("Reading... ", PathFC & "/sr/" & thedateNEWSTR & thetimeNEWSTR & "/sr" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step5STR)
+                                sr5 = read(PathFC & "/sr/" & thedateNEWSTR & thetimeNEWSTR & "/sr" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step5STR)
+                                        
+                                #Compute the 24 hourly fields
+                                print(" ")
+                                print("COMPUTING")
+                                print("Computing the required parameters (FER, cpr, tp, wspd700, cape, sr)...")
+                                TP = (tp5 - tp1) * 1000
+                                CP = (cp5 - cp1) * 1000
+                                U700 = ((0.5*u1) + u2 + u3 + u4 + (0.5*u5)) / 4
+                                V700 = ((0.5*v1) + v2 + v3 + v4 + (0.5*v5)) / 4
+                                WSPD = sqrt((U700^2)+(V700^2))
+                                CAPE = ((0.5*cape1) + cape2 + cape3 + cape4 + (0.5*cape5)) / 4
+                                SR = (sr5 - sr1) / 86400
+                                
+                                #Select the nearest grid-point from the rainfall observations
+                                print("Selecting the nearest grid point to rainfall obs...")
+                                TP_Ob = nearest_gridpoint(TP,obs)
+                                CP_Ob = nearest_gridpoint(CP,obs)
+                                WSPD_Ob = nearest_gridpoint(WSPD,obs)
+                                CAPE_Ob = nearest_gridpoint(CAPE,obs)
+                                SR_Ob = nearest_gridpoint(SR,obs)
+                                            
+                                #Select only the values that correspond to TP>=1
+                                print("Selecting the values that correspond to tp >= 1 mm/" & Acc & "h...")
+                                TP_Ob1 = filter(TP_Ob,TP_Ob>=1)
+                                if count(values(TP_Ob1)) = 1 then
+
+                                    print(" ")
+                                    print("IMPORTANT NOTE!!")
+                                    print("No values of tp >= 1 mm/" & Acc & "h.")
+                                    print("Case not considered. Go to the following forecast.")
+                                        
+                                else
+                                            
+                                    print(" ")
+                                    print("SAVING")
+                                    print("Saving the data in " & PathOUT & "/" & FileNameOUT & " ...")
+                                    CP_Ob1 = filter(CP_Ob,TP_Ob>=1)
+                                    WSPD_Ob1 = filter(WSPD_Ob,TP_Ob>=1)
+                                    CAPE_Ob1 = filter(CAPE_Ob,TP_Ob>=1)
+                                    SR_Ob1 = filter(SR_Ob,TP_Ob>=1)
+                                                
+                                    #Compute other parameters
+                                    obs1 = filter(obs,TP_Ob>=1) 
+                                    latObs_1 = latitudes(obs1)
+                                    lonObs_1 = longitudes(obs1)
+                                    CPr = CP_Ob1 / TP_Ob1
+                                    FER = (obs1 - TP_Ob1) / TP_Ob1
+                                            
+                                    #Saving the output file in ascii format
+                                    vals_TP = values(TP_Ob1)
+                                    vals_CP = values(CP_Ob1)
+                                    vals_OB = values(obs1)
+                                    vals_FER = values(FER)
+                                    vals_CPr = values(CPr)
+                                    vals_WSPD = values(WSPD_Ob1)
+                                    vals_CAPE = values(CAPE_Ob1)
+                                    vals_SR = values(SR_Ob1)
+
+                                    n = count(vals_FER)
+                                    obsUSED = obsUSED + n
+                                    for i = 1 to n do
+                                        append(Output_file, DateVF, tab, HourVF, tab, vals_OB[i], tab, latObs_1[i], tab, lonObs_1[i], tab, vals_FER[i], tab, vals_CPr[i], tab, vals_TP[i], tab, vals_WSPD[i], tab, vals_CAPE[i], tab, vals_SR[i], tab, "NaN", newline)
+                                    end for
+                                
+                                end if
+                        
+                            end if
+                                    
+                        end if
+                
+                    end if
+                            
+                end if
+                        
+            end if
+            
+            print(" ")
+            print("**************************************************") 
+                          
+        end for
+
+    end for
+    
+end for
+
+print("Number of observations in the whole training period: ", obsTOT)
+print("Number of observations actually used in the training period (that correspond to tp >= 1 mm/" & Acc & "h: ", obsUSED)
+
+append(Output_file, newline)
+append(Output_file, "Number of observations in the whole training period: ", obsTOT, newline)
+append(Output_file, "Number of observations actually used in the training period (that correspond to tp >= 1 mm/" & Acc & "h): ", obsUSED)
