@@ -12,3 +12,8 @@ def test_geopoints_loader_header_ok():
     loader.validate()
 
     assert len(list(loader.read())) == 2
+
+    loader = GeopointsLoader(os.path.join(TEST_DATA_DIR, 'good_geo_file_with_multiline_comments.geo'))
+    loader.validate()
+
+    assert len(list(loader.read())) == 2

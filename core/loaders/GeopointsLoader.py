@@ -50,8 +50,11 @@ class GeopointsLoader(BaseLoader):
         with open(self.path) as f:
             f.readline()
             f.readline()
-            f.readline()
-            f.readline()
+
+            while True:
+                raw_data = f.readline()
+                if not raw_data.strip() or raw_data.lstrip('#').strip() == 'DATA':
+                    break
 
             for line in f:
                 lat, lon, height, date, time, value = line.strip().split()
@@ -61,14 +64,19 @@ class GeopointsLoader(BaseLoader):
         with open(self.path) as f:
             l1 = f.readline().lstrip('#').strip()
             l2 = f.readline().lstrip('#').strip()
-            l3 = f.readline()
-            l4 = f.readline().lstrip('#').strip()
+            while True:
+                raw_data = f.readline()
+                if not raw_data.strip():
+                    data = ''
+                    break
+                if raw_data.lstrip('#').strip() == 'DATA':
+                    data = 'DATA'
+                    break
 
             if (
                     l1 == 'GEO' and
                     l2.split() == self.HEADER and
-                    l3.startswith('#') and
-                    l4 == 'DATA'
+                    data == 'DATA'
             ):
                 # OK
                 pass
