@@ -1,8 +1,11 @@
+import logging
 from datetime import datetime, time
 
 import attr
 
 from .BaseLoader import BaseLoader
+
+logger = logging.getLogger(__name__)
 
 
 def convert_str_to_py_date(string):
@@ -42,6 +45,8 @@ class GeopointsLoader(BaseLoader):
         self.path = path
 
     def read(self):
+        logger.info('Reading: ' + self.path)
+
         with open(self.path) as f:
             f.readline()
             f.readline()
