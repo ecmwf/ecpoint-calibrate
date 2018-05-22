@@ -9,11 +9,15 @@ TEST_DATA_DIR = os.path.join(
 
 def test_geopoints_loader_header_ok():
     loader = GeopointsLoader(os.path.join(TEST_DATA_DIR, 'good_geo_file.geo'))
-    loader.validate()
 
-    assert len(list(loader.read())) == 2
+    assert len(loader.geopoints) == 2
 
     loader = GeopointsLoader(os.path.join(TEST_DATA_DIR, 'good_geo_file_with_multiline_comments.geo'))
-    loader.validate()
 
-    assert len(list(loader.read())) == 2
+    assert len(loader.geopoints) == 2
+
+
+def test_geopoints_loader_values_ok():
+    loader = GeopointsLoader(os.path.join(TEST_DATA_DIR, 'good_geo_file.geo'))
+    assert len(loader.values) == 2
+    assert loader.values == [0.0, 0.0]

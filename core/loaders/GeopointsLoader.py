@@ -43,6 +43,9 @@ class GeopointsLoader(BaseLoader):
 
     def __init__(self, path):
         self.path = path
+        self.geopoints = []
+        self.validate()
+        self.read()
 
     def read(self):
         logger.info('Reading: ' + self.path)
@@ -58,7 +61,13 @@ class GeopointsLoader(BaseLoader):
 
             for line in f:
                 lat, lon, height, date, time, value = line.strip().split()
-                yield Geopoint(lat, lon, height, date, time, value)
+                self.geopoints.append(
+                    Geopoint(lat, lon, height, date, time, value)
+                )
+
+    @property
+    def values(self):
+        return [geopoint.value for geopoint in self.geopoints]
 
     def validate(self):
         with open(self.path) as f:
