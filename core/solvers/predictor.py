@@ -1,16 +1,3 @@
-# Metview Macro
-
-#  **************************** LICENSE START ***********************************
-#
-#  Copyright 2016 ECMWF. This software is distributed under the terms
-#  of the Apache License version 2.0. In applying this license, ECMWF does not
-#  waive the privileges and immunities granted to it by virtue of its status as
-#  an Intergovernmental Organization or submit itself to any jurisdiction.
-#
-#  ***************************** LICENSE END ************************************
-#
-#########################################################################################################
-
 ####################
 # INPUT PARAMETERS #
 ####################
@@ -50,6 +37,7 @@ FileNameOUT_predictors = "test.ascii"
 
 from ..utils import daterange
 from ..loaders.GeopointsLoader import GeopointsLoader
+from ..loaders.GribLoader import GribLoader
 import os
 from math import sqrt
 from datetime import datetime, timedelta
@@ -63,7 +51,7 @@ BaseDateFSTR=BaseDateF.strftime('%Y%m%d')
 
 AccSTR = '%02d'.format(Acc)
 
-precision(4)  # [XXX]
+#precision(4)  # [XXX]
 
 FileNameOUT = 'FER{0}h_{1}'.format(AccSTR, FileNameOUT_predictors)
 Output_file = open(os.path.join(PathOUT, FileNameOUT), 'w')
@@ -190,12 +178,11 @@ for thedate in daterange(BaseDateS, BaseDateF):
                     print("Validity date/time (end of the ", AccSTR, " hourly period) = ", validDateF)
 
                     #Looking for no repetions in the computed dates and times
-                    checkNoRepeat = (counterValidTimes = number(validDateF, "yyyymmddHH"))
-                    if sum(vector(checkNoRepeat)) > 0:
+                    if validDateF in counterValidTimes:
                         print("Valid Date and Time already computed.")
                         print("Case not considered. Go to the following forecast.")
                     else:
-                        counterValidTimes = counterValidTimes & [number(validDateF, "yyyymmddHH")]  # [XXX]
+                        counterValidTimes.append(validDateF)
                         dirOBS = os.path.join(PathOBS, AccSTR, DateVF)
                         fileOBS = 'PPT{0}_obs_Global_{1}{2}.geo'.format(AccSTR, DateVF, HourVF)
 
@@ -230,18 +217,24 @@ for thedate in daterange(BaseDateS, BaseDateF):
 
                                 #Reading forecasts
                                 print("READING FORECASTS")
-                                tp1 = read(PathFC & "/tp/" & thedateNEWSTR & thetimeNEWSTR & "/tp" & "_" & thedateNEWSTR &  "_" & thetimeNEWSTR & "_" & step1STR)
-                                tp2 = read(PathFC & "/tp/" & thedateNEWSTR & thetimeNEWSTR & "/tp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
-                                cp1 = read(PathFC & "/cp/" & thedateNEWSTR & thetimeNEWSTR & "/cp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
-                                cp2 = read(PathFC & "/cp/" & thedateNEWSTR & thetimeNEWSTR & "/cp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
-                                u1 = read(PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
-                                u2 = read(PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
-                                v1 = read(PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
-                                v2 = read(PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
-                                cape1 = read(PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
-                                cape2 = read(PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
-                                sr1 = read(PathFC & "/sr/" & thedateNEWSTR & thetimeNEWSTR & "/sr" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1srSTR)
-                                sr2 = read(PathFC & "/sr/" & thedateNEWSTR & thetimeNEWSTR & "/sr" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2srSTR)
+
+                                tp1 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
+                                tp2 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step2STR]))).points
+
+                                cp1 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
+                                cp2 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step2STR]))).points
+
+                                u1 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
+                                u2 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step2STR]))).points
+
+                                v1 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
+                                v2 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step2STR]))).points
+
+                                cape1 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
+                                cape2 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step2STR]))).points
+
+                                sr1 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step1srSTR]))).points
+                                sr2 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step2srSTR]))).points
 
                                 #Compute the 6 hourly fields
                                 print('\nCOMPUTING')
@@ -334,12 +327,11 @@ for thedate in daterange(BaseDateS, BaseDateF):
                     print("Validity date/time (end of the ", AccSTR, " hourly period) = ", validDateF)
 
                     #Looking for no repetions in the computed dates and times
-                    checkNoRepeat = (counterValidTimes = number(validDateF, "yyyymmddHH"))  # [XXX] Find out that the hell is this.
-                    if sum(vector(checkNoRepeat)) > 0:
+                    if validDateF in counterValidTimes:
                         print("Valid Date and Time already computed.")
                         print("Case not considered. Go to the following forecast.")
                     else:
-                        counterValidTimes = counterValidTimes & [number(validDateF, "yyyymmddHH")]  # [XXX] This is a list concat operation.
+                        counterValidTimes.append(validDateF)
                         dirOBS = os.path.join(PathOBS, AccSTR, DateVF)
                         fileOBS = 'PPT{0}_obs_Global_{1}{2}.geo'.format(AccSTR, DateVF, HourVF)
 
@@ -374,21 +366,26 @@ for thedate in daterange(BaseDateS, BaseDateF):
 
                                 #Reading forecasts
                                 print("READING FORECASTS")
-                                tp1 = read(PathFC & "/tp/" & thedateNEWSTR & thetimeNEWSTR & "/tp" & "_" & thedateNEWSTR &  "_" & thetimeNEWSTR & "_" & step1STR)
-                                tp3 = read(PathFC & "/tp/" & thedateNEWSTR & thetimeNEWSTR & "/tp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
-                                cp1 = read(PathFC & "/cp/" & thedateNEWSTR & thetimeNEWSTR & "/cp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
-                                cp3 = read(PathFC & "/cp/" & thedateNEWSTR & thetimeNEWSTR & "/cp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
-                                u1 = read(PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
-                                u2 = read(PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
-                                u3 = read(PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
-                                v1 = read(PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
-                                v2 = read(PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
-                                v3 = read(PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
-                                cape1 = read(PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
-                                cape2 = read(PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
-                                cape3 = read(PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
-                                sr1 = read(PathFC & "/sr/" & thedateNEWSTR & thetimeNEWSTR & "/sr" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1srSTR)
-                                sr3 = read(PathFC & "/sr/" & thedateNEWSTR & thetimeNEWSTR & "/sr" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3srSTR)
+                                tp1 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
+                                tp3 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step3STR]))).points
+
+                                cp1 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
+                                cp3 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step3STR]))).points
+
+                                u1 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
+                                u2 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step2STR]))).points
+                                u3 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step3STR]))).points
+
+                                v1 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
+                                v2 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step2STR]))).points
+                                v3 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step3STR]))).points
+
+                                cape1 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
+                                cape2 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step2STR]))).points
+                                cape3 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step3STR]))).points
+
+                                sr1 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step1srSTR]))).points
+                                sr3 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step3srSTR]))).points
 
                                 #Compute the 12 hourly fields
                                 print("COMPUTING")
@@ -470,12 +467,11 @@ for thedate in daterange(BaseDateS, BaseDateF):
                     print("Validity date/time (end of the ", AccSTR, " hourly period) = ", validDateF)
 
                     #Looking for no repetions in the computed dates and times
-                    checkNoRepeat = (counterValidTimes = number(validDateF, "yyyymmddHH"))
-                    if sum(vector(checkNoRepeat)) > 0:
+                    if validDateF in counterValidTimes:
                         print("Valid Date and Time already computed.")
                         print("Case not considered. Go to the following forecast.")
                     else:
-                        counterValidTimes = counterValidTimes & [number(validDateF, "yyyymmddHH")]
+                        counterValidTimes.append(validDateF)
                         dirOBS = os.path.join(PathOBS, AccSTR, DateVF)
                         fileOBS = 'PPT{0}_obs_Global_{1}{2}.geo'.format(AccSTR, DateVF, HourVF)
 
@@ -500,27 +496,32 @@ for thedate in daterange(BaseDateS, BaseDateF):
                                 #Reading Forecasts
                                 obsTOT = obsTOT + nOBS
                                 print("READING FORECASTS")
-                                tp1 = read(PathFC & "/tp/" & thedateNEWSTR & thetimeNEWSTR & "/tp" & "_" & thedateNEWSTR &  "_" & thetimeNEWSTR & "_" & step1STR)
-                                tp5 = read(PathFC & "/tp/" & thedateNEWSTR & thetimeNEWSTR & "/tp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step5STR)
-                                cp1 = read(PathFC & "/cp/" & thedateNEWSTR & thetimeNEWSTR & "/cp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
-                                cp5 = read(PathFC & "/cp/" & thedateNEWSTR & thetimeNEWSTR & "/cp" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step5STR)
-                                u1 = read(PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
-                                u2 = read(PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
-                                u3 = read(PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
-                                u4 = read(PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step4STR)
-                                u5 = read(PathFC & "/u700/" & thedateNEWSTR & thetimeNEWSTR & "/u700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step5STR)
-                                v1 = read(PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
-                                v2 = read(PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
-                                v3 = read(PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
-                                v4 = read(PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step4STR)
-                                v5 = read(PathFC & "/v700/" & thedateNEWSTR & thetimeNEWSTR & "/v700" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step5STR)
-                                cape1 = read(PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
-                                cape2 = read(PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step2STR)
-                                cape3 = read(PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step3STR)
-                                cape4 = read(PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step4STR)
-                                cape5 = read(PathFC & "/cape/" & thedateNEWSTR & thetimeNEWSTR & "/cape" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step5STR)
-                                sr1 = read(PathFC & "/sr/" & thedateNEWSTR & thetimeNEWSTR & "/sr" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step1STR)
-                                sr5 = read(PathFC & "/sr/" & thedateNEWSTR & thetimeNEWSTR & "/sr" & "_" & thedateNEWSTR & "_" & thetimeNEWSTR & "_" & step5STR)
+                                tp1 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
+                                tp5 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step5STR]))).points
+
+                                cp1 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
+                                cp5 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step5STR]))).points
+
+                                u1 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
+                                u2 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step2STR]))).points
+                                u3 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step3STR]))).points
+                                u4 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step4STR]))).points
+                                u5 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step5STR]))).points
+
+                                v1 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
+                                v2 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step2STR]))).points
+                                v3 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step3STR]))).points
+                                v4 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step4STR]))).points
+                                v5 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step5STR]))).points
+
+                                cape1 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
+                                cape2 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step2STR]))).points
+                                cape3 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step3STR]))).points
+                                cape4 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step4STR]))).points
+                                cape5 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step5STR]))).points
+
+                                sr1 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
+                                sr5 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step5STR]))).points
 
                                 #Compute the 24 hourly fields
                                 print('\nCOMPUTING')
