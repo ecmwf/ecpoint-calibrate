@@ -39,7 +39,6 @@ from ..utils import daterange
 from ..loaders.GeopointsLoader import GeopointsLoader
 from ..loaders.GribLoader import GribLoader
 import os
-from math import sqrt
 from datetime import datetime, timedelta
 
 #Set up the input/output parameters
@@ -218,42 +217,51 @@ for thedate in daterange(BaseDateS, BaseDateF):
                                 #Reading forecasts
                                 print("READING FORECASTS")
 
-                                tp1 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
-                                tp2 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step2STR]))).points
+                                tp1 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step1STR])))
+                                tp2 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step2STR])))
 
-                                cp1 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
-                                cp2 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step2STR]))).points
+                                cp1 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step1STR])))
+                                cp2 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step2STR])))
 
-                                u1 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
-                                u2 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step2STR]))).points
+                                u1 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step1STR])))
+                                u2 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step2STR])))
 
-                                v1 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
-                                v2 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step2STR]))).points
+                                v1 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step1STR])))
+                                v2 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step2STR])))
 
-                                cape1 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
-                                cape2 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step2STR]))).points
+                                cape1 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step1STR])))
+                                cape2 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step2STR])))
 
-                                sr1 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step1srSTR]))).points
-                                sr2 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step2srSTR]))).points
+                                sr1 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step1srSTR])))
+                                sr2 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step2srSTR])))
 
                                 #Compute the 6 hourly fields
                                 print('\nCOMPUTING')
                                 print('Computing the required parameters (FER, cpr, tp, wspd700, cape, sr)...')
-                                TP = (tp2 - tp1) * 1000
-                                CP = (cp2 - cp1) * 1000
-                                U700 = (u1 + u2) / 2
-                                V700 = (v1 + v2) / 2
-                                WSPD = sqrt((U700**2)+(V700**2))
-                                CAPE = (cape1 + cape2) / 2
-                                SR = (sr2 - sr1) / 86400
+                                TP = (tp2.points - tp1.points) * 1000
+                                CP = (cp2.points - cp1.points) * 1000
+                                U700 = (u1.points + u2.points) / 2
+                                V700 = (v1.points + v2.points) / 2
+                                WSPD = ((U700 ** 2) + (V700 ** 2)) ** 0.5
+                                CAPE = (cape1.points + cape2.points) / 2
+                                SR = (sr2.points - sr1.points) / 86400
 
                                 #Select the nearest grid-point from the rainfall observations
                                 print('Selecting the nearest grid point to rainfall obs...')
-                                TP_Ob = nearest_gridpoint(TP,obs)
-                                CP_Ob = nearest_gridpoint(CP,obs)
-                                WSPD_Ob = nearest_gridpoint(WSPD,obs)
-                                CAPE_Ob = nearest_gridpoint(CAPE,obs)
-                                SR_Ob = nearest_gridpoint(SR,obs)
+                                TP_Ob = tp1.nearest_gridpoint(obs)
+                                TP_Ob.values = TP.values
+
+                                CP_Ob = cp1.nearest_gridpoint(obs)
+                                CP_Ob.values = CP.values
+
+                                WSPD_Ob = u1.nearest_gridpoint(obs)
+                                WSPD_Ob.values = WSPD.values
+
+                                CAPE_Ob = cape1.nearest_gridpoint(obs)
+                                CAPE_Ob.values = CAPE.values
+
+                                SR_Ob = sr1.nearest_gridpoint(obs)
+                                SR_Ob.values = SR.values
 
                                 #Select only the values that correspond to TP>=1
                                 print('Selecting the values that correspond to tp >= 1 mm/{}h...'.format(Acc))
@@ -265,7 +273,7 @@ for thedate in daterange(BaseDateS, BaseDateF):
                                 else:
                                     print('\nSAVING')
                                     print("Saving the data in ", os.path.join(PathOUT, FileNameOUT, '...'))
-                                    CP_Ob1 = filter(CP_Ob,TP_Ob>=1)  # [XXX]
+                                    CP_Ob1 = filter(CP_Ob,TP_Ob>=1)  # [XXX] ERROR?
                                     WSPD_Ob1 = filter(WSPD_Ob,TP_Ob>=1)
                                     CAPE_Ob1 = filter(CAPE_Ob,TP_Ob>=1)
                                     SR_Ob1 = filter(SR_Ob,TP_Ob>=1)
@@ -366,45 +374,54 @@ for thedate in daterange(BaseDateS, BaseDateF):
 
                                 #Reading forecasts
                                 print("READING FORECASTS")
-                                tp1 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
-                                tp3 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step3STR]))).points
+                                tp1 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step1STR])))
+                                tp3 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step3STR])))
 
-                                cp1 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
-                                cp3 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step3STR]))).points
+                                cp1 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step1STR])))
+                                cp3 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step3STR])))
 
-                                u1 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
-                                u2 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step2STR]))).points
-                                u3 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step3STR]))).points
+                                u1 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step1STR])))
+                                u2 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step2STR])))
+                                u3 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step3STR])))
 
-                                v1 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
-                                v2 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step2STR]))).points
-                                v3 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step3STR]))).points
+                                v1 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step1STR])))
+                                v2 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step2STR])))
+                                v3 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step3STR])))
 
-                                cape1 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
-                                cape2 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step2STR]))).points
-                                cape3 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step3STR]))).points
+                                cape1 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step1STR])))
+                                cape2 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step2STR])))
+                                cape3 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step3STR])))
 
-                                sr1 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step1srSTR]))).points
-                                sr3 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step3srSTR]))).points
+                                sr1 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step1srSTR])))
+                                sr3 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step3srSTR])))
 
                                 #Compute the 12 hourly fields
                                 print("COMPUTING")
                                 print("Computing the required parameters (FER, cpr, tp, wspd700, cape, sr)...")
-                                TP = (tp3 - tp1) * 1000
-                                CP = (cp3 - cp1) * 1000
-                                U700 = 0.5 * ((0.5*u1) + u2 + (0.5*u3))
-                                V700 = 0.5 * ((0.5*v1) + v2 + (0.5*v3))
-                                WSPD = sqrt((U700**2)+(V700**2))
-                                CAPE = 0.5 * ((0.5*cape1) + cape2 + (0.5*cape3))
-                                SR = (sr3 - sr1) / 86400
+                                TP = (tp3.points - tp1.points) * 1000
+                                CP = (cp3.points - cp1.points) * 1000
+                                U700 = 0.5 * ((0.5*u1.points) + u2.points + (0.5*u3.points))
+                                V700 = 0.5 * ((0.5*v1.points) + v2.points + (0.5*v3.points))
+                                WSPD = ((U700 ** 2) + (V700 ** 2)) ** 0.5
+                                CAPE = 0.5 * ((0.5*cape1.points) + cape2.points + (0.5*cape3.points))
+                                SR = (sr3.points - sr1.points) / 86400
 
                                 #Select the nearest grid-point from the rainfall observations
                                 print("Selecting the nearest grid point to rainfall obs...")
-                                TP_Ob = nearest_gridpoint(TP,obs)
-                                CP_Ob = nearest_gridpoint(CP,obs)
-                                WSPD_Ob = nearest_gridpoint(WSPD,obs)
-                                CAPE_Ob = nearest_gridpoint(CAPE,obs)
-                                SR_Ob = nearest_gridpoint(SR,obs)
+                                TP_Ob = tp1.nearest_gridpoint(obs)
+                                TP_Ob.values = TP.values
+
+                                CP_Ob = cp1.nearest_gridpoint(obs)
+                                CP_Ob.values = CP.values
+
+                                WSPD_Ob = u1.nearest_gridpoint(obs)
+                                WSPD_Ob.values = WSPD.values
+
+                                CAPE_Ob = cape1.nearest_gridpoint(obs)
+                                CAPE_Ob.values = CAPE.values
+
+                                SR_Ob = sr1.nearest_gridpoint(obs)
+                                SR_Ob.values = SR.values
 
                                 #Select only the values that correspond to TP>=1
                                 print('Selecting the values that correspond to tp >= 1 mm/{}h...'.format(Acc))
@@ -496,51 +513,60 @@ for thedate in daterange(BaseDateS, BaseDateF):
                                 #Reading Forecasts
                                 obsTOT = obsTOT + nOBS
                                 print("READING FORECASTS")
-                                tp1 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
-                                tp5 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step5STR]))).points
+                                tp1 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step1STR])))
+                                tp5 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step5STR])))
 
-                                cp1 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
-                                cp5 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step5STR]))).points
+                                cp1 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step1STR])))
+                                cp5 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step5STR])))
 
-                                u1 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
-                                u2 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step2STR]))).points
-                                u3 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step3STR]))).points
-                                u4 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step4STR]))).points
-                                u5 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step5STR]))).points
+                                u1 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step1STR])))
+                                u2 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step2STR])))
+                                u3 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step3STR])))
+                                u4 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step4STR])))
+                                u5 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step5STR])))
 
-                                v1 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
-                                v2 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step2STR]))).points
-                                v3 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step3STR]))).points
-                                v4 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step4STR]))).points
-                                v5 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step5STR]))).points
+                                v1 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step1STR])))
+                                v2 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step2STR])))
+                                v3 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step3STR])))
+                                v4 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step4STR])))
+                                v5 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step5STR])))
 
-                                cape1 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
-                                cape2 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step2STR]))).points
-                                cape3 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step3STR]))).points
-                                cape4 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step4STR]))).points
-                                cape5 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step5STR]))).points
+                                cape1 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step1STR])))
+                                cape2 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step2STR])))
+                                cape3 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step3STR])))
+                                cape4 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step4STR])))
+                                cape5 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step5STR])))
 
-                                sr1 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step1STR]))).points
-                                sr5 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step5STR]))).points
+                                sr1 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step1STR])))
+                                sr5 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step5STR])))
 
                                 #Compute the 24 hourly fields
                                 print('\nCOMPUTING')
                                 print('Computing the required parameters (FER, cpr, tp, wspd700, cape, sr)...')
-                                TP = (tp5 - tp1) * 1000
-                                CP = (cp5 - cp1) * 1000
-                                U700 = ((0.5*u1) + u2 + u3 + u4 + (0.5*u5)) / 4
-                                V700 = ((0.5*v1) + v2 + v3 + v4 + (0.5*v5)) / 4
-                                WSPD = sqrt((U700**2)+(V700**2))
-                                CAPE = ((0.5*cape1) + cape2 + cape3 + cape4 + (0.5*cape5)) / 4
-                                SR = (sr5 - sr1) / 86400
+                                TP = (tp5.points - tp1.points) * 1000
+                                CP = (cp5.points - cp1.points) * 1000
+                                U700 = ((0.5*u1.points) + u2.points + u3.points + u4.points + (0.5*u5.points)) / 4
+                                V700 = ((0.5*v1.points) + v2.points + v3.points + v4.points + (0.5*v5.points)) / 4
+                                WSPD = ((U700**2)+(V700**2)) ** 0.5
+                                CAPE = ((0.5*cape1.points) + cape2.points + cape3.points + cape4.points + (0.5*cape5.points)) / 4
+                                SR = (sr5.points - sr1.points) / 86400
 
                                 #Select the nearest grid-point from the rainfall observations
                                 print('Selecting the nearest grid point to rainfall obs...')
-                                TP_Ob = nearest_gridpoint(TP,obs)
-                                CP_Ob = nearest_gridpoint(CP,obs)
-                                WSPD_Ob = nearest_gridpoint(WSPD,obs)
-                                CAPE_Ob = nearest_gridpoint(CAPE,obs)
-                                SR_Ob = nearest_gridpoint(SR,obs)
+                                TP_Ob = tp1.nearest_gridpoint(obs)
+                                TP_Ob.values = TP.values
+
+                                CP_Ob = cp1.nearest_gridpoint(obs)
+                                CP_Ob.values = CP.values
+
+                                WSPD_Ob = u1.nearest_gridpoint(obs)
+                                WSPD_Ob.values = WSPD.values
+
+                                CAPE_Ob = cape1.nearest_gridpoint(obs)
+                                CAPE_Ob.values = CAPE.values
+
+                                SR_Ob = sr1.nearest_gridpoint(obs)
+                                SR_Ob.values = SR.values
 
                                 #Select only the values that correspond to TP>=1
                                 print('Selecting the values that correspond to tp >= 1 mm/{}h...'.format(Acc))

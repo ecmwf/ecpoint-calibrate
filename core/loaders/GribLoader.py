@@ -8,6 +8,7 @@ from eccodes import (
     codes_set,
     codes_grib_iterator_delete,
     codes_release,
+    codes_grib_find_nearest,
 )
 
 from .BaseLoader import BaseLoader
@@ -95,9 +96,22 @@ class GribPoints(list):
 
         return result
 
+    def __pow__(self, power, modulo=None):
+        result = GribPoints()
+        for point in self:
+            result.append(
+                GribPoint(lat=point.lat, lon=point.lon, value=pow(point.value, power))
+            )
+        return result
+
     @property
     def values(self):
         return [item.value for item in self]
+
+    @values.setter
+    def values(self, values):
+        for point, value in zip(self, values):
+            point.value = value
 
 
 class GribLoader(BaseLoader):
@@ -125,6 +139,18 @@ class GribLoader(BaseLoader):
 
             codes_grib_iterator_delete(iterid)
             codes_release(gid)
+
+    def nearest_gridpoint(self, geopoints):
+        with open(self.path) as f:
+            gid = codes_grib_new_from_file(f)
+            result = GribPoints()
+            for geopoint in geopoints:
+                nearest = codes_grib_find_nearest(gid, geopoint.lat, geopoint.lon)[0]
+                result.append(
+                    GribPoint(nearest.lat, nearest.lon, nearest.value)
+                )
+            codes_release(gid)
+        return result
 
     def validate(self):
         pass
