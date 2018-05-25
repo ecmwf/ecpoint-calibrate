@@ -38,12 +38,18 @@ class Geopoint(object):
         )
 
 
+class Geopoints(list):
+    @property
+    def values(self):
+        return [geopoint.value for geopoint in self]
+
+
 class GeopointsLoader(BaseLoader):
     HEADER = ['lat', 'lon', 'height', 'date', 'time', 'value']
 
     def __init__(self, path):
         self.path = path
-        self.geopoints = []
+        self.geopoints = Geopoints()
         self.validate()
         self.read()
 
@@ -67,7 +73,7 @@ class GeopointsLoader(BaseLoader):
 
     @property
     def values(self):
-        return [geopoint.value for geopoint in self.geopoints]
+        return self.geopoints.values
 
     def validate(self):
         with open(self.path) as f:
