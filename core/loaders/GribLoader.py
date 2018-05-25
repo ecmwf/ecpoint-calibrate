@@ -9,9 +9,17 @@ from eccodes import (
     codes_grib_iterator_delete,
     codes_release,
     codes_grib_find_nearest,
+    codes_clone,
+    codes_write,
+    codes_get_values,
+    codes_set_values,
 )
 
 from .BaseLoader import BaseLoader
+from .GeopointsLoader import Geopoints, Geopoint
+
+import os
+import tempfile
 
 logger = logging.getLogger(__name__)
 
@@ -118,10 +126,10 @@ class GribLoader(BaseLoader):
     def __init__(self, path):
         self.path = path
         self.points = GribPoints()
-        self.read()
+        #self.read()
 
     def read(self):
-        logger.info('Reading: ' + self.path)
+        print('Reading:', self.path)
         with open(self.path) as f:
             gid = codes_grib_new_from_file(f)
             codes_set(gid, "missingValue", missingValue)
@@ -141,16 +149,85 @@ class GribLoader(BaseLoader):
             codes_release(gid)
 
     def nearest_gridpoint(self, geopoints):
+        result = Geopoints()
         with open(self.path) as f:
             gid = codes_grib_new_from_file(f)
-            result = GribPoints()
+
             for geopoint in geopoints:
                 nearest = codes_grib_find_nearest(gid, geopoint.lat, geopoint.lon)[0]
                 result.append(
-                    GribPoint(nearest.lat, nearest.lon, nearest.value)
+                    Geopoint(
+                        lat=geopoint.lat,
+                        lon=geopoint.lon,
+                        height=geopoint.height,
+                        date=geopoint.date,
+                        time=geopoint.time,
+                        value=nearest.value
+                    )
                 )
-            codes_release(gid)
         return result
+
+    def clone(self):
+        tmp_fd, tmp_path = tempfile.mkstemp()
+        with os.fdopen(tmp_fd, 'wb') as tmp, open(self.path, 'rb') as f:
+            gid = codes_grib_new_from_file(f)
+            clone_id = codes_clone(gid)
+            codes_write(clone_id, tmp)
+            codes_release(clone_id)
+            codes_release(gid)
+
+        return type(self)(path=tmp_path)
+
+    @property
+    def values(self):
+        with open(self.path) as f:
+            gid = codes_grib_new_from_file(f)
+            result = codes_get_values(gid)
+            codes_release(gid)
+
+            return result
+
+    @values.setter
+    def values(self, values):
+        with open(self.path) as f:
+            gid = codes_grib_new_from_file(f)
+            codes_set_values(gid, values)
+            codes_release(gid)
+
+    def __sub__(self, other):
+        values_self = self.values
+        values_other = other.values
+        clone = self.clone()
+        clone.values = values_self - values_other
+        return clone
+
+    def __add__(self, other):
+        values_self = self.values
+        values_other = other.values
+        clone = self.clone()
+        clone.values = values_self + values_other
+        return clone
+
+    def __mul__(self, other):
+        # other is a scalar
+        values_self = self.values
+        clone = self.clone()
+        clone.values = values_self * other
+        return clone
+
+    def __div__(self, other):
+        # other is a scalar
+        values_self = self.values
+        clone = self.clone()
+        clone.values = values_self / other
+        return clone
+
+    def __pow__(self, other):
+        # other is a scalar
+        values_self = self.values
+        clone = self.clone()
+        clone.values = values_self ** other
+        return clone
 
     def validate(self):
         pass

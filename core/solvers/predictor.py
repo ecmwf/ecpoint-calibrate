@@ -35,7 +35,7 @@ FileNameOUT_predictors = "test.ascii"
 
 #########################################################################################################
 
-from ..utils import daterange
+from ..utils import daterange, nearest_gridpoint
 from ..loaders.GeopointsLoader import GeopointsLoader
 from ..loaders.GribLoader import GribLoader
 import os
@@ -238,30 +238,21 @@ for thedate in daterange(BaseDateS, BaseDateF):
                                 #Compute the 6 hourly fields
                                 print('\nCOMPUTING')
                                 print('Computing the required parameters (FER, cpr, tp, wspd700, cape, sr)...')
-                                TP = (tp2.points - tp1.points) * 1000
-                                CP = (cp2.points - cp1.points) * 1000
-                                U700 = (u1.points + u2.points) / 2
-                                V700 = (v1.points + v2.points) / 2
+                                TP = (tp2 - tp1) * 1000
+                                CP = (cp2 - cp1) * 1000
+                                U700 = (u1 + u2) / 2
+                                V700 = (v1 + v2) / 2
                                 WSPD = ((U700 ** 2) + (V700 ** 2)) ** 0.5
-                                CAPE = (cape1.points + cape2.points) / 2
-                                SR = (sr2.points - sr1.points) / 86400
+                                CAPE = (cape1 + cape2) / 2
+                                SR = (sr2 - sr1) / 86400
 
                                 #Select the nearest grid-point from the rainfall observations
                                 print('Selecting the nearest grid point to rainfall obs...')
-                                TP_Ob = tp1.nearest_gridpoint(obs)
-                                TP_Ob.values = TP.values
-
-                                CP_Ob = cp1.nearest_gridpoint(obs)
-                                CP_Ob.values = CP.values
-
-                                WSPD_Ob = u1.nearest_gridpoint(obs)
-                                WSPD_Ob.values = WSPD.values
-
-                                CAPE_Ob = cape1.nearest_gridpoint(obs)
-                                CAPE_Ob.values = CAPE.values
-
-                                SR_Ob = sr1.nearest_gridpoint(obs)
-                                SR_Ob.values = SR.values
+                                TP_Ob = TP.nearest_gridpoint(obs)  # Geopoints(list) instance
+                                CP_Ob = CP.nearest_gridpoint(obs)
+                                WSPD_Ob = WSPD.nearest_gridpoint(obs)
+                                CAPE_Ob = CAPE.nearest_gridpoint(obs)
+                                SR_Ob = SR.nearest_gridpoint(obs)
 
                                 #Select only the values that correspond to TP>=1
                                 print('Selecting the values that correspond to tp >= 1 mm/{}h...'.format(Acc))
@@ -398,30 +389,21 @@ for thedate in daterange(BaseDateS, BaseDateF):
                                 #Compute the 12 hourly fields
                                 print("COMPUTING")
                                 print("Computing the required parameters (FER, cpr, tp, wspd700, cape, sr)...")
-                                TP = (tp3.points - tp1.points) * 1000
-                                CP = (cp3.points - cp1.points) * 1000
-                                U700 = 0.5 * ((0.5*u1.points) + u2.points + (0.5*u3.points))
-                                V700 = 0.5 * ((0.5*v1.points) + v2.points + (0.5*v3.points))
+                                TP = (tp3 - tp1) * 1000
+                                CP = (cp3 - cp1) * 1000
+                                U700 = 0.5 * ((u1 * 0.5) + u2 + (u3 * 0.5))
+                                V700 = 0.5 * ((v1 * 0.5) + v2 + (v3 * 0.5))
                                 WSPD = ((U700 ** 2) + (V700 ** 2)) ** 0.5
-                                CAPE = 0.5 * ((0.5*cape1.points) + cape2.points + (0.5*cape3.points))
-                                SR = (sr3.points - sr1.points) / 86400
+                                CAPE = 0.5 * ((cape1 * 0.5) + cape2 + (cape3*0.5))
+                                SR = (sr3 - sr1) / 86400
 
                                 #Select the nearest grid-point from the rainfall observations
                                 print("Selecting the nearest grid point to rainfall obs...")
-                                TP_Ob = tp1.nearest_gridpoint(obs)
-                                TP_Ob.values = TP.values
-
-                                CP_Ob = cp1.nearest_gridpoint(obs)
-                                CP_Ob.values = CP.values
-
-                                WSPD_Ob = u1.nearest_gridpoint(obs)
-                                WSPD_Ob.values = WSPD.values
-
-                                CAPE_Ob = cape1.nearest_gridpoint(obs)
-                                CAPE_Ob.values = CAPE.values
-
-                                SR_Ob = sr1.nearest_gridpoint(obs)
-                                SR_Ob.values = SR.values
+                                TP_Ob = TP.nearest_gridpoint(obs)
+                                CP_Ob = CP.nearest_gridpoint(obs)
+                                WSPD_Ob = WSPD.nearest_gridpoint(obs)
+                                CAPE_Ob = CAPE.nearest_gridpoint(obs)
+                                SR_Ob = SR.nearest_gridpoint(obs)
 
                                 #Select only the values that correspond to TP>=1
                                 print('Selecting the values that correspond to tp >= 1 mm/{}h...'.format(Acc))
@@ -543,30 +525,21 @@ for thedate in daterange(BaseDateS, BaseDateF):
                                 #Compute the 24 hourly fields
                                 print('\nCOMPUTING')
                                 print('Computing the required parameters (FER, cpr, tp, wspd700, cape, sr)...')
-                                TP = (tp5.points - tp1.points) * 1000
-                                CP = (cp5.points - cp1.points) * 1000
-                                U700 = ((0.5*u1.points) + u2.points + u3.points + u4.points + (0.5*u5.points)) / 4
-                                V700 = ((0.5*v1.points) + v2.points + v3.points + v4.points + (0.5*v5.points)) / 4
+                                TP = (tp5 - tp1) * 1000
+                                CP = (cp5 - cp1) * 1000
+                                U700 = ((u1*0.5) + u2 + u3 + u4 + (u5*0.5)) / 4
+                                V700 = ((v1*0.5) + v2 + v3 + v4 + (v5*0.5)) / 4
                                 WSPD = ((U700**2)+(V700**2)) ** 0.5
-                                CAPE = ((0.5*cape1.points) + cape2.points + cape3.points + cape4.points + (0.5*cape5.points)) / 4
-                                SR = (sr5.points - sr1.points) / 86400
+                                CAPE = ((cape1*0.5) + cape2 + cape3 + cape4 + (cape5*0.5)) / 4
+                                SR = (sr5 - sr1) / 86400
 
                                 #Select the nearest grid-point from the rainfall observations
                                 print('Selecting the nearest grid point to rainfall obs...')
-                                TP_Ob = tp1.nearest_gridpoint(obs)
-                                TP_Ob.values = TP.values
-
-                                CP_Ob = cp1.nearest_gridpoint(obs)
-                                CP_Ob.values = CP.values
-
-                                WSPD_Ob = u1.nearest_gridpoint(obs)
-                                WSPD_Ob.values = WSPD.values
-
-                                CAPE_Ob = cape1.nearest_gridpoint(obs)
-                                CAPE_Ob.values = CAPE.values
-
-                                SR_Ob = sr1.nearest_gridpoint(obs)
-                                SR_Ob.values = SR.values
+                                TP_Ob = TP.nearest_gridpoint(obs)
+                                CP_Ob = CP.nearest_gridpoint(obs)
+                                WSPD_Ob = WSPD.nearest_gridpoint(obs)
+                                CAPE_Ob = CAPE.nearest_gridpoint(obs)
+                                SR_Ob = SR.nearest_gridpoint(obs)
 
                                 #Select only the values that correspond to TP>=1
                                 print('Selecting the values that correspond to tp >= 1 mm/{}h...'.format(Acc))
