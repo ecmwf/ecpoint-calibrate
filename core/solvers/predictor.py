@@ -35,8 +35,8 @@ FileNameOUT_predictors = "test.ascii"
 
 #########################################################################################################
 
-from ..utils import daterange, nearest_gridpoint
-from ..loaders.GeopointsLoader import GeopointsLoader
+from ..utils import daterange
+from ..loaders.GeopointsLoader import GeopointsLoader, Geopoints
 from ..loaders.GribLoader import GribLoader
 import os
 from datetime import datetime, timedelta
@@ -256,23 +256,52 @@ for thedate in daterange(BaseDateS, BaseDateF):
 
                                 #Select only the values that correspond to TP>=1
                                 print('Selecting the values that correspond to tp >= 1 mm/{}h...'.format(Acc))
-                                TP_Ob1 = filter(TP_Ob,TP_Ob>=1)
-                                if count(values(TP_Ob1)) == 1:
+                                TP_Ob1 = Geopoints(
+                                    TP_geopoint
+                                    for TP_geopoint in TP_Ob
+                                    if TP_geopoint.value >= 1
+                                )
+                                if not TP_Ob1:
                                     print("IMPORTANT NOTE!!")
                                     print('No values of tp >= 1 mm/{}h.'.format(Acc))
                                     print("Case not considered. Go to the following forecast.")
                                 else:
                                     print('\nSAVING')
                                     print("Saving the data in ", os.path.join(PathOUT, FileNameOUT, '...'))
-                                    CP_Ob1 = filter(CP_Ob,TP_Ob>=1)  # [XXX] ERROR?
-                                    WSPD_Ob1 = filter(WSPD_Ob,TP_Ob>=1)
-                                    CAPE_Ob1 = filter(CAPE_Ob,TP_Ob>=1)
-                                    SR_Ob1 = filter(SR_Ob,TP_Ob>=1)
 
-                                    #Compute other parameters
-                                    obs1 = filter(obs,TP_Ob>=1)
-                                    latObs_1 = latitudes(obs1)
-                                    lonObs_1 = longitudes(obs1)
+                                    CP_Ob1 = Geopoints(
+                                        CP_geopoint
+                                        for CP_geopoint, TP_geopoint in zip(CP_Ob, TP_Ob)
+                                        if TP_geopoint.value >= 1
+                                    )
+
+                                    WSPD_Ob1 = Geopoints(
+                                        WSPD_geopoint
+                                        for WSPD_geopoint, TP_geopoint in zip(WSPD_Ob, TP_Ob)
+                                        if TP_geopoint.value >= 1
+                                    )
+
+                                    CAPE_Ob1 = Geopoints(
+                                        CAPE_geopoint
+                                        for CAPE_geopoint, TP_geopoint in zip(CAPE_Ob, TP_Ob)
+                                        if TP_geopoint.value >= 1
+                                    )
+
+                                    SR_Ob1 = Geopoints(
+                                        SR_geopoint
+                                        for SR_geopoint, TP_geopoint in zip(SR_Ob, TP_Ob)
+                                        if TP_geopoint.value >= 1
+                                    )
+
+                                    # Compute other parameters
+                                    obs1 = Geopoints(
+                                        obs_geopoint
+                                        for obs_geopoint, TP_geopoint in zip(obs.geopoints, TP_Ob)
+                                        if TP_geopoint.value >= 1
+                                    )
+
+                                    latObs_1 = obs1.latitudes
+                                    lonObs_1 = obs1.longitudes
                                     CPr = CP_Ob1 / TP_Ob1
                                     FER = (obs1 - TP_Ob1) / TP_Ob1
 
@@ -292,16 +321,16 @@ for thedate in daterange(BaseDateS, BaseDateF):
                                     vals_LST = tempPos + tempNeg #Combine both subsets
 
                                     #Saving the output file in ascii format
-                                    vals_TP = values(TP_Ob1)
-                                    vals_CP = values(CP_Ob1)
-                                    vals_OB = values(obs1)
-                                    vals_FER = values(FER)
-                                    vals_CPr = values(CPr)
-                                    vals_WSPD = values(WSPD_Ob1)
-                                    vals_CAPE = values(CAPE_Ob1)
-                                    vals_SR = values(SR_Ob1)
+                                    vals_TP = TP_Ob1.values
+                                    vals_CP = CP_Ob1.values
+                                    vals_OB = obs1.values
+                                    vals_FER = FER.values
+                                    vals_CPr = CPr.values
+                                    vals_WSPD = WSPD_Ob1.values
+                                    vals_CAPE = CAPE_Ob1.values
+                                    vals_SR = SR_Ob1.values
 
-                                    n = count(vals_FER)
+                                    n = len(vals_FER)
                                     obsUSED = obsUSED + n
                                     for i in range(1, n+1): # [XXX] Make it zero-index based
                                         data = map(str, [DateVF, HourVF, vals_OB[i], latObs_1[i], lonObs_1[i], vals_FER[i], vals_CPr[i], vals_TP[i], vals_WSPD[i], vals_CAPE[i], vals_SR[i], vals_LST[i]])
@@ -407,37 +436,64 @@ for thedate in daterange(BaseDateS, BaseDateF):
 
                                 #Select only the values that correspond to TP>=1
                                 print('Selecting the values that correspond to tp >= 1 mm/{}h...'.format(Acc))
-                                TP_Ob1 = filter(TP_Ob,TP_Ob>=1)
-                                if count(values(TP_Ob1)) == 1:
+                                TP_Ob1 = Geopoints(
+                                    TP_geopoint
+                                    for TP_geopoint in TP_Ob
+                                    if TP_geopoint.value >= 1
+                                )
+                                if not TP_Ob1:
                                     print('\nIMPORTANT NOTE!')
                                     print('No values of tp >= 1 mm/{}h.'.format(Acc))
                                     print('Case not considered. Go to the following forecast.')
                                 else:
                                     print('\nSAVING')
                                     print('Saving the data in ', os.path.join(PathOUT, FileNameOUT), '...')
-                                    CP_Ob1 = filter(CP_Ob,TP_Ob>=1)
-                                    WSPD_Ob1 = filter(WSPD_Ob,TP_Ob>=1)
-                                    CAPE_Ob1 = filter(CAPE_Ob,TP_Ob>=1)
-                                    SR_Ob1 = filter(SR_Ob,TP_Ob>=1)
+                                    CP_Ob1 = Geopoints(
+                                        CP_geopoint
+                                        for CP_geopoint, TP_geopoint in zip(CP_Ob, TP_Ob)
+                                        if TP_geopoint.value >= 1
+                                    )
 
-                                    #Compute other parameters
-                                    obs1 = filter(obs,TP_Ob>=1)
-                                    latObs_1 = latitudes(obs1)
-                                    lonObs_1 = longitudes(obs1)
-                                    CPr = CP_Ob1 / TP_Ob1  # [XXX]
-                                    FER = (obs1 - TP_Ob1) / TP_Ob1  # [XXX]
+                                    WSPD_Ob1 = Geopoints(
+                                        WSPD_geopoint
+                                        for WSPD_geopoint, TP_geopoint in zip(WSPD_Ob, TP_Ob)
+                                        if TP_geopoint.value >= 1
+                                    )
+
+                                    CAPE_Ob1 = Geopoints(
+                                        CAPE_geopoint
+                                        for CAPE_geopoint, TP_geopoint in zip(CAPE_Ob, TP_Ob)
+                                        if TP_geopoint.value >= 1
+                                    )
+
+                                    SR_Ob1 = Geopoints(
+                                        SR_geopoint
+                                        for SR_geopoint, TP_geopoint in zip(SR_Ob, TP_Ob)
+                                        if TP_geopoint.value >= 1
+                                    )
+
+                                    # Compute other parameters
+                                    obs1 = Geopoints(
+                                        obs_geopoint
+                                        for obs_geopoint, TP_geopoint in zip(obs.geopoints, TP_Ob)
+                                        if TP_geopoint.value >= 1
+                                    )
+                                    latObs_1 = obs1.latitudes
+                                    lonObs_1 = obs1.longitudes
+                                    CPr = CP_Ob1 / TP_Ob1
+                                    FER = (obs1 - TP_Ob1) / TP_Ob1
 
                                     #Saving the output file in ascii format
-                                    vals_TP = values(TP_Ob1)
-                                    vals_CP = values(CP_Ob1)
-                                    vals_OB = values(obs1)
-                                    vals_FER = values(FER)
-                                    vals_CPr = values(CPr)
-                                    vals_WSPD = values(WSPD_Ob1)
-                                    vals_CAPE = values(CAPE_Ob1)
-                                    vals_SR = values(SR_Ob1)  # [XXX] What does values() do?
+                                    vals_TP = TP_Ob1.values
+                                    vals_CP = CP_Ob1.values
+                                    vals_OB = obs1.values
+                                    vals_FER = FER.values
+                                    vals_CPr = CPr.values
+                                    vals_WSPD = WSPD_Ob1.values
+                                    vals_CAPE = CAPE_Ob1.values
+                                    vals_SR = SR_Ob1.values
 
-                                    n = count(vals_FER)
+                                    n = len(vals_FER)
                                     obsUSED = obsUSED + n
                                     for i in range(1, n + 1):  # [XXX] Make it zero-index based
                                         data = map(str, [DateVF, HourVF, vals_OB[i], latObs_1[i], lonObs_1[i], vals_FER[i], vals_CPr[i], vals_TP[i], vals_WSPD[i], vals_CAPE[i], vals_SR[i], 'NaN'])
@@ -543,37 +599,64 @@ for thedate in daterange(BaseDateS, BaseDateF):
 
                                 #Select only the values that correspond to TP>=1
                                 print('Selecting the values that correspond to tp >= 1 mm/{}h...'.format(Acc))
-                                TP_Ob1 = filter(TP_Ob,TP_Ob>=1)
-                                if count(values(TP_Ob1)) == 1:
+                                TP_Ob1 = Geopoints(
+                                    TP_geopoint
+                                    for TP_geopoint in TP_Ob
+                                    if TP_geopoint.value >= 1
+                                )
+                                if not TP_Ob1:
                                     print('\nIMPORTANT NOTE!')
                                     print('No values of tp >= 1 mm/{}h.'.format(Acc))
                                     print("Case not considered. Go to the following forecast.")
                                 else:
                                     print("SAVING")
                                     print("Saving the data in ", os.path.join(PathOUT, FileNameOUT), '...')
-                                    CP_Ob1 = filter(CP_Ob,TP_Ob>=1)
-                                    WSPD_Ob1 = filter(WSPD_Ob,TP_Ob>=1)
-                                    CAPE_Ob1 = filter(CAPE_Ob,TP_Ob>=1)
-                                    SR_Ob1 = filter(SR_Ob,TP_Ob>=1)
+                                    CP_Ob1 = Geopoints(
+                                        CP_geopoint
+                                        for CP_geopoint, TP_geopoint in zip(CP_Ob, TP_Ob)
+                                        if TP_geopoint.value >= 1
+                                    )
 
-                                    #Compute other parameters
-                                    obs1 = filter(obs,TP_Ob>=1)
-                                    latObs_1 = latitudes(obs1)
-                                    lonObs_1 = longitudes(obs1)
+                                    WSPD_Ob1 = Geopoints(
+                                        WSPD_geopoint
+                                        for WSPD_geopoint, TP_geopoint in zip(WSPD_Ob, TP_Ob)
+                                        if TP_geopoint.value >= 1
+                                    )
+
+                                    CAPE_Ob1 = Geopoints(
+                                        CAPE_geopoint
+                                        for CAPE_geopoint, TP_geopoint in zip(CAPE_Ob, TP_Ob)
+                                        if TP_geopoint.value >= 1
+                                    )
+
+                                    SR_Ob1 = Geopoints(
+                                        SR_geopoint
+                                        for SR_geopoint, TP_geopoint in zip(SR_Ob, TP_Ob)
+                                        if TP_geopoint.value >= 1
+                                    )
+
+                                    # Compute other parameters
+                                    obs1 = Geopoints(
+                                        obs_geopoint
+                                        for obs_geopoint, TP_geopoint in zip(obs.geopoints, TP_Ob)
+                                        if TP_geopoint.value >= 1
+                                    )
+                                    latObs_1 = obs1.latitudes
+                                    lonObs_1 = obs1.longitudes
                                     CPr = CP_Ob1 / TP_Ob1
                                     FER = (obs1 - TP_Ob1) / TP_Ob1
 
                                     #Saving the output file in ascii format
-                                    vals_TP = values(TP_Ob1)
-                                    vals_CP = values(CP_Ob1)
-                                    vals_OB = values(obs1)
-                                    vals_FER = values(FER)
-                                    vals_CPr = values(CPr)
-                                    vals_WSPD = values(WSPD_Ob1)
-                                    vals_CAPE = values(CAPE_Ob1)
-                                    vals_SR = values(SR_Ob1)
+                                    vals_TP = TP_Ob1.values
+                                    vals_CP = CP_Ob1.values
+                                    vals_OB = obs1.values
+                                    vals_FER = FER.values
+                                    vals_CPr = CPr.values
+                                    vals_WSPD = WSPD_Ob1.values
+                                    vals_CAPE = CAPE_Ob1.values
+                                    vals_SR = SR_Ob1.values
 
-                                    n = count(vals_FER)
+                                    n = len(vals_FER)
                                     obsUSED = obsUSED + n
                                     for i in range(1, n + 1):  # [XXX] Make it zero-index based
                                         data = map(str, [DateVF, HourVF, vals_OB[i], latObs_1[i], lonObs_1[i], vals_FER[i], vals_CPr[i], vals_TP[i], vals_WSPD[i], vals_CAPE[i], vals_SR[i], 'NaN'])
