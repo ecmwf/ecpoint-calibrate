@@ -168,7 +168,7 @@ class GribLoader(BaseLoader):
         return result
 
     def clone(self):
-        tmp_fd, tmp_path = tempfile.mkstemp()
+        tmp_fd, tmp_path = tempfile.mkstemp(suffix='.tmp.grib')
         with os.fdopen(tmp_fd, 'wb') as tmp, open(self.path, 'rb') as f:
             gid = codes_grib_new_from_file(f)
             clone_id = codes_clone(gid)
@@ -228,6 +228,10 @@ class GribLoader(BaseLoader):
         clone = self.clone()
         clone.values = values_self ** other
         return clone
+
+    def __del__(self):
+        if self.path.endswith('.tmp.grib'):
+            os.remove(self.path)
 
     def validate(self):
         pass
