@@ -1,9 +1,11 @@
+from __future__ import print_function
+
 ####################
 # INPUT PARAMETERS #
 ####################
 
-BaseDateS = '20160101'
-BaseDateF = '20160101'
+BaseDateS = '20150601'
+BaseDateF = '20150601'
 Acc = 12
 LimSU = 2
 Range = 1
@@ -35,9 +37,9 @@ FileNameOUT_predictors = "test.ascii"
 
 #########################################################################################################
 
-from ..utils import daterange
-from ..loaders.GeopointsLoader import GeopointsLoader, Geopoints
-from ..loaders.GribLoader import GribLoader
+from core.utils import daterange
+from core.loaders.GeopointsLoader import GeopointsLoader, Geopoints
+from core.loaders.GribLoader import GribLoader
 import os
 import numpy
 from datetime import datetime, timedelta
@@ -170,7 +172,7 @@ for thedate in daterange(BaseDateS, BaseDateF):
                     step2STR = "%02d".format(step2)
 
                     # Defining the parameters for the rainfall observations
-                    validDateF = thedateNEW + (thetimeNEW/24) + (step2/24)  # [XXX]
+                    validDateF = thedateNEW + (thetimeNEW/24) + (step2/24)
                     DateVF = validDateF.strftime("%Y%m%d")  # [XXX] - DateVF is NOT a date
                     HourVF = validDateF.strftime("%H") # [XXX]
                     HourVF_num = validDateF.hour
