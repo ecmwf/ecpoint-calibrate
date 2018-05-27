@@ -346,7 +346,7 @@ for thedate in daterange(BaseDateS, BaseDateF):
 
                                     n = len(vals_FER)
                                     obsUSED = obsUSED + n
-                                    for i in range(1, n+1): # [XXX] Make it zero-index based
+                                    for i in range(n):
                                         data = map(str, [DateVF, HourVF, vals_OB[i], latObs_1[i], lonObs_1[i], vals_FER[i], vals_CPr[i], vals_TP[i], vals_WSPD[i], vals_CAPE[i], vals_SR[i], vals_LST[i]])
                                         Output_file.write('\t'.join(data) + '\n')
 
@@ -509,7 +509,7 @@ for thedate in daterange(BaseDateS, BaseDateF):
 
                                     n = len(vals_FER)
                                     obsUSED = obsUSED + n
-                                    for i in range(1, n + 1):  # [XXX] Make it zero-index based
+                                    for i in range(n):
                                         data = map(str, [DateVF, HourVF, vals_OB[i], latObs_1[i], lonObs_1[i], vals_FER[i], vals_CPr[i], vals_TP[i], vals_WSPD[i], vals_CAPE[i], vals_SR[i], 'NaN'])
                                         Output_file.write('\t'.join(data) + '\n')
 
@@ -672,7 +672,7 @@ for thedate in daterange(BaseDateS, BaseDateF):
 
                                     n = len(vals_FER)
                                     obsUSED = obsUSED + n
-                                    for i in range(1, n + 1):  # [XXX] Make it zero-index based
+                                    for i in range(n):
                                         data = map(str, [DateVF, HourVF, vals_OB[i], latObs_1[i], lonObs_1[i], vals_FER[i], vals_CPr[i], vals_TP[i], vals_WSPD[i], vals_CAPE[i], vals_SR[i], 'NaN'])
                                         Output_file.write('\t'.join(data) + '\n')
 
