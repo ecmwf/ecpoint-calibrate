@@ -3,6 +3,8 @@ from datetime import datetime, time
 
 import attr
 
+import numpy
+
 from .BaseLoader import BaseLoader
 
 logger = logging.getLogger(__name__)
@@ -41,15 +43,15 @@ class Geopoint(object):
 class Geopoints(list):
     @property
     def values(self):
-        return [geopoint.value for geopoint in self]
+        return numpy.array(geopoint.value for geopoint in self)
 
     @property
     def latitudes(self):
-        return [geopoint.lat for geopoint in self]
+        return numpy.array(geopoint.lat for geopoint in self)
 
     @property
     def longitudes(self):
-        return [geopoint.lon for geopoint in self]
+        return numpy.array(geopoint.lon for geopoint in self)
 
     def __sub__(self, other):
         return type(self)(
