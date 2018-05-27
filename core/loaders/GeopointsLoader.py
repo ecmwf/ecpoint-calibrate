@@ -43,6 +43,34 @@ class Geopoints(list):
     def values(self):
         return [geopoint.value for geopoint in self]
 
+    @property
+    def latitudes(self):
+        return [geopoint.lat for geopoint in self]
+
+    @property
+    def longitudes(self):
+        return [geopoint.lon for geopoint in self]
+
+    def __sub__(self, other):
+        return type(self)(
+            Geopoint(
+                lat=point_self.lat, lon=point_self.lon, time=point_self.time,
+                height=point_self.height, date=point_self.date,
+                value=point_self.value - point_other.value
+            )
+            for point_self, point_other in zip(self, other)
+        )
+
+    def __div__(self, other):
+        return type(self)(
+            Geopoint(
+                lat=point_self.lat, lon=point_self.lon, time=point_self.time,
+                height=point_self.height, date=point_self.date,
+                value=point_self.value / point_other.value
+            )
+            for point_self, point_other in zip(self, other)
+        )
+
 
 class GeopointsLoader(BaseLoader):
     HEADER = ['lat', 'lon', 'height', 'date', 'time', 'value']
