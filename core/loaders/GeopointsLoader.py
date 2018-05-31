@@ -17,11 +17,14 @@ def convert_str_to_py_date(string):
 
 
 def convert_str_to_py_time(string):
-    string = string.zfill(4)
-    hour, minute = int(string[:2]), int(string[2:])
-    carry_hours, minute = divmod(minute, 60)
-    hour += carry_hours
-    return time(hour=hour, minute=minute)
+    try:
+        string = string.zfill(4)
+        hour, minute = int(string[:2]), int(string[2:])
+        carry_hours, minute = divmod(minute, 60)
+        hour += carry_hours
+        return time(hour=hour, minute=minute)
+    except:
+        return time(hour=0, minute=0)
 
 
 @attr.s
@@ -43,15 +46,15 @@ class Geopoint(object):
 class Geopoints(list):
     @property
     def values(self):
-        return numpy.array(geopoint.value for geopoint in self)
+        return numpy.array([geopoint.value for geopoint in self])
 
     @property
     def latitudes(self):
-        return numpy.array(geopoint.lat for geopoint in self)
+        return numpy.array([geopoint.lat for geopoint in self])
 
     @property
     def longitudes(self):
-        return numpy.array(geopoint.lon for geopoint in self)
+        return numpy.array([geopoint.lon for geopoint in self])
 
     def __sub__(self, other):
         return type(self)(

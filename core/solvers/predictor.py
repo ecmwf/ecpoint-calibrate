@@ -5,7 +5,7 @@ from __future__ import print_function
 ####################
 
 BaseDateS = '20150601'
-BaseDateF = '20150601'
+BaseDateF = '20150604'
 Acc = 12
 LimSU = 2
 Range = 1
@@ -51,7 +51,7 @@ BaseDateSSTR=BaseDateS.strftime('%Y%m%d')
 BaseDateFSTR=BaseDateF.strftime('%Y%m%d')
 
 
-AccSTR = '%02d'.format(Acc)
+AccSTR = 'Acc%02dh' % Acc
 
 #precision(4)  # [XXX]
 
@@ -168,8 +168,8 @@ for thedate in daterange(BaseDateS, BaseDateF):
                     step1 = LeadStartNEW
                     step2 = LeadStartNEW + Acc
 
-                    step1STR = "%02d".format(step1)
-                    step2STR = "%02d".format(step2)
+                    step1STR = "{:02d}".format(step1)
+                    step2STR = "{:02d}".format(step2)
 
                     # Defining the parameters for the rainfall observations
                     validDateF = thedateNEW + (thetimeNEW/24) + (step2/24)
@@ -186,7 +186,7 @@ for thedate in daterange(BaseDateS, BaseDateF):
                     else:
                         counterValidTimes.append(validDateF)
                         dirOBS = os.path.join(PathOBS, AccSTR, DateVF)
-                        fileOBS = 'PPT{0}_obs_Global_{1}{2}.geo'.format(AccSTR, DateVF, HourVF)
+                        fileOBS = 'tp_{:02d}_{}_{}.geo'.format(Acc, DateVF, HourVF)
 
                         if not os.path.exists(os.path.join(dirOBS, fileOBS)):
                             print("IMPORTANT NOTE!!")
@@ -214,29 +214,29 @@ for thedate in daterange(BaseDateS, BaseDateF):
                                     step1sr = step2 - 24
                                     step2sr = step2
 
-                                step1srSTR = "%02d".format(step1sr)
-                                step2srSTR = "%02d".format(step2sr)
+                                step1srSTR = "%02d" % step1sr
+                                step2srSTR = "%02d" % step2sr
 
                                 #Reading forecasts
                                 print("READING FORECASTS")
 
-                                tp1 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step1STR])))
-                                tp2 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step2STR])))
+                                tp1 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
+                                tp2 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step2STR]) + '.grib'))
 
-                                cp1 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step1STR])))
-                                cp2 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step2STR])))
+                                cp1 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
+                                cp2 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step2STR]) + '.grib'))
 
-                                u1 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step1STR])))
-                                u2 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step2STR])))
+                                u1 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
+                                u2 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step2STR]) + '.grib'))
 
-                                v1 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step1STR])))
-                                v2 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step2STR])))
+                                v1 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
+                                v2 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step2STR]) + '.grib'))
 
-                                cape1 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step1STR])))
-                                cape2 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step2STR])))
+                                cape1 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
+                                cape2 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step2STR]) + '.grib'))
 
-                                sr1 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step1srSTR])))
-                                sr2 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step2srSTR])))
+                                sr1 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step1srSTR]) + '.grib'))
+                                sr2 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step2srSTR]) + '.grib'))
 
                                 #Compute the 6 hourly fields
                                 print('\nCOMPUTING')
@@ -357,12 +357,12 @@ for thedate in daterange(BaseDateS, BaseDateF):
                     step2 = LeadStartNEW + (Acc/2)
                     step3 = LeadStartNEW + Acc
 
-                    step1STR = "%02d".format(step1)
-                    step2STR = "%02d".format(step2)
-                    step3STR = "%02d".format(step3)
+                    step1STR = "{:02d}".format(step1)
+                    step2STR = "{:02d}".format(step2)
+                    step3STR = "{:02d}".format(step3)
 
                     #Defining the parameters for the rainfall observations
-                    validDateF = thedateNEW + (thetimeNEW/24) + (step3/24)
+                    validDateF = thedateNEW + timedelta(hours=thetimeNEW) + timedelta(hours=step3)
                     DateVF = validDateF.strftime("%Y%m%d")
                     HourVF = validDateF.strftime("%H")  # [XXX]
                     print("RAINFALL OBS PARAMETERS")
@@ -375,7 +375,7 @@ for thedate in daterange(BaseDateS, BaseDateF):
                     else:
                         counterValidTimes.append(validDateF)
                         dirOBS = os.path.join(PathOBS, AccSTR, DateVF)
-                        fileOBS = 'PPT{0}_obs_Global_{1}{2}.geo'.format(AccSTR, DateVF, HourVF)
+                        fileOBS = 'tp_{:02d}_{}_{}.geo'.format(Acc, DateVF, HourVF)
 
                         if not os.path.exists(os.path.join(dirOBS, fileOBS)):
                             print("IMPORTANT NOTE!!")
@@ -403,41 +403,41 @@ for thedate in daterange(BaseDateS, BaseDateF):
                                     step1sr = step3 - 24
                                     step3sr = step3
 
-                                step1srSTR = '%02d'.format(step1sr)
-                                step3srSTR = '%02d'.format(step3sr)
+                                step1srSTR = '%02d' % step1sr
+                                step3srSTR = '%02d' % step3sr
 
                                 #Reading forecasts
                                 print("READING FORECASTS")
-                                tp1 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step1STR])))
-                                tp3 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step3STR])))
+                                tp1 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
+                                tp3 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step3STR]) + '.grib'))
 
-                                cp1 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step1STR])))
-                                cp3 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step3STR])))
+                                cp1 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
+                                cp3 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step3STR]) + '.grib'))
 
-                                u1 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step1STR])))
-                                u2 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step2STR])))
-                                u3 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step3STR])))
+                                u1 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
+                                u2 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step2STR]) + '.grib'))
+                                u3 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step3STR]) + '.grib'))
 
-                                v1 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step1STR])))
-                                v2 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step2STR])))
-                                v3 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step3STR])))
+                                v1 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
+                                v2 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step2STR]) + '.grib'))
+                                v3 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step3STR]) + '.grib'))
 
-                                cape1 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step1STR])))
-                                cape2 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step2STR])))
-                                cape3 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step3STR])))
+                                cape1 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
+                                cape2 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step2STR]) + '.grib'))
+                                cape3 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step3STR]) + '.grib'))
 
-                                sr1 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step1srSTR])))
-                                sr3 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step3srSTR])))
+                                sr1 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step1srSTR]) + '.grib'))
+                                sr3 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step3srSTR]) + '.grib'))
 
                                 #Compute the 12 hourly fields
                                 print("COMPUTING")
                                 print("Computing the required parameters (FER, cpr, tp, wspd700, cape, sr)...")
                                 TP = (tp3 - tp1) * 1000
                                 CP = (cp3 - cp1) * 1000
-                                U700 = 0.5 * ((u1 * 0.5) + u2 + (u3 * 0.5))
-                                V700 = 0.5 * ((v1 * 0.5) + v2 + (v3 * 0.5))
+                                U700 = ((u1 * 0.5) + u2 + (u3 * 0.5)) * 0.5
+                                V700 = ((v1 * 0.5) + v2 + (v3 * 0.5)) * 0.5
                                 WSPD = ((U700 ** 2) + (V700 ** 2)) ** 0.5
-                                CAPE = 0.5 * ((cape1 * 0.5) + cape2 + (cape3*0.5))
+                                CAPE = ((cape1 * 0.5) + cape2 + (cape3*0.5)) * 0.5
                                 SR = (sr3 - sr1) / 86400
 
                                 #Select the nearest grid-point from the rainfall observations
@@ -522,11 +522,11 @@ for thedate in daterange(BaseDateS, BaseDateF):
                     step4 = LeadStartNEW + (3*Acc/4)
                     step5 = LeadStartNEW + Acc
 
-                    step1STR = "%02d".format(step1)
-                    step2STR = "%02d".format(step2)
-                    step3STR = "%02d".format(step3)
-                    step4STR = "%02d".format(step4)
-                    step5STR = "%02d".format(step5)
+                    step1STR = "{:02d}".format(step1)
+                    step2STR = "{:02d}".format(step2)
+                    step3STR = "{:02d}".format(step3)
+                    step4STR = "{:02d}".format(step4)
+                    step5STR = "{:02d}".format(step5)
 
                     #Defining the parameters for the rainfall observations
                     validDateF = thedateNEW + (thetimeNEW/24) + (step5/24)
@@ -542,7 +542,7 @@ for thedate in daterange(BaseDateS, BaseDateF):
                     else:
                         counterValidTimes.append(validDateF)
                         dirOBS = os.path.join(PathOBS, AccSTR, DateVF)
-                        fileOBS = 'PPT{0}_obs_Global_{1}{2}.geo'.format(AccSTR, DateVF, HourVF)
+                        fileOBS = 'tp_{:02d}_{}_{}.geo'.format(Acc, DateVF, HourVF)
 
                         if not os.path.exists(os.path.join(dirOBS, fileOBS)):
                             print("IMPORTANT NOTE!!")
@@ -565,32 +565,32 @@ for thedate in daterange(BaseDateS, BaseDateF):
                                 #Reading Forecasts
                                 obsTOT = obsTOT + nOBS
                                 print("READING FORECASTS")
-                                tp1 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step1STR])))
-                                tp5 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step5STR])))
+                                tp1 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
+                                tp5 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step5STR]) + '.grib'))
 
-                                cp1 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step1STR])))
-                                cp5 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step5STR])))
+                                cp1 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
+                                cp5 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step5STR]) + '.grib'))
 
-                                u1 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step1STR])))
-                                u2 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step2STR])))
-                                u3 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step3STR])))
-                                u4 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step4STR])))
-                                u5 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step5STR])))
+                                u1 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
+                                u2 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step2STR]) + '.grib'))
+                                u3 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step3STR]) + '.grib'))
+                                u4 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step4STR]) + '.grib'))
+                                u5 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step5STR]) + '.grib'))
 
-                                v1 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step1STR])))
-                                v2 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step2STR])))
-                                v3 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step3STR])))
-                                v4 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step4STR])))
-                                v5 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step5STR])))
+                                v1 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
+                                v2 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step2STR]) + '.grib'))
+                                v3 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step3STR]) + '.grib'))
+                                v4 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step4STR]) + '.grib'))
+                                v5 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step5STR]) + '.grib'))
 
-                                cape1 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step1STR])))
-                                cape2 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step2STR])))
-                                cape3 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step3STR])))
-                                cape4 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step4STR])))
-                                cape5 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step5STR])))
+                                cape1 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
+                                cape2 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step2STR]) + '.grib'))
+                                cape3 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step3STR]) + '.grib'))
+                                cape4 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step4STR]) + '.grib'))
+                                cape5 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step5STR]) + '.grib'))
 
-                                sr1 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step1STR])))
-                                sr5 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step5STR])))
+                                sr1 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
+                                sr5 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step5STR]) + '.grib'))
 
                                 #Compute the 24 hourly fields
                                 print('\nCOMPUTING')

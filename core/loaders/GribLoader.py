@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import logging
 
 import attr
@@ -226,11 +228,14 @@ class GribLoader(BaseLoader):
         # other is a scalar
         values_self = self.values
         clone = self.clone()
+        print(values_self)
+        print(other)
         clone.values = values_self ** other
         return clone
 
     def __del__(self):
         if self.path.endswith('.tmp.grib'):
+            print('REMOVING TEMPORARY GRIB FILE:', self.path)
             os.remove(self.path)
 
     def validate(self):
