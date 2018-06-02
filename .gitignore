@@ -228,3 +228,4 @@ venv.bak/
 
 # End of https://www.gitignore.io/api/node,python,pycharm
 
+.idea
