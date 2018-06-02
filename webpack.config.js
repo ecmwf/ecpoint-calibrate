@@ -25,12 +25,6 @@ const config = {
   module: {
     rules: [
       {
-        enforce: "pre",
-        test: /\.jsx?$/,
-        exclude: /node_modules/,
-        loader: "eslint-loader"
-      },
-      {
         test: /\.jsx?$/,
         loaders: [
           'babel-loader',
@@ -104,15 +98,6 @@ const config = {
   },
 
   plugins: [
-    new webpack.LoaderOptionsPlugin({
-      test: /\.jsx?$/,
-      options: {
-        eslint: {
-          configFile: resolve(__dirname, '.eslintrc'),
-          cache: false,
-        }
-      },
-    }),
     new webpack.optimize.ModuleConcatenationPlugin(),
     new CopyWebpackPlugin([
       { from: 'index.html', to: '.' },
