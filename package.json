@@ -1,10 +1,10 @@
 {
   "name": "ecPoint-PyCal",
   "description": "React frontend for ecPoint-PyCal",
-  "main": "main.js",
   "engines": {
     "node": "==8.11.2"
   },
+  "main": "./dist/server.js",
   "scripts": {
     "start": "electron .",
     "postinstall": "webpack --progress --colors",
