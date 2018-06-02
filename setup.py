@@ -27,11 +27,6 @@ class PreCompileSmokeTests(object):
             )
 
 
-def precompile_steps():
-    cmd = shlex.split('pip install -r build-requirements.txt')
-    subprocess.Popen(args=cmd, cwd=here)
-
-
 def extra_install_steps():
     # Install eccodes
     # [TODO] - Rewrite the install_eccodes.sh script in Python
@@ -40,7 +35,6 @@ def extra_install_steps():
 
 
 PreCompileSmokeTests()
-precompile_steps()
 
 
 def get_cmd_cls(base):
@@ -55,9 +49,6 @@ def get_cmd_cls(base):
 # Get the long description from the README file
 with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
-
-cmd = shlex.split('pip install -r build-requirements.txt')
-subprocess.Popen(args=cmd, cwd=here)
 
 setup(
     name='ecpoint-cal',
@@ -85,7 +76,7 @@ setup(
     install_requires=[
         'attrs>=18.1.0',
         'numpy>=1.14.3',
-        'kivy>=1.10.0',
+        'zerorpc>=0.6.1',
     ],
     extras_require={
         'dev': ['check-manifest'],
