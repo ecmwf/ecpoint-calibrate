@@ -12,7 +12,8 @@ const PY_MODULE = 'api' // without .py suffix
 
 let pyProc = null
 
-const getScriptPath = () => path.join(__dirname, '..', PY_FOLDER, `${PY_MODULE}.py`)
+const getScriptPath = () =>
+  path.join(__dirname, '..', PY_FOLDER, `${PY_MODULE}.py`)
 
 const selectPort = () => 4242
 
@@ -44,11 +45,13 @@ let mainWindow = null
 const createWindow = () => {
   mainWindow = new BrowserWindow()
   mainWindow.maximize()
-  mainWindow.loadURL(require('url').format({
-    pathname: path.join(__dirname, 'index.html'),
-    protocol: 'file:',
-    slashes: true,
-  }))
+  mainWindow.loadURL(
+    require('url').format({
+      pathname: path.join(__dirname, 'index.html'),
+      protocol: 'file:',
+      slashes: true,
+    })
+  )
 
   mainWindow.on('closed', () => {
     mainWindow = null
@@ -69,6 +72,7 @@ app.on('activate', () => {
   }
 })
 
-exports.selectDirectory = () => dialog.showOpenDialog(mainWindow, {
-  properties: ['openDirectory'],
-})
+exports.selectDirectory = () =>
+  dialog.showOpenDialog(mainWindow, {
+    properties: ['openDirectory'],
+  })
