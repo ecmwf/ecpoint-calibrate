@@ -1,8 +1,8 @@
 const electron = require('electron')
+
 const app = electron.app
 const BrowserWindow = electron.BrowserWindow
 const path = require('path')
-
 
 /*
  * Python process
@@ -14,22 +14,18 @@ const PY_MODULE = 'api' // without .py suffix
 let pyProc = null
 let pyPort = null
 
-const getScriptPath = () => {
-  return path.join(__dirname, '..', PY_FOLDER, PY_MODULE + '.py')
-}
+const getScriptPath = () => path.join(__dirname, '..', PY_FOLDER, `${PY_MODULE}.py`)
 
-const selectPort = () => {
-  return 4242
-}
+const selectPort = () => 4242
 
 const createPyProc = () => {
-  let script = getScriptPath()
-  let port = '' + selectPort()
+  const script = getScriptPath()
+  const port = `${selectPort()}`
 
   pyProc = require('child_process').spawn('python', [script, port])
 
   if (pyProc != null) {
-    console.log('child process success on port ' + port)
+    console.log(`child process success on port ${port}`)
   }
 }
 
@@ -42,7 +38,6 @@ const exitPyProc = () => {
 app.on('ready', createPyProc)
 app.on('will-quit', exitPyProc)
 
-
 /*
  * Electron Window Management
  */
@@ -50,13 +45,12 @@ app.on('will-quit', exitPyProc)
 let mainWindow = null
 
 const createWindow = () => {
-  mainWindow = new BrowserWindow({width: 800, height: 600})
+  mainWindow = new BrowserWindow({ width: 1024, height: 768 })
   mainWindow.loadURL(require('url').format({
     pathname: path.join(__dirname, 'index.html'),
     protocol: 'file:',
-    slashes: true
+    slashes: true,
   }))
-  mainWindow.webContents.openDevTools()
 
   mainWindow.on('closed', () => {
     mainWindow = null

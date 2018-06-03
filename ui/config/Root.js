@@ -1,15 +1,13 @@
-import React from 'react';
-import { HashRouter as Router, Route, Switch } from 'react-router-dom';
-import App from '../components/App';
+import React from 'react'
+import { HashRouter as Router, Route, Switch } from 'react-router-dom'
+import App from '../components/App'
 
-const Root = () => {
-  return (
-    <Router>
-      <Switch>
-        <Route path="/" component={App} exact />
-      </Switch>
-    </Router>
-  );
-};
+const Root = () => (
+  <Router>
+    <Switch>
+      <Route path="/" component={App} exact />
+    </Switch>
+  </Router>
+)
 
-export default Root;
+export default Root

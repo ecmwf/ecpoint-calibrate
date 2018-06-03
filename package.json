@@ -8,7 +8,7 @@
   "scripts": {
     "start": "electron .",
     "postinstall": "webpack --progress --colors",
-    "lint": "eslint ./app/**/**.js"
+    "lint": "eslint --fix ui"
   },
   "author": "Anirudha Bose <ani07nov@gmail.com>",
   "license": "MIT",
@@ -34,9 +34,12 @@
     "css-loader": "0.28.11",
     "eslint": "4.19.0",
     "eslint-config-airbnb": "16.1.0",
-    "eslint-plugin-import": "2.11.0",
+    "eslint-plugin-import": "2.12.0",
     "eslint-plugin-jsx-a11y": "6.0.3",
-    "eslint-plugin-react": "7.8.0",
+    "eslint-plugin-node": "6.0.1",
+    "eslint-plugin-promise": "3.8.0",
+    "eslint-plugin-react": "7.8.2",
+    "eslint-plugin-standard": "3.1.0",
     "extract-text-webpack-plugin": "3.0.2",
     "file-loader": "1.1.10",
     "node-loader": "0.6.0",
