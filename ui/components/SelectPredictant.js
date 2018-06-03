@@ -10,7 +10,7 @@ const SelectPredictant = () => (
           <h2 className="mdl-card__title-text">Select Predictant</h2>
         </div>
         <div className="mdl-card__supporting-text">
-        Select predictant files.
+        Select directory for the predictants you want to use (rainfall, temperature, etc.)
         </div>
         <div className="mdl-card__actions mdl-card--border">
           <a href="#" className="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">

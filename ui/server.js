@@ -1,8 +1,7 @@
 const electron = require('electron')
-
-const app = electron.app
-const BrowserWindow = electron.BrowserWindow
 const path = require('path')
+
+const { app, BrowserWindow } = electron
 
 /*
  * Python process
@@ -12,7 +11,6 @@ const PY_FOLDER = 'core'
 const PY_MODULE = 'api' // without .py suffix
 
 let pyProc = null
-let pyPort = null
 
 const getScriptPath = () => path.join(__dirname, '..', PY_FOLDER, `${PY_MODULE}.py`)
 
@@ -32,7 +30,6 @@ const createPyProc = () => {
 const exitPyProc = () => {
   pyProc.kill()
   pyProc = null
-  pyPort = null
 }
 
 app.on('ready', createPyProc)

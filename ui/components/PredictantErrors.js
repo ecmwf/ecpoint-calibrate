@@ -1,6 +1,4 @@
 import React, { Component } from 'react'
-
-import _ from 'lodash'
 import { Set } from 'immutable'
 
 import client from '../utils/rpc'
