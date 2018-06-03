@@ -1,7 +1,7 @@
 const electron = require('electron')
 const path = require('path')
 
-const { app, BrowserWindow } = electron
+const { app, BrowserWindow, dialog } = electron
 
 /*
  * Python process
@@ -68,3 +68,9 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+exports.selectDirectory = () => {
+  dialog.showOpenDialog(mainWindow, {
+    properties: ['openDirectory'],
+  })
+}

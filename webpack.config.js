@@ -21,7 +21,7 @@ const config = {
   resolve: {
     extensions: ['.js', '.jsx'],
   },
-
+  target: 'electron-main',
   module: {
     rules: [
       {

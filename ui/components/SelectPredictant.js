@@ -1,4 +1,7 @@
 import React from 'react'
+import { remote } from 'electron'
+
+const mainProcess = remote.require('./server')
 
 const SelectPredictant = () => (
   <div className="mdl-grid">
@@ -13,9 +16,12 @@ const SelectPredictant = () => (
         Select directory for the predictants you want to use (rainfall, temperature, etc.)
         </div>
         <div className="mdl-card__actions mdl-card--border">
-          <a href="#" className="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+          <button
+            className="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
+            onClick={() => mainProcess.selectDirectory()}
+          >
           Browse
-          </a>
+          </button>
         </div>
       </div>
     </div>
