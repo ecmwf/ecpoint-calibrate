@@ -69,8 +69,6 @@ app.on('activate', () => {
   }
 })
 
-exports.selectDirectory = () => {
-  dialog.showOpenDialog(mainWindow, {
-    properties: ['openDirectory'],
-  })
-}
+exports.selectDirectory = () => dialog.showOpenDialog(mainWindow, {
+  properties: ['openDirectory'],
+})
