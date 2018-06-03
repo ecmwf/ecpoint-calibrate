@@ -31,7 +31,7 @@ class PredictantErrors extends Component {
           this.setState(state => ({ minValueFieldClassNames: state.minValueFieldClassNames.add('is-invalid') }))
         }
       } else {
-        this.setState(state => ({ minValueFieldClassNames: state.minValueFieldClassNames.remove('is-dirty') }))
+        this.setState(state => ({ minValueFieldClassNames: state.minValueFieldClassNames.remove('is-dirty').remove('is-invalid') }))
       }
     }
   }
