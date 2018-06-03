@@ -8,7 +8,7 @@ const path = require('path')
  * Python process
  */
 
-const PY_FOLDER = 'pycalc'
+const PY_FOLDER = 'core'
 const PY_MODULE = 'api' // without .py suffix
 
 let pyProc = null
