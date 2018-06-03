@@ -45,7 +45,8 @@ app.on('will-quit', exitPyProc)
 let mainWindow = null
 
 const createWindow = () => {
-  mainWindow = new BrowserWindow({ width: 1024, height: 768 })
+  mainWindow = new BrowserWindow()
+  mainWindow.maximize()
   mainWindow.loadURL(require('url').format({
     pathname: path.join(__dirname, 'index.html'),
     protocol: 'file:',
