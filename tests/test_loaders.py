@@ -1,5 +1,7 @@
 import os
 
+import numpy
+
 from core.loaders.GeopointsLoader import GeopointsLoader
 
 TEST_DATA_DIR = os.path.join(
@@ -20,4 +22,4 @@ def test_geopoints_loader_header_ok():
 def test_geopoints_loader_values_ok():
     loader = GeopointsLoader(os.path.join(TEST_DATA_DIR, 'good_geo_file.geo'))
     assert len(loader.values) == 2
-    assert loader.values == [0.0, 0.0]
+    assert loader.values.tolist() == [0.0, 0.0]
