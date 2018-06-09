@@ -76,3 +76,9 @@ exports.selectDirectory = () =>
   dialog.showOpenDialog(mainWindow, {
     properties: ['openDirectory', 'multiSelections'],
   })
+
+exports.saveFile = () =>
+  dialog.showSaveDialog(mainWindow, {
+    title: 'Output file path',
+    defaultPath: 'test.ascii',
+  })
