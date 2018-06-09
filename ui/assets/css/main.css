@@ -27,3 +27,11 @@
   font-size: 1rem;
   padding-left: 16px;
 }
+
+.type-selector {
+  margin-left: 16px;
+  font-size: 16px;
+  line-height: 28px;
+  color: rgba(0, 0, 0, 0.54);
+;
+}
