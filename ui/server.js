@@ -74,5 +74,5 @@ app.on('activate', () => {
 
 exports.selectDirectory = () =>
   dialog.showOpenDialog(mainWindow, {
-    properties: ['openDirectory'],
+    properties: ['openDirectory', 'multiSelections'],
   })
