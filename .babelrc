@@ -9,5 +9,6 @@
   ],
 
   "plugins": [
+    'transform-class-properties',
   ]
 }
