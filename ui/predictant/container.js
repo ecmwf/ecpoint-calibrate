@@ -2,7 +2,12 @@ import { connect } from 'react-redux'
 
 import PredictantsComponent from './component'
 
-import { setPredictantType, setPredictantPaths, setAccField } from './actions'
+import {
+  setPredictantType,
+  setPredictantPaths,
+  setAccField,
+  setLimSUField,
+} from './actions'
 
 const mapStateToProps = state => ({
   predictant: state.predictant,
@@ -14,6 +19,8 @@ const mapDispatchToProps = dispatch => ({
   onPredictantPathsChange: paths => dispatch(setPredictantPaths(paths)),
   onParametersAccFieldChange: (value, pattern) =>
     dispatch(setAccField(value, pattern)),
+  onParametersLimSUFieldChange: (value, pattern) =>
+    dispatch(setLimSUField(value, pattern)),
 })
 
 export default connect(

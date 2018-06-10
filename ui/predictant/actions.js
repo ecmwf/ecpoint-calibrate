@@ -13,3 +13,9 @@ export const setAccField = (value, pattern) => ({
   value,
   pattern,
 })
+
+export const setLimSUField = (value, pattern) => ({
+  type: 'PARAMETERS.SET_LIMSU_FIELD',
+  value,
+  pattern,
+})
