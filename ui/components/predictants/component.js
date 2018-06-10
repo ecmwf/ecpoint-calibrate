@@ -4,9 +4,9 @@ import SelectPredictant from './SelectPredictant'
 import PredictantErrors from './PredictantErrors'
 import Parameters from './Parameters'
 
-const Predictant = () => (
+const Predictant = props => (
   <div>
-    <SelectPredictant />
+    <SelectPredictant {...props} />
     <PredictantErrors />
     <Parameters />
   </div>

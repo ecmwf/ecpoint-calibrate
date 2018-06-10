@@ -4,14 +4,6 @@ import { remote } from 'electron'
 const mainProcess = remote.require('./server')
 
 class SelectPredictant extends Component {
-  constructor() {
-    super()
-    this.state = {
-      paths: [],
-      type: 'grib',
-    }
-  }
-
   isPathFormatOK() {
     return true
   }
@@ -34,12 +26,16 @@ class SelectPredictant extends Component {
               <button
                 className="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
                 onClick={() =>
-                  this.setState({ paths: mainProcess.selectDirectory() || [] })
+                  this.props.onPredictantPathsChange(
+                    mainProcess.selectDirectory()
+                  )
                 }
               >
                 Browse
               </button>
-              <span className="text-muted">{this.state.paths.join(' | ')}</span>
+              <span className="text-muted">
+                {this.props.predictant.paths.join(' | ')}
+              </span>
 
               {!this.isPathFormatOK() && (
                 <p className="text-muted">
@@ -63,8 +59,10 @@ class SelectPredictant extends Component {
                   type="radio"
                   className="mdl-radio__button"
                   value="grib"
-                  checked={this.state.type === 'grib'}
-                  onChange={e => this.setState({ type: e.target.value })}
+                  checked={this.props.predictant.type === 'grib'}
+                  onChange={e =>
+                    this.props.onPredictantTypeChange(e.target.value)
+                  }
                 />
                 <span className="mdl-radio__label">GRIB</span>
               </label>
@@ -73,8 +71,10 @@ class SelectPredictant extends Component {
                   type="radio"
                   className="mdl-radio__button"
                   value="netcdf"
-                  checked={this.state.type === 'netcdf'}
-                  onChange={e => this.setState({ type: e.target.value })}
+                  checked={this.props.predictant.type === 'netcdf'}
+                  onChange={e =>
+                    this.props.onPredictantTypeChange(e.target.value)
+                  }
                 />
                 <span className="mdl-radio__label">NetCDF</span>
               </label>

@@ -18,7 +18,9 @@
     "lodash": "4.17.10",
     "react": "16.3.2",
     "react-dom": "16.3.2",
+    "react-redux": "5.0.7",
     "react-router-dom": "4.2.2",
+    "redux": "4.0.0",
     "zerorpc": "0.9.7"
   },
   "devDependencies": {
@@ -27,6 +29,7 @@
     "babel-eslint": "8.2.3",
     "babel-loader": "7.1.4",
     "babel-plugin-transform-class-properties": "6.24.1",
+    "babel-plugin-transform-object-rest-spread": "6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-es2015": "6.24.1",
     "babel-preset-react": "6.24.1",

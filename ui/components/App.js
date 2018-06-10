@@ -1,6 +1,6 @@
 import React from 'react'
 
-import Predictant from './Predictant'
+import Predictant from './predictants'
 import Header from './Header'
 
 const App = () => (

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Set } from 'immutable'
 
-import client from '../utils/rpc'
+import client from '../../utils/rpc'
 
 class Parameters extends Component {
   state = {
