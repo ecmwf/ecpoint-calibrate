@@ -5,7 +5,7 @@ import PredictantsComponent from './component'
 import { setPredictantType, setPredictantPaths } from './actions'
 
 const mapStateToProps = state => ({
-  predictant: state.predictants,
+  predictant: state.predictant,
 })
 
 const mapDispatchToProps = dispatch => ({

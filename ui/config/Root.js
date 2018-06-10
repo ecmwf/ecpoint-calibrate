@@ -1,6 +1,6 @@
 import React from 'react'
 import { HashRouter as Router, Route, Switch } from 'react-router-dom'
-import App from '../components/App'
+import App from '../App'
 
 const Root = () => (
   <Router>

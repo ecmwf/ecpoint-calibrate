@@ -1,9 +1,9 @@
 import { combineReducers } from 'redux'
 
-import predictantsReducer from './predictantsReducer'
+import predictantReducer from './predictantReducer'
 
 const reducer = combineReducers({
-  predictants: predictantsReducer,
+  predictant: predictantReducer,
 })
 
 export default reducer
