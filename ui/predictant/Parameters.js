@@ -4,37 +4,6 @@ import { Set } from 'immutable'
 import client from '../utils/rpc'
 
 class Parameters extends Component {
-  state = {
-    acc: null,
-    accFieldClassNames: Set(['mdl-textfield', 'mdl-js-textfield']),
-  }
-
-  setAccFieldClassNames(value) {
-    if (value) {
-      if (!isNaN(value) && [6, 12, 24].includes(parseInt(value))) {
-        this.setState(state => ({
-          acc: value,
-          accFieldClassNames: state.accFieldClassNames
-            .add('is-dirty')
-            .remove('is-invalid'),
-        }))
-      } else {
-        this.setState(state => ({
-          accFieldClassNames: state.accFieldClassNames
-            .add('is-dirty')
-            .add('is-invalid'),
-        }))
-      }
-    } else {
-      this.setState(state => ({
-        acc: null,
-        accFieldClassNames: state.accFieldClassNames
-          .remove('is-dirty')
-          .remove('is-invalid'),
-      }))
-    }
-  }
-
   render() {
     return (
       <div className="mdl-grid">
@@ -47,25 +16,17 @@ class Parameters extends Component {
             <div className="mdl-card__supporting-text">
               Select accumulation (in hours of the parameter to post-process:
               <div>
-                <div className={this.state.accFieldClassNames.join(' ')}>
+                <div className="mdl-textfield mdl-js-textfield">
                   <input
                     className="mdl-textfield__input"
                     type="text"
-                    onFocus={() =>
-                      this.setState(state => ({
-                        accFieldClassNames: state.accFieldClassNames.add(
-                          'is-focused'
-                        ),
-                      }))
+                    pattern="^(6|12|24)$"
+                    onChange={e =>
+                      this.props.onParametersAccFieldChange(
+                        e.target.value,
+                        e.target.pattern
+                      )
                     }
-                    onBlur={() =>
-                      this.setState(state => ({
-                        accFieldClassNames: state.accFieldClassNames.remove(
-                          'is-focused'
-                        ),
-                      }))
-                    }
-                    onChange={e => this.setAccFieldClassNames(e.target.value)}
                   />
                   <label className="mdl-textfield__label">Number...</label>
                   <span className="mdl-textfield__error">

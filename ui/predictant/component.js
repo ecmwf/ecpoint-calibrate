@@ -8,7 +8,7 @@ const Predictant = props => (
   <div>
     <SelectPredictant {...props} />
     <PredictantErrors />
-    <Parameters />
+    <Parameters {...props} />
   </div>
 )
 
