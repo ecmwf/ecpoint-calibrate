@@ -245,7 +245,7 @@ for thedate in daterange(BaseDateS, BaseDateF):
                                 CP = (cp2 - cp1) * 1000
                                 U700 = (u1 + u2) / 2
                                 V700 = (v1 + v2) / 2
-                                WSPD = ((U700 ** 2) + (V700 ** 2)) ** 0.5
+                                WSPD = GribLoader.rms(U700, V700)
                                 CAPE = (cape1 + cape2) / 2
                                 SR = (sr2 - sr1) / 86400
 
@@ -436,7 +436,8 @@ for thedate in daterange(BaseDateS, BaseDateF):
                                 CP = (cp3 - cp1) * 1000
                                 U700 = ((u1 * 0.5) + u2 + (u3 * 0.5)) * 0.5
                                 V700 = ((v1 * 0.5) + v2 + (v3 * 0.5)) * 0.5
-                                WSPD = ((U700 ** 2) + (V700 ** 2)) ** 0.5
+
+                                WSPD = GribLoader.rms(U700, V700)
                                 CAPE = ((cape1 * 0.5) + cape2 + (cape3*0.5)) * 0.5
                                 SR = (sr3 - sr1) / 86400
 
@@ -599,7 +600,7 @@ for thedate in daterange(BaseDateS, BaseDateF):
                                 CP = (cp5 - cp1) * 1000
                                 U700 = ((u1*0.5) + u2 + u3 + u4 + (u5*0.5)) / 4
                                 V700 = ((v1*0.5) + v2 + v3 + v4 + (v5*0.5)) / 4
-                                WSPD = ((U700**2)+(V700**2)) ** 0.5
+                                WSPD = GribLoader.rms(U700, V700)
                                 CAPE = ((cape1*0.5) + cape2 + cape3 + cape4 + (cape5*0.5)) / 4
                                 SR = (sr5 - sr1) / 86400
 

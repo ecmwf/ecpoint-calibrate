@@ -3,6 +3,7 @@ from __future__ import print_function
 import logging
 
 import attr
+import numpy as np
 from eccodes import (
     codes_grib_new_from_file,
     codes_grib_iterator_new,
@@ -86,7 +87,8 @@ class GribPoints(list):
 
         for grib_point in self:
             result.append(
-                GribPoint(lat=grib_point.lat, lon=grib_point.lon, value=grib_point.value * other)
+                GribPoint(lat=grib_point.lat, lon=grib_point.lon,
+                          value=grib_point.value * other)
             )
 
         return result
@@ -101,7 +103,8 @@ class GribPoints(list):
 
         for grib_point in self:
             result.append(
-                GribPoint(lat=grib_point.lat, lon=grib_point.lon, value=grib_point.value / other)
+                GribPoint(lat=grib_point.lat, lon=grib_point.lon,
+                          value=grib_point.value / other)
             )
 
         return result
@@ -110,7 +113,8 @@ class GribPoints(list):
         result = GribPoints()
         for point in self:
             result.append(
-                GribPoint(lat=point.lat, lon=point.lon, value=pow(point.value, power))
+                GribPoint(lat=point.lat, lon=point.lon,
+                          value=pow(point.value, power))
             )
         return result
 
@@ -128,7 +132,7 @@ class GribLoader(BaseLoader):
     def __init__(self, path):
         self.path = path
         self.points = GribPoints()
-        #self.read()
+        # self.read()
 
     def read(self):
         print('Reading:', self.path)
@@ -156,7 +160,8 @@ class GribLoader(BaseLoader):
             gid = codes_grib_new_from_file(f)
 
             for geopoint in geopoints:
-                nearest = codes_grib_find_nearest(gid, geopoint.lat, geopoint.lon)[0]
+                nearest = \
+                codes_grib_find_nearest(gid, geopoint.lat, geopoint.lon)[0]
                 result.append(
                     Geopoint(
                         lat=geopoint.lat,
@@ -240,3 +245,17 @@ class GribLoader(BaseLoader):
 
     def validate(self):
         pass
+
+    @classmethod
+    def rms(cls, *args):
+        if len(args) == 0:
+            raise Exception
+
+        term_1 = args[0]
+        clone = term_1.clone()
+
+        sum_squared_values = sum(abs(term.values) ** 2 for term in args)
+        mean_squared_values = sum_squared_values / 2.0
+
+        clone.values = np.sqrt(mean_squared_values)
+        return clone
