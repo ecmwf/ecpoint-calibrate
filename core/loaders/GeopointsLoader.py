@@ -110,6 +110,10 @@ class GeopointsLoader(BaseLoader):
                     Geopoint(lat, lon, height, date, time, value)
                 )
 
+    def __iter__(self):
+        for geopoint in self.geopoints:
+            yield geopoint
+
     @property
     def values(self):
         return self.geopoints.values
