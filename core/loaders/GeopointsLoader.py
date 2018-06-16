@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, time
+from datetime import datetime, time, date
 
 import attr
 
@@ -11,12 +11,18 @@ logger = logging.getLogger(__name__)
 
 
 def convert_str_to_py_date(string):
+    if isinstance(string, date):
+        return string
+
     return datetime.strptime(
         string, '%Y%m%d'
     ).date()
 
 
 def convert_str_to_py_time(string):
+    if isinstance(string, time):
+        return string
+
     try:
         string = string.zfill(4)
         hour, minute = int(string[:2]), int(string[2:])
