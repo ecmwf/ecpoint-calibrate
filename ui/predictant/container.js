@@ -8,6 +8,7 @@ import {
   setAccField,
   setLimSUField,
   setRangeField,
+  setOutPath,
 } from './actions'
 
 const mapStateToProps = state => ({
@@ -18,6 +19,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   onPredictantTypeChange: type => dispatch(setPredictantType(type)),
   onPredictantPathsChange: paths => dispatch(setPredictantPaths(paths)),
+  onOutPathChange: path => dispatch(setOutPath(path)),
   onParametersAccFieldChange: (value, pattern) =>
     dispatch(setAccField(value, pattern)),
   onParametersLimSUFieldChange: (value, pattern) =>

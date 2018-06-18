@@ -8,6 +8,11 @@ export const setPredictantPaths = paths => ({
   data: paths,
 })
 
+export const setOutPath = path => ({
+  type: 'PARAMETERS.SET_OUT_PATH',
+  data: path,
+})
+
 export const setAccField = (value, pattern) => ({
   type: 'PARAMETERS.SET_ACC_FIELD',
   value,

@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import { Set } from 'immutable'
 
 import client from '../utils/rpc'
+import { remote } from 'electron'
+
+const mainProcess = remote.require('./server')
 
 class Parameters extends Component {
   getAccField = () => (
@@ -71,6 +74,19 @@ class Parameters extends Component {
     </div>
   )
 
+  getPathOutField = () => (
+    <div className="mdl-card__supporting-text">
+      Select output filename and directory for storing results:<br />
+      <button
+        className="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
+        onClick={() => this.props.onOutPathChange(mainProcess.saveFile())}
+      >
+        Browse
+      </button>
+      <span className="text-muted">{this.props.parameters.outPath}</span>
+    </div>
+  )
+
   render() {
     return (
       <div className="mdl-grid">
@@ -83,6 +99,7 @@ class Parameters extends Component {
             {this.getAccField()}
             {this.getLimSUField()}
             {this.getRangeField()}
+            {this.getPathOutField()}
           </div>
         </div>
         <div className="mdl-layout-spacer" />

@@ -3,6 +3,8 @@ import { Set } from 'immutable'
 const defaultState = {
   acc: null,
   limSU: null,
+  range: null,
+  outPath: null,
 }
 
 export default (state = defaultState, action) => {
@@ -26,6 +28,10 @@ export default (state = defaultState, action) => {
         return { ...state, range: action.value }
       }
       return state
+    }
+
+    case 'PARAMETERS.SET_OUT_PATH': {
+      return { ...state, outPath: action.data }
     }
 
     default: {
