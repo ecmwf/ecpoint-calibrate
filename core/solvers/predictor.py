@@ -53,9 +53,7 @@ BaseDateFSTR=BaseDateF.strftime('%Y%m%d')
 
 AccSTR = 'Acc%02dh' % Acc
 
-#precision(4)  # [XXX]
-
-FileNameOUT = 'FER{0}h_{1}'.format(AccSTR, FileNameOUT_predictors)
+FileNameOUT = 'FER{}_{}'.format(AccSTR, FileNameOUT_predictors)
 Output_file = open(os.path.join(PathOUT, FileNameOUT), 'w')
 Output_file.write('Ppn Forecast Verification for HRES. Base Date for FC from {0} to {1}. {2}h FC period.'.format(BaseDateSSTR, BaseDateFSTR, AccSTR))
 Output_file.write('\n\n')
@@ -88,7 +86,7 @@ obsUSED = 0
 
 #Loop over start dates
 for thedate in daterange(BaseDateS, BaseDateF):
-    thedateSTR = thedate.strftime("%Y%m%d")
+    thedateSTR = thedate.strftime('%Y%m%d')
 
     #Loop over start times
     for thetime in range(0, 12+1, 12):
@@ -172,7 +170,7 @@ for thedate in daterange(BaseDateS, BaseDateF):
                     step2STR = "{:02d}".format(step2)
 
                     # Defining the parameters for the rainfall observations
-                    validDateF = thedateNEW + (thetimeNEW/24) + (step2/24)
+                    validDateF = thedateNEW + timedelta(hours=thetimeNEW) + timedelta(hours=step2)
                     DateVF = validDateF.strftime("%Y%m%d")  # [XXX] - DateVF is NOT a date
                     HourVF = validDateF.strftime("%H") # [XXX]
                     HourVF_num = validDateF.hour
@@ -530,7 +528,7 @@ for thedate in daterange(BaseDateS, BaseDateF):
                     step5STR = "{:02d}".format(step5)
 
                     #Defining the parameters for the rainfall observations
-                    validDateF = thedateNEW + (thetimeNEW/24) + (step5/24)
+                    validDateF = thedateNEW + timedelta(hours=thetimeNEW) + timedelta(hours=step5)
                     DateVF = validDateF.strftime("%Y%m%d")
                     HourVF = validDateF.strftime("%H")  # [XXX]
                     print("RAINFALL OBS PARAMETERS")
