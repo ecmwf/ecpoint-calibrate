@@ -1,9 +1,12 @@
 from __future__ import print_function
 
 import logging
+import numpy as np
+import os
+import tempfile
+from functools import partial
 
 import attr
-import numpy as np
 from eccodes import (
     codes_grib_new_from_file,
     codes_grib_iterator_new,
@@ -20,9 +23,7 @@ from eccodes import (
 
 from .BaseLoader import BaseLoader
 from .GeopointsLoader import Geopoints, Geopoint
-
-import os
-import tempfile
+from ..utils import poolcontext
 
 logger = logging.getLogger(__name__)
 
@@ -128,6 +129,21 @@ class GribPoints(list):
             point.value = value
 
 
+def nearest_value_func(gid, geopoint):
+    nearest = codes_grib_find_nearest(
+        gid, geopoint.lat, geopoint.lon
+    )[0]
+
+    return Geopoint(
+        lat=geopoint.lat,
+        lon=geopoint.lon,
+        height=geopoint.height,
+        date=geopoint.date,
+        time=geopoint.time,
+        value=nearest.value
+    )
+
+
 class GribLoader(BaseLoader):
     def __init__(self, path):
         self.path = path
@@ -155,24 +171,16 @@ class GribLoader(BaseLoader):
             codes_release(gid)
 
     def nearest_gridpoint(self, geopoints):
-        result = Geopoints()
         with open(self.path) as f:
             gid = codes_grib_new_from_file(f)
 
-            for geopoint in geopoints:
-                nearest = \
-                codes_grib_find_nearest(gid, geopoint.lat, geopoint.lon)[0]
-                result.append(
-                    Geopoint(
-                        lat=geopoint.lat,
-                        lon=geopoint.lon,
-                        height=geopoint.height,
-                        date=geopoint.date,
-                        time=geopoint.time,
-                        value=nearest.value
-                    )
+            with poolcontext() as pool:
+                result = pool.map(
+                    partial(nearest_value_func, gid),
+                    geopoints
                 )
-        return result
+
+        return Geopoints(result)
 
     def clone(self):
         tmp_fd, tmp_path = tempfile.mkstemp(suffix='.tmp.grib')
