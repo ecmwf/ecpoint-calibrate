@@ -21,6 +21,13 @@ export default (state = defaultState, action) => {
       return state
     }
 
+    case 'PARAMETERS.SET_RANGE_FIELD': {
+      if (RegExp(action.pattern)) {
+        return { ...state, range: action.value }
+      }
+      return state
+    }
+
     default: {
       return state
     }

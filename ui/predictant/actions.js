@@ -19,3 +19,9 @@ export const setLimSUField = (value, pattern) => ({
   value,
   pattern,
 })
+
+export const setRangeField = (value, pattern) => ({
+  type: 'PARAMETERS.SET_RANGE_FIELD',
+  value,
+  pattern,
+})

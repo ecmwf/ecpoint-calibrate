@@ -7,6 +7,7 @@ import {
   setPredictantPaths,
   setAccField,
   setLimSUField,
+  setRangeField,
 } from './actions'
 
 const mapStateToProps = state => ({
@@ -21,6 +22,8 @@ const mapDispatchToProps = dispatch => ({
     dispatch(setAccField(value, pattern)),
   onParametersLimSUFieldChange: (value, pattern) =>
     dispatch(setLimSUField(value, pattern)),
+  onParametersRangeFieldChange: (value, pattern) =>
+    dispatch(setRangeField(value, pattern)),
 })
 
 export default connect(

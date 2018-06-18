@@ -50,6 +50,27 @@ class Parameters extends Component {
     </div>
   )
 
+  getRangeField = () => (
+    <div className="mdl-card__supporting-text">
+      Enter a range for the Leadtime (in hours):<br />
+      <div className="mdl-textfield mdl-js-textfield">
+        <input
+          className="mdl-textfield__input"
+          type="text"
+          pattern="^\d+$"
+          onChange={e =>
+            this.props.onParametersRangeFieldChange(
+              e.target.value,
+              e.target.pattern
+            )
+          }
+        />
+        <label className="mdl-textfield__label">Number...</label>
+        <span className="mdl-textfield__error">Input is not a number!</span>
+      </div>
+    </div>
+  )
+
   render() {
     return (
       <div className="mdl-grid">
@@ -61,6 +82,7 @@ class Parameters extends Component {
             </div>
             {this.getAccField()}
             {this.getLimSUField()}
+            {this.getRangeField()}
           </div>
         </div>
         <div className="mdl-layout-spacer" />

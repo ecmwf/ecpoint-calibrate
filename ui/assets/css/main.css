@@ -1,11 +1,10 @@
 .demo-card-square.mdl-card {
   width: 640px;
-  height: 320px;
+  height: auto;
 }
 .demo-card-square > .mdl-card__title {
   color: #fff;
-  background:
-    url('../images/dog.png') bottom right 15% no-repeat #46B6AC;
+  background: #46B6AC;
 }
 
 .header-logo img {
