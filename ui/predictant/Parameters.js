@@ -47,6 +47,7 @@ class Parameters extends Component {
               e.target.pattern
             )
           }
+          value={this.props.parameters.limSU || ''}
         />
         <label className="mdl-textfield__label">Number...</label>
         <span className="mdl-textfield__error">Input is not a number!</span>
@@ -68,6 +69,7 @@ class Parameters extends Component {
               e.target.pattern
             )
           }
+          value={this.props.parameters.range || ''}
         />
         <label className="mdl-textfield__label">Number...</label>
         <span className="mdl-textfield__error">Input is not a number!</span>
