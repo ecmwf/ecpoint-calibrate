@@ -14,6 +14,7 @@ import {
 const mapStateToProps = state => ({
   predictant: state.predictant,
   parameters: state.parameters,
+  page: state.page.page,
 })
 
 const mapDispatchToProps = dispatch => ({

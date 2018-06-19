@@ -21,6 +21,11 @@
   background: black;
 }
 
+.mdl-layout__tab-bar {
+  background: black;
+  letter-spacing: 1px;
+}
+
 .text-muted {
   color: rgba(0,0,0,.54);
   font-size: 1rem;
