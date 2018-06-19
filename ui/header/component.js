@@ -14,21 +14,21 @@ const Header = props => (
     <div className="mdl-layout__tab-bar mdl-js-ripple-effect">
       <a
         href="#fixed-tab-1"
-        className="mdl-layout__tab is-active"
+        className={`mdl-layout__tab ${props.page === 0 ? 'is-active': ''}`}
         onClick={() => props.onPageChange(0)}
       >
         Input Parameters
       </a>
       <a
         href="#fixed-tab-2"
-        className="mdl-layout__tab"
+        className={`mdl-layout__tab ${props.page === 1 ? 'is-active': ''}`}
         onClick={() => props.onPageChange(1)}
       >
         Computations
       </a>
       <a
         href="#fixed-tab-3"
-        className="mdl-layout__tab"
+        className={`mdl-layout__tab ${props.page === 2 ? 'is-active': ''}`}
         onClick={() => props.onPageChange(2)}
       >
         Result
