@@ -89,7 +89,6 @@ class Parameters extends Component {
   )
 
   render() {
-    console.log(this.props)
     return (
       <div className="mdl-grid">
         <div className="mdl-layout-spacer" />
