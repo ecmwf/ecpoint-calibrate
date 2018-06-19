@@ -21,6 +21,7 @@ class Parameters extends Component {
               e.target.pattern
             )
           }
+          value={this.props.parameters.acc || ''}
         />
         <label className="mdl-textfield__label">Number...</label>
         <span className="mdl-textfield__error">
@@ -88,6 +89,7 @@ class Parameters extends Component {
   )
 
   render() {
+    console.log(this.props)
     return (
       <div className="mdl-grid">
         <div className="mdl-layout-spacer" />
