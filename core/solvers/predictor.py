@@ -170,9 +170,9 @@ for thedate in daterange(BaseDateS, BaseDateF):
                     step2STR = "{:02d}".format(step2)
 
                     # Defining the parameters for the rainfall observations
-                    validDateF = thedateNEW + timedelta(hours=thetimeNEW) + timedelta(hours=step2)
-                    DateVF = validDateF.strftime("%Y%m%d")  # [XXX] - DateVF is NOT a date
-                    HourVF = validDateF.strftime("%H") # [XXX]
+                    validDateF = datetime.combine(thedateNEW, datetime.min.time()) + timedelta(hours=thetimeNEW) + timedelta(hours=step2)
+                    DateVF = validDateF.strftime("%Y%m%d")
+                    HourVF = validDateF.strftime("%H")
                     HourVF_num = validDateF.hour
                     print("RAINFALL OBS PARAMETERS")
                     print("Validity date/time (end of the ", AccSTR, " hourly period) = ", validDateF)
@@ -360,9 +360,9 @@ for thedate in daterange(BaseDateS, BaseDateF):
                     step3STR = "{:02d}".format(step3)
 
                     #Defining the parameters for the rainfall observations
-                    validDateF = thedateNEW + timedelta(hours=thetimeNEW) + timedelta(hours=step3)
+                    validDateF = datetime.combine(thedateNEW, datetime.min.time()) + timedelta(hours=thetimeNEW) + timedelta(hours=step3)
                     DateVF = validDateF.strftime("%Y%m%d")
-                    HourVF = validDateF.strftime("%H")  # [XXX]
+                    HourVF = validDateF.strftime("%H")
                     print("RAINFALL OBS PARAMETERS")
                     print("Validity date/time (end of the ", AccSTR, " hourly period) = ", validDateF)
 
@@ -528,9 +528,9 @@ for thedate in daterange(BaseDateS, BaseDateF):
                     step5STR = "{:02d}".format(step5)
 
                     #Defining the parameters for the rainfall observations
-                    validDateF = thedateNEW + timedelta(hours=thetimeNEW) + timedelta(hours=step5)
+                    validDateF = datetime.combine(thedateNEW, datetime.min.time()) + timedelta(hours=thetimeNEW) + timedelta(hours=step5)
                     DateVF = validDateF.strftime("%Y%m%d")
-                    HourVF = validDateF.strftime("%H")  # [XXX]
+                    HourVF = validDateF.strftime("%H")
                     print("RAINFALL OBS PARAMETERS")
                     print("Validity date/time (end of the ", AccSTR, " hourly period) = ", validDateF)
 
