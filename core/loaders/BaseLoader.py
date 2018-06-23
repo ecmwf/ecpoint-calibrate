@@ -1,4 +1,4 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractproperty
 
 
 class BaseLoader(object):
@@ -6,10 +6,10 @@ class BaseLoader(object):
 
     path = None
 
-    @abstractmethod
-    def read(self):
+    @abstractproperty
+    def values(self):
         pass
 
-    @abstractmethod
-    def validate(self):
+    @values.setter
+    def values(self, values):
         pass
