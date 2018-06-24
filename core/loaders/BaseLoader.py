@@ -1,4 +1,4 @@
-from abc import ABCMeta, abstractproperty
+from abc import ABCMeta, abstractmethod
 
 
 class BaseLoader(object):
@@ -6,10 +6,28 @@ class BaseLoader(object):
 
     path = None
 
-    @abstractproperty
-    def values(self):
+
+class BasePredictorLoader(object):
+    __metaclass__ = ABCMeta
+
+    path = None
+
+    @abstractmethod
+    def __add__(self, other):
         pass
 
-    @values.setter
-    def values(self, values):
+    @abstractmethod
+    def __sub__(self, other):
+        pass
+
+    @abstractmethod
+    def __mul__(self, other):
+        pass
+
+    @abstractmethod
+    def __div__(self, other):
+        pass
+
+    @abstractmethod
+    def rms(cls):
         pass

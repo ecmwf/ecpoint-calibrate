@@ -17,7 +17,7 @@ from eccodes import (
     codes_set,
 )
 
-from .BaseLoader import BaseLoader
+from .BaseLoader import BasePredictorLoader
 from .GeopointsLoader import Geopoints, Geopoint
 from ..utils import poolcontext
 
@@ -41,7 +41,7 @@ def nearest_value_func(gid, geopoint):
     )
 
 
-class GribLoader(BaseLoader):
+class GribLoader(BasePredictorLoader):
     def __init__(self, path):
         self.path = path
 
