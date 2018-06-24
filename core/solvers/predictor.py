@@ -442,10 +442,6 @@ for thedate in daterange(BaseDateS, BaseDateF):
                                 #Select the nearest grid-point from the rainfall observations
                                 print("Selecting the nearest grid point to rainfall obs...")
                                 TP_Ob = TP.nearest_gridpoint(obs)
-                                CP_Ob = CP.nearest_gridpoint(obs)
-                                WSPD_Ob = WSPD.nearest_gridpoint(obs)
-                                CAPE_Ob = CAPE.nearest_gridpoint(obs)
-                                SR_Ob = SR.nearest_gridpoint(obs)
 
                                 #Select only the values that correspond to TP>=1
                                 print('Selecting the values that correspond to tp >= 1 mm/{}h...'.format(Acc))
@@ -459,6 +455,11 @@ for thedate in daterange(BaseDateS, BaseDateF):
                                     print('No values of tp >= 1 mm/{}h.'.format(Acc))
                                     print('Case not considered. Go to the following forecast.')
                                 else:
+                                    CP_Ob = CP.nearest_gridpoint(obs)
+                                    WSPD_Ob = WSPD.nearest_gridpoint(obs)
+                                    CAPE_Ob = CAPE.nearest_gridpoint(obs)
+                                    SR_Ob = SR.nearest_gridpoint(obs)
+
                                     print('\nSAVING')
                                     print('Saving the data in ', os.path.join(PathOUT, FileNameOUT), '...')
                                     CP_Ob1 = Geopoints(
