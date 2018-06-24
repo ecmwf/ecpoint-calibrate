@@ -96,7 +96,7 @@ for thedate in daterange(BaseDateS, BaseDateF):
             thetimeSTR = "12"
 
         #Loop over start leadtimes
-        for LeadStart in range(0, 23, Range): #expressed in hours
+        for LeadStart in range(0, 24, Range): #expressed in hours
             print("FORECAST PARAMETERS")
             print("BaseDate = ", thedateSTR, " BaseTime = ", thetimeSTR, " UTC (t+", LeadStart, ",t+", (LeadStart+Acc), ")")
 
