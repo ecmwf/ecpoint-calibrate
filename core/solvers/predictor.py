@@ -395,8 +395,8 @@ for thedate in daterange(BaseDateS, BaseDateF):
                             else:
                                 obsTOT = obsTOT + nOBS
                                 if step3 <= 24:
-                                    step1sr = 0
-                                    step3sr = 24
+                                    step1sr = 1
+                                    step3sr = 25  # [XXX]
                                 else:
                                     step1sr = step3 - 24
                                     step3sr = step3
