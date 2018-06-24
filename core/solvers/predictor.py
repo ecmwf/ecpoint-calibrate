@@ -90,15 +90,11 @@ for thedate in daterange(BaseDateS, BaseDateF):
 
     #Loop over start times
     for thetime in range(0, 12+1, 12):
-        if thetime == 0:
-            thetimeSTR = "00"
-        else:
-            thetimeSTR = "12"
-
         #Loop over start leadtimes
         for LeadStart in range(0, 24, Range): #expressed in hours
             print("FORECAST PARAMETERS")
-            print("BaseDate = ", thedateSTR, " BaseTime = ", thetimeSTR, " UTC (t+", LeadStart, ",t+", (LeadStart+Acc), ")")
+            print('BaseDate={} BaseTime={:02d} UTC (t+{}, t+{})'.format(
+                thedateSTR, thetime, LeadStart, LeadStart + Acc))
 
             #Defining the parameters for the forecasts
             #Case n.1
@@ -107,47 +103,37 @@ for thedate in daterange(BaseDateS, BaseDateF):
 
                 if thetime == 0:
                     thedateNEW = thedate - timedelta(days=1)
-                    thedateNEWSTR = thedateNEW.strftime("%Y%m%d")
                     thetimeNEW = 12
-                    thetimeNEWSTR = "12"
                 else:
                     thedateNEW = thedate
-                    thedateNEWSTR = thedateNEW.strftime("%Y%m%d")
                     thetimeNEW = 0
-                    thetimeNEWSTR = "00"
 
                 LeadStartNEW = LeadStart + 12
 
             #Case n.2
-            elif (LeadStart > LimSU) and (LeadStart <= 12+LimSU):
+            elif LimSU < LeadStart <= 12+LimSU:
                 print("The forecast parameters do not change...")
                 thedateNEW = thedate
-                thedateNEWSTR=thedateNEW.strftime("%Y%m%d")
                 thetimeNEW = thetime
-                if thetime == 0:
-                    thetimeNEWSTR = "00"
-                else:
-                    thetimeNEWSTR = "12"
 
                 LeadStartNEW = LeadStart
 
             #Case n.3
-            elif LeadStart > (12 + LimSU):
+            elif LeadStart > 12+LimSU:
                 print("A shorter range forecast is considered...")
                 if thetime == 0:
                     thedateNEW = thedate
-                    thedateNEWSTR=thedateNEW.strftime("%Y%m%d")
                     thetimeNEW = 12
-                    thetimeNEWSTR = "12"
                 else:
                     thedateNEW = thedate + timedelta(days=1)
-                    thedateNEWSTR=thedateNEW.strftime("%Y%m%d")
                     thetimeNEW = 0
-                    thetimeNEWSTR = "00"
 
                 LeadStartNEW = LeadStart - 12
 
-            print("BaseDate = ", thedateNEWSTR, " BaseTime = ", thetimeNEWSTR, " UTC (t+", LeadStartNEW, ",t+", LeadStartNEW+Acc, ")")
+            thedateNEWSTR = thedateNEW.strftime('%Y%m%d')
+            thetimeNEWSTR = '{:02d}'.format(thetimeNEW)
+            print('BaseDate={} BaseTime={} UTC (t+{}, t+{})'.format(
+                thedateNEWSTR, thetimeNEWSTR, LeadStartNEW, LeadStartNEW + Acc))
 
             #Reading the forecasts
             if thedateNEW < BaseDateS or thedateNEW > BaseDateF:
@@ -208,7 +194,7 @@ for thedate in daterange(BaseDateS, BaseDateF):
                     print("Case not considered. Go to the following forecast.")
                     continue
 
-                obsTOT = obsTOT + nOBS
+                obsTOT += nOBS
                 if step2 <= 24:
                     step1sr = 0
                     step2sr = 24
@@ -518,7 +504,7 @@ for thedate in daterange(BaseDateS, BaseDateF):
                 vals_SR = SR_Ob1.values
 
                 n = len(vals_FER)
-                obsUSED = obsUSED + n
+                obsUSED += n
                 for i in range(n):
                     data = map(str, [DateVF, HourVF, vals_OB[i], latObs_1[i], lonObs_1[i], vals_FER[i], vals_CPr[i], vals_TP[i], vals_WSPD[i], vals_CAPE[i], vals_SR[i], 'NaN'])
                     Output_file.write('\t'.join(data) + '\n')
@@ -575,7 +561,7 @@ for thedate in daterange(BaseDateS, BaseDateF):
                     continue
 
                 #Reading Forecasts
-                obsTOT = obsTOT + nOBS
+                obsTOT += nOBS
                 print("READING FORECASTS")
                 tp1 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
                 tp5 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step5STR]) + '.grib'))
@@ -685,7 +671,7 @@ for thedate in daterange(BaseDateS, BaseDateF):
                 vals_SR = SR_Ob1.values
 
                 n = len(vals_FER)
-                obsUSED = obsUSED + n
+                obsUSED += n
                 for i in range(n):
                     data = map(str, [DateVF, HourVF, vals_OB[i], latObs_1[i], lonObs_1[i], vals_FER[i], vals_CPr[i], vals_TP[i], vals_WSPD[i], vals_CAPE[i], vals_SR[i], 'NaN'])
                     Output_file.write('\t'.join(data) + '\n')
@@ -697,3 +683,4 @@ print('Number of observations actually used in the training period (that corresp
 
 Output_file.write('\nNumber of observations in the whole training period: {}\n'.format(obsTOT))
 Output_file.write('Number of observations actually used in the training period (that correspond to tp >= 1 mm/{0}h): {1}'.format(Acc, obsUSED))
+Output_file.close()
