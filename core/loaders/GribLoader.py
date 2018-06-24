@@ -14,6 +14,7 @@ from eccodes import (
     codes_write,
     codes_get_values,
     codes_set_values,
+    codes_set,
 )
 
 from .BaseLoader import BaseLoader
@@ -44,11 +45,6 @@ class GribLoader(BaseLoader):
     def __init__(self, path):
         self.path = path
 
-        with open(path, 'rb') as f:
-            gid = codes_grib_new_from_file(f)
-            self.__values = codes_get_values(gid)
-            codes_release(gid)
-
     def nearest_gridpoint(self, geopoints):
         with open(self.path) as f:
             gid = codes_grib_new_from_file(f)
@@ -63,48 +59,59 @@ class GribLoader(BaseLoader):
 
     @property
     def values(self):
-        return self.__values
+        with open(self.path, 'rb') as f:
+            gid = codes_grib_new_from_file(f)
+            result = codes_get_values(gid)
+            codes_release(gid)
+
+        return result
 
     @values.setter
     def values(self, values):
-        if not isinstance(values, np.ndarray):
-            raise TypeError
+        raise NotImplementedError
 
+    def clone_with_new_values(self, values):
         tmp_fd, tmp_path = tempfile.mkstemp(suffix='.tmp.grib')
         with os.fdopen(tmp_fd, 'wb') as tmp, open(self.path, 'rb') as f:
             gid = codes_grib_new_from_file(f)
             clone_id = codes_clone(gid)
 
-            codes_write(clone_id, tmp)
+            # Use single-precision floating-point representation
+            codes_set(clone_id, 'bitsPerValue', 32)
+
             codes_set_values(clone_id, values)
-            self.__values = values
-            self.path = tmp_path
+
+            codes_write(clone_id, tmp)
 
             codes_release(clone_id)
             codes_release(gid)
 
+        return type(self)(
+            tmp_path
+        )
+
     def __sub__(self, other):
-        self.values = self.values - other.values
-        return self
+        values = self.values - other.values
+        return self.clone_with_new_values(values)
 
     def __add__(self, other):
-        self.values = self.values + other.values
-        return self
+        values = self.values + other.values
+        return self.clone_with_new_values(values)
 
     def __mul__(self, other):
         # other is a scalar
-        self.values = self.values * other
-        return self
+        values = self.values * other
+        return self.clone_with_new_values(values)
 
     def __div__(self, other):
         # other is a scalar
-        self.values = self.values / other
-        return self
+        values = self.values / other
+        return self.clone_with_new_values(values)
 
     def __pow__(self, other):
         # other is a scalar
-        self.values = self.values ** other
-        return self
+        values = self.values ** other
+        return self.clone_with_new_values(values)
 
     def __del__(self):
         if self.path.endswith('.tmp.grib'):
@@ -120,10 +127,9 @@ class GribLoader(BaseLoader):
             raise Exception
 
         term_1 = args[0]
-        clone = term_1.clone()
 
         sum_squared_values = sum(abs(term.values) ** 2 for term in args)
         mean_squared_values = sum_squared_values / 2.0
 
-        clone.values = np.sqrt(mean_squared_values)
-        return clone
+        values = np.sqrt(mean_squared_values)
+        return term_1.clone_with_new_values(values)

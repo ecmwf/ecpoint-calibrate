@@ -2,8 +2,8 @@ import operator
 import os
 
 import pytest
-from random import random
-from numpy import ndarray
+from random import randint
+import numpy as np
 
 from core.loaders.GribLoader import GribLoader
 from .conf import TEST_DATA_DIR
@@ -17,7 +17,7 @@ def test_values_getter():
     grib = GribLoader(path=path)
     values = grib.values
 
-    assert isinstance(values, ndarray)
+    assert isinstance(values, np.ndarray)
     assert (values[:5] == [9.125, 7.375, 6.625, 5.5, 4.875]).all()
 
 
@@ -28,12 +28,8 @@ def test_values_setter():
 
     grib = GribLoader(path=path)
 
-    with pytest.raises(TypeError):
-        grib.values = 'INVALID DATA'
-
-    grib.values = grib.values * 10  # Invoke setter method of values property.
-    assert grib.path.endswith('.tmp.grib')
-    assert (grib.values[:5] == [91.25, 73.75, 66.25, 55.0, 48.75]).all()
+    with pytest.raises(NotImplementedError):
+        grib.values = 'WHATEVER'
 
 
 @pytest.mark.parametrize('op', [
@@ -47,13 +43,13 @@ def test_binary_operation_with_vector(op):
         path=os.path.join(TEST_DATA_DIR, 'cape_20150601_00_03.grib')
     )
     grib_a_values = grib_a.values
-    assert isinstance(grib_a_values, ndarray)
+    assert isinstance(grib_a_values, np.ndarray)
 
     grib_b = GribLoader(
         path=os.path.join(TEST_DATA_DIR, 'cape_20150601_00_27.grib')
     )
     grib_b_values = grib_b.values
-    assert isinstance(grib_b_values, ndarray)
+    assert isinstance(grib_b_values, np.ndarray)
 
     grib = op_func(grib_a, grib_b)
 
@@ -61,7 +57,14 @@ def test_binary_operation_with_vector(op):
     assert grib.path.endswith('.tmp.grib')
 
     expected_value = op_func(grib_a_values, grib_b_values)
-    assert (grib.values == expected_value).all()
+    np.testing.assert_almost_equal(
+        actual=grib.values, desired=expected_value,
+        decimal=4
+    )
+
+    # Check if the original GRIB files are mutated.
+    assert (grib_a.values == grib_a_values).all()
+    assert (grib_b.values == grib_b_values).all()
 
 
 @pytest.mark.parametrize('op', [
@@ -76,9 +79,9 @@ def test_binary_operation_with_scalar(op):
         path=os.path.join(TEST_DATA_DIR, 'cape_20150601_00_03.grib')
     )
     grib_a_values = grib_a.values
-    assert isinstance(grib_a_values, ndarray)
+    assert isinstance(grib_a_values, np.ndarray)
 
-    scalar = random() * 100  # Ex: 2.05
+    scalar = 2
 
     grib = op_func(grib_a, scalar)
 
@@ -86,4 +89,29 @@ def test_binary_operation_with_scalar(op):
     assert grib.path.endswith('.tmp.grib')
 
     expected_value = op_func(grib_a_values, scalar)
-    assert (grib.values == expected_value).all()
+    np.testing.assert_almost_equal(
+        actual=grib.values, desired=expected_value,
+        decimal=4
+    )
+
+    # Check if the original GRIB file is mutated.
+    assert (grib_a.values == grib_a_values).all()
+
+
+def test_complex_math_operations():
+    grib_a = GribLoader(
+        path=os.path.join(TEST_DATA_DIR, 'cape_20150601_00_03.grib')
+    )
+    grib_a_values = grib_a.values
+    assert isinstance(grib_a_values, np.ndarray)
+
+    grib_b = GribLoader(
+        path=os.path.join(TEST_DATA_DIR, 'cape_20150601_00_27.grib')
+    )
+    grib_b_values = grib_b.values
+    assert isinstance(grib_b_values, np.ndarray)
+
+    result = (grib_b - grib_a) * 1000
+
+    assert isinstance(result, GribLoader)
+    assert (result.values == (grib_b_values - grib_a_values) * 1000).all()
