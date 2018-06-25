@@ -37,7 +37,7 @@ FileNameOUT_predictors = "test.ascii"
 
 #########################################################################################################
 
-from core.utils import daterange
+from .utils import daterange
 from core.loaders.GeopointsLoader import GeopointsLoader, Geopoints
 from core.loaders.GribLoader import GribLoader
 import os

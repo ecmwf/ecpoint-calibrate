@@ -19,7 +19,7 @@ from eccodes import (
 
 from .BaseLoader import BasePredictorLoader
 from .GeopointsLoader import Geopoints, Geopoint
-from ..utils import poolcontext
+from .utils import poolcontext
 
 logger = logging.getLogger(__name__)
 
