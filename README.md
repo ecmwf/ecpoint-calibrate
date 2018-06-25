@@ -3,7 +3,7 @@ ECMWF caliberation software in Python
 
 ### Installation
 
-#### Install required packages from Ubuntu repositories
+##### Install required packages from Ubuntu repositories
 
 ```sh
 $ sudo apt update
@@ -27,6 +27,7 @@ First clone the source locally.
 ```sh
 $ git clone https://github.com/onyb/ecPoint-PyCal
 ```
+then install ecPoint-PyCal package with:
 
 ```sh
 $ pip install -e . -v
@@ -44,4 +45,13 @@ $ pip install -r test-requirements.txt
 
 ```sh
 py.test
+```
+
+### Launching the ecPoint-PyCal UI
+
+**Note:** Make sure the Python virtual environment is activated.
+
+```sh
+$ npm install
+$ npm start
 ```
