@@ -13,6 +13,10 @@ class BasePredictorLoader(object):
     path = None
 
     @abstractmethod
+    def nearest_gridpoint(self, geopoints):
+        pass
+
+    @abstractmethod
     def __add__(self, other):
         pass
 
