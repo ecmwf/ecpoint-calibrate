@@ -228,7 +228,7 @@ def run(parameters):
                         continue
 
                     print('\nSAVING')
-                    print("Saving the data in ", os.path.join(PathOUT, FileNameOUT, '...'))
+                    print("Saving the data in ", PathOUT, '...')
 
                     CP_Ob = CP.nearest_gridpoint(obs)
                     WSPD_Ob = WSPD.nearest_gridpoint(obs)
@@ -430,7 +430,7 @@ def run(parameters):
                     SR_Ob = SR.nearest_gridpoint(obs)
 
                     print('\nSAVING')
-                    print('Saving the data in ', os.path.join(PathOUT, FileNameOUT), '...')
+                    print("Saving the data in ", PathOUT, '...')
                     CP_Ob1 = Geopoints(
                         CP_geopoint
                         for CP_geopoint, TP_geopoint in zip(CP_Ob, TP_Ob)
@@ -597,7 +597,7 @@ def run(parameters):
                     SR_Ob = SR.nearest_gridpoint(obs)
 
                     print("SAVING")
-                    print("Saving the data in ", os.path.join(PathOUT, FileNameOUT), '...')
+                    print("Saving the data in ", PathOUT, '...')
                     CP_Ob1 = Geopoints(
                         CP_geopoint
                         for CP_geopoint, TP_geopoint in zip(CP_Ob, TP_Ob)
