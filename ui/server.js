@@ -21,7 +21,9 @@ const createPyProc = () => {
   const script = getScriptPath()
   const port = `${selectPort()}`
 
-  pyProc = require('child_process').spawn('python', [script, port])
+  pyProc = require('child_process').spawn('python', [script, port], {
+    stdio: 'inherit',
+  })
 
   if (pyProc != null) {
     console.log(`child process success on port ${port}`)
@@ -72,10 +74,15 @@ app.on('activate', () => {
   }
 })
 
-exports.selectDirectory = () =>
+exports.selectMultiDirectory = () =>
   dialog.showOpenDialog(mainWindow, {
     properties: ['openDirectory', 'multiSelections'],
   }) || []
+
+exports.selectDirectory = () =>
+  dialog.showOpenDialog(mainWindow, {
+    properties: ['openDirectory'],
+  })
 
 exports.saveFile = () =>
   dialog.showSaveDialog(mainWindow, {

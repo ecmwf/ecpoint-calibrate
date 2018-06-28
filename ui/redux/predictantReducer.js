@@ -1,5 +1,6 @@
 const defaultState = {
-  paths: [],
+  predictantPath: null,
+  predictorsPath: null,
   type: 'grib',
 }
 
@@ -9,8 +10,12 @@ export default (state = defaultState, action) => {
       return { ...state, type: action.data }
     }
 
-    case 'PREDICTANT.SET_PATHS': {
-      return { ...state, paths: action.data }
+    case 'PREDICTANT.SET_PREDICTANT_PATH': {
+      return { ...state, predictantPath: action.data.pop() }
+    }
+
+    case 'PREDICTANT.SET_PREDICTORS_PATH': {
+      return { ...state, predictorsPath: action.data.pop() }
     }
 
     default: {

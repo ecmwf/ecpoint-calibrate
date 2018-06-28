@@ -32,6 +32,54 @@ class Parameters extends Component {
     </div>
   )
 
+  getDateStartField = () => (
+    <div className="mdl-card__supporting-text">
+      Enter start date to consider in YYYYMMDD format:
+      <div className="mdl-textfield mdl-js-textfield">
+        <input
+          className="mdl-textfield__input"
+          type="text"
+          pattern="^\d{8}$"
+          onChange={e =>
+            this.props.onParametersDateStartFieldChange(
+              e.target.value,
+              e.target.pattern
+            )
+          }
+          value={this.props.parameters.date_start || ''}
+        />
+        <label className="mdl-textfield__label">Number...</label>
+        <span className="mdl-textfield__error">
+          Input is not a valid date! It should in YYYYMMDD format.
+        </span>
+      </div>
+    </div>
+  )
+
+  getDateEndField = () => (
+    <div className="mdl-card__supporting-text">
+      Enter end date to consider in YYYYMMDD format:
+      <div className="mdl-textfield mdl-js-textfield">
+        <input
+          className="mdl-textfield__input"
+          type="text"
+          pattern="^\d{8}$"
+          onChange={e =>
+            this.props.onParametersDateEndFieldChange(
+              e.target.value,
+              e.target.pattern
+            )
+          }
+          value={this.props.parameters.date_end || ''}
+        />
+        <label className="mdl-textfield__label">Number...</label>
+        <span className="mdl-textfield__error">
+          Input is not a valid date! It should in YYYYMMDD format.
+        </span>
+      </div>
+    </div>
+  )
+
   getLimSUField = () => (
     <div className="mdl-card__supporting-text">
       Enter upper limit (in hours) of the window in the forecast with spin-up
@@ -99,6 +147,8 @@ class Parameters extends Component {
             <div className="mdl-card__title mdl-card--expand">
               <h2 className="mdl-card__title-text">Parameters</h2>
             </div>
+            {this.getDateStartField()}
+            {this.getDateEndField()}
             {this.getAccField()}
             {this.getLimSUField()}
             {this.getRangeField()}

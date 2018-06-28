@@ -26,7 +26,7 @@ class SelectPredictant extends Component {
               <button
                 className="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
                 onClick={() =>
-                  this.props.onPredictantPathsChange(
+                  this.props.onPredictantPathChange(
                     mainProcess.selectDirectory()
                   )
                 }
@@ -34,7 +34,7 @@ class SelectPredictant extends Component {
                 Browse
               </button>
               <span className="text-muted">
-                {this.props.predictant.paths.join(' | ')}
+                {this.props.predictant.predictantPath}
               </span>
 
               {!this.isPathFormatOK() && (
@@ -50,6 +50,36 @@ class SelectPredictant extends Component {
             </div>
 
             <div className="mdl-card__actions mdl-card--border">
+              <div className="mdl-card__supporting-text">
+                Select directory for the predictors you want to use (CAPE, SR,
+                etc.)
+              </div>
+
+              <button
+                className="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
+                onClick={() =>
+                  this.props.onPredictorsPathChange(
+                    mainProcess.selectDirectory()
+                  )
+                }
+              >
+                Browse
+              </button>
+              <span className="text-muted">
+                {this.props.predictant.predictorsPath}
+              </span>
+
+              {!this.isPathFormatOK() && (
+                <p className="text-muted">
+                  The specified path does not conform with the required
+                  specification:
+                  <code>
+                    &lt;parent&gt;/vol/ecpoint/ecPoint_DB/FC/&lt;range
+                    identifier&gt;/tp
+                  </code>
+                </p>
+              )}
+
               <div className="mdl-card__supporting-text">
                 Select the data type you want to load:
               </div>

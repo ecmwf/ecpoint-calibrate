@@ -14,8 +14,7 @@ class RPC_API_SERVER(object):
         """echo any text"""
         return text
 
-    def run(self, parameters):
-        assert False, parameters
+    def run_computation(self, parameters):
         parameters = Parameters(**parameters)
         self.status = 'ON'
         run(parameters)
