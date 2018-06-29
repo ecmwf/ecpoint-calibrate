@@ -14,12 +14,12 @@ The bulk of the operations like loading observation/forecast data and running co
 
 ## Usage information for the GUI
 
-### Step 1: Select the predictors and predictants
+### Selecting the predictors and predictants
 
 In this step of the GUI, we specify the paths in the local filesystem where the predictant and predictors are stored. The software has not been tested to work with remote filesystems.
 
 
-#### Selecting the predictant
+#### Predictant
 
 We can use the GUI to select a *single* directory that holds the observation data for the predictant we want to use in our computations. The expected format is specified below, where `selectedDirectory` is the directory chosen on the GUI.
 
@@ -40,7 +40,7 @@ Here is a sample predictant file, where `selectedDirectory` is `/home/username/e
 
 The supported data type is Geopoint (`.geo`).
 
-#### Selecting the predictors
+#### Predictors
 
 We can use the GUI to select a *single* directory that holds all the forecast data for different predictors under it. The expected format is specified below, where `selectedDirectory` is the directory chosen on the GUI.
 
@@ -58,7 +58,7 @@ Here is a sample predictor file, where `selectedDirectory` is `/home/username/ec
 /home/username/ecmwf/dissemination.ecmwf.int/vol/ecpoint/ecPoint_DB/FC/ECMWF41r1_HRES16km_Global/cape/2015060100/cape_20150601_00_10.grib
 ```
 
-Supported data types are GRIB (`.grib`) and NetCDF (`.nc`).
+Supported data types are GRIB (`.grib`) and NetCDF (`.nc`). You must specify the type of forecast data to load (GRIB, by default), however this will probably be automatically inferred in the future.
 
 #### List of predictors
 
@@ -78,7 +78,16 @@ Supported data types are GRIB (`.grib`) and NetCDF (`.nc`).
 </p>
 
 
-### Step 2: Select computations
+### Specifying the input parameters
+
+In order to have flexibility, the software allows users to customize the values of the input parameters.
+
+| Parameter | Remark | Example |
+| :-------: | :----- | :-----: |
+| Date Start | Must follow the `YYYYMMDD` format | 20150601 |
+
+
+### Selecting the computations
 
 <p align="center">
   <img src="./page2.png" />
