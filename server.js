@@ -13,7 +13,7 @@ const PY_MODULE = 'api' // without .py suffix
 let pyProc = null
 
 const getScriptPath = () =>
-  path.join(__dirname, '..', PY_FOLDER, `${PY_MODULE}.py`)
+  path.join(__dirname, PY_FOLDER, `${PY_MODULE}.py`)
 
 const selectPort = () => 4242
 

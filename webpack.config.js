@@ -104,8 +104,6 @@ const config = {
   plugins: [
     new webpack.optimize.ModuleConcatenationPlugin(),
     new CopyWebpackPlugin([
-      { from: 'index.html', to: '.' },
-      { from: 'server.js', to: '.' },
       { from: 'assets', to: './assets' }
     ]),
   ],
