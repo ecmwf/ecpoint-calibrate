@@ -30,4 +30,4 @@ We use ZeroRPC to connect to a ZeroMQ service over TCP for passing messages betw
 
 TBA
 
-**Note:** Please check the console for to track the progress of the computation. A next step would be to stream logs from the standard output to the Electron server using ZeroRPC streams.
+**Note:** Please check the console for tracking the progress of the computation. A next step would be to stream logs from the standard output to the Electron server using ZeroRPC streams.
