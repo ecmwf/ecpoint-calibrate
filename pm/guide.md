@@ -17,13 +17,14 @@ We use ZeroRPC to connect to a ZeroMQ service over TCP for passing messages betw
 ##### List of predictors
 
 
-|| Predictor || Short name || Computation || Unit ||
+| Predictor | Short name | Computation | Unit |
+| --------- | ---------- | ----------- | ---- |
 | Convective Precipitation Ratio | CPR | convective precipitation / total precipitation | - |
 | Total Precipitation | TP | - | mm/h |
 | Wind speed of steering winds (at 700 mbar) | WSPD700 | - | m/s |
 | Convective Available Potential Energy | CAPE | - | J/kg |
 | Daily accumulation of clear-sky solar radiation | SR24h | - W/m2 |
-| Local Solar Time | LST | - | h
+| Local Solar Time | LST | - | h |
 
 
 
