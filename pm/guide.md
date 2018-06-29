@@ -84,7 +84,9 @@ In order to have flexibility, the software allows users to customize the values 
 
 | Parameter | Remark | Example |
 | :-------: | :----- | :-----: |
-| Date Start | Must follow the `YYYYMMDD` format | 20150601 |
+| Date Start | Start base date of the forecast (in the format `YYYYMMDD`). | 20150601 |
+| Date End | End base date of the forecast (in the format `YYYYMMDD`). | 20150602 |
+| Accumulation | Accumulation of the parameter to post-process (in hours). Valid values are: `6`, `12`, and `24`. | 12 |
 
 
 ### Selecting the computations
