@@ -1,6 +1,6 @@
 **Note:** This guide assumes that you have installed the ecPoint-PyCal package. Installation instructions can be found in the [README.md](https://github.com/onyb/reobject/blob/master/README.md) file.
 
-#### Architectural overview
+### Architectural overview
 
 The UI for ecPoint-PyCal is powered by [Electron](https://electronjs.org). The Electron process renders the UI contents on the main window, and is responsible for spawning a child Python subprocess, and communicate with it.
 
@@ -10,9 +10,22 @@ We use ZeroRPC to connect to a ZeroMQ service over TCP for passing messages betw
   <img src="./architecture.png" />
 </p>
 
-#### Using the UI
+### Using the UI
 
-##### Step 1: Select the predictors and predictants
+#### Step 1: Select the predictors and predictants
+
+##### List of predictors
+
+
+|| Predictor || Short name || Computation || Unit ||
+| Convective Precipitation Ratio | CPR | convective precipitation / total precipitation | - |
+| Total Precipitation | TP | - | mm/h |
+| Wind speed of steering winds (at 700 mbar) | WSPD700 | - | m/s |
+| Convective Available Potential Energy | CAPE | - | J/kg |
+| Daily accumulation of clear-sky solar radiation | SR24h | - W/m2 |
+| Local Solar Time | LST | - | h
+
+
 
 <p align="center">
   <img src="./page1.png" />
