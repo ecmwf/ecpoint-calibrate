@@ -94,6 +94,9 @@ In order to have flexibility, the software allows users to customize the values 
 
 ### Selecting the computations
 
+Currently, the GUI performs all the available computations. Providing a way to customize this is a future area of work.
+
+
 <p align="center">
   <img src="./page2.png" />
 </p>
