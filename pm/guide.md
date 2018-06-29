@@ -65,12 +65,13 @@ Supported data types are GRIB (`.grib`) and NetCDF (`.nc`). You must specify the
 
 | Predictor | Short name | Computation | Unit |
 | :-------: | :--------: | :---------: | :--: |
-| Convective Precipitation Ratio | CPR | convective precipitation / total precipitation | - |
-| Total Precipitation | TP | - | mm/h |
-| Wind speed of steering winds (at 700 mbar) | WSPD700 | - | m/s |
-| Convective Available Potential Energy | CAPE | - | J/kg |
-| Daily accumulation of clear-sky Solar Radiation | SR24h | - | W/m2 |
-| Local Solar Time | LST | - | h |
+| Total Precipitation | TP | - | `mm/h` |
+| Convective Precipitation | CP | - | `mm/h` |
+| Convective Precipitation Ratio | CPR | `convective precipitation / total precipitation` | - |
+| Wind speed of steering winds (at `700 mbar`) | WSPD700 | - | `m/s` |
+| Convective Available Potential Energy | CAPE | - | `J/kg` |
+| Daily accumulation of clear-sky Solar Radiation | SR24h | - | `W/m2` |
+| Local Solar Time | LST | - | `h` |
 
 
 <p align="center">
