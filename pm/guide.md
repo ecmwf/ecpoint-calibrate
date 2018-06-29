@@ -14,7 +14,20 @@ We use ZeroRPC to connect to a ZeroMQ service over TCP for passing messages betw
 
 ##### Step 1: Select the predictors and predictants
 
+<p align="center">
+  <img src="./page1.png" />
+</p>
+
+
 ##### Step 2: Select computations
+
+<p align="center">
+  <img src="./page2.png" />
+</p>
+
 
 ##### Step 3: Result
 
+TBA
+
+**Note: ** Please check the console for to track the progress of the computation. A next step would be to stream logs from the standard output to the Electron server using ZeroRPC streams.
