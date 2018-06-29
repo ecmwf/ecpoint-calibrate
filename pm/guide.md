@@ -6,7 +6,9 @@ The UI for ecPoint-PyCal is powered by [Electron](https://electronjs.org). The E
 
 We use ZeroRPC to connect to a ZeroMQ service over TCP for passing messages between the Electron process, and the Python subprocess.
 
-![](./architecture.png)
+<p align="center"> 
+  <img src="./architecture.png" />
+</p>
 
 #### Using the UI
 
