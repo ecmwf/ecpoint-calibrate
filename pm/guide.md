@@ -18,7 +18,7 @@ We use ZeroRPC to connect to a ZeroMQ service over TCP for passing messages betw
 
 
 | Predictor | Short name | Computation | Unit |
-| --------- | ---------- | ----------- | ---- |
+| :-------: | :--------: | :---------: | :--: |
 | Convective Precipitation Ratio | CPR | convective precipitation / total precipitation | - |
 | Total Precipitation | TP | - | mm/h |
 | Wind speed of steering winds (at 700 mbar) | WSPD700 | - | m/s |
