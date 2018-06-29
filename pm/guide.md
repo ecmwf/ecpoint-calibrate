@@ -84,10 +84,12 @@ In order to have flexibility, the software allows users to customize the values 
 
 | Parameter | Remark | Example |
 | :-------: | :----- | :-----: |
-| Date Start | Start base date of the forecast (in the format `YYYYMMDD`). | 20150601 |
-| Date End | End base date of the forecast (in the format `YYYYMMDD`). | 20150602 |
-| Accumulation | Accumulation of the parameter to post-process (in hours). Valid values are: `6`, `12`, and `24`. | 12 |
-
+| Date Start | Start base date of the forecast (in the format `YYYYMMDD`). | `20150601` |
+| Date End | End base date of the forecast (in the format `YYYYMMDD`). | `20150602` |
+| Accumulation | Accumulation of the parameter to post-process (in hours). Valid values are: `6`, `12`, and `24`. | `12` |
+| Limit Spin-Up | Upper limit of the window in the forecast with spin-up problems (in hours). | `2` |
+| Leadtime Range | Range for the leadtime (in hours). | `1` |
+| Out Path | File path where the output of the computations must be stored, as an ASCII (`.ascii`) file. | `/home/username/output.ascii` |
 
 ### Selecting the computations
 
@@ -98,6 +100,8 @@ In order to have flexibility, the software allows users to customize the values 
 
 ### Step 3: Result
 
-TBA
+**WIP**
+
+Clicking on this tab will trigger the computation. Please make sure all the input parameters in Tab 1 have been correctly filled up, before moving to this step.
 
 **Note:** Please check the console for tracking the progress of the computation. A next step would be to stream logs from the standard output to the Electron server using a ZeroRPC stream.
