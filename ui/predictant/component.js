@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react'
 
 import SelectPredictant from './SelectPredictant'
 import PredictantErrors from './PredictantErrors'
+import Computations from './Computations'
 import Parameters from './Parameters'
 
 import client from '../utils/rpc'
@@ -19,8 +20,6 @@ class Predictant extends Component {
         forecast_path: this.props.predictant.predictorsPath,
         out_path: this.props.parameters.outPath,
       }
-
-      console.log(parameters)
 
       client.invoke('run_computation', parameters, (error, res) => {
         if (error) {
@@ -43,7 +42,7 @@ class Predictant extends Component {
     }
 
     if (this.props.page === 1) {
-      return <PredictantErrors />
+      return <Computations {...this.props} />
     }
 
     if (this.props.page === 2) {

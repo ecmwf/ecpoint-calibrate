@@ -12,11 +12,17 @@ import {
   setLimSUField,
   setRangeField,
   setOutPath,
+  addComputation,
+  updateComputationName,
+  updateComputationField,
+  updateComputationInputs,
+  removeComputation,
 } from './actions'
 
 const mapStateToProps = state => ({
   predictant: state.predictant,
   parameters: state.parameters,
+  computations: state.computations,
   page: state.page.page,
 })
 
@@ -43,6 +49,19 @@ const mapDispatchToProps = dispatch => ({
 
   onParametersRangeFieldChange: (value, pattern) =>
     dispatch(setRangeField(value, pattern)),
+
+  onComputationNameChange: (key, name) =>
+    dispatch(updateComputationName(key, name)),
+
+  onComputationFieldChange: (key, field) =>
+    dispatch(updateComputationField(key, field)),
+
+  onComputationInputsChange: (key, inputs) =>
+    dispatch(updateComputationInputs(key, inputs)),
+
+  addEmptyComputation: () => dispatch(addComputation('', '', [])),
+
+  onComputationRemove: index => dispatch(removeComputation(index)),
 })
 
 export default connect(
