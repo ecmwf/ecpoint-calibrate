@@ -1,0 +1,182 @@
+*******************************************************************
+*                                                                 *
+*                  ecPoint-Cal (Matlab Toolbox)                   *
+*                                                                 *
+*******************************************************************
+ 
+ecPoint-MatCal Toolbox is a Matlab Toolbox that trains a new
+physically-based post-processing system (ecPoint) which produces
+forecasts for meteorological variables at a point scale.
+ 
+ecPoint-MatCal studies the relationship between meteorological/
+geographical parameters (predictors), and the spatial sub-grid
+variability of the post-processed parameter. The predictors can be
+raw model outputs or derived from raw model.
+This relashionship is determined by the definition of Weather Types
+(WTs) organized in a tree-like structure (Decision Tree, DT).
+ 
+The training system is organized in the following two modules:
+  1. The user does not know anything about the structure of the DT.
+     Therefore, the user will follow certain steps to construct the
+     DT from the beginning.
+  2. The user knows the structure of the DT and wants to test it.
+     Therefore, the user will introduce the WTs of the DT to plot
+     and evaluate them.
+ 
+********************
+* INPUT PARAMETERS *
+********************
+Reading InputParams.csv that contains the parameters for the input file...
+ 
+    'The user is uploading the file InputData_Test.mat'
+
+The file can be directly loaded.
+ 
+The mat file cointains the following variables... 
+    'CAPE'
+    'CPR'
+    'DATE'
+    'FER'
+    'LatOBS'
+    'LonOBS'
+    'OBS'
+    'SR24h'
+    'TP'
+    'TimeLST'
+    'TimeUTC'
+    'WSPD700'
+
+    'The training dataset contains 1668167 realizations.'
+
+ 
+**************
+* PREDICTORS *
+**************
+Reading Predictors.csv that contains the parameters selected as predictors...
+ 
+5 variables has been selected as predictors:
+    'CPR'
+    'TP'
+    'WSPD700'
+    'CAPE'
+    'SR24h'
+
+ 
+***********
+* MODULES *
+***********
+Module 1. The user does not know anything about the structure of the DT.
+          The user will construct the DT from the beginning.
+Module 2. The user knows the structure of the DT and wants to test it.
+          The user will introduce the WTs of the DT.
+ 
+Select the module to run.
+Enter 1 for "Module 1" or 2 for "Module 2": 2
+
+
+
+ 
+************
+* MODULE 2 *
+************
+The user either knows the definitive structure of the DT or wants to
+test a particular DT. Therefore, the user will introduce in the
+training system the thresholds for every selected predictor in order
+ to create the WTs that correspond to that particular DT and evaluate
+ them.
+ 
+NOTE: 
+The convention adopted to compute Pred < thr or Pred >= thr is: 
+    Pred < thr => thrL = -9999 ; thrH = thr
+    Pred >= thr => thrL = -thr ; thrH = 9999
+ 
+Reading the weather types from WeatherTypes.csv...
+ 
+Creating the decision tree...
+ 
+    'Creating 6 weather types...'
+
+Enter the upper limit for y-axes for the mapping functions (valid values between 0 and 1): 0.8
+ 
+WT n.1
+Level n.1
+(-9999<=CPR<0.25)
+Level n.2
+(-9999<=TP<2)
+Level n.3
+(5<=WSPD700<20)
+Level n.4
+(-9999<=CAPE<9999)
+Level n.5
+(-9999<=SR24h<70)
+ 
+WT n.2
+Level n.1
+(-9999<=CPR<0.25)
+Level n.2
+(-9999<=TP<2)
+Level n.3
+(5<=WSPD700<20)
+Level n.4
+(-9999<=CAPE<9999)
+Level n.5
+(70<=SR24h<275)
+ 
+WT n.3
+Level n.1
+(-9999<=CPR<0.25)
+Level n.2
+(-9999<=TP<2)
+Level n.3
+(5<=WSPD700<20)
+Level n.4
+(-9999<=CAPE<9999)
+Level n.5
+(275<=SR24h<9999)
+ 
+WT n.4
+Level n.1
+(-9999<=CPR<0.25)
+Level n.2
+(-9999<=TP<2)
+Level n.3
+(20<=WSPD700<9999)
+Level n.4
+(-9999<=CAPE<9999)
+Level n.5
+(-9999<=SR24h<70)
+ 
+WT n.5
+Level n.1
+(-9999<=CPR<0.25)
+Level n.2
+(-9999<=TP<2)
+Level n.3
+(20<=WSPD700<9999)
+Level n.4
+(-9999<=CAPE<9999)
+Level n.5
+(70<=SR24h<275)
+ 
+WT n.6
+Level n.1
+(-9999<=CPR<0.25)
+Level n.2
+(-9999<=TP<2)
+Level n.3
+(20<=WSPD700<9999)
+Level n.4
+(-9999<=CAPE<9999)
+Level n.5
+(275<=SR24h<9999)
+ 
+On the screen the weather types from the decision tree selected
+by the user are displayed. Take your time to analize them.
+OPTIONAL NOTE ABOUT THE DISPLAYED FIGURES. 
+The user has can delete some or all the displayed figures.
+To close a particular figure type => close 1 (to close figure n.1)
+To close all the figures type => close all
+Do you want to save the weather types in ascii format?
+Type 1 if "yes", type 0 if "no": 1
+ 
+Saving the weather types in an ascii file...
