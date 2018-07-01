@@ -12,6 +12,7 @@ export default (state = defaultState, action) => {
           name: action.name,
           field: action.field,
           inputs: action.inputs,
+          scale: { op: 'MULTIPLY', value: 1 },
         },
       ]
     }
@@ -40,6 +41,22 @@ export default (state = defaultState, action) => {
       return state.map(item => {
         if (item.index === action.index) {
           return { ...item, inputs: action.inputs }
+        }
+        return item
+      })
+
+    case 'COMPUTATIONS.SET_SCALE_OP':
+      return state.map(item => {
+        if (item.index === action.index) {
+          return { ...item, scale: { ...item.scale, op: action.op } }
+        }
+        return item
+      })
+
+    case 'COMPUTATIONS.SET_SCALE_VALUE':
+      return state.map(item => {
+        if (item.index === action.index) {
+          return { ...item, scale: { ...item.scale, value: action.value } }
         }
         return item
       })

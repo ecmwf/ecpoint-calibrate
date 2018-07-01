@@ -77,3 +77,15 @@ export const removeComputation = index => ({
   type: 'COMPUTATIONS.REMOVE',
   index,
 })
+
+export const setScaleOp = (index, op) => ({
+  type: 'COMPUTATIONS.SET_SCALE_OP',
+  index,
+  op,
+})
+
+export const setScaleValue = (index, value) => ({
+  type: 'COMPUTATIONS.SET_SCALE_VALUE',
+  index,
+  value,
+})

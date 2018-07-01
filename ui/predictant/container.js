@@ -17,6 +17,8 @@ import {
   updateComputationField,
   updateComputationInputs,
   removeComputation,
+  setScaleOp,
+  setScaleValue,
 } from './actions'
 
 const mapStateToProps = state => ({
@@ -50,18 +52,21 @@ const mapDispatchToProps = dispatch => ({
   onParametersRangeFieldChange: (value, pattern) =>
     dispatch(setRangeField(value, pattern)),
 
-  onComputationNameChange: (key, name) =>
-    dispatch(updateComputationName(key, name)),
+  onComputationNameChange: (index, name) =>
+    dispatch(updateComputationName(index, name)),
 
-  onComputationFieldChange: (key, field) =>
-    dispatch(updateComputationField(key, field)),
+  onComputationFieldChange: (index, field) =>
+    dispatch(updateComputationField(index, field)),
 
-  onComputationInputsChange: (key, inputs) =>
-    dispatch(updateComputationInputs(key, inputs)),
+  onComputationInputsChange: (index, inputs) =>
+    dispatch(updateComputationInputs(index, inputs)),
 
   addEmptyComputation: () => dispatch(addComputation('', '', [])),
 
   onComputationRemove: index => dispatch(removeComputation(index)),
+
+  setScaleOp: (index, op) => dispatch(setScaleOp(index, op)),
+  setScaleValue: (index, value) => dispatch(setScaleValue(index, value)),
 })
 
 export default connect(

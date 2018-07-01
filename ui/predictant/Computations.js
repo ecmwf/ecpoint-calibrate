@@ -12,6 +12,7 @@ import {
   Dropdown,
   Input,
   Label,
+  Radio,
 } from 'semantic-ui-react'
 
 const friendOptions = [
@@ -55,7 +56,12 @@ const predictors = [
 
 class Computation extends Component {
   isPositive() {
-    if (this.props.name && this.props.field && this.props.inputs.length !== 0) {
+    if (
+      this.props.name &&
+      this.props.field &&
+      this.props.scale.value &&
+      this.props.inputs.length !== 0
+    ) {
       return true
     }
     return null
@@ -106,6 +112,37 @@ class Computation extends Component {
             }
           />
         </Table.Cell>
+        <Table.Cell>
+          <Grid columns={2} padded>
+            <Grid.Column>
+              <Radio
+                label="Multiply"
+                value="MULTIPLY"
+                checked={this.props.scale.op === 'MULTIPLY'}
+                onChange={() =>
+                  this.props.setScaleOp(this.props.index, 'MULTIPLY')
+                }
+              />
+            </Grid.Column>
+            <Grid.Column>
+              <Radio
+                label="Divide"
+                value="DIVIDE"
+                checked={this.props.scale.op === 'DIVIDE'}
+                onChange={() =>
+                  this.props.setScaleOp(this.props.index, 'DIVIDE')
+                }
+              />
+            </Grid.Column>
+          </Grid>
+          <Input
+            fluid
+            value={this.props.scale.value}
+            onChange={e =>
+              this.props.setScaleValue(this.props.index, e.target.value)
+            }
+          />
+        </Table.Cell>
         <Table.Cell collapsing>
           <Button
             icon
@@ -129,6 +166,7 @@ class Computations extends Component {
             <Table.HeaderCell>Computation</Table.HeaderCell>
             <Table.HeaderCell>Operation</Table.HeaderCell>
             <Table.HeaderCell>Input variable(s)</Table.HeaderCell>
+            <Table.HeaderCell>Scaling factor</Table.HeaderCell>
             <Table.HeaderCell />
           </Table.Row>
         </Table.Header>
@@ -145,6 +183,8 @@ class Computations extends Component {
               onFieldChange={this.props.onComputationFieldChange}
               onInputsChange={this.props.onComputationInputsChange}
               onRemove={this.props.onComputationRemove}
+              setScaleOp={this.props.setScaleOp}
+              setScaleValue={this.props.setScaleValue}
             />
           ))}
         </Table.Body>
