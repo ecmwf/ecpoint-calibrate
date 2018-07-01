@@ -17,6 +17,15 @@
     margin: 0 15px 0 0;
 }
 
+.card > .header {
+  color: #fff;
+  background-color: #46B6AC;
+  font-size: 24px;
+  font-weight: 300;
+  height: 50px;
+  padding: 14px;
+}
+
 .mdl-layout__header-row {
   background: black;
 }

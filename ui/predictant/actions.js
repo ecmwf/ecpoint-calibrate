@@ -18,34 +18,29 @@ export const setOutPath = path => ({
   data: path,
 })
 
-export const setAccField = (value, pattern) => ({
+export const setAccField = value => ({
   type: 'PARAMETERS.SET_ACC_FIELD',
   value,
-  pattern,
 })
 
-export const setDateStartField = (value, pattern) => ({
+export const setDateStartField = value => ({
   type: 'PARAMETERS.SET_DATE_START_FIELD',
   value,
-  pattern,
 })
 
-export const setDateEndField = (value, pattern) => ({
+export const setDateEndField = value => ({
   type: 'PARAMETERS.SET_DATE_END_FIELD',
   value,
-  pattern,
 })
 
-export const setLimSUField = (value, pattern) => ({
+export const setLimSUField = value => ({
   type: 'PARAMETERS.SET_LIMSU_FIELD',
   value,
-  pattern,
 })
 
-export const setRangeField = (value, pattern) => ({
+export const setRangeField = value => ({
   type: 'PARAMETERS.SET_RANGE_FIELD',
   value,
-  pattern,
 })
 
 export const addComputation = (name, field, inputs) => ({

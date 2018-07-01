@@ -37,20 +37,15 @@ const mapDispatchToProps = dispatch => ({
 
   onOutPathChange: path => dispatch(setOutPath(path)),
 
-  onParametersDateStartFieldChange: (value, pattern) =>
-    dispatch(setDateStartField(value, pattern)),
+  onParametersDateStartFieldChange: value => dispatch(setDateStartField(value)),
 
-  onParametersDateEndFieldChange: (value, pattern) =>
-    dispatch(setDateEndField(value, pattern)),
+  onParametersDateEndFieldChange: value => dispatch(setDateEndField(value)),
 
-  onParametersAccFieldChange: (value, pattern) =>
-    dispatch(setAccField(value, pattern)),
+  onParametersAccFieldChange: value => dispatch(setAccField(value)),
 
-  onParametersLimSUFieldChange: (value, pattern) =>
-    dispatch(setLimSUField(value, pattern)),
+  onParametersLimSUFieldChange: value => dispatch(setLimSUField(value)),
 
-  onParametersRangeFieldChange: (value, pattern) =>
-    dispatch(setRangeField(value, pattern)),
+  onParametersRangeFieldChange: value => dispatch(setRangeField(value)),
 
   onComputationNameChange: (index, name) =>
     dispatch(updateComputationName(index, name)),
