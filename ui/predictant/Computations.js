@@ -92,7 +92,15 @@ class Computation extends Component {
             selection
             placeholder="Select computation input(s)"
             value={this.props.inputs}
-            options={predictors}
+            options={predictors.concat(
+              this.props.computedVariables
+                .map(v => ({
+                  key: v,
+                  text: v,
+                  value: v,
+                }))
+                .filter(v => v.key !== this.props.name)
+            )}
             onChange={(e, { value }) =>
               this.props.onInputsChange(this.props.index, value)
             }
@@ -130,6 +138,9 @@ class Computations extends Component {
             <Computation
               {...each}
               key={each.index}
+              computedVariables={this.props.computations.map(
+                computation => computation.name
+              )}
               onNameChange={this.props.onComputationNameChange}
               onFieldChange={this.props.onComputationFieldChange}
               onInputsChange={this.props.onComputationInputsChange}
