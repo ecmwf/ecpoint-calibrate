@@ -1,0 +1,2 @@
+TypeFile	PathFile	NameFile	formatSpec
+mat		InputData_Test	%s%s%s%s%s%s%s%s%s%s%s%[^\n\r]

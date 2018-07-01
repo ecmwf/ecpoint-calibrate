@@ -1,0 +1,6 @@
+Vars_WS,Pred_Description,Pred_ShortName,Pred_Range,Pred_Units
+cpr,Convective Precipitation Ratio,CPR,0 to 1,-
+tp,Total Precipitation,TP,0 to inf,mm
+wspd700,Speed of Steering Winds at 700 mbar,WSPD700,0 to inf,m/s
+cape,Convective Available Potential Energy,CAPE,0 to inf,J/kg
+sr24h,Daily Accumulation of Clear Sky Solar Radiation,SR24h,0 to inf,J/m2
