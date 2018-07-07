@@ -36,3 +36,9 @@ class Parameters(object):
     # output file path
     out_path = attr.ib(converter=str)
 
+
+def generate_leadstart(BaseDateS, BaseDateF, model_runs_per_day=2, leadstart_increments=1):
+    for curr_date in daterange(BaseDateS, BaseDateF):
+        for curr_time in range(0, 24, 24 // model_runs_per_day):
+            for leadstart in range(0, 24, leadstart_increments):
+                yield curr_date, curr_time, leadstart
