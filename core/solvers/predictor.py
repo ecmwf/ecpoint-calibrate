@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 from core.loaders.GeopointsLoader import GeopointsLoader, Geopoints
 from core.loaders.GribLoader import GribLoader
-from .utils import generate_leadstart
+from .utils import iter_daterange
 
 
 def run(parameters):
@@ -56,7 +56,7 @@ def run(parameters):
     obsTOT = 0
     obsUSED = 0
 
-    for curr_date, curr_time, leadstart in generate_leadstart(BaseDateS, BaseDateF):
+    for curr_date, curr_time, leadstart in iter_daterange(BaseDateS, BaseDateF):
         print("FORECAST PARAMETERS")
         print('BaseDate={} BaseTime={:02d} UTC (t+{}, t+{})'.format(
             curr_date.strftime('%Y%m%d'), curr_time, leadstart, leadstart + Acc))

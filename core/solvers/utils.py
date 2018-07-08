@@ -1,6 +1,6 @@
-import attr
+from datetime import timedelta, datetime, time
 
-from datetime import timedelta
+import attr
 
 
 def daterange(start_date, end_date):
@@ -37,10 +37,22 @@ class Parameters(object):
     out_path = attr.ib(converter=str)
 
 
-def generate_leadstart(date_start, date_end, model_runs_per_day=2,
-                       leadstart_increment=1):
-
-    for curr_date in daterange(date_start, date_end):
+def iter_daterange(start, end, model_runs_per_day=2, leadstart_increment=1):
+    for curr_date in daterange(start, end):
         for curr_time in range(0, 24, 24 // model_runs_per_day):
             for leadstart in range(0, 24, leadstart_increment):
                 yield curr_date, curr_time, leadstart
+
+
+def adjust_leadstart(date, hour, leadstart, limSU, model_runs_per_day):
+    leadstart_difference = 24 // model_runs_per_day
+    timestamp = datetime.combine(date, time(hour=hour))
+
+    if 0 <= leadstart <= limSU:
+        timestamp -= timedelta(hours=leadstart_difference)
+        return timestamp.date(), timestamp.time().hour, leadstart + leadstart_difference
+
+    for each in range(0, 24, leadstart_difference):
+        if each + limSU < leadstart <= each + limSU + leadstart_difference:
+            timestamp += timedelta(hours=each)
+            return timestamp.date(), timestamp.time().hour, leadstart - each
