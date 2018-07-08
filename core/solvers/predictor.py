@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 from core.loaders.GeopointsLoader import GeopointsLoader, Geopoints
 from core.loaders.GribLoader import GribLoader
-from .utils import iter_daterange
+from .utils import iter_daterange, adjust_leadstart
 
 
 def run(parameters):
@@ -61,47 +61,18 @@ def run(parameters):
         print('BaseDate={} BaseTime={:02d} UTC (t+{}, t+{})'.format(
             curr_date.strftime('%Y%m%d'), curr_time, leadstart, leadstart + Acc))
 
-        #Defining the parameters for the forecasts
-        #Case n.1
-        if leadstart <= LimSU:
-            print("To avoid any spin-up effect at the begining of the forecast, it will be considered...")
+        curr_date, curr_time, leadstart = adjust_leadstart(
+            date=curr_date, hour=curr_time, leadstart=leadstart, limSU=LimSU,
+            model_runs_per_day=2
+        )
+        thedateNEWSTR = curr_date.strftime('%Y%m%d')
+        thetimeNEWSTR = '{:02d}'.format(curr_time)
 
-            if curr_time == 0:
-                thedateNEW = curr_date - timedelta(days=1)
-                thetimeNEW = 12
-            else:
-                thedateNEW = curr_date
-                thetimeNEW = 0
-
-            LeadStartNEW = leadstart + 12
-
-        #Case n.2
-        elif LimSU < leadstart <= 12+LimSU:
-            print("The forecast parameters do not change...")
-            thedateNEW = curr_date
-            thetimeNEW = curr_time
-
-            LeadStartNEW = leadstart
-
-        #Case n.3
-        elif leadstart > 12+LimSU:
-            print("A shorter range forecast is considered...")
-            if curr_time == 0:
-                thedateNEW = curr_date
-                thetimeNEW = 12
-            else:
-                thedateNEW = curr_date + timedelta(days=1)
-                thetimeNEW = 0
-
-            LeadStartNEW = leadstart - 12
-
-        thedateNEWSTR = thedateNEW.strftime('%Y%m%d')
-        thetimeNEWSTR = '{:02d}'.format(thetimeNEW)
         print('BaseDate={} BaseTime={} UTC (t+{}, t+{})'.format(
-            thedateNEWSTR, thetimeNEWSTR, LeadStartNEW, LeadStartNEW + Acc))
+            thedateNEWSTR, thetimeNEWSTR, leadstart, leadstart + Acc))
 
         #Reading the forecasts
-        if thedateNEW < BaseDateS or thedateNEW > BaseDateF:
+        if curr_date < BaseDateS or curr_date > BaseDateF:
             print("IMPORTANT NOTE!!")
             print("The requested BaseDate is not within the range defined by BaseDateS=", BaseDateSSTR, " and BaseDateF=", BaseDateFSTR)
             print("Case not considered. Go to the following forecast.")
@@ -115,14 +86,14 @@ def run(parameters):
         #6 hourly Accumulation
         if Acc == 6:
             #Steps
-            step1 = LeadStartNEW
-            step2 = LeadStartNEW + Acc
+            step1 = leadstart
+            step2 = leadstart + Acc
 
             step1STR = "{:02d}".format(step1)
             step2STR = "{:02d}".format(step2)
 
             # Defining the parameters for the rainfall observations
-            validDateF = datetime.combine(thedateNEW, datetime.min.time()) + timedelta(hours=thetimeNEW) + timedelta(hours=step2)
+            validDateF = datetime.combine(curr_date, datetime.min.time()) + timedelta(hours=curr_time) + timedelta(hours=step2)
             DateVF = validDateF.strftime("%Y%m%d")
             HourVF = validDateF.strftime("%H")
             HourVF_num = validDateF.hour
@@ -308,16 +279,16 @@ def run(parameters):
         #12 hourly Accumulation
         elif Acc == 12:
             #Steps
-            step1 = LeadStartNEW
-            step2 = LeadStartNEW + (Acc/2)
-            step3 = LeadStartNEW + Acc
+            step1 = leadstart
+            step2 = leadstart + (Acc/2)
+            step3 = leadstart + Acc
 
             step1STR = "{:02d}".format(step1)
             step2STR = "{:02d}".format(step2)
             step3STR = "{:02d}".format(step3)
 
             #Defining the parameters for the rainfall observations
-            validDateF = datetime.combine(thedateNEW, datetime.min.time()) + timedelta(hours=thetimeNEW) + timedelta(hours=step3)
+            validDateF = datetime.combine(curr_date, datetime.min.time()) + timedelta(hours=curr_time) + timedelta(hours=step3)
             DateVF = validDateF.strftime("%Y%m%d")
             HourVF = validDateF.strftime("%H")
             print("RAINFALL OBS PARAMETERS")
@@ -477,11 +448,11 @@ def run(parameters):
         #24 hourly Accumulation
         elif Acc == 24:
             #Steps
-            step1 = LeadStartNEW
-            step2 = LeadStartNEW + (Acc/4)
-            step3 = LeadStartNEW + (Acc/2)
-            step4 = LeadStartNEW + (3*Acc/4)
-            step5 = LeadStartNEW + Acc
+            step1 = leadstart
+            step2 = leadstart + (Acc/4)
+            step3 = leadstart + (Acc/2)
+            step4 = leadstart + (3*Acc/4)
+            step5 = leadstart + Acc
 
             step1STR = "{:02d}".format(step1)
             step2STR = "{:02d}".format(step2)
@@ -490,7 +461,7 @@ def run(parameters):
             step5STR = "{:02d}".format(step5)
 
             #Defining the parameters for the rainfall observations
-            validDateF = datetime.combine(thedateNEW, datetime.min.time()) + timedelta(hours=thetimeNEW) + timedelta(hours=step5)
+            validDateF = datetime.combine(curr_date, datetime.min.time()) + timedelta(hours=curr_time) + timedelta(hours=step5)
             DateVF = validDateF.strftime("%Y%m%d")
             HourVF = validDateF.strftime("%H")
             print("RAINFALL OBS PARAMETERS")
