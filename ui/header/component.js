@@ -1,40 +1,43 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 
-const Header = props => (
-  <header className="mdl-layout__header">
-    <div className="mdl-layout__header-row">
-      <span className="mdl-layout-title header-logo">
-        <img
-          alt=""
-          src="https://www.ecmwf.int/sites/all/themes/ecmwf_bootstrap_2017/dist/images/logo.production.png"
-        />
+import { Icon, Step, Header, Segment, Image } from 'semantic-ui-react'
+
+const Menu = props => (
+  <Fragment>
+    <div
+      style={{ paddingLeft: '20px', paddingBottom: '10px', paddingTop: '20px' }}
+    >
+      <Image
+        src="https://www.ecmwf.int/sites/default/files/ECMWF_Master_Logo_RGB_nostrap.png"
+        size="small"
+        verticalAlign="bottom"
+      />
+      <span style={{ paddingLeft: '20px' }}>
+        European Centre for Medium-Range Weather Forecasts
       </span>
-      <div className="mdl-layout-spacer" />
     </div>
-    <div className="mdl-layout__tab-bar mdl-js-ripple-effect">
-      <a
-        href="#fixed-tab-1"
-        className={`mdl-layout__tab ${props.page === 0 ? 'is-active' : ''}`}
-        onClick={() => props.onPageChange(0)}
-      >
-        Input Parameters
-      </a>
-      <a
-        href="#fixed-tab-2"
-        className={`mdl-layout__tab ${props.page === 1 ? 'is-active' : ''}`}
-        onClick={() => props.onPageChange(1)}
-      >
-        Computations
-      </a>
-      <a
-        href="#fixed-tab-3"
-        className={`mdl-layout__tab ${props.page === 2 ? 'is-active' : ''}`}
-        onClick={() => props.onPageChange(2)}
-      >
-        Result
-      </a>
-    </div>
-  </header>
+
+    <Step.Group widths={3}>
+      <Step onClick={() => props.onPageChange(0)}>
+        <Icon name="cloud upload" />
+        <Step.Content>
+          <Step.Title>Input Parameters</Step.Title>
+        </Step.Content>
+      </Step>
+      <Step active onClick={() => props.onPageChange(1)}>
+        <Icon name="cogs" />
+        <Step.Content>
+          <Step.Title>Computations</Step.Title>
+        </Step.Content>
+      </Step>
+      <Step disabled onClick={() => props.onPageChange(2)}>
+        <Icon name="chart bar" />
+        <Step.Content>
+          <Step.Title>Result</Step.Title>
+        </Step.Content>
+      </Step>
+    </Step.Group>
+  </Fragment>
 )
 
-export default Header
+export default Menu
