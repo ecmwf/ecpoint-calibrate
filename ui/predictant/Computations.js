@@ -214,12 +214,9 @@ class Computations extends Component {
     return (
       <Grid container centered>
         <Grid.Column>
-          <Card fluid>
+          <Card fluid color="teal">
+            <Card.Header>Computations</Card.Header>
             <Card.Content>
-              <Card.Header>Computations</Card.Header>
-              <Card.Meta>
-                <span className="date">Joined in 2015</span>
-              </Card.Meta>
               <Card.Description>
                 <p>
                   Available predictors that can be used as inputs to
@@ -231,9 +228,8 @@ class Computations extends Component {
                 <Label>u700</Label>
                 <Label>v700</Label>
                 <Label>sr</Label>
+                {this.getComputationsTable()}
               </Card.Description>
-
-              {this.getComputationsTable()}
             </Card.Content>
             <Card.Content extra>
               <a>
