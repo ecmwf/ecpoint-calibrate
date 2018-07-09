@@ -184,30 +184,6 @@ class Parameters extends Component {
 
   render() {
     return (
-      <div className="mdl-grid">
-        <div className="mdl-layout-spacer" />
-        <div className="mdl-cell mdl-cell--4-col">
-          <div className="demo-card-square mdl-card mdl-shadow--2dp">
-            <div className="mdl-card__title mdl-card--expand">
-              <h2 className="mdl-card__title-text">Parameters</h2>
-            </div>
-            <Item.Group>
-              {this.getDateStartField()}
-              {this.getDateEndField()}
-            </Item.Group>
-            {this.getAccField()}
-            {this.getLimSUField()}
-            {this.getRangeField()}
-            {this.getPathOutField()}
-          </div>
-        </div>
-        <div className="mdl-layout-spacer" />
-      </div>
-    )
-  }
-
-  render() {
-    return (
       <Grid container centered>
         <Grid.Column>
           <Card fluid color="teal">
