@@ -56,3 +56,17 @@ def adjust_leadstart(date, hour, leadstart, limSU, model_runs_per_day):
         if each + limSU < leadstart <= each + limSU + leadstart_difference:
             timestamp += timedelta(hours=each)
             return timestamp.date(), timestamp.time().hour, leadstart - each
+
+
+class log(object):
+    @classmethod
+    def info(cls, message):
+        return '[INFO] ' + message + '[END]'
+
+    @classmethod
+    def warn(cls, message):
+        return '[WARNING] ' + message + '[END]'
+
+    @classmethod
+    def error(cls, message):
+        return '[ERROR] ' + message + '[END]'
