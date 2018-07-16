@@ -13,6 +13,7 @@
   "author": "Anirudha Bose <ani07nov@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "axios": "0.18.0",
     "electron": "^2.0.2",
     "immutable": "3.8.2",
     "lodash": "4.17.10",
@@ -24,9 +25,9 @@
     "redux": "4.0.0",
     "redux-persist": "5.10.0",
     "redux-persist-electron-storage": "1.1.2",
+    "request": "2.87.0",
     "semantic-ui-css": "2.3.2",
-    "semantic-ui-react": "0.81.3",
-    "zerorpc": "0.9.7"
+    "semantic-ui-react": "0.81.3"
   },
   "devDependencies": {
     "babel-cli": "6.26.0",

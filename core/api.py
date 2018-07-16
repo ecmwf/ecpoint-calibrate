@@ -1,9 +1,12 @@
 from __future__ import print_function
 
-import zerorpc
+from flask import Flask, request, Response
+
 
 from core.solvers.predictor import run
 from core.solvers.utils import Parameters
+
+app = Flask(__name__)
 
 
 class RPC_API_SERVER(object):
@@ -17,16 +20,17 @@ class RPC_API_SERVER(object):
     def run_computation(self, parameters):
         parameters = Parameters(**parameters)
         self.status = 'ON'
-        run(parameters)
-        self.status = 'OFF'
+        return run(parameters)
+
+
+@app.route('/computation-logs', methods=('POST',))
+def stream_computation_logs():
+    parameters = Parameters(**request.get_json())
+    return Response(run(parameters), mimetype='text/plain')
 
 
 def main():
-    addr = 'tcp://127.0.0.1:4242'
-    s = zerorpc.Server(RPC_API_SERVER())
-    s.bind(addr)
-    print('Start running on {}'.format(addr))
-    s.run()
+    app.run()
 
 
 if __name__ == '__main__':

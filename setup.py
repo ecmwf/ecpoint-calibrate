@@ -76,7 +76,7 @@ setup(
     install_requires=[
         'attrs>=18.1.0',
         'numpy>=1.14.3',
-        'zerorpc>=0.6.1',
+        'flask>=1.0.2',
     ],
     extras_require={
         'dev': ['check-manifest'],
