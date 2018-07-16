@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 from core.loaders.GeopointsLoader import GeopointsLoader, Geopoints
 from core.loaders.GribLoader import GribLoader
-from .utils import iter_daterange, adjust_leadstart
+from .utils import iter_daterange, adjust_leadstart, log
 
 
 def run(parameters):
@@ -38,18 +38,18 @@ def run(parameters):
     #############################################################################################
 
     #PROCESSING MODEL DATA
-    print("****************************************************************************************************")
-    print("POST-PROCESSING SOFTWARE TO PRODUCE FORECASTS AT POINTS - ecPoint")
-    print("The user is running the ecPoint-RAINFALL family, Operational Version 1")
-    print("Forecast Error Ratio (FER) and Predictors for ", Acc, " hour accumulation")
-    print("List of predictors:")
-    print("- Convective precipitation ratio, cpr = convective precipitation / total precipitation [-]")
-    print("- Total precipitation, tp [mm/{}h]".format(Acc))
-    print("- Wind speed of steering winds (at 700 mbar), wspd700 [m/s]")
-    print("- Convective available potential energy, cape [J/kg]")
-    print("- Daily accumulation of clear-sky solar radiation, sr24h [W/m2]")
-    print("- Local Solar Time, lst [hours]")
-    print("****************************************************************************************************")
+    yield log.info("****************************************************************************************************")
+    yield log.info("POST-PROCESSING SOFTWARE TO PRODUCE FORECASTS AT POINTS - ecPoint")
+    yield log.info("The user is running the ecPoint-RAINFALL family, Operational Version 1")
+    yield log.info("Forecast Error Ratio (FER) and Predictors for {}  hour accumulation.".format(Acc))
+    yield log.info("List of predictors:")
+    yield log.info("- Convective precipitation ratio, cpr = convective precipitation / total precipitation [-]")
+    yield log.info("- Total precipitation, tp [mm/{}h]".format(Acc))
+    yield log.info("- Wind speed of steering winds (at 700 mbar), wspd700 [m/s]")
+    yield log.info("- Convective available potential energy, cape [J/kg]")
+    yield log.info("- Daily accumulation of clear-sky solar radiation, sr24h [W/m2]")
+    yield log.info("- Local Solar Time, lst [hours]")
+    yield log.info("****************************************************************************************************")
 
     #Counter for the BaseDate and BaseTime to avoid repeating the same forecasts in different cases
     counterValidTimes = [0]
@@ -57,8 +57,8 @@ def run(parameters):
     obsUSED = 0
 
     for curr_date, curr_time, leadstart in iter_daterange(BaseDateS, BaseDateF):
-        print("FORECAST PARAMETERS")
-        print('BaseDate={} BaseTime={:02d} UTC (t+{}, t+{})'.format(
+        yield log.info('FORECAST PARAMETERS')
+        yield log.info('BaseDate={} BaseTime={:02d} UTC (t+{}, t+{})'.format(
             curr_date.strftime('%Y%m%d'), curr_time, leadstart, leadstart + Acc))
 
         curr_date, curr_time, leadstart = adjust_leadstart(
@@ -68,14 +68,18 @@ def run(parameters):
         thedateNEWSTR = curr_date.strftime('%Y%m%d')
         thetimeNEWSTR = '{:02d}'.format(curr_time)
 
-        print('BaseDate={} BaseTime={} UTC (t+{}, t+{})'.format(
-            thedateNEWSTR, thetimeNEWSTR, leadstart, leadstart + Acc))
+        yield log.info(
+            'BaseDate={} BaseTime={} UTC (t+{}, t+{})'.format(
+                thedateNEWSTR, thetimeNEWSTR, leadstart, leadstart + Acc)
+        )
 
         #Reading the forecasts
         if curr_date < BaseDateS or curr_date > BaseDateF:
-            print("IMPORTANT NOTE!!")
-            print("The requested BaseDate is not within the range defined by BaseDateS=", BaseDateSSTR, " and BaseDateF=", BaseDateFSTR)
-            print("Case not considered. Go to the following forecast.")
+            log.warn(
+                'Requested date {} outside input date range: {} - {}'.format(
+                    curr_date, BaseDateSSTR, BaseDateFSTR
+                )
+            )
             continue
 
         #Note about the computation of the sr.
@@ -97,37 +101,35 @@ def run(parameters):
             DateVF = validDateF.strftime("%Y%m%d")
             HourVF = validDateF.strftime("%H")
             HourVF_num = validDateF.hour
-            print("RAINFALL OBS PARAMETERS")
-            print("Validity date/time (end of the ", AccSTR, " hourly period) = ", validDateF)
+            yield log.info('RAINFALL OBS PARAMETERS')
+            yield log.info(
+                'Validity date/time (end of {} hourly '
+                'period) = {}'.format(Acc, validDateF)
+            )
 
             #Looking for no repetions in the computed dates and times
             if validDateF in counterValidTimes:
-                print("Valid Date and Time already computed.")
-                print("Case not considered. Go to the following forecast.")
+                yield log.warn('Valid Date and Time already computed.')
                 continue
 
             counterValidTimes.append(validDateF)
             dirOBS = os.path.join(PathOBS, AccSTR, DateVF)
             fileOBS = 'tp_{:02d}_{}_{}.geo'.format(Acc, DateVF, HourVF)
 
-            if not os.path.exists(os.path.join(dirOBS, fileOBS)):
-                print("IMPORTANT NOTE!!")
-                print("The file ", fileOBS, " do not exist on the database ", PathOBS)
-                print("Case not considered. Go to the following forecast.")
+            obs_path = os.path.join(dirOBS, fileOBS)
+            if not os.path.exists(obs_path):
+                yield log.warn('File not found in DB: {}.'.format(obs_path))
                 continue
 
-            #Reading Rainfall Observations
-            print("READING RAINFALL OBS")
-            print("Reading... ", os.path.join(dirOBS, fileOBS))
-            obs=GeopointsLoader(path=os.path.join(dirOBS, fileOBS))
+            # Reading Rainfall Observations
+            yield log.info('Read rainfall observation: '.format(obs_path))
+            obs=GeopointsLoader(path=obs_path)
             nOBS = len(obs.values)
 
             if nOBS == 1:
             # which will account for the cases of zero observation in the geopoint file (because the length of the vector will be forced to 1),
             # or cases in which there is only one observation in the geopoint file
-                print("IMPORTANT NOTE!!")
-                print("No rainfall observations in ", fileOBS)
-                print("Case not considered. Go to the following forecast.")
+                yield log.warn('No rainfall observations: {}.'.format(fileOBS))
                 continue
 
             obsTOT += nOBS
@@ -142,7 +144,7 @@ def run(parameters):
             step2srSTR = "%02d" % step2sr
 
             #Reading forecasts
-            print("READING FORECASTS")
+            yield log.info('Read forecast data')
 
             tp1 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
             tp2 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step2STR]) + '.grib'))
@@ -163,8 +165,11 @@ def run(parameters):
             sr2 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step2srSTR]) + '.grib'))
 
             #Compute the 6 hourly fields
-            print('\nCOMPUTING')
-            print('Computing the required parameters (FER, cpr, tp, wspd700, cape, sr)...')
+            # [TODO] - Should be dynamic
+            yield log.info(
+                'Computing the required parameters '
+                '(FER, cpr, tp, wspd700, cape, sr).'
+            )
             TP = (tp2 - tp1) * 1000
             CP = (cp2 - cp1) * 1000
             U700 = (u1 + u2) / 2
@@ -174,24 +179,26 @@ def run(parameters):
             SR = (sr2 - sr1) / 86400
 
             #Select the nearest grid-point from the rainfall observations
-            print('Selecting the nearest grid point to rainfall obs...')
+            yield log.info(
+                'Selecting the nearest grid point to rainfall observations.'
+            )
             TP_Ob = TP.nearest_gridpoint(obs)  # Geopoints(list) instance
 
             #Select only the values that correspond to TP>=1
-            print('Selecting the values that correspond to tp >= 1 mm/{}h...'.format(Acc))
+            yield log.info(
+                'Selecting values that correspond to '
+                'tp >= 1 mm/{}h.'.format(Acc)
+            )
             TP_Ob1 = Geopoints(
                 TP_geopoint
                 for TP_geopoint in TP_Ob
                 if TP_geopoint.value >= 1
             )
             if not TP_Ob1:
-                print("IMPORTANT NOTE!!")
-                print('No values of tp >= 1 mm/{}h.'.format(Acc))
-                print("Case not considered. Go to the following forecast.")
+                yield log.warn('No values of tp >= 1 mm/{}h.'.format(Acc))
                 continue
 
-            print('\nSAVING')
-            print("Saving the data in ", PathOUT, '...')
+            yield log.info('Write data to: {}'.format(PathOUT))
 
             CP_Ob = CP.nearest_gridpoint(obs)
             WSPD_Ob = WSPD.nearest_gridpoint(obs)
@@ -291,37 +298,35 @@ def run(parameters):
             validDateF = datetime.combine(curr_date, datetime.min.time()) + timedelta(hours=curr_time) + timedelta(hours=step3)
             DateVF = validDateF.strftime("%Y%m%d")
             HourVF = validDateF.strftime("%H")
-            print("RAINFALL OBS PARAMETERS")
-            print("Validity date/time (end of the ", AccSTR, " hourly period) = ", validDateF)
+            yield log.info('RAINFALL OBS PARAMETERS')
+            yield log.info(
+                'Validity date/time (end of {} hourly '
+                'period) = {}'.format(Acc, validDateF)
+            )
 
             #Looking for no repetions in the computed dates and times
             if validDateF in counterValidTimes:
-                print("Valid Date and Time already computed.")
-                print("Case not considered. Go to the following forecast.")
+                yield log.warn('Valid Date and Time already computed.')
                 continue
 
             counterValidTimes.append(validDateF)
             dirOBS = os.path.join(PathOBS, AccSTR, DateVF)
             fileOBS = 'tp_{:02d}_{}_{}.geo'.format(Acc, DateVF, HourVF)
 
-            if not os.path.exists(os.path.join(dirOBS, fileOBS)):
-                print("IMPORTANT NOTE!!")
-                print("The file ", fileOBS, " do not exist on the database ", PathOBS)
-                print("Case not considered. Go to the following forecast.")
+            obs_path = os.path.join(dirOBS, fileOBS)
+            if not os.path.exists(obs_path):
+                yield log.warn('File not found in DB: {}.'.format(obs_path))
                 continue
 
-            #Reading Rainfall Observations
-            print("READING RAINFALL OBS")
-            print("Reading... ", os.path.join(dirOBS, fileOBS))
-            obs=GeopointsLoader(path=os.path.join(dirOBS, fileOBS))
+            # Reading Rainfall Observations
+            yield log.info('Read rainfall observation: '.format(obs_path))
+            obs=GeopointsLoader(path=obs_path)
             nOBS = len(obs.values)
 
             if nOBS == 1:
                 #which will account for the cases of zero obeservation in the geopoint file (because the length of the vector will be forced to 1),
                 #or cases in which there is only one observation in the geopoint file
-                print('IMPORTANT NOTE!')
-                print('No rainfall observations in ', fileOBS)
-                print('Case not considered. Go to the following forecast.')
+                yield log.warn('No rainfall observations: {}.'.format(fileOBS))
                 continue
 
             obsTOT = obsTOT + nOBS
@@ -336,7 +341,7 @@ def run(parameters):
             step3srSTR = '%02d' % step3sr
 
             #Reading forecasts
-            print("READING FORECASTS")
+            yield log.info('Read forecast data')
             tp1 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
             tp3 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step3STR]) + '.grib'))
 
@@ -359,8 +364,11 @@ def run(parameters):
             sr3 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step3srSTR]) + '.grib'))
 
             #Compute the 12 hourly fields
-            print("COMPUTING")
-            print("Computing the required parameters (FER, cpr, tp, wspd700, cape, sr)...")
+            # [TODO] - Should be dynamic
+            yield log.info(
+                'Computing the required parameters '
+                '(FER, cpr, tp, wspd700, cape, sr).'
+            )
             TP = (tp3 - tp1) * 1000
             CP = (cp3 - cp1) * 1000
             U700 = ((u1 * 0.5) + u2 + (u3 * 0.5)) * 0.5
@@ -371,20 +379,23 @@ def run(parameters):
             SR = (sr3 - sr1) / 86400
 
             #Select the nearest grid-point from the rainfall observations
-            print("Selecting the nearest grid point to rainfall obs...")
+            yield log.info(
+                'Selecting the nearest grid point to rainfall observations.'
+            )
             TP_Ob = TP.nearest_gridpoint(obs)
 
             #Select only the values that correspond to TP>=1
-            print('Selecting the values that correspond to tp >= 1 mm/{}h...'.format(Acc))
+            yield log.info(
+                'Selecting values that correspond to '
+                'tp >= 1 mm/{}h.'.format(Acc)
+            )
             TP_Ob1 = Geopoints(
                 TP_geopoint
                 for TP_geopoint in TP_Ob
                 if TP_geopoint.value >= 1
             )
             if not TP_Ob1:
-                print('\nIMPORTANT NOTE!')
-                print('No values of tp >= 1 mm/{}h.'.format(Acc))
-                print('Case not considered. Go to the following forecast.')
+                yield log.warn('No values of tp >= 1 mm/{}h.'.format(Acc))
                 continue
 
             CP_Ob = CP.nearest_gridpoint(obs)
@@ -392,8 +403,7 @@ def run(parameters):
             CAPE_Ob = CAPE.nearest_gridpoint(obs)
             SR_Ob = SR.nearest_gridpoint(obs)
 
-            print('\nSAVING')
-            print("Saving the data in ", PathOUT, '...')
+            yield log.info('Write data to: {}'.format(PathOUT))
             CP_Ob1 = Geopoints(
                 CP_geopoint
                 for CP_geopoint, TP_geopoint in zip(CP_Ob, TP_Ob)
@@ -464,41 +474,39 @@ def run(parameters):
             validDateF = datetime.combine(curr_date, datetime.min.time()) + timedelta(hours=curr_time) + timedelta(hours=step5)
             DateVF = validDateF.strftime("%Y%m%d")
             HourVF = validDateF.strftime("%H")
-            print("RAINFALL OBS PARAMETERS")
-            print("Validity date/time (end of the ", AccSTR, " hourly period) = ", validDateF)
+            yield log.info('RAINFALL OBS PARAMETERS')
+            yield log.info(
+                'Validity date/time (end of {} hourly '
+                'period) = {}'.format(Acc, validDateF)
+            )
 
             #Looking for no repetions in the computed dates and times
             if validDateF in counterValidTimes:
-                print("Valid Date and Time already computed.")
-                print("Case not considered. Go to the following forecast.")
+                yield log.warn('Valid Date and Time already computed.')
                 continue
             counterValidTimes.append(validDateF)
             dirOBS = os.path.join(PathOBS, AccSTR, DateVF)
             fileOBS = 'tp_{:02d}_{}_{}.geo'.format(Acc, DateVF, HourVF)
 
-            if not os.path.exists(os.path.join(dirOBS, fileOBS)):
-                print("IMPORTANT NOTE!!")
-                print("The file ", fileOBS, " do not exist on the database ", PathOBS)
-                print("Case not considered. Go to the following forecast.")
+            obs_path = os.path.join(dirOBS, fileOBS)
+            if not os.path.exists(obs_path):
+                yield log.warn('File not found in DB: {}.'.format(obs_path))
                 continue
 
             #Reading Rainfall Observations
-            print("READING RAINFALL OBS")
-            print("Reading... ", os.path.join(dirOBS, fileOBS))
-            obs=GeopointsLoader(path=os.path.join(dirOBS, fileOBS))
+            yield log.info('Read rainfall observation: '.format(obs_path))
+            obs=GeopointsLoader(path=obs_path)
             nOBS = len(obs.values)
 
             if nOBS == 1:
                 # which will account for the cases of zero obeservation in the geopoint file (because the length of the vector will be forced to 1),
                 # or cases in which there is only one observation in the geopoint file
-                print("IMPORTANT NOTE!!")
-                print("No rainfall observations in ", fileOBS)
-                print("Case not considered. Go to the following forecast.")
+                yield log.warn('No rainfall observations: {}.'.format(fileOBS))
                 continue
 
             #Reading Forecasts
             obsTOT += nOBS
-            print("READING FORECASTS")
+            yield log.info('Read forecast data')
             tp1 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
             tp5 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step5STR]) + '.grib'))
 
@@ -527,8 +535,11 @@ def run(parameters):
             sr5 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step5STR]) + '.grib'))
 
             #Compute the 24 hourly fields
-            print('\nCOMPUTING')
-            print('Computing the required parameters (FER, cpr, tp, wspd700, cape, sr)...')
+            # [TODO] - Should be dynamic
+            yield log.info(
+                'Computing the required parameters '
+                '(FER, cpr, tp, wspd700, cape, sr).'
+            )
             TP = (tp5 - tp1) * 1000
             CP = (cp5 - cp1) * 1000
             U700 = ((u1*0.5) + u2 + u3 + u4 + (u5*0.5)) / 4
@@ -538,20 +549,23 @@ def run(parameters):
             SR = (sr5 - sr1) / 86400
 
             #Select the nearest grid-point from the rainfall observations
-            print('Selecting the nearest grid point to rainfall obs...')
+            yield log.info(
+                'Selecting the nearest grid point to rainfall observations.'
+            )
             TP_Ob = TP.nearest_gridpoint(obs)
 
             #Select only the values that correspond to TP>=1
-            print('Selecting the values that correspond to tp >= 1 mm/{}h...'.format(Acc))
+            yield log.info(
+                'Selecting values that correspond to '
+                'tp >= 1 mm/{}h.'.format(Acc)
+            )
             TP_Ob1 = Geopoints(
                 TP_geopoint
                 for TP_geopoint in TP_Ob
                 if TP_geopoint.value >= 1
             )
             if not TP_Ob1:
-                print('\nIMPORTANT NOTE!')
-                print('No values of tp >= 1 mm/{}h.'.format(Acc))
-                print("Case not considered. Go to the following forecast.")
+                yield log.warn('No values of tp >= 1 mm/{}h.'.format(Acc))
                 continue
 
             CP_Ob = CP.nearest_gridpoint(obs)
@@ -559,8 +573,7 @@ def run(parameters):
             CAPE_Ob = CAPE.nearest_gridpoint(obs)
             SR_Ob = SR.nearest_gridpoint(obs)
 
-            print("SAVING")
-            print("Saving the data in ", PathOUT, '...')
+            yield log.info('Write data to: {}'.format(PathOUT))
             CP_Ob1 = Geopoints(
                 CP_geopoint
                 for CP_geopoint, TP_geopoint in zip(CP_Ob, TP_Ob)
@@ -612,10 +625,15 @@ def run(parameters):
                 data = map(str, [DateVF, HourVF, vals_OB[i], latObs_1[i], lonObs_1[i], vals_FER[i], vals_CPr[i], vals_TP[i], vals_WSPD[i], vals_CAPE[i], vals_SR[i], 'NaN'])
                 Output_file.write('\t'.join(data) + '\n')
 
-        print('\n' + '*'*80)
+        yield log.info('\n' + '*'*80)
 
-    print('Number of observations in the whole training period:', obsTOT)
-    print('Number of observations actually used in the training period (that correspond to tp >= 1 mm/{0}h: {1}'.format(Acc, obsUSED))
+    yield log.info(
+        'Number of observations in the whole training period: '.format(obsTOT)
+    )
+    yield log.info(
+        'Number of observations actually used in the training period '
+        '(tp >= 1 mm/{}h): {}'.format(Acc, obsUSED)
+    )
 
     Output_file.write('\nNumber of observations in the whole training period: {}\n'.format(obsTOT))
     Output_file.write('Number of observations actually used in the training period (that correspond to tp >= 1 mm/{0}h): {1}'.format(Acc, obsUSED))
