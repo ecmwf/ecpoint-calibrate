@@ -30,7 +30,7 @@ const Menu = props => (
           <Step.Title>Computations</Step.Title>
         </Step.Content>
       </Step>
-      <Step disabled onClick={() => props.onPageChange(2)}>
+      <Step onClick={() => props.onPageChange(2)}>
         <Icon name="chart bar" />
         <Step.Content>
           <Step.Title>Result</Step.Title>

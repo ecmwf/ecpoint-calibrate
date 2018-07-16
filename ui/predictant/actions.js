@@ -84,3 +84,8 @@ export const setScaleValue = (index, value) => ({
   index,
   value,
 })
+
+export const appendLog = log => ({
+  type: 'COMPUTATIONS.APPEND_LOG',
+  log,
+})

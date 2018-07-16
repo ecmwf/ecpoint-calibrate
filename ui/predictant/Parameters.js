@@ -15,7 +15,6 @@ import {
   Item,
 } from 'semantic-ui-react'
 
-import client from '../utils/rpc'
 import { remote } from 'electron'
 
 const mainProcess = remote.require('./server')

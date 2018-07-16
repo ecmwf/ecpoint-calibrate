@@ -19,6 +19,7 @@ import {
   removeComputation,
   setScaleOp,
   setScaleValue,
+  appendLog,
 } from './actions'
 
 const mapStateToProps = state => ({
@@ -26,6 +27,7 @@ const mapStateToProps = state => ({
   parameters: state.parameters,
   computations: state.computations,
   page: state.page.page,
+  logs: state.logs,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -62,6 +64,8 @@ const mapDispatchToProps = dispatch => ({
 
   setScaleOp: (index, op) => dispatch(setScaleOp(index, op)),
   setScaleValue: (index, value) => dispatch(setScaleValue(index, value)),
+
+  appendLog: log => dispatch(appendLog(log)),
 })
 
 export default connect(

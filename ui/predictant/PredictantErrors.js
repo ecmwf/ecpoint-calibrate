@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import { Set } from 'immutable'
 
-import client from '../utils/rpc'
-
 class PredictantErrors extends Component {
   constructor() {
     super()
