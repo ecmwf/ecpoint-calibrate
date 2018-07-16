@@ -18,7 +18,10 @@ import {
 import client from '../utils/client'
 
 class ComputationLogs extends Component {
+  state = { active: false }
+
   runComputation() {
+    this.setState({ active: true })
     const parameters = {
       date_start: this.props.parameters.date_start,
       date_end: this.props.parameters.date_end,
@@ -33,7 +36,7 @@ class ComputationLogs extends Component {
     client
       .post({ url: '/computation-logs', body: parameters, json: true })
       .on('data', chunk => this.props.appendLog(chunk.toString()))
-      .on('end', () => console.log('DONE'))
+      .on('end', () => this.setState({ active: false }))
   }
 
   colorizeLog = log => {
@@ -54,7 +57,10 @@ class ComputationLogs extends Component {
     return (
       <Grid columns={2} centered>
         <Grid.Row>
-          <Button onClick={() => this.runComputation()}>
+          <Button
+            onClick={() => this.runComputation()}
+            disabled={this.state.active ? true : null}
+          >
             Launch computation
           </Button>
         </Grid.Row>
