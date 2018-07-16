@@ -198,7 +198,7 @@ def run(parameters):
                 yield log.warn('No values of tp >= 1 mm/{}h.'.format(Acc))
                 continue
 
-            yield log.info('Write data to: {}'.format(PathOUT))
+            yield log.success('Write data to: {}'.format(PathOUT))
 
             CP_Ob = CP.nearest_gridpoint(obs)
             WSPD_Ob = WSPD.nearest_gridpoint(obs)
@@ -403,7 +403,7 @@ def run(parameters):
             CAPE_Ob = CAPE.nearest_gridpoint(obs)
             SR_Ob = SR.nearest_gridpoint(obs)
 
-            yield log.info('Write data to: {}'.format(PathOUT))
+            yield log.success('Write data to: {}'.format(PathOUT))
             CP_Ob1 = Geopoints(
                 CP_geopoint
                 for CP_geopoint, TP_geopoint in zip(CP_Ob, TP_Ob)
@@ -573,7 +573,7 @@ def run(parameters):
             CAPE_Ob = CAPE.nearest_gridpoint(obs)
             SR_Ob = SR.nearest_gridpoint(obs)
 
-            yield log.info('Write data to: {}'.format(PathOUT))
+            yield log.success('Write data to: {}'.format(PathOUT))
             CP_Ob1 = Geopoints(
                 CP_geopoint
                 for CP_geopoint, TP_geopoint in zip(CP_Ob, TP_Ob)
@@ -627,10 +627,10 @@ def run(parameters):
 
         yield log.info('\n' + '*'*80)
 
-    yield log.info(
+    yield log.success(
         'Number of observations in the whole training period: '.format(obsTOT)
     )
-    yield log.info(
+    yield log.success(
         'Number of observations actually used in the training period '
         '(tp >= 1 mm/{}h): {}'.format(Acc, obsUSED)
     )

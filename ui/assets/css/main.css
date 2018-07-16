@@ -6,3 +6,10 @@
   height: 70px;
   padding: 24px;
 }
+
+.log {
+  color: #edede3;
+  font-family: "RobotoMono",Monaco,"Courier New",monospace;
+  font-size: 13px;
+  margin-bottom: 0.2em;
+}

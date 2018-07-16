@@ -70,3 +70,7 @@ class log(object):
     @classmethod
     def error(cls, message):
         return '[ERROR] ' + message + '[END]'
+
+    @classmethod
+    def success(cls, message):
+        return '[SUCCESS] ' + message + '[END]'

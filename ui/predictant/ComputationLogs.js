@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react'
 
 import {
   Grid,
+  Segment,
   Card,
   Button,
   Checkbox,
@@ -30,18 +31,44 @@ class ComputationLogs extends Component {
     }
 
     client
-      .post({url: '/computation-logs', body: parameters, json: true})
+      .post({ url: '/computation-logs', body: parameters, json: true })
       .on('data', chunk => this.props.appendLog(chunk.toString()))
       .on('end', () => console.log('DONE'))
   }
 
+  colorizeLog = log => {
+    if (log.startsWith('[WARNING]')) {
+      return <span style={{ color: '#d6cc75' }}>{log}</span>
+    } else if (log.startsWith('[SUCCESS]')) {
+      return (
+        <span style={{ color: '#42c88a' }}>{log.replace('[SUCCESS]', '')}</span>
+      )
+    } else if (log.startsWith('[ERROR]')) {
+      return <span style={{ color: '#f65353' }}>{log}</span>
+    }
+
+    return <span>{log.replace('[INFO]', '')}</span>
+  }
+
   render() {
     return (
-      <Grid>
-        <Button onClick={() => this.runComputation()}>Click me.</Button>
+      <Grid columns={2} centered>
+        <Grid.Row>
+          <Button onClick={() => this.runComputation()}>
+            Launch computation
+          </Button>
+        </Grid.Row>
         <Grid.Row>
           <Grid.Column>
-            {this.props.logs.map((log, idx) => <p key={idx}>{log}</p>)}
+            {this.props.logs.length > 0 && (
+              <Segment inverted>
+                {this.props.logs.map((log, idx) => (
+                  <p key={idx} className="log">
+                    {this.colorizeLog(log)}
+                  </p>
+                ))}
+              </Segment>
+            )}
           </Grid.Column>
         </Grid.Row>
       </Grid>
