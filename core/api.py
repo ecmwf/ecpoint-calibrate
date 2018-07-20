@@ -3,8 +3,8 @@ from __future__ import print_function
 from flask import Flask, request, Response
 
 
-from core.solvers.predictor import run
-from core.solvers.utils import Parameters
+from core.computations.predictor import run
+from core.computations.utils import Parameters
 
 app = Flask(__name__)
 

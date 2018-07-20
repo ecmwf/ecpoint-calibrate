@@ -1,7 +1,7 @@
 from datetime import date
 from functools import partial
 
-from core.solvers.utils import iter_daterange, adjust_leadstart
+from core.computations.utils import iter_daterange, adjust_leadstart
 
 
 def test_generate_leadstart():
