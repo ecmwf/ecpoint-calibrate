@@ -102,480 +102,181 @@ def run(parameters):
         #One wants the 24h. The 24h mean is obtained by taking the difference between the beginning and the end of the 24 hourly period
         #and dividing by the number of seconds in that period (24h = 86400 sec). Thus, the unit will be W/m2
 
-        #6 hourly Accumulation
-        if Acc == 6:
-            steps = [leadstart + step for step in generate_steps(Acc)]
+        steps = [leadstart + step for step in generate_steps(Acc)]
 
-            # Defining the parameters for the rainfall observations
-            validDateF = (
-                    datetime.combine(curr_date, datetime.min.time()) +
-                    timedelta(hours=curr_time) +
-                    timedelta(hours=steps[-1])
-            )
-            DateVF = validDateF.strftime('%Y%m%d')
-            HourVF = validDateF.strftime('%H')
-            HourVF_num = validDateF.hour
-            yield log.info('RAINFALL OBS PARAMETERS')
-            yield log.info(
-                'Validity date/time (end of {} hourly '
-                'period) = {}'.format(Acc, validDateF)
-            )
-
-            #Looking for no repetions in the computed dates and times
-            if validDateF in counterValidTimes:
-                yield log.warn('Valid Date and Time already computed.')
-                continue
-
-            counterValidTimes.add(validDateF)
-            dirOBS = os.path.join(PathOBS, AccSTR, DateVF)
-            fileOBS = 'tp_{:02d}_{}_{}.geo'.format(Acc, DateVF, HourVF)
-
-            obs_path = os.path.join(dirOBS, fileOBS)
-            if not os.path.exists(obs_path):
-                yield log.warn('File not found in DB: {}.'.format(obs_path))
-                continue
-
-            # Reading Rainfall Observations
-            yield log.info('Read rainfall observation: '.format(obs_path))
-            obs=GeopointsLoader(path=obs_path)
-            nOBS = len(obs.values)
-
-            if nOBS == 1:
-            # which will account for the cases of zero observation in the geopoint file (because the length of the vector will be forced to 1),
-            # or cases in which there is only one observation in the geopoint file
-                yield log.warn('No rainfall observations: {}.'.format(fileOBS))
-                continue
-
-            obsTOT += nOBS
-            if steps[-1] <= 24:
-                step_start_sr, step_end_sr = 1, 25
-            else:
-                step_start_sr, step_end_sr = steps[-1] - 24, steps[-1]
-
-            yield log.info('Read forecast data')
-
-            tp1, tp2 = [GribLoader(path=get_grib_path('tp', step)) for step in steps]
-            cp1, cp2 = [GribLoader(path=get_grib_path('cp', step)) for step in steps]
-            u1, u2 = [GribLoader(path=get_grib_path('u700', step)) for step in steps]
-            v1, v2 = [GribLoader(path=get_grib_path('v700', step)) for step in steps]
-            cape1, cape2 = [GribLoader(path=get_grib_path('cape', step)) for step in steps]
-            sr_start, sr_end = [GribLoader(path=get_grib_path('sr', step)) for step in (step_start_sr, step_end_sr,)]
-
-            #Compute the 6 hourly fields
-            # [TODO] - Should be dynamic
-            yield log.info(
-                'Computing the required parameters '
-                '(FER, cpr, tp, wspd700, cape, sr).'
-            )
-            TP = compute_accumulated_field(tp1, tp2) * 1000
-            CP = compute_accumulated_field(cp1, cp2) * 1000
-            U700 = compute_weighted_average_field(u1, u2)
-            V700 = compute_weighted_average_field(v1, v2)
-            WSPD = compute_rms_field(U700, V700)
-            CAPE = compute_weighted_average_field(cape1, cape2)
-            SR = compute_accumulated_field(sr_start, sr_end) / 86400
-
-            #Select the nearest grid-point from the rainfall observations
-            yield log.info(
-                'Selecting the nearest grid point to rainfall observations.'
-            )
-            TP_Ob = TP.nearest_gridpoint(obs)  # Geopoints(list) instance
-
-            #Select only the values that correspond to TP>=1
-            yield log.info(
-                'Selecting values that correspond to '
-                'tp >= 1 mm/{}h.'.format(Acc)
-            )
-            TP_Ob1 = Geopoints(
-                TP_geopoint
-                for TP_geopoint in TP_Ob
-                if TP_geopoint.value >= 1
-            )
-            if not TP_Ob1:
-                yield log.warn('No values of tp >= 1 mm/{}h.'.format(Acc))
-                continue
-
-            yield log.success('Write data to: {}'.format(PathOUT))
-
-            CP_Ob = CP.nearest_gridpoint(obs)
-            WSPD_Ob = WSPD.nearest_gridpoint(obs)
-            CAPE_Ob = CAPE.nearest_gridpoint(obs)
-            SR_Ob = SR.nearest_gridpoint(obs)
-
-            CP_Ob1 = Geopoints(
-                CP_geopoint
-                for CP_geopoint, TP_geopoint in zip(CP_Ob, TP_Ob)
-                if TP_geopoint.value >= 1
-            )
-
-            WSPD_Ob1 = Geopoints(
-                WSPD_geopoint
-                for WSPD_geopoint, TP_geopoint in zip(WSPD_Ob, TP_Ob)
-                if TP_geopoint.value >= 1
-            )
-
-            CAPE_Ob1 = Geopoints(
-                CAPE_geopoint
-                for CAPE_geopoint, TP_geopoint in zip(CAPE_Ob, TP_Ob)
-                if TP_geopoint.value >= 1
-            )
-
-            SR_Ob1 = Geopoints(
-                SR_geopoint
-                for SR_geopoint, TP_geopoint in zip(SR_Ob, TP_Ob)
-                if TP_geopoint.value >= 1
-            )
-
-            # Compute other parameters
-            obs1 = Geopoints(
-                obs_geopoint
-                for obs_geopoint, TP_geopoint in zip(obs.geopoints, TP_Ob)
-                if TP_geopoint.value >= 1
-            )
-
-            latObs_1 = obs1.latitudes
-            lonObs_1 = obs1.longitudes
-            CPr = CP_Ob1 / TP_Ob1
-            FER = (obs1 - TP_Ob1) / TP_Ob1
-
-            # Compute the Local Solar Time
-            # Select values at the right of the Greenwich Meridian
-            temp_lonPos = lonObs_1 * (lonObs_1 >= 0)
-            # Compute the time difference between the local place and the Greenwich Meridian
-            lstPos = HourVF_num + (temp_lonPos/15.0)
-            # Put back to zero the values that are not part of the subset (lonObs_1 >= 0)
-            lstPos = lstPos * (temp_lonPos != 0)
-            # Adjust the times that appear bigger than 24 (the time relates to the following day)
-            temp_lstPosMore24 = (lstPos * (lstPos >= 24)) - 24
-            temp_lstPosMore24 = temp_lstPosMore24 * (temp_lstPosMore24 > 0)
-            # Restore the dataset
-            tempPos = lstPos * (lstPos < 24) + temp_lstPosMore24
-            # Select values at the left of the Greenwich Meridian
-            temp_lonNeg = lonObs_1 * (lonObs_1 < 0)
-            # Compute the time difference between the local place and the Greenwich Meridian
-            lstNeg = HourVF_num - abs((temp_lonNeg/15.0))
-            # Put back to zero the values that are not part of the subset (lonObs_1 < 0)
-            lstNeg = lstNeg * (temp_lonNeg != 0)
-            # Adjust the times that appear smaller than 24 (the time relates to the previous day)
-            temp_lstNegLess0 = lstNeg * (lstNeg < 0) + 24
-            temp_lstNegLess0 = temp_lstNegLess0 * (temp_lstNegLess0 != 24)
-            # Restore the dataset
-            tempNeg = lstNeg * (lstNeg >0) + temp_lstNegLess0
-            # Combine both subsets
-            vals_LST = tempPos + tempNeg  #[XXX] Review this line
-
-            #Saving the outpudt file in ascii format
-            vals_TP = TP_Ob1.values
-            vals_CP = CP_Ob1.values
-            vals_OB = obs1.values
-            vals_FER = FER.values
-            vals_CPr = CPr.values
-            vals_WSPD = WSPD_Ob1.values
-            vals_CAPE = CAPE_Ob1.values
-            vals_SR = SR_Ob1.values
-
-            n = len(vals_FER)
-            obsUSED = obsUSED + n
-            for i in range(n):
-                data = map(str, [DateVF, HourVF, vals_OB[i], latObs_1[i], lonObs_1[i], vals_FER[i], vals_CPr[i], vals_TP[i], vals_WSPD[i], vals_CAPE[i], vals_SR[i], vals_LST[i]])
-                Output_file.write('\t'.join(data) + '\n')
-
-        #12 hourly Accumulation
-        elif Acc == 12:
-            steps = [leadstart + step for step in generate_steps(Acc)]
-
-            # Defining the parameters for the rainfall observations
-            validDateF = (
+        # Defining the parameters for the rainfall observations
+        validDateF = (
                 datetime.combine(curr_date, datetime.min.time()) +
                 timedelta(hours=curr_time) +
                 timedelta(hours=steps[-1])
-            )
-            DateVF = validDateF.strftime('%Y%m%d')
-            HourVF = validDateF.strftime('%H')
-            yield log.info('RAINFALL OBS PARAMETERS')
-            yield log.info(
-                'Validity date/time (end of {} hourly '
-                'period) = {}'.format(Acc, validDateF)
-            )
+        )
+        DateVF = validDateF.strftime('%Y%m%d')
+        HourVF = validDateF.strftime('%H')
+        HourVF_num = validDateF.hour
+        yield log.info('RAINFALL OBS PARAMETERS')
+        yield log.info(
+            'Validity date/time (end of {} hourly '
+            'period) = {}'.format(Acc, validDateF)
+        )
 
-            #Looking for no repetions in the computed dates and times
-            if validDateF in counterValidTimes:
-                yield log.warn('Valid Date and Time already computed.')
-                continue
+        #Looking for no repetions in the computed dates and times
+        if validDateF in counterValidTimes:
+            yield log.warn('Valid Date and Time already computed.')
+            continue
 
-            counterValidTimes.add(validDateF)
-            dirOBS = os.path.join(PathOBS, AccSTR, DateVF)
-            fileOBS = 'tp_{:02d}_{}_{}.geo'.format(Acc, DateVF, HourVF)
+        counterValidTimes.add(validDateF)
+        dirOBS = os.path.join(PathOBS, AccSTR, DateVF)
+        fileOBS = 'tp_{:02d}_{}_{}.geo'.format(Acc, DateVF, HourVF)
 
-            obs_path = os.path.join(dirOBS, fileOBS)
-            if not os.path.exists(obs_path):
-                yield log.warn('File not found in DB: {}.'.format(obs_path))
-                continue
+        obs_path = os.path.join(dirOBS, fileOBS)
+        if not os.path.exists(obs_path):
+            yield log.warn('File not found in DB: {}.'.format(obs_path))
+            continue
 
-            # Reading Rainfall Observations
-            yield log.info('Read rainfall observation: '.format(obs_path))
-            obs=GeopointsLoader(path=obs_path)
-            nOBS = len(obs.values)
+        # Reading Rainfall Observations
+        yield log.info('Read rainfall observation: '.format(obs_path))
+        obs=GeopointsLoader(path=obs_path)
+        nOBS = len(obs.values)
 
-            if nOBS == 1:
-                #which will account for the cases of zero obeservation in the geopoint file (because the length of the vector will be forced to 1),
-                #or cases in which there is only one observation in the geopoint file
-                yield log.warn('No rainfall observations: {}.'.format(fileOBS))
-                continue
+        if nOBS == 1:
+        # which will account for the cases of zero observation in the geopoint file (because the length of the vector will be forced to 1),
+        # or cases in which there is only one observation in the geopoint file
+            yield log.warn('No rainfall observations: {}.'.format(fileOBS))
+            continue
 
-            obsTOT = obsTOT + nOBS
-            if steps[-1] <= 24:
-                step_start_sr, step_end_sr = 1, 25
-            else:
-                step_start_sr, step_end_sr = steps[-1] - 24, steps[-1]
+        obsTOT += nOBS
+        if steps[-1] <= 24:
+            step_start_sr, step_end_sr = 1, 25
+        else:
+            step_start_sr, step_end_sr = steps[-1] - 24, steps[-1]
 
-            #Reading forecasts
-            yield log.info('Read forecast data')
-            tp1, tp2, tp3 = [GribLoader(path=get_grib_path('tp', step)) for step in steps]
-            cp1, cp2, cp3 = [GribLoader(path=get_grib_path('cp', step)) for step in steps]
-            u1, u2, u3 = [GribLoader(path=get_grib_path('u700', step)) for step in steps]
-            v1, v2, v3 = [GribLoader(path=get_grib_path('v700', step)) for step in steps]
-            cape1, cape2, cape3 = [GribLoader(path=get_grib_path('cape', step)) for step in steps]
-            sr_start, sr_end = [GribLoader(path=get_grib_path('sr', step)) for step in (step_start_sr, step_end_sr,)]
+        yield log.info('Read forecast data')
 
-            #Compute the 12 hourly fields
-            # [TODO] - Should be dynamic
-            yield log.info(
-                'Computing the required parameters '
-                '(FER, cpr, tp, wspd700, cape, sr).'
-            )
-            TP = compute_accumulated_field(tp1, tp2, tp3) * 1000
-            CP = compute_accumulated_field(cp1, cp2, cp3) * 1000
-            U700 = compute_weighted_average_field(u1, u2, u3)
-            V700 = compute_weighted_average_field(v1, v2, v3)
-            WSPD = compute_rms_field(U700, V700)
-            CAPE = compute_weighted_average_field(cape1, cape2, cape3)
-            SR = compute_accumulated_field(sr_start, sr_end) / 86400
+        tp_steps = [GribLoader(path=get_grib_path('tp', step)) for step in steps]
+        cp_steps = [GribLoader(path=get_grib_path('cp', step)) for step in steps]
+        u_steps = [GribLoader(path=get_grib_path('u700', step)) for step in steps]
+        v_steps = [GribLoader(path=get_grib_path('v700', step)) for step in steps]
+        cape_steps = [GribLoader(path=get_grib_path('cape', step)) for step in steps]
+        sr_start, sr_end = [GribLoader(path=get_grib_path('sr', step)) for step in (step_start_sr, step_end_sr,)]
 
-            #Select the nearest grid-point from the rainfall observations
-            yield log.info(
-                'Selecting the nearest grid point to rainfall observations.'
-            )
-            TP_Ob = TP.nearest_gridpoint(obs)
+        #Compute the 6 hourly fields
+        # [TODO] - Should be dynamic
+        yield log.info(
+            'Computing the required parameters '
+            '(FER, cpr, tp, wspd700, cape, sr).'
+        )
+        TP = compute_accumulated_field(*tp_steps) * 1000
+        CP = compute_accumulated_field(*cp_steps) * 1000
+        U700 = compute_weighted_average_field(*u_steps)
+        V700 = compute_weighted_average_field(*v_steps)
+        WSPD = compute_rms_field(U700, V700)
+        CAPE = compute_weighted_average_field(*cape_steps)
+        SR = compute_accumulated_field(sr_start, sr_end) / 86400
 
-            #Select only the values that correspond to TP>=1
-            yield log.info(
-                'Selecting values that correspond to '
-                'tp >= 1 mm/{}h.'.format(Acc)
-            )
-            TP_Ob1 = Geopoints(
-                TP_geopoint
-                for TP_geopoint in TP_Ob
-                if TP_geopoint.value >= 1
-            )
-            if not TP_Ob1:
-                yield log.warn('No values of tp >= 1 mm/{}h.'.format(Acc))
-                continue
+        #Select the nearest grid-point from the rainfall observations
+        yield log.info(
+            'Selecting the nearest grid point to rainfall observations.'
+        )
+        TP_Ob = TP.nearest_gridpoint(obs)  # Geopoints(list) instance
 
-            CP_Ob = CP.nearest_gridpoint(obs)
-            WSPD_Ob = WSPD.nearest_gridpoint(obs)
-            CAPE_Ob = CAPE.nearest_gridpoint(obs)
-            SR_Ob = SR.nearest_gridpoint(obs)
+        #Select only the values that correspond to TP>=1
+        yield log.info(
+            'Selecting values that correspond to '
+            'tp >= 1 mm/{}h.'.format(Acc)
+        )
+        TP_Ob1 = Geopoints(
+            TP_geopoint
+            for TP_geopoint in TP_Ob
+            if TP_geopoint.value >= 1
+        )
+        if not TP_Ob1:
+            yield log.warn('No values of tp >= 1 mm/{}h.'.format(Acc))
+            continue
 
-            yield log.success('Write data to: {}'.format(PathOUT))
-            CP_Ob1 = Geopoints(
-                CP_geopoint
-                for CP_geopoint, TP_geopoint in zip(CP_Ob, TP_Ob)
-                if TP_geopoint.value >= 1
-            )
+        yield log.success('Write data to: {}'.format(PathOUT))
 
-            WSPD_Ob1 = Geopoints(
-                WSPD_geopoint
-                for WSPD_geopoint, TP_geopoint in zip(WSPD_Ob, TP_Ob)
-                if TP_geopoint.value >= 1
-            )
+        CP_Ob = CP.nearest_gridpoint(obs)
+        WSPD_Ob = WSPD.nearest_gridpoint(obs)
+        CAPE_Ob = CAPE.nearest_gridpoint(obs)
+        SR_Ob = SR.nearest_gridpoint(obs)
 
-            CAPE_Ob1 = Geopoints(
-                CAPE_geopoint
-                for CAPE_geopoint, TP_geopoint in zip(CAPE_Ob, TP_Ob)
-                if TP_geopoint.value >= 1
-            )
+        CP_Ob1 = Geopoints(
+            CP_geopoint
+            for CP_geopoint, TP_geopoint in zip(CP_Ob, TP_Ob)
+            if TP_geopoint.value >= 1
+        )
 
-            SR_Ob1 = Geopoints(
-                SR_geopoint
-                for SR_geopoint, TP_geopoint in zip(SR_Ob, TP_Ob)
-                if TP_geopoint.value >= 1
-            )
+        WSPD_Ob1 = Geopoints(
+            WSPD_geopoint
+            for WSPD_geopoint, TP_geopoint in zip(WSPD_Ob, TP_Ob)
+            if TP_geopoint.value >= 1
+        )
 
-            # Compute other parameters
-            obs1 = Geopoints(
-                obs_geopoint
-                for obs_geopoint, TP_geopoint in zip(obs.geopoints, TP_Ob)
-                if TP_geopoint.value >= 1
-            )
-            latObs_1 = obs1.latitudes
-            lonObs_1 = obs1.longitudes
-            CPr = CP_Ob1 / TP_Ob1
-            FER = (obs1 - TP_Ob1) / TP_Ob1
+        CAPE_Ob1 = Geopoints(
+            CAPE_geopoint
+            for CAPE_geopoint, TP_geopoint in zip(CAPE_Ob, TP_Ob)
+            if TP_geopoint.value >= 1
+        )
 
-            #Saving the output file in ascii format
-            vals_TP = TP_Ob1.values
-            vals_CP = CP_Ob1.values
-            vals_OB = obs1.values
-            vals_FER = FER.values
-            vals_CPr = CPr.values
-            vals_WSPD = WSPD_Ob1.values
-            vals_CAPE = CAPE_Ob1.values
-            vals_SR = SR_Ob1.values
+        SR_Ob1 = Geopoints(
+            SR_geopoint
+            for SR_geopoint, TP_geopoint in zip(SR_Ob, TP_Ob)
+            if TP_geopoint.value >= 1
+        )
 
-            n = len(vals_FER)
-            obsUSED += n
-            for i in range(n):
-                data = map(str, [DateVF, HourVF, vals_OB[i], latObs_1[i], lonObs_1[i], vals_FER[i], vals_CPr[i], vals_TP[i], vals_WSPD[i], vals_CAPE[i], vals_SR[i], 'NaN'])
-                Output_file.write('\t'.join(data) + '\n')
+        # Compute other parameters
+        obs1 = Geopoints(
+            obs_geopoint
+            for obs_geopoint, TP_geopoint in zip(obs.geopoints, TP_Ob)
+            if TP_geopoint.value >= 1
+        )
 
-        #24 hourly Accumulation
-        elif Acc == 24:
-            steps = [leadstart + step for step in generate_steps(Acc)]
+        latObs_1 = obs1.latitudes
+        lonObs_1 = obs1.longitudes
+        CPr = CP_Ob1 / TP_Ob1
+        FER = (obs1 - TP_Ob1) / TP_Ob1
 
-            # Defining the parameters for the rainfall observations
-            validDateF = (
-                    datetime.combine(curr_date, datetime.min.time()) +
-                    timedelta(hours=curr_time) +
-                    timedelta(hours=steps[-1])
-            )
-            DateVF = validDateF.strftime('%Y%m%d')
-            HourVF = validDateF.strftime('%H')
-            yield log.info('RAINFALL OBS PARAMETERS')
-            yield log.info(
-                'Validity date/time (end of {} hourly '
-                'period) = {}'.format(Acc, validDateF)
-            )
+        # Compute the Local Solar Time
+        # Select values at the right of the Greenwich Meridian
+        temp_lonPos = lonObs_1 * (lonObs_1 >= 0)
+        # Compute the time difference between the local place and the Greenwich Meridian
+        lstPos = HourVF_num + (temp_lonPos/15.0)
+        # Put back to zero the values that are not part of the subset (lonObs_1 >= 0)
+        lstPos = lstPos * (temp_lonPos != 0)
+        # Adjust the times that appear bigger than 24 (the time relates to the following day)
+        temp_lstPosMore24 = (lstPos * (lstPos >= 24)) - 24
+        temp_lstPosMore24 = temp_lstPosMore24 * (temp_lstPosMore24 > 0)
+        # Restore the dataset
+        tempPos = lstPos * (lstPos < 24) + temp_lstPosMore24
+        # Select values at the left of the Greenwich Meridian
+        temp_lonNeg = lonObs_1 * (lonObs_1 < 0)
+        # Compute the time difference between the local place and the Greenwich Meridian
+        lstNeg = HourVF_num - abs((temp_lonNeg/15.0))
+        # Put back to zero the values that are not part of the subset (lonObs_1 < 0)
+        lstNeg = lstNeg * (temp_lonNeg != 0)
+        # Adjust the times that appear smaller than 24 (the time relates to the previous day)
+        temp_lstNegLess0 = lstNeg * (lstNeg < 0) + 24
+        temp_lstNegLess0 = temp_lstNegLess0 * (temp_lstNegLess0 != 24)
+        # Restore the dataset
+        tempNeg = lstNeg * (lstNeg >0) + temp_lstNegLess0
+        # Combine both subsets
+        vals_LST = tempPos + tempNeg  #[XXX] Review this line
 
-            #Looking for no repetions in the computed dates and times
-            if validDateF in counterValidTimes:
-                yield log.warn('Valid Date and Time already computed.')
-                continue
-            counterValidTimes.add(validDateF)
-            dirOBS = os.path.join(PathOBS, AccSTR, DateVF)
-            fileOBS = 'tp_{:02d}_{}_{}.geo'.format(Acc, DateVF, HourVF)
+        #Saving the outpudt file in ascii format
+        vals_TP = TP_Ob1.values
+        vals_CP = CP_Ob1.values
+        vals_OB = obs1.values
+        vals_FER = FER.values
+        vals_CPr = CPr.values
+        vals_WSPD = WSPD_Ob1.values
+        vals_CAPE = CAPE_Ob1.values
+        vals_SR = SR_Ob1.values
 
-            obs_path = os.path.join(dirOBS, fileOBS)
-            if not os.path.exists(obs_path):
-                yield log.warn('File not found in DB: {}.'.format(obs_path))
-                continue
-
-            #Reading Rainfall Observations
-            yield log.info('Read rainfall observation: '.format(obs_path))
-            obs=GeopointsLoader(path=obs_path)
-            nOBS = len(obs.values)
-
-            if nOBS == 1:
-                # which will account for the cases of zero obeservation in the geopoint file (because the length of the vector will be forced to 1),
-                # or cases in which there is only one observation in the geopoint file
-                yield log.warn('No rainfall observations: {}.'.format(fileOBS))
-                continue
-
-            obsTOT += nOBS
-
-            if steps[-1] <= 24:
-                step_start_sr, step_end_sr = 1, 25
-            else:
-                step_start_sr, step_end_sr = steps[-1] - 24, steps[-1]
-
-            yield log.info('Read forecast data')
-            tp1, tp2, tp3, tp4, tp5 = [GribLoader(path=get_grib_path('tp', step)) for step in steps]
-            cp1, cp2, cp3, cp4, cp5 = [GribLoader(path=get_grib_path('cp', step)) for step in steps]
-            u1, u2, u3, u4, u5 = [GribLoader(path=get_grib_path('u700', step)) for step in steps]
-            v1, v2, v3, v4, v5 = [GribLoader(path=get_grib_path('v700', step)) for step in steps]
-            cape1, cape2, cape3, cape4, cape5 = [GribLoader(path=get_grib_path('cape', step)) for step in steps]
-            sr_start, sr_end = [GribLoader(path=get_grib_path('sr', step)) for step in (step_start_sr, step_end_sr,)]
-
-            #Compute the 24 hourly fields
-            # [TODO] - Should be dynamic
-            yield log.info(
-                'Computing the required parameters '
-                '(FER, cpr, tp, wspd700, cape, sr).'
-            )
-            TP = compute_accumulated_field(tp1, tp2, tp3, tp4, tp5) * 1000
-            CP = compute_accumulated_field(cp1, cp2, cp3, cp4, cp5) * 1000
-            U700 = compute_weighted_average_field(u1, u2, u3, u4, u5)
-            V700 = compute_weighted_average_field(v1, v2, v3, v4, v5)
-            WSPD = compute_rms_field(U700, V700)
-            CAPE = compute_weighted_average_field(cape1, cape2, cape3, cape4, cape5)
-            SR = compute_accumulated_field(sr_start, sr_end) / 86400
-
-            #Select the nearest grid-point from the rainfall observations
-            yield log.info(
-                'Selecting the nearest grid point to rainfall observations.'
-            )
-            TP_Ob = TP.nearest_gridpoint(obs)
-
-            #Select only the values that correspond to TP>=1
-            yield log.info(
-                'Selecting values that correspond to '
-                'tp >= 1 mm/{}h.'.format(Acc)
-            )
-            TP_Ob1 = Geopoints(
-                TP_geopoint
-                for TP_geopoint in TP_Ob
-                if TP_geopoint.value >= 1
-            )
-            if not TP_Ob1:
-                yield log.warn('No values of tp >= 1 mm/{}h.'.format(Acc))
-                continue
-
-            CP_Ob = CP.nearest_gridpoint(obs)
-            WSPD_Ob = WSPD.nearest_gridpoint(obs)
-            CAPE_Ob = CAPE.nearest_gridpoint(obs)
-            SR_Ob = SR.nearest_gridpoint(obs)
-
-            yield log.success('Write data to: {}'.format(PathOUT))
-            CP_Ob1 = Geopoints(
-                CP_geopoint
-                for CP_geopoint, TP_geopoint in zip(CP_Ob, TP_Ob)
-                if TP_geopoint.value >= 1
-            )
-
-            WSPD_Ob1 = Geopoints(
-                WSPD_geopoint
-                for WSPD_geopoint, TP_geopoint in zip(WSPD_Ob, TP_Ob)
-                if TP_geopoint.value >= 1
-            )
-
-            CAPE_Ob1 = Geopoints(
-                CAPE_geopoint
-                for CAPE_geopoint, TP_geopoint in zip(CAPE_Ob, TP_Ob)
-                if TP_geopoint.value >= 1
-            )
-
-            SR_Ob1 = Geopoints(
-                SR_geopoint
-                for SR_geopoint, TP_geopoint in zip(SR_Ob, TP_Ob)
-                if TP_geopoint.value >= 1
-            )
-
-            # Compute other parameters
-            obs1 = Geopoints(
-                obs_geopoint
-                for obs_geopoint, TP_geopoint in zip(obs.geopoints, TP_Ob)
-                if TP_geopoint.value >= 1
-            )
-            latObs_1 = obs1.latitudes
-            lonObs_1 = obs1.longitudes
-            CPr = CP_Ob1 / TP_Ob1
-            FER = (obs1 - TP_Ob1) / TP_Ob1
-
-            #Saving the output file in ascii format
-            vals_TP = TP_Ob1.values
-            vals_CP = CP_Ob1.values
-            vals_OB = obs1.values
-            vals_FER = FER.values
-            vals_CPr = CPr.values
-            vals_WSPD = WSPD_Ob1.values
-            vals_CAPE = CAPE_Ob1.values
-            vals_SR = SR_Ob1.values
-
-            n = len(vals_FER)
-            obsUSED += n
-            for i in range(n):
-                data = map(str, [DateVF, HourVF, vals_OB[i], latObs_1[i], lonObs_1[i], vals_FER[i], vals_CPr[i], vals_TP[i], vals_WSPD[i], vals_CAPE[i], vals_SR[i], 'NaN'])
-                Output_file.write('\t'.join(data) + '\n')
+        n = len(vals_FER)
+        obsUSED = obsUSED + n
+        for i in range(n):
+            data = map(str, [DateVF, HourVF, vals_OB[i], latObs_1[i], lonObs_1[i], vals_FER[i], vals_CPr[i], vals_TP[i], vals_WSPD[i], vals_CAPE[i], vals_SR[i], vals_LST[i]])
+            Output_file.write('\t'.join(data) + '\n')
 
         yield log.info('\n' + '*'*80)
 
