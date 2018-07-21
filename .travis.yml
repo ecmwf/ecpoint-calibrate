@@ -7,11 +7,11 @@ cache:
     - $HOME/.cache/pip
 
 install:
-  - pip install . 
+  - pip install . -vv
   - pip install -r test-requirements.txt
 
 script:
-  - py.test tests
+  - py.test
 
 after_success:
   - codecov
