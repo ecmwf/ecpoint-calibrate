@@ -1,7 +1,13 @@
 from datetime import date
 from functools import partial
 
-from core.computations.utils import iter_daterange, adjust_leadstart
+from core.computations.utils import (
+    iter_daterange,
+    adjust_leadstart,
+    generate_steps,
+    compute_accumulated_field,
+    compute_weighted_average_field,
+)
 
 
 def test_generate_leadstart():
@@ -237,3 +243,20 @@ def test_adjust_leadstart_4_model_runs_per_day():
     assert new_date == date(2018, 06, 03)
     assert new_hour == 12
     assert new_leadstart == 3
+
+
+def test_generate_steps():
+    assert generate_steps(6) == (0, 6)
+    assert generate_steps(12) == (0, 6, 12)
+    assert generate_steps(24) == (0, 6, 12, 18, 24)
+
+
+def test_compute_accumulated_field():
+    assert compute_accumulated_field(1, 2, 3, 4, 5) == 4
+
+
+def test_compute_weighted_average_field():
+    assert compute_weighted_average_field(2, 4) == 3
+    assert compute_weighted_average_field(2, 4, 6) == 4
+    assert compute_weighted_average_field(2, 4, 4, 6) == 4
+    assert compute_weighted_average_field(2, 4, 8, 4, 6) == 5

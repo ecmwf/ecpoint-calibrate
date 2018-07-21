@@ -6,7 +6,15 @@ from datetime import datetime, timedelta
 
 from core.loaders.GeopointsLoader import GeopointsLoader, Geopoints
 from core.loaders.GribLoader import GribLoader
-from .utils import iter_daterange, adjust_leadstart, log
+from .utils import (
+    iter_daterange,
+    adjust_leadstart,
+    generate_steps,
+    compute_accumulated_field,
+    compute_weighted_average_field,
+    compute_rms_field,
+    log,
+)
 
 
 def run(parameters):
@@ -82,6 +90,13 @@ def run(parameters):
             )
             continue
 
+        def get_grib_path(predictant, step):
+            return os.path.join(
+                PathFC, predictant, thedateNEWSTR + thetimeNEWSTR,
+                '_'.join([predictant, thedateNEWSTR, thetimeNEWSTR,
+                          '{:02d}'.format(step)]) + '.grib'
+            )
+
         #Note about the computation of the sr.
         #The solar radiation is a cumulative variable and its units is J/m2 (which means, W*s/m2).
         #One wants the 24h. The 24h mean is obtained by taking the difference between the beginning and the end of the 24 hourly period
@@ -89,17 +104,16 @@ def run(parameters):
 
         #6 hourly Accumulation
         if Acc == 6:
-            #Steps
-            step1 = leadstart
-            step2 = leadstart + Acc
-
-            step1STR = "{:02d}".format(step1)
-            step2STR = "{:02d}".format(step2)
+            steps = [leadstart + step for step in generate_steps(Acc)]
 
             # Defining the parameters for the rainfall observations
-            validDateF = datetime.combine(curr_date, datetime.min.time()) + timedelta(hours=curr_time) + timedelta(hours=step2)
-            DateVF = validDateF.strftime("%Y%m%d")
-            HourVF = validDateF.strftime("%H")
+            validDateF = (
+                    datetime.combine(curr_date, datetime.min.time()) +
+                    timedelta(hours=curr_time) +
+                    timedelta(hours=steps[-1])
+            )
+            DateVF = validDateF.strftime('%Y%m%d')
+            HourVF = validDateF.strftime('%H')
             HourVF_num = validDateF.hour
             yield log.info('RAINFALL OBS PARAMETERS')
             yield log.info(
@@ -140,29 +154,14 @@ def run(parameters):
                 step1sr = step2 - 24
                 step2sr = step2
 
-            step1srSTR = "%02d" % step1sr
-            step2srSTR = "%02d" % step2sr
-
-            #Reading forecasts
             yield log.info('Read forecast data')
 
-            tp1 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
-            tp2 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step2STR]) + '.grib'))
-
-            cp1 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
-            cp2 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step2STR]) + '.grib'))
-
-            u1 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
-            u2 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step2STR]) + '.grib'))
-
-            v1 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
-            v2 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step2STR]) + '.grib'))
-
-            cape1 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
-            cape2 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step2STR]) + '.grib'))
-
-            sr1 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step1srSTR]) + '.grib'))
-            sr2 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step2srSTR]) + '.grib'))
+            tp1, tp2 = [GribLoader(path=get_grib_path('tp', step)) for step in steps]
+            cp1, cp2 = [GribLoader(path=get_grib_path('cp', step)) for step in steps]
+            u1, u2 = [GribLoader(path=get_grib_path('u700', step)) for step in steps]
+            v1, v2 = [GribLoader(path=get_grib_path('v700', step)) for step in steps]
+            cape1, cape2 = [GribLoader(path=get_grib_path('cape', step)) for step in steps]
+            sr1, sr2 = [GribLoader(path=get_grib_path('sr', step)) for step in steps]
 
             #Compute the 6 hourly fields
             # [TODO] - Should be dynamic
@@ -170,13 +169,13 @@ def run(parameters):
                 'Computing the required parameters '
                 '(FER, cpr, tp, wspd700, cape, sr).'
             )
-            TP = (tp2 - tp1) * 1000
-            CP = (cp2 - cp1) * 1000
-            U700 = (u1 + u2) / 2
-            V700 = (v1 + v2) / 2
-            WSPD = GribLoader.rms(U700, V700)
-            CAPE = (cape1 + cape2) / 2
-            SR = (sr2 - sr1) / 86400
+            TP = compute_accumulated_field(tp1, tp2) * 1000
+            CP = compute_accumulated_field(cp1, cp2) * 1000
+            U700 = compute_weighted_average_field(u1, u2)
+            V700 = compute_weighted_average_field(v1, v2)
+            WSPD = compute_rms_field(U700, V700)
+            CAPE = compute_weighted_average_field(cape1, cape2)
+            SR = compute_accumulated_field(sr1) / 86400
 
             #Select the nearest grid-point from the rainfall observations
             yield log.info(
@@ -285,19 +284,20 @@ def run(parameters):
 
         #12 hourly Accumulation
         elif Acc == 12:
-            #Steps
+            steps = [leadstart + step for step in generate_steps(Acc)]
+
             step1 = leadstart
             step2 = leadstart + (Acc/2)
             step3 = leadstart + Acc
 
-            step1STR = "{:02d}".format(step1)
-            step2STR = "{:02d}".format(step2)
-            step3STR = "{:02d}".format(step3)
-
-            #Defining the parameters for the rainfall observations
-            validDateF = datetime.combine(curr_date, datetime.min.time()) + timedelta(hours=curr_time) + timedelta(hours=step3)
-            DateVF = validDateF.strftime("%Y%m%d")
-            HourVF = validDateF.strftime("%H")
+            # Defining the parameters for the rainfall observations
+            validDateF = (
+                datetime.combine(curr_date, datetime.min.time()) +
+                timedelta(hours=curr_time) +
+                timedelta(hours=steps[-1])
+            )
+            DateVF = validDateF.strftime('%Y%m%d')
+            HourVF = validDateF.strftime('%H')
             yield log.info('RAINFALL OBS PARAMETERS')
             yield log.info(
                 'Validity date/time (end of {} hourly '
@@ -337,31 +337,14 @@ def run(parameters):
                 step1sr = step3 - 24
                 step3sr = step3
 
-            step1srSTR = '%02d' % step1sr
-            step3srSTR = '%02d' % step3sr
-
             #Reading forecasts
             yield log.info('Read forecast data')
-            tp1 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
-            tp3 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step3STR]) + '.grib'))
-
-            cp1 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
-            cp3 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step3STR]) + '.grib'))
-
-            u1 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
-            u2 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step2STR]) + '.grib'))
-            u3 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step3STR]) + '.grib'))
-
-            v1 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
-            v2 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step2STR]) + '.grib'))
-            v3 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step3STR]) + '.grib'))
-
-            cape1 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
-            cape2 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step2STR]) + '.grib'))
-            cape3 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step3STR]) + '.grib'))
-
-            sr1 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step1srSTR]) + '.grib'))
-            sr3 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step3srSTR]) + '.grib'))
+            tp1, tp2, tp3 = [GribLoader(path=get_grib_path('tp', step)) for step in steps]
+            cp1, cp2, cp3 = [GribLoader(path=get_grib_path('cp', step)) for step in steps]
+            u1, u2, u3 = [GribLoader(path=get_grib_path('u700', step)) for step in steps]
+            v1, v2, v3 = [GribLoader(path=get_grib_path('v700', step)) for step in steps]
+            cape1, cape2, cape3 = [GribLoader(path=get_grib_path('cape', step)) for step in steps]
+            sr1, sr2, sr3 = [GribLoader(path=get_grib_path('sr', step)) for step in steps]
 
             #Compute the 12 hourly fields
             # [TODO] - Should be dynamic
@@ -369,14 +352,13 @@ def run(parameters):
                 'Computing the required parameters '
                 '(FER, cpr, tp, wspd700, cape, sr).'
             )
-            TP = (tp3 - tp1) * 1000
-            CP = (cp3 - cp1) * 1000
-            U700 = ((u1 * 0.5) + u2 + (u3 * 0.5)) * 0.5
-            V700 = ((v1 * 0.5) + v2 + (v3 * 0.5)) * 0.5
-
-            WSPD = GribLoader.rms(U700, V700)
-            CAPE = ((cape1 * 0.5) + cape2 + (cape3*0.5)) * 0.5
-            SR = (sr3 - sr1) / 86400
+            TP = compute_accumulated_field(tp1, tp2, tp3) * 1000
+            CP = compute_accumulated_field(cp1, cp2, cp3) * 1000
+            U700 = compute_weighted_average_field(u1, u2, u3)
+            V700 = compute_weighted_average_field(v1, v2, v3)
+            WSPD = compute_rms_field(U700, V700)
+            CAPE = compute_weighted_average_field(cape1, cape2, cape3)
+            SR = compute_accumulated_field(sr1, sr3) / 86400
 
             #Select the nearest grid-point from the rainfall observations
             yield log.info(
@@ -457,23 +439,16 @@ def run(parameters):
 
         #24 hourly Accumulation
         elif Acc == 24:
-            #Steps
-            step1 = leadstart
-            step2 = leadstart + (Acc/4)
-            step3 = leadstart + (Acc/2)
-            step4 = leadstart + (3*Acc/4)
-            step5 = leadstart + Acc
+            steps = [leadstart + step for step in generate_steps(Acc)]
 
-            step1STR = "{:02d}".format(step1)
-            step2STR = "{:02d}".format(step2)
-            step3STR = "{:02d}".format(step3)
-            step4STR = "{:02d}".format(step4)
-            step5STR = "{:02d}".format(step5)
-
-            #Defining the parameters for the rainfall observations
-            validDateF = datetime.combine(curr_date, datetime.min.time()) + timedelta(hours=curr_time) + timedelta(hours=step5)
-            DateVF = validDateF.strftime("%Y%m%d")
-            HourVF = validDateF.strftime("%H")
+            # Defining the parameters for the rainfall observations
+            validDateF = (
+                    datetime.combine(curr_date, datetime.min.time()) +
+                    timedelta(hours=curr_time) +
+                    timedelta(hours=steps[-1])
+            )
+            DateVF = validDateF.strftime('%Y%m%d')
+            HourVF = validDateF.strftime('%H')
             yield log.info('RAINFALL OBS PARAMETERS')
             yield log.info(
                 'Validity date/time (end of {} hourly '
@@ -507,32 +482,12 @@ def run(parameters):
             #Reading Forecasts
             obsTOT += nOBS
             yield log.info('Read forecast data')
-            tp1 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
-            tp5 = GribLoader(path=os.path.join(PathFC, 'tp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['tp', thedateNEWSTR, thetimeNEWSTR, step5STR]) + '.grib'))
-
-            cp1 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
-            cp5 = GribLoader(path=os.path.join(PathFC, 'cp', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cp', thedateNEWSTR, thetimeNEWSTR, step5STR]) + '.grib'))
-
-            u1 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
-            u2 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step2STR]) + '.grib'))
-            u3 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step3STR]) + '.grib'))
-            u4 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step4STR]) + '.grib'))
-            u5 = GribLoader(path=os.path.join(PathFC, 'u700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['u700', thedateNEWSTR, thetimeNEWSTR, step5STR]) + '.grib'))
-
-            v1 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
-            v2 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step2STR]) + '.grib'))
-            v3 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step3STR]) + '.grib'))
-            v4 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step4STR]) + '.grib'))
-            v5 = GribLoader(path=os.path.join(PathFC, 'v700', thedateNEWSTR + thetimeNEWSTR, '_'.join(['v700', thedateNEWSTR, thetimeNEWSTR, step5STR]) + '.grib'))
-
-            cape1 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
-            cape2 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step2STR]) + '.grib'))
-            cape3 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step3STR]) + '.grib'))
-            cape4 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step4STR]) + '.grib'))
-            cape5 = GribLoader(path=os.path.join(PathFC, 'cape', thedateNEWSTR + thetimeNEWSTR, '_'.join(['cape', thedateNEWSTR, thetimeNEWSTR, step5STR]) + '.grib'))
-
-            sr1 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step1STR]) + '.grib'))
-            sr5 = GribLoader(path=os.path.join(PathFC, 'sr', thedateNEWSTR + thetimeNEWSTR, '_'.join(['sr', thedateNEWSTR, thetimeNEWSTR, step5STR]) + '.grib'))
+            tp1, tp2, tp3, tp4, tp5 = [GribLoader(path=get_grib_path('tp', step)) for step in steps]
+            cp1, cp2, cp3, cp4, cp5 = [GribLoader(path=get_grib_path('cp', step)) for step in steps]
+            u1, u2, u3, u4, u5 = [GribLoader(path=get_grib_path('u700', step)) for step in steps]
+            v1, v2, v3, v4, v5 = [GribLoader(path=get_grib_path('v700', step)) for step in steps]
+            cape1, cape2, cape3, cape4, cape5 = [GribLoader(path=get_grib_path('cape', step)) for step in steps]
+            sr1, sr2, sr3, sr4, sr5 = [GribLoader(path=get_grib_path('sr', step)) for step in steps]
 
             #Compute the 24 hourly fields
             # [TODO] - Should be dynamic
@@ -540,13 +495,13 @@ def run(parameters):
                 'Computing the required parameters '
                 '(FER, cpr, tp, wspd700, cape, sr).'
             )
-            TP = (tp5 - tp1) * 1000
-            CP = (cp5 - cp1) * 1000
-            U700 = ((u1*0.5) + u2 + u3 + u4 + (u5*0.5)) / 4
-            V700 = ((v1*0.5) + v2 + v3 + v4 + (v5*0.5)) / 4
-            WSPD = GribLoader.rms(U700, V700)
-            CAPE = ((cape1*0.5) + cape2 + cape3 + cape4 + (cape5*0.5)) / 4
-            SR = (sr5 - sr1) / 86400
+            TP = compute_accumulated_field(tp1, tp2, tp3, tp4, tp5) * 1000
+            CP = compute_accumulated_field(cp1, cp2, cp3, cp4, cp5) * 1000
+            U700 = compute_weighted_average_field(u1, u2, u3, u4, u5)
+            V700 = compute_weighted_average_field(v1, v2, v3, v4, v5)
+            WSPD = compute_rms_field(U700, V700)
+            CAPE = compute_weighted_average_field(cape1, cape2, cape3, cape4, cape5)
+            SR = compute_accumulated_field(sr1, sr2, sr3, sr4, sr5) / 86400
 
             #Select the nearest grid-point from the rainfall observations
             yield log.info(

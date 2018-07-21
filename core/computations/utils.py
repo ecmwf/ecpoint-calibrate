@@ -1,5 +1,7 @@
 from datetime import timedelta, datetime, time
 
+from ..loaders.GribLoader import GribLoader
+
 import attr
 
 
@@ -56,6 +58,32 @@ def adjust_leadstart(date, hour, leadstart, limSU, model_runs_per_day):
         if each + limSU < leadstart <= each + limSU + leadstart_difference:
             timestamp += timedelta(hours=each)
             return timestamp.date(), timestamp.time().hour, leadstart - each
+
+
+def generate_steps(accumulation):
+    return tuple(
+        range(0, accumulation, 6) + [accumulation]
+    )
+
+
+def compute_accumulated_field(*args):
+    return args[-1] - args[0]
+
+
+def compute_weighted_average_field(*args):
+    weighted_sum_of_first_and_last_items = args[0] * 0.5 + args[-1] * 0.5
+    items_excluding_first_and_last = args[1: len(args)-1]
+
+    if items_excluding_first_and_last:
+        total_sum = weighted_sum_of_first_and_last_items + sum(items_excluding_first_and_last)
+        total_weight = len(items_excluding_first_and_last) * 1 + 2 * 0.5
+        return total_sum / total_weight
+    else:
+        return weighted_sum_of_first_and_last_items
+
+
+def compute_rms_field(*args):
+    return GribLoader.rms(*args)
 
 
 class log(object):
