@@ -13,6 +13,7 @@ from .utils import (
     compute_accumulated_field,
     compute_weighted_average_field,
     compute_rms_field,
+    compute_local_solar_time,
     log,
 )
 
@@ -235,32 +236,8 @@ def run(parameters):
         lonObs_1 = obs1.longitudes
         CPr = CP_Ob1 / TP_Ob1
         FER = (obs1 - TP_Ob1) / TP_Ob1
-
-        # Compute the Local Solar Time
-        # Select values at the right of the Greenwich Meridian
-        temp_lonPos = lonObs_1 * (lonObs_1 >= 0)
-        # Compute the time difference between the local place and the Greenwich Meridian
-        lstPos = HourVF_num + (temp_lonPos/15.0)
-        # Put back to zero the values that are not part of the subset (lonObs_1 >= 0)
-        lstPos = lstPos * (temp_lonPos != 0)
-        # Adjust the times that appear bigger than 24 (the time relates to the following day)
-        temp_lstPosMore24 = (lstPos * (lstPos >= 24)) - 24
-        temp_lstPosMore24 = temp_lstPosMore24 * (temp_lstPosMore24 > 0)
-        # Restore the dataset
-        tempPos = lstPos * (lstPos < 24) + temp_lstPosMore24
-        # Select values at the left of the Greenwich Meridian
-        temp_lonNeg = lonObs_1 * (lonObs_1 < 0)
-        # Compute the time difference between the local place and the Greenwich Meridian
-        lstNeg = HourVF_num - abs((temp_lonNeg/15.0))
-        # Put back to zero the values that are not part of the subset (lonObs_1 < 0)
-        lstNeg = lstNeg * (temp_lonNeg != 0)
-        # Adjust the times that appear smaller than 24 (the time relates to the previous day)
-        temp_lstNegLess0 = lstNeg * (lstNeg < 0) + 24
-        temp_lstNegLess0 = temp_lstNegLess0 * (temp_lstNegLess0 != 24)
-        # Restore the dataset
-        tempNeg = lstNeg * (lstNeg >0) + temp_lstNegLess0
-        # Combine both subsets
-        vals_LST = tempPos + tempNeg  #[XXX] Review this line
+        vals_LST = compute_local_solar_time(longitudes=lonObs_1,
+                                            hour=HourVF_num)
 
         #Saving the outpudt file in ascii format
         vals_TP = TP_Ob1.values
