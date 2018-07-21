@@ -147,12 +147,10 @@ def run(parameters):
                 continue
 
             obsTOT += nOBS
-            if step2 <= 24:
-                step1sr = 0
-                step2sr = 24
+            if steps[-1] <= 24:
+                step_start_sr, step_end_sr = 1, 25
             else:
-                step1sr = step2 - 24
-                step2sr = step2
+                step_start_sr, step_end_sr = steps[-1] - 24, steps[-1]
 
             yield log.info('Read forecast data')
 
@@ -161,7 +159,7 @@ def run(parameters):
             u1, u2 = [GribLoader(path=get_grib_path('u700', step)) for step in steps]
             v1, v2 = [GribLoader(path=get_grib_path('v700', step)) for step in steps]
             cape1, cape2 = [GribLoader(path=get_grib_path('cape', step)) for step in steps]
-            sr1, sr2 = [GribLoader(path=get_grib_path('sr', step)) for step in steps]
+            sr_start, sr_end = [GribLoader(path=get_grib_path('sr', step)) for step in (step_start_sr, step_end_sr,)]
 
             #Compute the 6 hourly fields
             # [TODO] - Should be dynamic
@@ -175,7 +173,7 @@ def run(parameters):
             V700 = compute_weighted_average_field(v1, v2)
             WSPD = compute_rms_field(U700, V700)
             CAPE = compute_weighted_average_field(cape1, cape2)
-            SR = compute_accumulated_field(sr1) / 86400
+            SR = compute_accumulated_field(sr_start, sr_end) / 86400
 
             #Select the nearest grid-point from the rainfall observations
             yield log.info(
@@ -286,10 +284,6 @@ def run(parameters):
         elif Acc == 12:
             steps = [leadstart + step for step in generate_steps(Acc)]
 
-            step1 = leadstart
-            step2 = leadstart + (Acc/2)
-            step3 = leadstart + Acc
-
             # Defining the parameters for the rainfall observations
             validDateF = (
                 datetime.combine(curr_date, datetime.min.time()) +
@@ -330,12 +324,10 @@ def run(parameters):
                 continue
 
             obsTOT = obsTOT + nOBS
-            if step3 <= 24:
-                step1sr = 1
-                step3sr = 25  # [XXX]
+            if steps[-1] <= 24:
+                step_start_sr, step_end_sr = 1, 25
             else:
-                step1sr = step3 - 24
-                step3sr = step3
+                step_start_sr, step_end_sr = steps[-1] - 24, steps[-1]
 
             #Reading forecasts
             yield log.info('Read forecast data')
@@ -344,7 +336,7 @@ def run(parameters):
             u1, u2, u3 = [GribLoader(path=get_grib_path('u700', step)) for step in steps]
             v1, v2, v3 = [GribLoader(path=get_grib_path('v700', step)) for step in steps]
             cape1, cape2, cape3 = [GribLoader(path=get_grib_path('cape', step)) for step in steps]
-            sr1, sr2, sr3 = [GribLoader(path=get_grib_path('sr', step)) for step in steps]
+            sr_start, sr_end = [GribLoader(path=get_grib_path('sr', step)) for step in (step_start_sr, step_end_sr,)]
 
             #Compute the 12 hourly fields
             # [TODO] - Should be dynamic
@@ -358,7 +350,7 @@ def run(parameters):
             V700 = compute_weighted_average_field(v1, v2, v3)
             WSPD = compute_rms_field(U700, V700)
             CAPE = compute_weighted_average_field(cape1, cape2, cape3)
-            SR = compute_accumulated_field(sr1, sr3) / 86400
+            SR = compute_accumulated_field(sr_start, sr_end) / 86400
 
             #Select the nearest grid-point from the rainfall observations
             yield log.info(
@@ -479,15 +471,20 @@ def run(parameters):
                 yield log.warn('No rainfall observations: {}.'.format(fileOBS))
                 continue
 
-            #Reading Forecasts
             obsTOT += nOBS
+
+            if steps[-1] <= 24:
+                step_start_sr, step_end_sr = 1, 25
+            else:
+                step_start_sr, step_end_sr = steps[-1] - 24, steps[-1]
+
             yield log.info('Read forecast data')
             tp1, tp2, tp3, tp4, tp5 = [GribLoader(path=get_grib_path('tp', step)) for step in steps]
             cp1, cp2, cp3, cp4, cp5 = [GribLoader(path=get_grib_path('cp', step)) for step in steps]
             u1, u2, u3, u4, u5 = [GribLoader(path=get_grib_path('u700', step)) for step in steps]
             v1, v2, v3, v4, v5 = [GribLoader(path=get_grib_path('v700', step)) for step in steps]
             cape1, cape2, cape3, cape4, cape5 = [GribLoader(path=get_grib_path('cape', step)) for step in steps]
-            sr1, sr2, sr3, sr4, sr5 = [GribLoader(path=get_grib_path('sr', step)) for step in steps]
+            sr_start, sr_end = [GribLoader(path=get_grib_path('sr', step)) for step in (step_start_sr, step_end_sr,)]
 
             #Compute the 24 hourly fields
             # [TODO] - Should be dynamic
@@ -501,7 +498,7 @@ def run(parameters):
             V700 = compute_weighted_average_field(v1, v2, v3, v4, v5)
             WSPD = compute_rms_field(U700, V700)
             CAPE = compute_weighted_average_field(cape1, cape2, cape3, cape4, cape5)
-            SR = compute_accumulated_field(sr1, sr2, sr3, sr4, sr5) / 86400
+            SR = compute_accumulated_field(sr_start, sr_end) / 86400
 
             #Select the nearest grid-point from the rainfall observations
             yield log.info(
