@@ -139,7 +139,7 @@ def run(parameters):
         obs=GeopointsLoader(path=obs_path)
         nOBS = len(obs.values)
 
-        if nOBS == 1:
+        if nOBS <= 1:
         # which will account for the cases of zero observation in the geopoint file (because the length of the vector will be forced to 1),
         # or cases in which there is only one observation in the geopoint file
             yield log.warn('No rainfall observations: {}.'.format(fileOBS))
