@@ -60,7 +60,7 @@ def run(parameters):
     yield log.info("****************************************************************************************************")
 
     #Counter for the BaseDate and BaseTime to avoid repeating the same forecasts in different cases
-    counterValidTimes = [0]
+    counterValidTimes = set()
     obsTOT = 0
     obsUSED = 0
 
@@ -126,7 +126,7 @@ def run(parameters):
                 yield log.warn('Valid Date and Time already computed.')
                 continue
 
-            counterValidTimes.append(validDateF)
+            counterValidTimes.add(validDateF)
             dirOBS = os.path.join(PathOBS, AccSTR, DateVF)
             fileOBS = 'tp_{:02d}_{}_{}.geo'.format(Acc, DateVF, HourVF)
 
@@ -303,7 +303,7 @@ def run(parameters):
                 yield log.warn('Valid Date and Time already computed.')
                 continue
 
-            counterValidTimes.append(validDateF)
+            counterValidTimes.add(validDateF)
             dirOBS = os.path.join(PathOBS, AccSTR, DateVF)
             fileOBS = 'tp_{:02d}_{}_{}.geo'.format(Acc, DateVF, HourVF)
 
@@ -451,7 +451,7 @@ def run(parameters):
             if validDateF in counterValidTimes:
                 yield log.warn('Valid Date and Time already computed.')
                 continue
-            counterValidTimes.append(validDateF)
+            counterValidTimes.add(validDateF)
             dirOBS = os.path.join(PathOBS, AccSTR, DateVF)
             fileOBS = 'tp_{:02d}_{}_{}.geo'.format(Acc, DateVF, HourVF)
 
