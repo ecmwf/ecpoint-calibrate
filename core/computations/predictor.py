@@ -262,7 +262,7 @@ def run(parameters):
             # Restore the dataset
             tempNeg = lstNeg * (lstNeg >0) + temp_lstNegLess0
             # Combine both subsets
-            vals_LST = numpy.concatenate(tempPos, tempNeg)
+            vals_LST = tempPos + tempNeg  #[XXX] Review this line
 
             #Saving the outpudt file in ascii format
             vals_TP = TP_Ob1.values
