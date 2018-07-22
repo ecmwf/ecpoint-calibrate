@@ -20,7 +20,11 @@ const config = {
 
   resolve: {
     extensions: ['.js', '.jsx'],
+    alias: {
+      '~': resolve(__dirname, 'ui/'),
+    },
   },
+
   target: 'electron-main',
   module: {
     rules: [
