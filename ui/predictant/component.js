@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react'
 
 import SelectPredictant from './SelectPredictant'
 import PredictantErrors from './PredictantErrors'
-import Computations from './Computations'
+import Computations from './computations'
 import Parameters from './parameters'
 import ComputationLogs from './ComputationLogs'
 
