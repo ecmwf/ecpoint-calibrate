@@ -31,7 +31,7 @@ class Database extends Component {
             Browse
           </Button>
         </Item.Description>
-        <Item.Extra>{this.props.predictant.predictantPath}</Item.Extra>
+        <Item.Extra>{this.props.database.predictantPath}</Item.Extra>
       </Item.Content>
     </Item>
   )
@@ -54,7 +54,7 @@ class Database extends Component {
             Browse
           </Button>
         </Item.Description>
-        <Item.Extra>{this.props.predictant.predictorsPath}</Item.Extra>
+        <Item.Extra>{this.props.database.predictorsPath}</Item.Extra>
       </Item.Content>
     </Item>
   )
@@ -72,7 +72,7 @@ class Database extends Component {
               <Radio
                 label='GRIB'
                 value='grib'
-                checked={this.props.predictant.type === 'grib'}
+                checked={this.props.database.type === 'grib'}
                 onChange={() => this.props.onPredictantTypeChange('grib')}
               />
             </Grid.Column>
@@ -80,7 +80,7 @@ class Database extends Component {
               <Radio
                 label='NetCDF'
                 value='netcdf'
-                checked={this.props.predictant.type === 'netcdf'}
+                checked={this.props.database.type === 'netcdf'}
                 onChange={() => this.props.onPredictantTypeChange('netcdf')}
               />
             </Grid.Column>

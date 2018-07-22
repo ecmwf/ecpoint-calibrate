@@ -3,10 +3,9 @@ import { connect } from 'react-redux'
 import ComputationLogs from './component'
 
 const mapStateToProps = state => ({
-  predictant: state.predictant,
+  database: state.database,
   parameters: state.parameters,
-  computations: state.computations,
-  page: state.page.page
+  computations: state.computations
 })
 
 export default connect(

@@ -6,15 +6,15 @@ const defaultState = {
 
 export default (state = defaultState, action) => {
   switch (action.type) {
-    case 'PREDICTANT.SET_TYPE': {
+    case 'DATABASE.SET_PREDICTANT_TYPE': {
       return { ...state, type: action.data }
     }
 
-    case 'PREDICTANT.SET_PREDICTANT_PATH': {
+    case 'DATABASE.SET_PREDICTANT_PATH': {
       return { ...state, predictantPath: action.data.pop() }
     }
 
-    case 'PREDICTANT.SET_PREDICTORS_PATH': {
+    case 'DATABASE.SET_PREDICTORS_PATH': {
       return { ...state, predictorsPath: action.data.pop() }
     }
 

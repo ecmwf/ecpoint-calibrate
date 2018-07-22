@@ -13,10 +13,8 @@ import {
 } from './actions'
 
 const mapStateToProps = state => ({
-  predictant: state.predictant,
-  parameters: state.parameters,
-  computations: state.computations,
-  page: state.page.page
+  database: state.database,
+  computations: state.computations
 })
 
 const mapDispatchToProps = dispatch => ({

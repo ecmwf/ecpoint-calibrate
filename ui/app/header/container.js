@@ -5,8 +5,6 @@ import Header from './component'
 import { setPage } from './actions'
 
 const mapStateToProps = state => ({
-  predictant: state.predictant,
-  parameters: state.parameters,
   page: state.page.page
 })
 

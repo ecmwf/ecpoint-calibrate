@@ -1,12 +1,12 @@
 import { combineReducers } from 'redux'
 
-import predictantReducer from './predictantReducer'
+import databaseReducer from './databaseReducer'
 import parametersReducer from './parametersReducer'
 import pageReducer from './pageReducer'
 import computationsReducer from './computationsReducer'
 
 const reducer = combineReducers({
-  predictant: predictantReducer,
+  database: databaseReducer,
   parameters: parametersReducer,
   computations: computationsReducer,
   page: pageReducer
