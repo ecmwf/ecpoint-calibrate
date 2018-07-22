@@ -16,8 +16,6 @@ export const setPredictorsPath = path => async (dispatch) => {
   if (path_ !== null) {
     await dispatch({type: 'DATABASE.SET_PREDICTORS_PATH', data: path_})
 
-    console.log(path_)
-
     client.post(
       { url: '/predictors', body: {path: path_}, json: true },
       (err, httpResponse, body) => dispatch({type: 'DATABASE.SET_PREDICTOR_CODES', data: body})

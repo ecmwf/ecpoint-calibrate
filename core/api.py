@@ -34,8 +34,6 @@ def stream_computation_logs():
 @app.route('/predictors', methods=('POST',))
 def get_predictors():
     payload = request.get_json()
-    print(payload)
-
     path = payload['path']
 
     codes = [
