@@ -3,7 +3,7 @@ import React, { Component, Fragment } from 'react'
 import SelectPredictant from './SelectPredictant'
 import PredictantErrors from './PredictantErrors'
 import Computations from './Computations'
-import Parameters from './Parameters'
+import Parameters from './parameters'
 import ComputationLogs from './ComputationLogs'
 
 class Predictant extends Component {
