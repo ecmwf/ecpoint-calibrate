@@ -7,13 +7,13 @@ import { setPage } from './actions'
 const mapStateToProps = state => ({
   predictant: state.predictant,
   parameters: state.parameters,
-  page: state.page.page,
+  page: state.page.page
 })
 
 const mapDispatchToProps = dispatch => ({
   onPageChange: page => {
     dispatch(setPage(page))
-  },
+  }
 })
 
 export default connect(

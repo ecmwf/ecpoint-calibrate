@@ -1,6 +1,6 @@
-import React, { Component, Fragment } from 'react'
+import React, { Fragment } from 'react'
 
-import { Icon, Step, Header, Segment, Image } from 'semantic-ui-react'
+import { Icon, Step, Image } from 'semantic-ui-react'
 
 const Menu = props => (
   <Fragment>
@@ -8,9 +8,9 @@ const Menu = props => (
       style={{ paddingLeft: '20px', paddingBottom: '10px', paddingTop: '20px' }}
     >
       <Image
-        src="https://www.ecmwf.int/sites/default/files/ECMWF_Master_Logo_RGB_nostrap.png"
-        size="small"
-        verticalAlign="bottom"
+        src='https://www.ecmwf.int/sites/default/files/ECMWF_Master_Logo_RGB_nostrap.png'
+        size='small'
+        verticalAlign='bottom'
       />
       <span style={{ paddingLeft: '20px' }}>
         European Centre for Medium-Range Weather Forecasts
@@ -19,19 +19,19 @@ const Menu = props => (
 
     <Step.Group widths={3}>
       <Step onClick={() => props.onPageChange(0)}>
-        <Icon name="cloud upload" />
+        <Icon name='cloud upload' />
         <Step.Content>
           <Step.Title>Input Parameters</Step.Title>
         </Step.Content>
       </Step>
       <Step active onClick={() => props.onPageChange(1)}>
-        <Icon name="cogs" />
+        <Icon name='cogs' />
         <Step.Content>
           <Step.Title>Computations</Step.Title>
         </Step.Content>
       </Step>
       <Step onClick={() => props.onPageChange(2)}>
-        <Icon name="chart bar" />
+        <Icon name='chart bar' />
         <Step.Content>
           <Step.Title>Result</Step.Title>
         </Step.Content>

@@ -2,7 +2,6 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { PersistGate } from 'redux-persist/integration/react'
 import { Provider } from 'react-redux'
-import { createStore } from 'redux'
 
 import { store, persistor } from './redux/store'
 import Root from './config/Root'

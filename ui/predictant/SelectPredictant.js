@@ -5,14 +5,8 @@ import {
   Grid,
   Card,
   Button,
-  Checkbox,
-  Icon,
-  Table,
-  Dropdown,
-  Input,
-  Label,
   Radio,
-  Item,
+  Item
 } from 'semantic-ui-react'
 
 const mainProcess = remote.require('./server')
@@ -76,16 +70,16 @@ class SelectPredictant extends Component {
           <Grid columns={2} padded>
             <Grid.Column>
               <Radio
-                label="GRIB"
-                value="grib"
+                label='GRIB'
+                value='grib'
                 checked={this.props.predictant.type === 'grib'}
                 onChange={() => this.props.onPredictantTypeChange('grib')}
               />
             </Grid.Column>
             <Grid.Column>
               <Radio
-                label="NetCDF"
-                value="netcdf"
+                label='NetCDF'
+                value='netcdf'
                 checked={this.props.predictant.type === 'netcdf'}
                 onChange={() => this.props.onPredictantTypeChange('netcdf')}
               />
@@ -96,11 +90,11 @@ class SelectPredictant extends Component {
     </Item>
   )
 
-  render() {
+  render () {
     return (
       <Grid container centered>
         <Grid.Column>
-          <Card fluid color="teal">
+          <Card fluid color='teal'>
             <Card.Header>Select Predictant</Card.Header>
             <Card.Content>
               <Card.Description />

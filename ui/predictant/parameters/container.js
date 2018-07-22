@@ -8,7 +8,7 @@ import {
   setAccField,
   setLimSUField,
   setRangeField,
-  setOutPath,
+  setOutPath
 } from './actions'
 
 const mapStateToProps = state => ({
@@ -16,7 +16,7 @@ const mapStateToProps = state => ({
   parameters: state.parameters,
   computations: state.computations,
   page: state.page.page,
-  logs: state.logs,
+  logs: state.logs
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -30,7 +30,7 @@ const mapDispatchToProps = dispatch => ({
 
   onParametersLimSUFieldChange: value => dispatch(setLimSUField(value)),
 
-  onParametersRangeFieldChange: value => dispatch(setRangeField(value)),
+  onParametersRangeFieldChange: value => dispatch(setRangeField(value))
 })
 
 export default connect(

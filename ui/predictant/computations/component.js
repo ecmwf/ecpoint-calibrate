@@ -1,49 +1,46 @@
-import React, { Component, Fragment } from 'react'
-
-import _ from 'lodash'
+import React, { Component } from 'react'
 
 import {
   Grid,
   Card,
   Button,
-  Checkbox,
   Icon,
   Table,
   Dropdown,
   Input,
   Label,
-  Radio,
+  Radio
 } from 'semantic-ui-react'
 
 const friendOptions = [
   {
     text: 'Accumulated Field',
-    value: 'ACCUMULATED_FIELD',
+    value: 'ACCUMULATED_FIELD'
   },
   {
     text: 'Instantaneous Field',
-    value: 'INSTANTANEOUS_FIELD',
+    value: 'INSTANTANEOUS_FIELD'
   },
   {
     text: 'Maximum Field',
-    value: 'MAXIMUM_FIELD',
+    value: 'MAXIMUM_FIELD'
   },
   {
     text: 'Minimum Field',
-    value: 'MINIMUM_FIELD',
+    value: 'MINIMUM_FIELD'
   },
   {
     text: 'Average Field',
-    value: 'AVERAGE_FIELD',
+    value: 'AVERAGE_FIELD'
   },
   {
     text: 'Weighted Field',
-    value: 'WEIGHTED_FIELD',
+    value: 'WEIGHTED_FIELD'
   },
   {
     text: 'Vector Module',
-    value: 'VECTOR_MODULE',
-  },
+    value: 'VECTOR_MODULE'
+  }
 ]
 
 const predictors = [
@@ -51,11 +48,11 @@ const predictors = [
   { key: 'cp', text: 'cp', value: 'cp' },
   { key: 'cape', text: 'cape', value: 'cape' },
   { key: 'u700', text: 'v700', value: 'v700' },
-  { key: 'sr', text: 'sr', value: 'sr' },
+  { key: 'sr', text: 'sr', value: 'sr' }
 ]
 
 class Computation extends Component {
-  isPositive() {
+  isPositive () {
     if (
       this.props.name &&
       this.props.field &&
@@ -66,13 +63,13 @@ class Computation extends Component {
     }
     return null
   }
-  render() {
+  render () {
     return (
       <Table.Row positive={this.isPositive()}>
         <Table.Cell>
           <Input
             fluid
-            placeholder="Enter computation name"
+            placeholder='Enter computation name'
             value={this.props.name}
             onChange={e =>
               this.props.onNameChange(this.props.index, e.target.value)
@@ -81,7 +78,7 @@ class Computation extends Component {
         </Table.Cell>
         <Table.Cell>
           <Dropdown
-            placeholder="Select field"
+            placeholder='Select field'
             fluid
             selection
             options={friendOptions}
@@ -96,14 +93,14 @@ class Computation extends Component {
             fluid
             multiple
             selection
-            placeholder="Select computation input(s)"
+            placeholder='Select computation input(s)'
             value={this.props.inputs}
             options={predictors.concat(
               this.props.computedVariables
                 .map(v => ({
                   key: v,
                   text: v,
-                  value: v,
+                  value: v
                 }))
                 .filter(v => v.key !== this.props.name)
             )}
@@ -116,8 +113,8 @@ class Computation extends Component {
           <Grid columns={2} padded>
             <Grid.Column>
               <Radio
-                label="Multiply"
-                value="MULTIPLY"
+                label='Multiply'
+                value='MULTIPLY'
                 checked={this.props.scale.op === 'MULTIPLY'}
                 onChange={() =>
                   this.props.setScaleOp(this.props.index, 'MULTIPLY')
@@ -126,8 +123,8 @@ class Computation extends Component {
             </Grid.Column>
             <Grid.Column>
               <Radio
-                label="Divide"
-                value="DIVIDE"
+                label='Divide'
+                value='DIVIDE'
                 checked={this.props.scale.op === 'DIVIDE'}
                 onChange={() =>
                   this.props.setScaleOp(this.props.index, 'DIVIDE')
@@ -149,7 +146,7 @@ class Computation extends Component {
             circular
             onClick={() => this.props.onRemove(this.props.index)}
           >
-            <Icon name="delete" />
+            <Icon name='delete' />
           </Button>
         </Table.Cell>
       </Table.Row>
@@ -158,7 +155,7 @@ class Computation extends Component {
 }
 
 class Computations extends Component {
-  getComputationsTable() {
+  getComputationsTable () {
     return (
       <Table celled definition>
         <Table.Header fullWidth>
@@ -192,16 +189,16 @@ class Computations extends Component {
         <Table.Footer fullWidth>
           <Table.Row>
             <Table.HeaderCell />
-            <Table.HeaderCell colSpan="4">
+            <Table.HeaderCell colSpan='4'>
               <Button
-                floated="right"
+                floated='right'
                 icon
-                labelPosition="left"
+                labelPosition='left'
                 primary
-                size="small"
+                size='small'
                 onClick={() => this.props.addEmptyComputation()}
               >
-                <Icon name="add circle" /> Add row
+                <Icon name='add circle' /> Add row
               </Button>
             </Table.HeaderCell>
           </Table.Row>
@@ -210,11 +207,11 @@ class Computations extends Component {
     )
   }
 
-  render() {
+  render () {
     return (
       <Grid container centered>
         <Grid.Column>
-          <Card fluid color="teal">
+          <Card fluid color='teal'>
             <Card.Header>Computations</Card.Header>
             <Card.Content>
               <Card.Description>
@@ -233,7 +230,7 @@ class Computations extends Component {
             </Card.Content>
             <Card.Content extra>
               <a>
-                <Icon name="cogs" />
+                <Icon name='cogs' />
                 {this.props.computations.length} computation(s).
               </a>
             </Card.Content>

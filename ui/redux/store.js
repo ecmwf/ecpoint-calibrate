@@ -5,7 +5,7 @@ import rootReducer from './reducer'
 
 const persistConfig = {
   key: 'root',
-  storage: storageSession,
+  storage: storageSession
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

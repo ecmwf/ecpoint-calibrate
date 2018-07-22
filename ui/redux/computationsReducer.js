@@ -1,5 +1,3 @@
-import { Set } from 'immutable'
-
 const defaultState = []
 
 export default (state = defaultState, action) => {
@@ -12,8 +10,8 @@ export default (state = defaultState, action) => {
           name: action.name,
           field: action.field,
           inputs: action.inputs,
-          scale: { op: 'MULTIPLY', value: 1 },
-        },
+          scale: { op: 'MULTIPLY', value: 1 }
+        }
       ]
     }
 

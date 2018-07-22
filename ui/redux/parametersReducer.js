@@ -1,12 +1,10 @@
-import { Set } from 'immutable'
-
 const defaultState = {
   date_start: '',
   date_end: '',
   acc: '',
   limSU: '',
   range: '',
-  outPath: '',
+  outPath: ''
 }
 
 export default (state = defaultState, action) => {

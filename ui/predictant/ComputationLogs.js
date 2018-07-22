@@ -1,18 +1,9 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 
 import {
   Grid,
   Segment,
-  Card,
-  Button,
-  Checkbox,
-  Icon,
-  Table,
-  Dropdown,
-  Input,
-  Label,
-  Radio,
-  Item,
+  Button
 } from 'semantic-ui-react'
 
 import client from '../utils/client'
@@ -20,7 +11,7 @@ import client from '../utils/client'
 class ComputationLogs extends Component {
   state = { active: false }
 
-  runComputation() {
+  runComputation () {
     this.setState({ active: true })
     const parameters = {
       date_start: this.props.parameters.date_start,
@@ -30,7 +21,7 @@ class ComputationLogs extends Component {
       leadstart_range: this.props.parameters.range,
       observation_path: this.props.predictant.predictantPath,
       forecast_path: this.props.predictant.predictorsPath,
-      out_path: this.props.parameters.outPath,
+      out_path: this.props.parameters.outPath
     }
 
     client
@@ -53,7 +44,7 @@ class ComputationLogs extends Component {
     return <span>{log.replace('[INFO]', '')}</span>
   }
 
-  render() {
+  render () {
     return (
       <Grid columns={2} centered>
         <Grid.Row>
@@ -69,7 +60,7 @@ class ComputationLogs extends Component {
             {this.props.logs.length > 0 && (
               <Segment inverted>
                 {this.props.logs.map((log, idx) => (
-                  <p key={idx} className="log">
+                  <p key={idx} className='log'>
                     {this.colorizeLog(log)}
                   </p>
                 ))}

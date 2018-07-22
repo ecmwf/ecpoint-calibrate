@@ -1,5 +1,5 @@
 const defaultState = {
-  page: 0,
+  page: 0
 }
 
 export default (state = defaultState, action) => {

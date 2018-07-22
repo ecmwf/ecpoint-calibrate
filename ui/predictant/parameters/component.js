@@ -1,18 +1,11 @@
 import React, { Component } from 'react'
-import { Set } from 'immutable'
 
 import {
   Grid,
   Card,
   Button,
-  Checkbox,
-  Icon,
-  Table,
-  Dropdown,
   Input,
-  Label,
-  Radio,
-  Item,
+  Item
 } from 'semantic-ui-react'
 
 import { remote } from 'electron'
@@ -181,11 +174,11 @@ class Parameters extends Component {
     </Item>
   )
 
-  render() {
+  render () {
     return (
       <Grid container centered>
         <Grid.Column>
-          <Card fluid color="teal">
+          <Card fluid color='teal'>
             <Card.Header>Parameters</Card.Header>
             <Card.Content>
               <Card.Description />

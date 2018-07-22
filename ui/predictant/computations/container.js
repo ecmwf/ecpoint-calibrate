@@ -9,7 +9,7 @@ import {
   updateComputationInputs,
   removeComputation,
   setScaleOp,
-  setScaleValue,
+  setScaleValue
 } from './actions'
 
 const mapStateToProps = state => ({
@@ -17,7 +17,7 @@ const mapStateToProps = state => ({
   parameters: state.parameters,
   computations: state.computations,
   page: state.page.page,
-  logs: state.logs,
+  logs: state.logs
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -35,7 +35,7 @@ const mapDispatchToProps = dispatch => ({
   onComputationRemove: index => dispatch(removeComputation(index)),
 
   setScaleOp: (index, op) => dispatch(setScaleOp(index, op)),
-  setScaleValue: (index, value) => dispatch(setScaleValue(index, value)),
+  setScaleValue: (index, value) => dispatch(setScaleValue(index, value))
 })
 
 export default connect(

@@ -1,13 +1,12 @@
 import React, { Component, Fragment } from 'react'
 
 import SelectPredictant from './SelectPredictant'
-import PredictantErrors from './PredictantErrors'
 import Computations from './computations'
 import Parameters from './parameters'
 import ComputationLogs from './ComputationLogs'
 
 class Predictant extends Component {
-  render() {
+  render () {
     if (this.props.page === 0) {
       return (
         <Fragment>

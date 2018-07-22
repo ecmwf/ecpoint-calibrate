@@ -11,7 +11,7 @@ const reducer = combineReducers({
   parameters: parametersReducer,
   computations: computationsReducer,
   page: pageReducer,
-  logs: logsReducer,
+  logs: logsReducer
 })
 
 export default reducer

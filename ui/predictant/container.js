@@ -6,7 +6,7 @@ import {
   setPredictantType,
   setPredictantPath,
   setPredictorsPath,
-  appendLog,
+  appendLog
 } from './actions'
 
 const mapStateToProps = state => ({
@@ -14,7 +14,7 @@ const mapStateToProps = state => ({
   parameters: state.parameters,
   computations: state.computations,
   page: state.page.page,
-  logs: state.logs,
+  logs: state.logs
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -24,7 +24,7 @@ const mapDispatchToProps = dispatch => ({
 
   onPredictorsPathChange: path => dispatch(setPredictorsPath(path)),
 
-  appendLog: log => dispatch(appendLog(log)),
+  appendLog: log => dispatch(appendLog(log))
 })
 
 export default connect(

@@ -1,7 +1,7 @@
 const defaultState = {
   predictantPath: null,
   predictorsPath: null,
-  type: 'grib',
+  type: 'grib'
 }
 
 export default (state = defaultState, action) => {

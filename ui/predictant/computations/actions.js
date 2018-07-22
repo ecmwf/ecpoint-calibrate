@@ -2,45 +2,45 @@ export const addComputation = (name, field, inputs) => ({
   type: 'COMPUTATIONS.ADD',
   name,
   field,
-  inputs,
+  inputs
 })
 
 export const updateComputationName = (index, name) => ({
   type: 'COMPUTATIONS.UPDATE_NAME',
   index,
-  name,
+  name
 })
 
 export const updateComputationField = (index, field) => ({
   type: 'COMPUTATIONS.UPDATE_FIELD',
   index,
-  field,
+  field
 })
 
 export const updateComputationInputs = (index, inputs) => ({
   type: 'COMPUTATIONS.UPDATE_INPUTS',
   index,
-  inputs,
+  inputs
 })
 
 export const removeComputation = index => ({
   type: 'COMPUTATIONS.REMOVE',
-  index,
+  index
 })
 
 export const setScaleOp = (index, op) => ({
   type: 'COMPUTATIONS.SET_SCALE_OP',
   index,
-  op,
+  op
 })
 
 export const setScaleValue = (index, value) => ({
   type: 'COMPUTATIONS.SET_SCALE_VALUE',
   index,
-  value,
+  value
 })
 
 export const appendLog = log => ({
   type: 'COMPUTATIONS.APPEND_LOG',
-  log,
+  log
 })
