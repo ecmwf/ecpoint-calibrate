@@ -1,7 +1,8 @@
 const defaultState = {
   predictantPath: null,
   predictorsPath: null,
-  type: 'grib'
+  type: 'grib',
+  predictorCodes: []
 }
 
 export default (state = defaultState, action) => {
@@ -11,11 +12,15 @@ export default (state = defaultState, action) => {
     }
 
     case 'DATABASE.SET_PREDICTANT_PATH': {
-      return { ...state, predictantPath: action.data.pop() }
+      return { ...state, predictantPath: action.data }
     }
 
     case 'DATABASE.SET_PREDICTORS_PATH': {
-      return { ...state, predictorsPath: action.data.pop() }
+      return { ...state, predictorsPath: action.data }
+    }
+
+    case 'DATABASE.SET_PREDICTOR_CODES': {
+      return { ...state, predictorCodes: action.data }
     }
 
     default: {

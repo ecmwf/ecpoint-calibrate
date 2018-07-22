@@ -6,7 +6,8 @@ import {
   Card,
   Button,
   Radio,
-  Item
+  Item,
+  Label
 } from 'semantic-ui-react'
 
 const mainProcess = remote.require('./server')
@@ -31,7 +32,9 @@ class Database extends Component {
             Browse
           </Button>
         </Item.Description>
-        <Item.Extra>{this.props.database.predictantPath}</Item.Extra>
+        <Item.Extra>
+          <p>{this.props.database.predictantPath}</p>
+        </Item.Extra>
       </Item.Content>
     </Item>
   )
@@ -54,7 +57,15 @@ class Database extends Component {
             Browse
           </Button>
         </Item.Description>
-        <Item.Extra>{this.props.database.predictorsPath}</Item.Extra>
+        <Item.Extra>
+          <p>{this.props.database.predictorsPath}</p>
+          {
+
+            this.props.database.predictorCodes.map(
+              code => <Label>{code}</Label>
+            )
+          }
+        </Item.Extra>
       </Item.Content>
     </Item>
   )

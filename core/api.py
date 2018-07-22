@@ -1,7 +1,9 @@
 from __future__ import print_function
 
-from flask import Flask, request, Response
+import json
+import os
 
+from flask import Flask, request, Response
 
 from core.computations.predictor import run
 from core.computations.utils import Parameters
@@ -27,6 +29,22 @@ class RPC_API_SERVER(object):
 def stream_computation_logs():
     parameters = Parameters(**request.get_json())
     return Response(run(parameters), mimetype='text/plain')
+
+
+@app.route('/predictors', methods=('POST',))
+def get_predictors():
+    payload = request.get_json()
+    print(payload)
+
+    path = payload['path']
+
+    codes = [
+        name
+        for name in os.listdir(path)
+        if os.path.isdir(os.path.join(path, name)) and not name.startswith('.')
+    ]
+
+    return Response(json.dumps(codes), mimetype='application/json')
 
 
 def main():
