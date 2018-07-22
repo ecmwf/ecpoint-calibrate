@@ -1,8 +1,10 @@
+import operator
 from datetime import timedelta, datetime, time
-
-from ..loaders.GribLoader import GribLoader
+from functools import reduce
 
 import attr
+
+from ..loaders.GribLoader import GribLoader
 
 
 def daterange(start_date, end_date):
@@ -75,7 +77,11 @@ def compute_weighted_average_field(*args):
     items_excluding_first_and_last = args[1: len(args)-1]
 
     if items_excluding_first_and_last:
-        total_sum = weighted_sum_of_first_and_last_items + sum(items_excluding_first_and_last)
+        total_sum = reduce(
+            operator.add,
+            items_excluding_first_and_last,
+            weighted_sum_of_first_and_last_items
+        )
         total_weight = len(items_excluding_first_and_last) * 1 + 2 * 0.5
         return total_sum / total_weight
     else:
