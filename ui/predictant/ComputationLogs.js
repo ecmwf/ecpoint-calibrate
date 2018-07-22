@@ -9,7 +9,14 @@ import {
 import client from '../utils/client'
 
 class ComputationLogs extends Component {
-  state = { active: false }
+  state = { active: false, logs: [] }
+
+  appendLog (log) {
+    const chunk = log.split('[END]').filter(e => e !== '')
+    this.setState((prevState) => ({
+      logs: [...prevState.logs, ...chunk]
+    }))
+  }
 
   runComputation () {
     this.setState({ active: true })
@@ -26,7 +33,7 @@ class ComputationLogs extends Component {
 
     client
       .post({ url: '/computation-logs', body: parameters, json: true })
-      .on('data', chunk => this.props.appendLog(chunk.toString()))
+      .on('data', chunk => this.appendLog(chunk.toString()))
       .on('end', () => this.setState({ active: false }))
   }
 
@@ -57,9 +64,9 @@ class ComputationLogs extends Component {
         </Grid.Row>
         <Grid.Row>
           <Grid.Column>
-            {this.props.logs.length > 0 && (
+            {this.state.logs.length > 0 && (
               <Segment inverted>
-                {this.props.logs.map((log, idx) => (
+                {this.state.logs.map((log, idx) => (
                   <p key={idx} className='log'>
                     {this.colorizeLog(log)}
                   </p>

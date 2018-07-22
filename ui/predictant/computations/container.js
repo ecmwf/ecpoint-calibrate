@@ -16,8 +16,7 @@ const mapStateToProps = state => ({
   predictant: state.predictant,
   parameters: state.parameters,
   computations: state.computations,
-  page: state.page.page,
-  logs: state.logs
+  page: state.page.page
 })
 
 const mapDispatchToProps = dispatch => ({

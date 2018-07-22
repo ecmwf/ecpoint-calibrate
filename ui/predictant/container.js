@@ -5,16 +5,14 @@ import PredictantsComponent from './component'
 import {
   setPredictantType,
   setPredictantPath,
-  setPredictorsPath,
-  appendLog
+  setPredictorsPath
 } from './actions'
 
 const mapStateToProps = state => ({
   predictant: state.predictant,
   parameters: state.parameters,
   computations: state.computations,
-  page: state.page.page,
-  logs: state.logs
+  page: state.page.page
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -22,9 +20,7 @@ const mapDispatchToProps = dispatch => ({
 
   onPredictantPathChange: path => dispatch(setPredictantPath(path)),
 
-  onPredictorsPathChange: path => dispatch(setPredictorsPath(path)),
-
-  appendLog: log => dispatch(appendLog(log))
+  onPredictorsPathChange: path => dispatch(setPredictorsPath(path))
 })
 
 export default connect(
