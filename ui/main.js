@@ -4,7 +4,7 @@ import { PersistGate } from 'redux-persist/integration/react'
 import { Provider } from 'react-redux'
 
 import { store, persistor } from './redux/store'
-import Root from './config/Root'
+import Root from './app/config/Root'
 
 const render = Component => {
   ReactDOM.render(

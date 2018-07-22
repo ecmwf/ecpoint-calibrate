@@ -6,7 +6,7 @@ import {
   Button
 } from 'semantic-ui-react'
 
-import client from '../utils/client'
+import client from '../..//utils/client'
 
 class ComputationLogs extends Component {
   state = { active: false, logs: [] }

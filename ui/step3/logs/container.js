@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 
-import PredictantsComponent from './component'
+import ComputationLogs from './component'
 
 const mapStateToProps = state => ({
   predictant: state.predictant,
@@ -11,4 +11,4 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps
-)(PredictantsComponent)
+)(ComputationLogs)

@@ -1,12 +1,12 @@
 import React, { Fragment } from 'react'
 
-import Predictant from './predictant'
+import Page from './page'
 import Header from './header'
 
 const App = () => (
   <Fragment>
     <Header />
-    <Predictant />
+    <Page />
   </Fragment>
 )
 
