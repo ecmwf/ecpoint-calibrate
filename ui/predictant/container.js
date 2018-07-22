@@ -6,19 +6,6 @@ import {
   setPredictantType,
   setPredictantPath,
   setPredictorsPath,
-  setDateStartField,
-  setDateEndField,
-  setAccField,
-  setLimSUField,
-  setRangeField,
-  setOutPath,
-  addComputation,
-  updateComputationName,
-  updateComputationField,
-  updateComputationInputs,
-  removeComputation,
-  setScaleOp,
-  setScaleValue,
   appendLog,
 } from './actions'
 
@@ -36,34 +23,6 @@ const mapDispatchToProps = dispatch => ({
   onPredictantPathChange: path => dispatch(setPredictantPath(path)),
 
   onPredictorsPathChange: path => dispatch(setPredictorsPath(path)),
-
-  onOutPathChange: path => dispatch(setOutPath(path)),
-
-  onParametersDateStartFieldChange: value => dispatch(setDateStartField(value)),
-
-  onParametersDateEndFieldChange: value => dispatch(setDateEndField(value)),
-
-  onParametersAccFieldChange: value => dispatch(setAccField(value)),
-
-  onParametersLimSUFieldChange: value => dispatch(setLimSUField(value)),
-
-  onParametersRangeFieldChange: value => dispatch(setRangeField(value)),
-
-  onComputationNameChange: (index, name) =>
-    dispatch(updateComputationName(index, name)),
-
-  onComputationFieldChange: (index, field) =>
-    dispatch(updateComputationField(index, field)),
-
-  onComputationInputsChange: (index, inputs) =>
-    dispatch(updateComputationInputs(index, inputs)),
-
-  addEmptyComputation: () => dispatch(addComputation('', '', [])),
-
-  onComputationRemove: index => dispatch(removeComputation(index)),
-
-  setScaleOp: (index, op) => dispatch(setScaleOp(index, op)),
-  setScaleValue: (index, value) => dispatch(setScaleValue(index, value)),
 
   appendLog: log => dispatch(appendLog(log)),
 })
