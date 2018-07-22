@@ -11,7 +11,7 @@ import {
 
 const mainProcess = remote.require('./server')
 
-class SelectPredictant extends Component {
+class Database extends Component {
   getPredictantField = () => (
     <Item>
       <Item.Content>
@@ -111,4 +111,4 @@ class SelectPredictant extends Component {
   }
 }
 
-export default SelectPredictant
+export default Database

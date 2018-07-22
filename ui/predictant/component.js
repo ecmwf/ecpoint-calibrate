@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 
-import SelectPredictant from './SelectPredictant'
+import Database from './database'
 import Computations from './computations'
 import Parameters from './parameters'
 import ComputationLogs from './ComputationLogs'
@@ -10,7 +10,7 @@ class Predictant extends Component {
     if (this.props.page === 0) {
       return (
         <Fragment>
-          <SelectPredictant {...this.props} />
+          <Database {...this.props} />
           <Parameters {...this.props} />
         </Fragment>
       )
