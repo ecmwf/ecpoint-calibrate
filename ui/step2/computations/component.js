@@ -169,12 +169,12 @@ class Computations extends Component {
         </Table.Header>
 
         <Table.Body>
-          {this.props.computations.map(each => (
+          {this.props.fields.map(each => (
             <Computation
               {...each}
               key={each.index}
-              computedVariables={this.props.computations.map(
-                computation => computation.name
+              computedVariables={this.props.fields.map(
+                field => field.name
               )}
               onNameChange={this.props.onComputationNameChange}
               onFieldChange={this.props.onComputationFieldChange}
@@ -231,7 +231,7 @@ class Computations extends Component {
             <Card.Content extra>
               <a>
                 <Icon name='cogs' />
-                {this.props.computations.length} computation(s).
+                {this.props.fields.length} computation(s).
               </a>
             </Card.Content>
           </Card>

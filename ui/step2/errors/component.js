@@ -1,142 +1,66 @@
-import React, { Component } from 'react'
-import { Set } from 'immutable'
+import React, { Component, Fragment } from 'react'
 
-class PredictantErrors extends Component {
-  constructor () {
-    super()
-    this.state = {
-      isFEChecked: false,
-      isFERChecked: false,
-      minValueFER: null,
-      minValueFieldClassNames: Set(['mdl-textfield', 'mdl-js-textfield'])
-    }
-  }
+import {
+  Grid,
+  Card,
+  Checkbox,
+  Input
+} from 'semantic-ui-react'
 
-  setMinValueFieldClassNames (action, value) {
-    if (action === 'focus') {
-      this.setState(state => ({
-        minValueFieldClassNames: state.minValueFieldClassNames.add(
-          'is-focused'
-        )
-      }))
-    } else if (action === 'blur') {
-      this.setState(state => ({
-        minValueFieldClassNames: state.minValueFieldClassNames.remove(
-          'is-focused'
-        )
-      }))
-    }
-
-    if (action === 'change') {
-      if (value) {
-        this.setState(state => ({
-          minValueFER: value,
-          minValueFieldClassNames: state.minValueFieldClassNames.add(
-            'is-dirty'
-          )
-        }))
-
-        if (!/^\s*$/.test(value) && !isNaN(value)) {
-          this.setState(state => ({
-            minValueFieldClassNames: state.minValueFieldClassNames.remove(
-              'is-invalid'
-            )
-          }))
-        } else {
-          this.setState(state => ({
-            minValueFieldClassNames: state.minValueFieldClassNames.add(
-              'is-invalid'
-            )
-          }))
-        }
-      } else {
-        this.setState(state => ({
-          minValueFieldClassNames: state.minValueFieldClassNames
-            .remove('is-dirty')
-            .remove('is-invalid')
-        }))
-      }
-    }
-  }
-
+class Errors extends Component {
   minValueField () {
     return (
-      <div>
-        <div className={this.state.minValueFieldClassNames.join(' ')}>
-          <input
-            className='mdl-textfield__input'
-            type='text'
-            id='sample2'
-            onFocus={() => this.setMinValueFieldClassNames('focus')}
-            onBlur={() => this.setMinValueFieldClassNames('blur')}
+      <Fragment>
+        <Grid.Row>
+          <Input
+            placeholder='Enter number'
+            value={this.props.errors.minValueFER}
             onChange={e =>
-              this.setMinValueFieldClassNames('change', e.target.value)
+              this.props.changeMinValueFER(e.target.value)
             }
           />
-          <label className='mdl-textfield__label' htmlFor='sample2'>
-            Number...
-          </label>
-          <span className='mdl-textfield__error'>Input is not a number!</span>
-        </div>
-        <p>
+        </Grid.Row>
+        <Grid.Row>
           Select a minimum value to consider, so as to not divide by zero. Pay
           attention to the ensure consistency with chosen units.
-        </p>
-      </div>
+        </Grid.Row>
+      </Fragment>
     )
   }
 
   render () {
+    console.log(this.props.errors)
     return (
-      <div className='mdl-grid'>
-        <div className='mdl-layout-spacer' />
-        <div className='mdl-cell mdl-cell--4-col'>
-          <div className='demo-card-square mdl-card mdl-shadow--2dp'>
-            <div className='mdl-card__title mdl-card--expand'>
-              <h2 className='mdl-card__title-text'>Predictant Errors</h2>
-            </div>
-            <div className='mdl-card__supporting-text'>
-              Select error(s) to compute:
-              <label
-                className='mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect'
-                htmlFor='checkbox-FE'
-              >
-                <input
-                  type='checkbox'
-                  id='checkbox-FE'
-                  className='mdl-checkbox__input'
-                  checked={this.state.isFEChecked}
-                  onChange={() =>
-                    this.setState({ isFEChecked: !this.state.isFEChecked })
-                  }
+      <Grid container centered>
+        <Grid.Column>
+          <Card fluid color='teal'>
+            <Card.Header>Predictant Errors</Card.Header>
+            <Card.Content>
+              <Card.Description>
+                Select error(s) to compute:
+              </Card.Description>
+              <br />
+              <Grid.Row>
+                <Checkbox
+                  label='Forecast Error (FE)'
+                  defaultChecked={this.props.errors.isFEChecked ? true : null}
+                  onChange={() => this.props.toggleFE()}
                 />
-                <span className='mdl-checkbox__label'>Forecast Error (FE)</span>
-              </label>
-              <label
-                className='mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect'
-                htmlFor='checkbox-FER'
-              >
-                <input
-                  type='checkbox'
-                  id='checkbox-FER'
-                  className='mdl-checkbox__input'
-                  checked={this.state.isFERChecked}
-                  onChange={() =>
-                    this.setState({ isFERChecked: !this.state.isFERChecked })
-                  }
+              </Grid.Row>
+              <Grid.Row>
+                <Checkbox
+                  label='Forecast Error Ratio (FER)'
+                  defaultChecked={this.props.errors.isFERChecked ? true : null}
+                  onChange={() => this.props.toggleFER()}
                 />
-                <span className='mdl-checkbox__label'>
-                  Forecast Error Ratio (FER)
-                </span>
-              </label>
-              {this.state.isFERChecked ? this.minValueField() : null}
-            </div>
-          </div>
-        </div>
-        <div className='mdl-layout-spacer' />
-      </div>
+                {this.props.errors.isFERChecked && this.minValueField()}
+              </Grid.Row>
+            </Card.Content>
+          </Card>
+        </Grid.Column>
+      </Grid>
     )
   }
 }
 
-export default PredictantErrors
+export default Errors

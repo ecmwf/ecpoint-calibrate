@@ -14,7 +14,7 @@ import {
 
 const mapStateToProps = state => ({
   database: state.database,
-  computations: state.computations
+  fields: state.computations.fields
 })
 
 const mapDispatchToProps = dispatch => ({
