@@ -13,6 +13,7 @@ class Errors extends Component {
       <Fragment>
         <Grid.Row>
           <Input
+            error={this.minValueHasError()}
             placeholder='Enter number'
             value={this.props.errors.minValueFER}
             onChange={e =>
@@ -28,8 +29,13 @@ class Errors extends Component {
     )
   }
 
+  minValueHasError = () =>
+    this.props.errors.minValueFER === '' ||
+    /^\d$/.test(this.props.errors.minValueFER)
+      ? null
+      : true
+
   render () {
-    console.log(this.props.errors)
     return (
       <Grid container centered>
         <Grid.Column>
