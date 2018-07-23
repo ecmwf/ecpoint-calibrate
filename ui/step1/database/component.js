@@ -62,7 +62,7 @@ class Database extends Component {
           {
 
             this.props.database.predictorCodes.map(
-              code => <Label>{code}</Label>
+              code => <Label key={code}>{code}</Label>
             )
           }
         </Item.Extra>

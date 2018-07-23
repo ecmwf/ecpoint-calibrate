@@ -12,7 +12,7 @@ import {
   Radio
 } from 'semantic-ui-react'
 
-const friendOptions = [
+const operations = [
   {
     text: 'Accumulated Field',
     value: 'ACCUMULATED_FIELD'
@@ -43,14 +43,6 @@ const friendOptions = [
   }
 ]
 
-const predictors = [
-  { key: 'tp', text: 'tp', value: 'tp' },
-  { key: 'cp', text: 'cp', value: 'cp' },
-  { key: 'cape', text: 'cape', value: 'cape' },
-  { key: 'u700', text: 'v700', value: 'v700' },
-  { key: 'sr', text: 'sr', value: 'sr' }
-]
-
 class Computation extends Component {
   isPositive () {
     if (
@@ -63,6 +55,16 @@ class Computation extends Component {
     }
     return null
   }
+
+  getPredictors = () =>
+    this.props.predictors
+      .map(e => ({ key: e, text: e, value: e }))
+      .concat(
+        this.props.computedVariables
+          .map(v => ({ key: v, text: v, value: v }))
+          .filter(v => v.key !== this.props.name)
+      )
+
   render () {
     return (
       <Table.Row positive={this.isPositive()}>
@@ -81,7 +83,7 @@ class Computation extends Component {
             placeholder='Select field'
             fluid
             selection
-            options={friendOptions}
+            options={operations}
             value={this.props.field}
             onChange={(e, { value }) =>
               this.props.onFieldChange(this.props.index, value)
@@ -95,15 +97,7 @@ class Computation extends Component {
             selection
             placeholder='Select computation input(s)'
             value={this.props.inputs}
-            options={predictors.concat(
-              this.props.computedVariables
-                .map(v => ({
-                  key: v,
-                  text: v,
-                  value: v
-                }))
-                .filter(v => v.key !== this.props.name)
-            )}
+            options={this.getPredictors()}
             onChange={(e, { value }) =>
               this.props.onInputsChange(this.props.index, value)
             }
@@ -173,15 +167,14 @@ class Computations extends Component {
             <Computation
               {...each}
               key={each.index}
-              computedVariables={this.props.fields.map(
-                field => field.name
-              )}
+              computedVariables={this.props.fields.map(field => field.name)}
               onNameChange={this.props.onComputationNameChange}
               onFieldChange={this.props.onComputationFieldChange}
               onInputsChange={this.props.onComputationInputsChange}
               onRemove={this.props.onComputationRemove}
               setScaleOp={this.props.setScaleOp}
               setScaleValue={this.props.setScaleValue}
+              predictors={this.props.database.predictorCodes}
             />
           ))}
         </Table.Body>
@@ -219,12 +212,7 @@ class Computations extends Component {
                   Available predictors that can be used as inputs to
                   computations:
                 </p>
-                <Label>tp</Label>
-                <Label>cp</Label>
-                <Label>cape</Label>
-                <Label>u700</Label>
-                <Label>v700</Label>
-                <Label>sr</Label>
+                {this.props.database.predictorCodes.map(e => <Label key={e}>{e}</Label>)}
                 {this.getComputationsTable()}
               </Card.Description>
             </Card.Content>
