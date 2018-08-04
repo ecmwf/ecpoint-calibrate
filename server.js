@@ -15,18 +15,15 @@ let pyProc = null
 const getScriptPath = () =>
   path.join(__dirname, PY_FOLDER, `${PY_MODULE}.py`)
 
-const selectPort = () => 4242
-
 const createPyProc = () => {
   const script = getScriptPath()
-  const port = `${selectPort()}`
 
-  pyProc = require('child_process').spawn('python', [script, port], {
+  pyProc = require('child_process').spawn('python', [script], {
     stdio: 'inherit',
   })
 
   if (pyProc != null) {
-    console.log(`child process success on port ${port}`)
+    console.log(`child process success`)
   }
 }
 

@@ -11,20 +11,6 @@ from core.computations.utils import Parameters
 app = Flask(__name__)
 
 
-class RPC_API_SERVER(object):
-    def __init__(self):
-        self.status = 'OFF'
-
-    def echo(self, text):
-        """echo any text"""
-        return text
-
-    def run_computation(self, parameters):
-        parameters = Parameters(**parameters)
-        self.status = 'ON'
-        return run(parameters)
-
-
 @app.route('/computation-logs', methods=('POST',))
 def stream_computation_logs():
     parameters = Parameters(**request.get_json())
@@ -46,7 +32,7 @@ def get_predictors():
 
 
 def main():
-    app.run()
+    app.run(host='0.0.0.0', port='8888')
 
 
 if __name__ == '__main__':
