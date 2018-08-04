@@ -5,10 +5,13 @@ import {
   Card,
   Button,
   Input,
-  Item
+  Item,
+  Icon
 } from 'semantic-ui-react'
 
 import { remote } from 'electron'
+
+import { isEmpty } from './index'
 
 const mainProcess = remote.require('./server')
 
@@ -174,12 +177,35 @@ class Parameters extends Component {
     </Item>
   )
 
+  hasError = () => (
+    this.accHasError() ||
+    this.rangeHasError() ||
+    this.dateStartHasError() ||
+    this.dateEndHasError() ||
+    this.limSUHasError()
+  )
+
+  isComplete = (parameters) => !this.hasError() && !isEmpty(parameters)
+
+  componentDidUpdate = (prevProps) => {
+    if (this.isComplete(this.props.parameters) !== this.isComplete(prevProps.parameters)) {
+      this.props.updatePageCompletion(0, this.isComplete(this.props.parameters))
+    }
+  }
+
   render () {
     return (
       <Grid container centered>
         <Grid.Column>
           <Card fluid color='teal'>
-            <Card.Header>Parameters</Card.Header>
+            <Card.Header>
+              <Grid.Column floated='left'>
+                Parameters
+              </Grid.Column>
+              <Grid.Column floated='right'>
+                {this.isComplete(this.props.parameters) && <Icon name='check circle' />}
+              </Grid.Column>
+            </Card.Header>
             <Card.Content>
               <Card.Description />
               <Item.Group divided>

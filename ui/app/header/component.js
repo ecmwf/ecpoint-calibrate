@@ -18,19 +18,30 @@ const Menu = props => (
     </div>
 
     <Step.Group widths={3}>
-      <Step onClick={() => props.onPageChange(0)}>
+      <Step
+        active={props.page[0].isActive ? true : null}
+        onClick={() => props.onPageChange(0)}
+      >
         <Icon name='cloud upload' />
         <Step.Content>
           <Step.Title>Input Parameters</Step.Title>
         </Step.Content>
       </Step>
-      <Step active onClick={() => props.onPageChange(1)}>
+      <Step
+        active={props.page[1].isActive ? true : null}
+        disabled={props.page[0].isComplete ? null : true}
+        onClick={() => props.onPageChange(1)}
+      >
         <Icon name='cogs' />
         <Step.Content>
           <Step.Title>Computations</Step.Title>
         </Step.Content>
       </Step>
-      <Step onClick={() => props.onPageChange(2)}>
+      <Step
+        active={props.page[2].isActive ? true : null}
+        disabled={props.page[0].isComplete && props.page[1].isComplete ? null : true}
+        onClick={() => props.onPageChange(2)}
+      >
         <Icon name='chart bar' />
         <Step.Content>
           <Step.Title>Result</Step.Title>

@@ -8,7 +8,8 @@ import {
   setAccField,
   setLimSUField,
   setRangeField,
-  setOutPath
+  setOutPath,
+  updatePageCompletion
 } from './actions'
 
 const mapStateToProps = state => ({
@@ -26,7 +27,9 @@ const mapDispatchToProps = dispatch => ({
 
   onParametersLimSUFieldChange: value => dispatch(setLimSUField(value)),
 
-  onParametersRangeFieldChange: value => dispatch(setRangeField(value))
+  onParametersRangeFieldChange: value => dispatch(setRangeField(value)),
+
+  updatePageCompletion: (page, isComplete) => dispatch(updatePageCompletion(page, isComplete))
 })
 
 export default connect(

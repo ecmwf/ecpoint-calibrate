@@ -27,3 +27,9 @@ export const setRangeField = value => ({
   type: 'PARAMETERS.SET_RANGE_FIELD',
   value
 })
+
+export const updatePageCompletion = (page, isComplete) => ({
+  type: 'PAGE.UPDATE_PAGE_COMPLETION',
+  page,
+  isComplete
+})

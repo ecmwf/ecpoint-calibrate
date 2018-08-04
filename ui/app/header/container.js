@@ -5,7 +5,7 @@ import Header from './component'
 import { setPage } from './actions'
 
 const mapStateToProps = state => ({
-  page: state.page.page
+  page: state.page
 })
 
 const mapDispatchToProps = dispatch => ({

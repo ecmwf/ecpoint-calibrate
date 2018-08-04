@@ -7,8 +7,11 @@ import {
   Button,
   Radio,
   Item,
+  Icon,
   Label
 } from 'semantic-ui-react'
+
+import { isEmpty } from './index'
 
 const mainProcess = remote.require('./server')
 
@@ -101,12 +104,21 @@ class Database extends Component {
     </Item>
   )
 
+  isComplete = (database) => !isEmpty(database)
+
   render () {
     return (
       <Grid container centered>
         <Grid.Column>
           <Card fluid color='teal'>
-            <Card.Header>Select Predictant</Card.Header>
+            <Card.Header>
+              <Grid.Column floated='left'>
+                Select Predictant
+              </Grid.Column>
+              <Grid.Column floated='right'>
+                {this.isComplete(this.props.database) && <Icon name='check circle' />}
+              </Grid.Column>
+            </Card.Header>
             <Card.Content>
               <Card.Description />
               <Item.Group divided>
