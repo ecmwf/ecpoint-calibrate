@@ -104,28 +104,26 @@ class Computation extends Component {
           />
         </Table.Cell>
         <Table.Cell>
-          <Grid columns={2} padded>
-            <Grid.Column>
-              <Radio
-                label='Multiply'
-                value='MULTIPLY'
-                checked={this.props.scale.op === 'MULTIPLY'}
-                onChange={() =>
-                  this.props.setScaleOp(this.props.index, 'MULTIPLY')
-                }
-              />
-            </Grid.Column>
-            <Grid.Column>
-              <Radio
-                label='Divide'
-                value='DIVIDE'
-                checked={this.props.scale.op === 'DIVIDE'}
-                onChange={() =>
-                  this.props.setScaleOp(this.props.index, 'DIVIDE')
-                }
-              />
-            </Grid.Column>
-          </Grid>
+          <Grid.Row>
+            <Radio
+              label='Multiply'
+              value='MULTIPLY'
+              checked={this.props.scale.op === 'MULTIPLY'}
+              onChange={() =>
+                this.props.setScaleOp(this.props.index, 'MULTIPLY')
+              }
+            />
+          </Grid.Row>
+          <Grid.Row>
+            <Radio
+              label='Divide'
+              value='DIVIDE'
+              checked={this.props.scale.op === 'DIVIDE'}
+              onChange={() =>
+                this.props.setScaleOp(this.props.index, 'DIVIDE')
+              }
+            />
+          </Grid.Row>
           <Input
             fluid
             value={this.props.scale.value}
