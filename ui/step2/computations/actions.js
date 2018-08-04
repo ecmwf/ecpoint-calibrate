@@ -44,3 +44,8 @@ export const appendLog = log => ({
   type: 'COMPUTATIONS.APPEND_LOG',
   log
 })
+
+export const setComputationReference = index => ({
+  type: 'COMPUTATIONS.SET_REFERENCE',
+  index
+})

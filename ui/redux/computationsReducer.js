@@ -19,7 +19,8 @@ export default (state = defaultState, action) => {
             name: action.name,
             field: action.field,
             inputs: action.inputs,
-            scale: { op: 'MULTIPLY', value: 1 }
+            scale: { op: 'MULTIPLY', value: 1 },
+            isReference: false
           }
         ]
       }
@@ -109,6 +110,18 @@ export default (state = defaultState, action) => {
           ...state.errors,
           minValueFER: action.data
         }
+      }
+
+    case 'COMPUTATIONS.SET_REFERENCE':
+      return {
+        ...state,
+        fields: state.fields.map(item => {
+          if (item.index === action.index) {
+            return { ...item, isReference: true }
+          } else {
+            return { ...item, isReference: false }
+          }
+        })
       }
 
     default: {

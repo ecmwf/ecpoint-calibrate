@@ -132,6 +132,14 @@ class Computation extends Component {
             }
           />
         </Table.Cell>
+        <Table.Cell textAlign='center'>
+          <Radio
+            checked={this.props.isReference === true}
+            onChange={() =>
+              this.props.setReference(this.props.index)
+            }
+          />
+        </Table.Cell>
         <Table.Cell collapsing>
           <Button
             icon
@@ -152,10 +160,11 @@ class Computations extends Component {
       <Table celled definition>
         <Table.Header fullWidth>
           <Table.Row>
-            <Table.HeaderCell>Computation</Table.HeaderCell>
-            <Table.HeaderCell>Operation</Table.HeaderCell>
-            <Table.HeaderCell>Input variable(s)</Table.HeaderCell>
-            <Table.HeaderCell>Scaling factor</Table.HeaderCell>
+            <Table.HeaderCell textAlign='center'>Computation</Table.HeaderCell>
+            <Table.HeaderCell textAlign='center'>Operation</Table.HeaderCell>
+            <Table.HeaderCell textAlign='center'>Input variable(s)</Table.HeaderCell>
+            <Table.HeaderCell textAlign='center'>Scaling factor</Table.HeaderCell>
+            <Table.HeaderCell textAlign='center'>Reference</Table.HeaderCell>
             <Table.HeaderCell />
           </Table.Row>
         </Table.Header>
@@ -173,6 +182,7 @@ class Computations extends Component {
               setScaleOp={this.props.setScaleOp}
               setScaleValue={this.props.setScaleValue}
               predictors={this.props.database.predictorCodes}
+              setReference={this.props.setComputationReference}
             />
           ))}
         </Table.Body>
