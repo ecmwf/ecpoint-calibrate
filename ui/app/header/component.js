@@ -1,6 +1,9 @@
 import React, { Fragment } from 'react'
+import _ from 'lodash'
 
 import { Icon, Step, Image } from 'semantic-ui-react'
+
+const isPageComplete = page => _.every(_.values(page.isComplete))
 
 const Menu = props => (
   <Fragment>
@@ -29,7 +32,7 @@ const Menu = props => (
       </Step>
       <Step
         active={props.page[1].isActive ? true : null}
-        disabled={props.page[0].isComplete ? null : true}
+        disabled={!isPageComplete(props.page[0])}
         onClick={() => props.onPageChange(1)}
       >
         <Icon name='cogs' />
@@ -39,7 +42,7 @@ const Menu = props => (
       </Step>
       <Step
         active={props.page[2].isActive ? true : null}
-        disabled={props.page[0].isComplete && props.page[1].isComplete ? null : true}
+        disabled={!isPageComplete(props.page[0]) || !isPageComplete(props.page[1])}
         onClick={() => props.onPageChange(2)}
       >
         <Icon name='chart bar' />

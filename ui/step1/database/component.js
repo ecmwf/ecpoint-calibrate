@@ -104,7 +104,11 @@ class Database extends Component {
     </Item>
   )
 
-  isComplete = (database) => !isEmpty(database)
+  isComplete = () => !isEmpty(this.props.database)
+
+  componentDidUpdate = (prevProps) => {
+    this.props.updatePageCompletion(0, this.isComplete())
+  }
 
   render () {
     return (
@@ -116,7 +120,7 @@ class Database extends Component {
                 Select Predictant
               </Grid.Column>
               <Grid.Column floated='right'>
-                {this.isComplete(this.props.database) && <Icon name='check circle' />}
+                {this.isComplete() && <Icon name='check circle' />}
               </Grid.Column>
             </Card.Header>
             <Card.Content>

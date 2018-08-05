@@ -31,5 +31,6 @@ export const setRangeField = value => ({
 export const updatePageCompletion = (page, isComplete) => ({
   type: 'PAGE.UPDATE_PAGE_COMPLETION',
   page,
+  section: 'parameters',
   isComplete
 })

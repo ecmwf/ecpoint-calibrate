@@ -1,9 +1,9 @@
 import _ from 'lodash'
 
 const defaultState = {
-  0: { isActive: true, isComplete: false },
-  1: { isActive: false, isComplete: false },
-  2: { isActive: false, isComplete: false }
+  0: { isActive: true, isComplete: {database: false, parameters: false} },
+  1: { isActive: false, isComplete: {computations: false} },
+  2: { isActive: false, isComplete: {results: false} }
 }
 
 export default (state = defaultState, action) => {
@@ -18,7 +18,10 @@ export default (state = defaultState, action) => {
     case 'PAGE.UPDATE_PAGE_COMPLETION': {
       return {
         ...state,
-        [action.page]: { ...state[action.page], isComplete: action.isComplete }
+        [action.page]: {
+          ...state[action.page], // isActive
+          isComplete: { ...state[action.page].isComplete, [action.section]: action.isComplete }
+        }
       }
     }
 

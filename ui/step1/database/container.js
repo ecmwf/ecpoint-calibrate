@@ -5,7 +5,8 @@ import Database from './component'
 import {
   setPredictantType,
   setPredictantPath,
-  setPredictorsPath
+  setPredictorsPath,
+  updatePageCompletion
 } from './actions'
 
 const mapStateToProps = state => ({
@@ -17,7 +18,9 @@ const mapDispatchToProps = dispatch => ({
 
   onPredictantPathChange: path => dispatch(setPredictantPath(path)),
 
-  onPredictorsPathChange: path => dispatch(setPredictorsPath(path))
+  onPredictorsPathChange: path => dispatch(setPredictorsPath(path)),
+
+  updatePageCompletion: (page, isComplete) => dispatch(updatePageCompletion(page, isComplete))
 })
 
 export default connect(

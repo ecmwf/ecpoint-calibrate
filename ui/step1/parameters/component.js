@@ -185,12 +185,10 @@ class Parameters extends Component {
     this.limSUHasError()
   )
 
-  isComplete = (parameters) => !this.hasError() && !isEmpty(parameters)
+  isComplete = () => !this.hasError() && !isEmpty(this.props.parameters)
 
   componentDidUpdate = (prevProps) => {
-    if (this.isComplete(this.props.parameters) !== this.isComplete(prevProps.parameters)) {
-      this.props.updatePageCompletion(0, this.isComplete(this.props.parameters))
-    }
+    this.props.updatePageCompletion(0, this.isComplete())
   }
 
   render () {
@@ -203,7 +201,7 @@ class Parameters extends Component {
                 Parameters
               </Grid.Column>
               <Grid.Column floated='right'>
-                {this.isComplete(this.props.parameters) && <Icon name='check circle' />}
+                {this.isComplete() && <Icon name='check circle' />}
               </Grid.Column>
             </Card.Header>
             <Card.Content>

@@ -22,3 +22,10 @@ export const setPredictorsPath = path => async (dispatch) => {
     )
   }
 }
+
+export const updatePageCompletion = (page, isComplete) => ({
+  type: 'PAGE.UPDATE_PAGE_COMPLETION',
+  page,
+  section: 'database',
+  isComplete
+})
