@@ -40,6 +40,10 @@ class Parameters(object):
     # output file path
     out_path = attr.ib(converter=str)
 
+    computation_fields = attr.ib(default=attr.Factory(list))
+
+    predictor_codes = attr.ib(default=attr.Factory(list))
+
 
 def iter_daterange(start, end, model_runs_per_day=2, leadstart_increment=1):
     for curr_date in daterange(start, end):

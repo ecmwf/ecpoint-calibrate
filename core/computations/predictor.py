@@ -17,6 +17,8 @@ from .utils import (
     log,
 )
 
+from .computer import Computer
+
 
 def run(parameters):
     BaseDateS = parameters.date_start
@@ -153,106 +155,131 @@ def run(parameters):
 
         yield log.info('Read forecast data')
 
-        tp_steps = [GribLoader(path=get_grib_path('tp', step)) for step in steps]
-        cp_steps = [GribLoader(path=get_grib_path('cp', step)) for step in steps]
-        u_steps = [GribLoader(path=get_grib_path('u700', step)) for step in steps]
-        v_steps = [GribLoader(path=get_grib_path('v700', step)) for step in steps]
-        cape_steps = [GribLoader(path=get_grib_path('cape', step)) for step in steps]
-        sr_start, sr_end = [GribLoader(path=get_grib_path('sr', step)) for step in (step_start_sr, step_end_sr,)]
-
-        #Compute the 6 hourly fields
         # [TODO] - Should be dynamic
         yield log.info(
             'Computing the required parameters '
             '(FER, cpr, tp, wspd700, cape, sr).'
         )
-        TP = compute_accumulated_field(*tp_steps) * 1000
-        CP = compute_accumulated_field(*cp_steps) * 1000
-        U700 = compute_weighted_average_field(*u_steps)
-        V700 = compute_weighted_average_field(*v_steps)
-        WSPD = compute_rms_field(U700, V700)
-        CAPE = compute_weighted_average_field(*cape_steps)
-        SR = compute_accumulated_field(sr_start, sr_end) / 86400
 
-        #Select the nearest grid-point from the rainfall observations
-        yield log.info(
-            'Selecting the nearest grid point to rainfall observations.'
-        )
-        TP_Ob = TP.nearest_gridpoint(obs)  # Geopoints(list) instance
+        computations = parameters.computation_fields
+        base_fields = set(parameters.predictor_codes)
 
-        #Select only the values that correspond to TP>=1
-        yield log.info(
-            'Selecting values that correspond to '
-            'tp >= 1 mm/{}h.'.format(Acc)
-        )
-        TP_Ob1 = Geopoints(
-            TP_geopoint
-            for TP_geopoint in TP_Ob
-            if TP_geopoint.value >= 1
-        )
-        if not TP_Ob1:
-            yield log.warn('No values of tp >= 1 mm/{}h.'.format(Acc))
+        derived_computations = [
+            computation for computation in computations
+            if set(computation['inputs']) - base_fields != set()
+        ]
+
+        base_computations = sorted([
+            computation for computation in computations
+            if computation not in derived_computations
+        ], key=lambda computation: computation['isReference'], reverse=True)
+
+        computations_cache = {}
+        computations_result = []
+        skip = False
+
+        for computation in base_computations:
+            computer = Computer(computation)
+            predictor_code = computer.computation['inputs'][0]
+
+            steps = (
+                [step_start_sr, step_end_sr]
+                if computation['field'] == 'ACCUMULATED_SOLAR_RADIATION'
+                else steps
+            )
+
+            computation_steps = [
+                GribLoader(path=get_grib_path(predictor_code, step))
+                for step in steps
+            ]
+
+            computed_value = computer.compute(computation_steps)
+
+            computations_cache[
+                computation['name']
+            ] = computed_value
+
+            yield log.info(
+                'Selecting the nearest grid point to rainfall observations.'
+            )
+            geopoints = computed_value.nearest_gridpoint(obs)
+
+            yield log.info(
+                'Selecting values that correspond to '
+                'tp >= 1 mm/{}h.'.format(Acc)
+            )
+
+            # Select only the values that correspond to TP>=1
+            if computation['isReference']:
+                ref_geopoints = geopoints
+                ref_geopoints_filtered = Geopoints(
+                    geopoint
+                    for geopoint in ref_geopoints
+                    if geopoint.value >= 1
+                )
+
+                if not ref_geopoints_filtered:
+                    yield log.warn(
+                        'No values of {} >= 1 mm/{}h.'.format(computation['name'], Acc)
+                    )
+                    skip = True
+                    break
+                else:
+                    computations_result.append(ref_geopoints_filtered.values)
+            else:
+                geopoints_filtered = Geopoints(
+                    geopoint
+                    for geopoint, ref_geopoint in zip(geopoints, ref_geopoints)
+                    if ref_geopoint.value >= 1
+                )
+                computations_result.append(geopoints_filtered.values)
+
+        if skip:
             continue
 
-        yield log.success('Write data to: {}'.format(PathOUT))
+        for computation in derived_computations:
+            computer = Computer(computation)
+            steps = [
+                computations_cache[field_input]
+                for field_input in computation['inputs']
+            ]
 
-        CP_Ob = CP.nearest_gridpoint(obs)
-        WSPD_Ob = WSPD.nearest_gridpoint(obs)
-        CAPE_Ob = CAPE.nearest_gridpoint(obs)
-        SR_Ob = SR.nearest_gridpoint(obs)
+            computed_value = computer.compute(steps)
+            geopoints = computed_value.nearest_gridpoint(obs)
 
-        CP_Ob1 = Geopoints(
-            CP_geopoint
-            for CP_geopoint, TP_geopoint in zip(CP_Ob, TP_Ob)
-            if TP_geopoint.value >= 1
-        )
-
-        WSPD_Ob1 = Geopoints(
-            WSPD_geopoint
-            for WSPD_geopoint, TP_geopoint in zip(WSPD_Ob, TP_Ob)
-            if TP_geopoint.value >= 1
-        )
-
-        CAPE_Ob1 = Geopoints(
-            CAPE_geopoint
-            for CAPE_geopoint, TP_geopoint in zip(CAPE_Ob, TP_Ob)
-            if TP_geopoint.value >= 1
-        )
-
-        SR_Ob1 = Geopoints(
-            SR_geopoint
-            for SR_geopoint, TP_geopoint in zip(SR_Ob, TP_Ob)
-            if TP_geopoint.value >= 1
-        )
+            geopoints_filtered = Geopoints(
+                geopoint
+                for geopoint, ref_geopoint in zip(geopoints, ref_geopoints)
+                if ref_geopoint.value >= 1
+            )
+            computations_result.append(geopoints_filtered.values)
 
         # Compute other parameters
         obs1 = Geopoints(
             obs_geopoint
-            for obs_geopoint, TP_geopoint in zip(obs.geopoints, TP_Ob)
-            if TP_geopoint.value >= 1
+            for obs_geopoint, ref_geopoint in zip(obs.geopoints, ref_geopoints)
+            if ref_geopoint.value >= 1
         )
 
         latObs_1 = obs1.latitudes
         lonObs_1 = obs1.longitudes
-        CPr = CP_Ob1 / TP_Ob1
-        FER = (obs1 - TP_Ob1) / TP_Ob1
+        # [XXX] CPr = CP_Ob1 / TP_Ob1
+        FER = (obs1 - ref_geopoints_filtered) / ref_geopoints_filtered
         vals_LST = compute_local_solar_time(longitudes=lonObs_1,
                                             hour=HourVF_num)
 
         #Saving the outpudt file in ascii format
-        vals_TP = TP_Ob1.values
-        vals_CP = CP_Ob1.values
         vals_OB = obs1.values
         vals_FER = FER.values
-        vals_CPr = CPr.values
-        vals_WSPD = WSPD_Ob1.values
-        vals_CAPE = CAPE_Ob1.values
-        vals_SR = SR_Ob1.values
+
+        data = []
 
         n = len(vals_FER)
         obsUSED = obsUSED + n
+        yield log.success('Write data to: {}'.format(PathOUT))
+
         for i in range(n):
-            data = map(str, [DateVF, HourVF, vals_OB[i], latObs_1[i], lonObs_1[i], vals_FER[i], vals_CPr[i], vals_TP[i], vals_WSPD[i], vals_CAPE[i], vals_SR[i], vals_LST[i]])
+            data = map(str, [DateVF, HourVF, vals_OB[i], latObs_1[i], lonObs_1[i], vals_FER[i], vals_LST[i]] + [x[i] for x in computations_result])
             Output_file.write('\t'.join(data) + '\n')
 
         yield log.info('\n' + '*'*80)

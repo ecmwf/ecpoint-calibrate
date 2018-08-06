@@ -110,6 +110,9 @@ class GeopointsLoader(BaseLoader):
                     Geopoint(lat, lon, height, date, time, value)
                 )
 
+    def __len__(self):
+        return len(self.geopoints)
+
     def __iter__(self):
         for geopoint in self.geopoints:
             yield geopoint

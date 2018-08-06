@@ -32,7 +32,15 @@ class ComputationLogs extends Component {
     }
 
     client
-      .post({ url: '/computation-logs', body: parameters, json: true })
+      .post({
+        url: '/computation-logs',
+        body: {
+          ...parameters,
+          predictor_codes: this.props.database.predictorCodes,
+          computation_fields: this.props.computations.fields
+        },
+        json: true
+      })
       .on('data', chunk => this.appendLog(chunk.toString()))
       .on('end', () => this.setState({ active: false }))
   }

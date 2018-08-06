@@ -34,12 +34,20 @@ const operations = [
     value: 'AVERAGE_FIELD'
   },
   {
-    text: 'Weighted Field',
-    value: 'WEIGHTED_FIELD'
+    text: 'Weighted Average Field',
+    value: 'WEIGHTED_AVERAGE_FIELD'
   },
   {
     text: 'Vector Module',
     value: 'VECTOR_MODULE'
+  },
+  {
+    text: 'Local Solar Time (LST)',
+    value: 'LOCAL_SOLAR_TIME'
+  },
+  {
+    text: 'Accumulated Solar Radiaton (SR)',
+    value: 'ACCUMULATED_SOLAR_RADIATION'
   }
 ]
 
