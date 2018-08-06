@@ -2,7 +2,7 @@ import _ from 'lodash'
 
 const defaultState = {
   0: { isActive: true, isComplete: {database: false, parameters: false} },
-  1: { isActive: false, isComplete: {computations: false} },
+  1: { isActive: false, isComplete: {fields: false, errors: true} },
   2: { isActive: false, isComplete: {results: false} }
 }
 

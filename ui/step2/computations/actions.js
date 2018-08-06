@@ -49,3 +49,10 @@ export const setComputationReference = index => ({
   type: 'COMPUTATIONS.SET_REFERENCE',
   index
 })
+
+export const updatePageCompletion = (page, isComplete) => ({
+  type: 'PAGE.UPDATE_PAGE_COMPLETION',
+  page,
+  section: 'fields',
+  isComplete
+})

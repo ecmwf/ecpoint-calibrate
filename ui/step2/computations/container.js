@@ -10,7 +10,8 @@ import {
   removeComputation,
   setScaleOp,
   setScaleValue,
-  setComputationReference
+  setComputationReference,
+  updatePageCompletion
 } from './actions'
 
 const mapStateToProps = state => ({
@@ -36,7 +37,9 @@ const mapDispatchToProps = dispatch => ({
 
   setScaleValue: (index, value) => dispatch(setScaleValue(index, value)),
 
-  setComputationReference: index => dispatch(setComputationReference(index))
+  setComputationReference: index => dispatch(setComputationReference(index)),
+
+  updatePageCompletion: (page, isComplete) => dispatch(updatePageCompletion(page, isComplete))
 })
 
 export default connect(

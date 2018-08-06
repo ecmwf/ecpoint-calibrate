@@ -12,6 +12,8 @@ import {
   Radio
 } from 'semantic-ui-react'
 
+import { isNotEmpty, isValid } from './index'
+
 const operations = [
   {
     text: 'Accumulated Field',
@@ -52,17 +54,7 @@ const operations = [
 ]
 
 class Computation extends Component {
-  isPositive () {
-    if (
-      this.props.name &&
-      this.props.field &&
-      this.props.scale.value &&
-      this.props.inputs.length !== 0
-    ) {
-      return true
-    }
-    return null
-  }
+  isPositive = () => isNotEmpty([this.props]) ? true : null
 
   getPredictors = () =>
     this.props.predictors
@@ -214,6 +206,14 @@ class Computations extends Component {
         </Table.Footer>
       </Table>
     )
+  }
+
+  hasError = () => false
+
+  isComplete = () => !this.hasError() && isValid(this.props.fields)
+
+  componentDidUpdate = (prevProps) => {
+    this.props.updatePageCompletion(1, this.isComplete())
   }
 
   render () {
