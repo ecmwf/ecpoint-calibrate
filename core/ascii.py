@@ -3,11 +3,11 @@ from collections import OrderedDict
 import attr
 import pandas
 
-NEW_LINE = '\n'
+NEW_LINE = '\n\n'
 
 @attr.s(slots=True)
-class ASCII_Table(object):
-    output_path = attr.ib()
+class ASCIIEncoder(object):
+    path = attr.ib()
     dataframe = attr.ib(default=attr.Factory(pandas.DataFrame))
     header = attr.ib(default=None)
     footer = attr.ib(default=None)
@@ -22,17 +22,26 @@ class ASCII_Table(object):
             )
 
     def write(self):
-        with open(self.output_path, 'w') as f:
+        with open(self.path, 'w') as f:
             if self.header:
                 f.write(self.header)
 
             f.write(NEW_LINE)
             
             f.write(
-                self.dataframe.to_string()
+                self.dataframe.to_string(index=False)
             )
 
             f.write(NEW_LINE)
 
             if self.footer:
                 f.write(self.footer)
+
+
+@attr.s(slots=True)
+class ASCIIDecoder(object):
+    path = attr.ib()
+
+    @property
+    def dataframe(self):
+        return pandas.read_table(self.path, comment='#', skip_blank_lines=True, sep='\s+')

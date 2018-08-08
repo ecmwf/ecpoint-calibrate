@@ -13,7 +13,6 @@ from core.loaders.GeopointsLoader import (
 from core.loaders.GribLoader import GribLoader
 
 from .computer import Computer
-from .serializer import ASCII_Table
 from .utils import (
     adjust_leadstart,
     compute_accumulated_field,
@@ -24,6 +23,7 @@ from .utils import (
     iter_daterange,
     log,
 )
+from ..ascii import ASCIIEncoder
 
 
 def run(parameters):
@@ -43,7 +43,7 @@ def run(parameters):
     BaseDateFSTR=BaseDateF.strftime('%Y%m%d')
     AccSTR = 'Acc%02dh' % Acc
 
-    serializer = ASCII_Table(output_path=PathOUT)
+    serializer = ASCIIEncoder(path=PathOUT)
 
     #############################################################################################
 
@@ -227,7 +227,7 @@ def run(parameters):
                         now=datetime.now(), start=BaseDateSSTR, limsu=LimSU,
                         end=BaseDateFSTR, acc=Acc, ref=reference_predictor
                     )
-                )
+                ).strip()
                 serializer.header = header
 
                 ref_geopoints = geopoints
@@ -316,8 +316,6 @@ def run(parameters):
 
         yield log.info('\n' + '*'*80)
 
-        break
-
     yield log.success(
         'Number of observations in the whole training period: '.format(obsTOT)
     )
@@ -333,6 +331,6 @@ def run(parameters):
         '''.format(
             total_obs=obsTOT, ref=reference_predictor, acc=Acc, actual_obs=obsUSED
         )
-    )
+    ).strip()
     serializer.footer = footer
     serializer.write()

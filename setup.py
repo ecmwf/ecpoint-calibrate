@@ -77,7 +77,7 @@ setup(
         'attrs>=18.1.0',
         'numpy>=1.14.3',
         'flask>=1.0.2',
-        'pandas>=0.23.4',
+        'pandas==0.17.1',
     ],
     extras_require={
         'dev': ['check-manifest'],
