@@ -174,7 +174,7 @@ def run(parameters):
         ], key=lambda computation: computation['isReference'], reverse=True)
 
         computations_cache = {}
-        computations_result = {}
+        computations_result = []
         skip = False
 
         for computation in base_computations:
@@ -244,14 +244,18 @@ def run(parameters):
                     skip = True
                     break
                 else:
-                    computations_result[computation['name']] = ref_geopoints_filtered.values
+                    computations_result.append(
+                        (computation['name'], ref_geopoints_filtered.values)
+                    )
             else:
                 geopoints_filtered = Geopoints(
                     geopoint
                     for geopoint, ref_geopoint in zip(geopoints, ref_geopoints)
                     if ref_geopoint.value >= 1
                 )
-                computations_result[computation['name']] = geopoints_filtered.values
+                computations_result.append(
+                    (computation['name'], geopoints_filtered.values)
+                )
 
         if skip:
             continue
@@ -271,7 +275,9 @@ def run(parameters):
                 for geopoint, ref_geopoint in zip(geopoints, ref_geopoints)
                 if ref_geopoint.value >= 1
             )
-            computations_result[computation['name']] = geopoints_filtered.values
+            computations_result.append(
+                (computation['name'], geopoints_filtered.values)
+            )
 
         # Compute other parameters
         obs1 = Geopoints(
@@ -297,19 +303,20 @@ def run(parameters):
         obsUSED = obsUSED + n
         yield log.success('Write data to: {}'.format(PathOUT))
 
-        columns = dict(
-            Date=[DateVF] * n,
-            TimeUTC=[HourVF] * n,
-            OBS=vals_OB,
-            latOBS=latObs_1,
-            lonOBS=lonObs_1,
-            FER=vals_FER,
-            LST=vals_LST,
-            **computations_result
-        )
+        columns = [
+            ('Date', [DateVF] * n),
+            ('TimeUTC', [HourVF] * n),
+            ('OBS', vals_OB),
+            ('latOBS', latObs_1),
+            ('lonOBS', lonObs_1),
+            ('FER', vals_FER),
+            ('LST', vals_LST),
+        ] + computations_result
         serializer.add_columns_chunk(columns)
 
         yield log.info('\n' + '*'*80)
+
+        break
 
     yield log.success(
         'Number of observations in the whole training period: '.format(obsTOT)

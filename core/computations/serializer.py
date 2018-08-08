@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 import attr
 import pandas
 
@@ -12,14 +14,14 @@ class ASCII_Table(object):
 
     def add_columns_chunk(self, columns):
         if self.dataframe.empty:
-            self.dataframe = pandas.DataFrame(columns)
+            self.dataframe = pandas.DataFrame.from_dict(OrderedDict(columns))
         else:
             self.dataframe.append(
-                pandas.DataFrame(columns),
+                pandas.DataFrame.from_dict(OrderedDict(columns)),
                 ignore_index=True
             )
 
-    def write():
+    def write(self):
         with open(self.output_path, 'w') as f:
             if self.header:
                 f.write(self.header)
@@ -27,7 +29,7 @@ class ASCII_Table(object):
             f.write(NEW_LINE)
             
             f.write(
-                pandas.DataFrame(self.dataframe).to_string()
+                self.dataframe.to_string()
             )
 
             f.write(NEW_LINE)
