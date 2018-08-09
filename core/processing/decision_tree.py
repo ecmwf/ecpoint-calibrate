@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import os
 
 import numpy as np
@@ -76,7 +78,19 @@ class DecisionTree(object):
                         thrH_matrix[ind_i:ind_f,i] = tempH2
                         counter = ind_f
 
+        self.print_weather_types(thrL_matrix, thrH_matrix)
         return thrL_matrix, thrH_matrix
+
+    def print_weather_types(self, thrL_matrix, thrH_matrix):
+        for i, _ in enumerate(thrL_matrix):
+            print('Weather Type', i)
+            for j in range(self.num_predictors):
+                print(
+                    '    Level {num}: {low} <= PREDICTOR < {high}'.format(
+                        num=j, low=thrL_matrix[i][j], high=thrH_matrix[i][j]
+                    )
+                )
+            print()
 
 
 if __name__ == '__main__':
