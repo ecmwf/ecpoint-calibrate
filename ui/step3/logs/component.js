@@ -37,7 +37,8 @@ class ComputationLogs extends Component {
         body: {
           ...parameters,
           predictor_codes: this.props.database.predictorCodes,
-          computation_fields: this.props.computations.fields
+          computation_fields: this.props.computations.fields,
+          computation_errors: this.props.computations.errors
         },
         json: true
       })

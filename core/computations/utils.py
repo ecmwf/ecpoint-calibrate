@@ -42,6 +42,8 @@ class Parameters(object):
 
     computation_fields = attr.ib(default=attr.Factory(list))
 
+    computation_errors = attr.ib(default=attr.Factory(dict))
+
     predictor_codes = attr.ib(default=attr.Factory(list))
 
 

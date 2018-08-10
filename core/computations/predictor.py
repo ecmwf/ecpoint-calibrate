@@ -289,17 +289,29 @@ def run(parameters):
         latObs_1 = obs1.latitudes
         lonObs_1 = obs1.longitudes
         # [XXX] CPr = CP_Ob1 / TP_Ob1
-        FER = (obs1 - ref_geopoints_filtered) / ref_geopoints_filtered
+
+        vals_errors = []
+        if parameters.computation_errors['isFERChecked']:
+            FER = (obs1 - ref_geopoints_filtered) / ref_geopoints_filtered
+            vals_errors.append(
+                ('FER', FER.values)
+            )
+
+        if parameters.computation_errors['isFEChecked']:
+            FE = (obs1 - ref_geopoints_filtered)
+            vals_errors.append(
+                ('FE', FE.values)
+            )
+
         vals_LST = compute_local_solar_time(longitudes=lonObs_1,
                                             hour=HourVF_num)
 
-        #Saving the outpudt file in ascii format
+        # Saving the output file in ascii format
         vals_OB = obs1.values
-        vals_FER = FER.values
 
         data = []
 
-        n = len(vals_FER)
+        n = len(vals_OB)
         obsUSED = obsUSED + n
         yield log.success('Write data to: {}'.format(PathOUT))
 
@@ -309,9 +321,8 @@ def run(parameters):
             ('OBS', vals_OB),
             ('latOBS', latObs_1),
             ('lonOBS', lonObs_1),
-            ('FER', vals_FER),
             ('LST', vals_LST),
-        ] + computations_result
+        ] + vals_errors + computations_result
         serializer.add_columns_chunk(columns)
 
         yield log.info('\n' + '*'*80)
