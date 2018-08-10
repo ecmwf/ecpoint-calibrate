@@ -2,8 +2,8 @@ from __future__ import print_function
 
 import os
 
-import numpy as np
 import attr
+import numpy as np
 
 
 @attr.s(slots=True)
@@ -21,7 +21,7 @@ class DecisionTree(object):
         acc = 1
 
         for i in range(self.num_predictors):
-            temp = self.thrL.ix[:,i].dropna()
+            temp = self.thrL.ix[:, i].dropna()
             thresholds_num[i] = len(temp)
             acc = acc * len(temp)
             thresholds_num_acc[i] = acc
@@ -32,29 +32,29 @@ class DecisionTree(object):
         thresholds_num, thresholds_num_acc = self.get_threshold_counts()
         num_weather_types = thresholds_num_acc[-1]
 
-        dim = (num_weather_types, self.num_predictors,)
+        dim = (num_weather_types, self.num_predictors)
         thrL_matrix = np.zeros(dim)
         thrH_matrix = np.zeros(dim)
 
-        tempL = self.thrL.ix[:,-1].dropna()
-        tempH = self.thrH.ix[:,-1].dropna()
+        tempL = self.thrL.ix[:, -1].dropna()
+        tempH = self.thrH.ix[:, -1].dropna()
 
         m = len(tempL)
 
         # Last column
         for i in range(0, num_weather_types, m):
             j = i + m
-            thrL_matrix[i:j,-1] = tempL
-            thrH_matrix[i:j,-1] = tempH
+            thrL_matrix[i:j, -1] = tempL
+            thrH_matrix[i:j, -1] = tempH
 
         # All left columns
         rep = 1
         for i in range(self.num_predictors - 2, -1, -1):
-            tempL1 = self.thrL.ix[:,i].dropna()
-            tempH1 = self.thrH.ix[:,i].dropna()
+            tempL1 = self.thrL.ix[:, i].dropna()
+            tempH1 = self.thrH.ix[:, i].dropna()
             m = len(tempL1)
 
-            rep *= thresholds_num[i+1]
+            rep *= thresholds_num[i + 1]
             counter = 0
 
             if i == 0:
@@ -64,18 +64,18 @@ class DecisionTree(object):
                         ind_f = counter + rep
                         tempL2 = tempL1[k]
                         tempH2 = tempH1[k]
-                        thrL_matrix[ind_i:ind_f,i] = tempL2
-                        thrH_matrix[ind_i:ind_f,i] = tempH2
+                        thrL_matrix[ind_i:ind_f, i] = tempL2
+                        thrH_matrix[ind_i:ind_f, i] = tempH2
                         counter = ind_f
             else:
-                for j in range(thresholds_num_acc[i-1]):
+                for j in range(thresholds_num_acc[i - 1]):
                     for k in range(m):
                         ind_i = counter
                         ind_f = counter + rep
                         tempL2 = tempL1[k]
                         tempH2 = tempH1[k]
-                        thrL_matrix[ind_i:ind_f,i] = tempL2
-                        thrH_matrix[ind_i:ind_f,i] = tempH2
+                        thrL_matrix[ind_i:ind_f, i] = tempL2
+                        thrH_matrix[ind_i:ind_f, i] = tempH2
                         counter = ind_f
 
         self.print_weather_types(thrL_matrix, thrH_matrix)
@@ -83,10 +83,10 @@ class DecisionTree(object):
 
     def print_weather_types(self, thrL_matrix, thrH_matrix):
         for i, _ in enumerate(thrL_matrix):
-            print('Weather Type', i)
+            print("Weather Type", i)
             for j in range(self.num_predictors):
                 print(
-                    '    Level {num}: {low} <= PREDICTOR < {high}'.format(
+                    "    Level {num}: {low} <= PREDICTOR < {high}".format(
                         num=j, low=thrL_matrix[i][j], high=thrH_matrix[i][j]
                     )
                 )
