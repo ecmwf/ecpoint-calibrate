@@ -14,7 +14,7 @@ class DecisionTree(object):
     @property
     def num_predictors(self):
         return len(self.thrL.columns)
-    
+
     def get_threshold_counts(self):
         thresholds_num = np.zeros(self.num_predictors, dtype=int)
         thresholds_num_acc = np.zeros(self.num_predictors, dtype=int)
@@ -56,7 +56,7 @@ class DecisionTree(object):
 
             rep *= thresholds_num[i+1]
             counter = 0
-    
+
             if i == 0:
                 for j in range(thresholds_num_acc[0]):
                     for k in range(m):
@@ -103,7 +103,7 @@ if __name__ == '__main__':
     thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
     dt = DecisionTree(thrL=thrL, thrH=thrH)
     thrL_matrix, thrH_matrix = dt.create()
-  
+
     expected_thrL_matrix = [[-9999., -9999.,  5., -9999., -9999.],
                             [-9999., -9999.,  5., -9999.,    70.],
                             [-9999., -9999.,  5., -9999.,   275.],
