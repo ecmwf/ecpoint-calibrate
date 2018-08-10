@@ -1,29 +1,24 @@
 from datetime import date
 from functools import partial
 
-from core.computations.utils import (
-    iter_daterange,
-    adjust_leadstart,
-    generate_steps,
-    compute_accumulated_field,
-    compute_weighted_average_field,
-)
+from core.processor.utils import iter_daterange, adjust_leadstart, generate_steps
 
 
 def test_generate_leadstart():
-    cases = list(iter_daterange(
-        start=date(2018, 07, 01),
-        end=date(2018, 07, 03),
-        model_runs_per_day=4,
-        leadstart_increment=2
-    ))
+    cases = list(
+        iter_daterange(
+            start=date(2018, 7, 1),
+            end=date(2018, 7, 3),
+            model_runs_per_day=4,
+            leadstart_increment=2,
+        )
+    )
 
     # 3 days, 4 runs per day, 12 increments
     assert len(cases) == 3 * 4 * 12
 
     dates = set(i for i, _, _ in cases)
-    assert dates == {date(2018, 07, 01), date(2018, 07, 02),
-                     date(2018, 07, 03)}
+    assert dates == {date(2018, 7, 1), date(2018, 7, 2), date(2018, 7, 3)}
 
     times = set(i for _, i, _ in cases)
     assert times == {0, 6, 12, 18}
@@ -37,17 +32,15 @@ def test_adjust_leadstart_2_model_runs_per_day():
     ###########################################################################
     # CASE 1: LeadStart <= LimSU                                              #
     ###########################################################################
-    new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=0, leadstart=0
-    )
-    assert new_date == date(2018, 06, 01)
+    new_date, new_hour, new_leadstart = func(date=date(2018, 6, 2), hour=0, leadstart=0)
+    assert new_date == date(2018, 6, 1)
     assert new_hour == 12
     assert new_leadstart == 0 + 12
 
     new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=12, leadstart=0
+        date=date(2018, 6, 2), hour=12, leadstart=0
     )
-    assert new_date == date(2018, 06, 02)
+    assert new_date == date(2018, 6, 2)
     assert new_hour == 0
     assert new_leadstart == 12
 
@@ -55,17 +48,15 @@ def test_adjust_leadstart_2_model_runs_per_day():
     # CASE 2: LimSU < LeadStart <= LimSU + 12                                 #
     ###########################################################################
 
-    new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=0, leadstart=3
-    )
-    assert new_date == date(2018, 06, 02)
+    new_date, new_hour, new_leadstart = func(date=date(2018, 6, 2), hour=0, leadstart=3)
+    assert new_date == date(2018, 6, 2)
     assert new_hour == 0
     assert new_leadstart == 3
 
     new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=12, leadstart=3
+        date=date(2018, 6, 2), hour=12, leadstart=3
     )
-    assert new_date == date(2018, 06, 02)
+    assert new_date == date(2018, 6, 2)
     assert new_hour == 12
     assert new_leadstart == 3
 
@@ -73,16 +64,16 @@ def test_adjust_leadstart_2_model_runs_per_day():
     # CASE 3: LeadStart >= LimSU + 12                                         #
     ###########################################################################
     new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=0, leadstart=17
+        date=date(2018, 6, 2), hour=0, leadstart=17
     )
-    assert new_date == date(2018, 06, 02)
+    assert new_date == date(2018, 6, 2)
     assert new_hour == 12
     assert new_leadstart == 5
 
     new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=12, leadstart=17
+        date=date(2018, 6, 2), hour=12, leadstart=17
     )
-    assert new_date == date(2018, 06, 03)
+    assert new_date == date(2018, 6, 3)
     assert new_hour == 0
     assert new_leadstart == 5
 
@@ -92,62 +83,54 @@ def test_adjust_leadstart_4_model_runs_per_day():
     ###########################################################################
     # CASE 1: LeadStart <= LimSU                                              #
     ###########################################################################
-    new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=0, leadstart=0
-    )
-    assert new_date == date(2018, 06, 01)
+    new_date, new_hour, new_leadstart = func(date=date(2018, 6, 2), hour=0, leadstart=0)
+    assert new_date == date(2018, 6, 1)
     assert new_hour == 18
     assert new_leadstart == 6
 
-    new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=6, leadstart=0
-    )
-    assert new_date == date(2018, 06, 02)
+    new_date, new_hour, new_leadstart = func(date=date(2018, 6, 2), hour=6, leadstart=0)
+    assert new_date == date(2018, 6, 2)
     assert new_hour == 0
     assert new_leadstart == 6
 
     new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=12, leadstart=0
+        date=date(2018, 6, 2), hour=12, leadstart=0
     )
-    assert new_date == date(2018, 06, 02)
+    assert new_date == date(2018, 6, 2)
     assert new_hour == 6
     assert new_leadstart == 6
 
     new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=18, leadstart=0
+        date=date(2018, 6, 2), hour=18, leadstart=0
     )
-    assert new_date == date(2018, 06, 02)
+    assert new_date == date(2018, 6, 2)
     assert new_hour == 12
     assert new_leadstart == 6
 
     ###########################################################################
     # CASE 2: LimSU < LeadStart <= LimSU + 6                                  #
     ###########################################################################
-    new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=0, leadstart=4
-    )
-    assert new_date == date(2018, 06, 02)
+    new_date, new_hour, new_leadstart = func(date=date(2018, 6, 2), hour=0, leadstart=4)
+    assert new_date == date(2018, 6, 2)
     assert new_hour == 0
     assert new_leadstart == 4
 
-    new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=6, leadstart=4
-    )
-    assert new_date == date(2018, 06, 02)
+    new_date, new_hour, new_leadstart = func(date=date(2018, 6, 2), hour=6, leadstart=4)
+    assert new_date == date(2018, 6, 2)
     assert new_hour == 6
     assert new_leadstart == 4
 
     new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=12, leadstart=4
+        date=date(2018, 6, 2), hour=12, leadstart=4
     )
-    assert new_date == date(2018, 06, 02)
+    assert new_date == date(2018, 6, 2)
     assert new_hour == 12
     assert new_leadstart == 4
 
     new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=18, leadstart=4
+        date=date(2018, 6, 2), hour=18, leadstart=4
     )
-    assert new_date == date(2018, 06, 02)
+    assert new_date == date(2018, 6, 2)
     assert new_hour == 18
     assert new_leadstart == 4
 
@@ -155,30 +138,30 @@ def test_adjust_leadstart_4_model_runs_per_day():
     # CASE 3: LimSU + 6 < LeadStart <= LimSU + 12                             #
     ###########################################################################
     new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=0, leadstart=11
+        date=date(2018, 6, 2), hour=0, leadstart=11
     )
-    assert new_date == date(2018, 06, 02)
+    assert new_date == date(2018, 6, 2)
     assert new_hour == 6
     assert new_leadstart == 5
 
     new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=6, leadstart=11
+        date=date(2018, 6, 2), hour=6, leadstart=11
     )
-    assert new_date == date(2018, 06, 02)
+    assert new_date == date(2018, 6, 2)
     assert new_hour == 12
     assert new_leadstart == 5
 
     new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=12, leadstart=11
+        date=date(2018, 6, 2), hour=12, leadstart=11
     )
-    assert new_date == date(2018, 06, 02)
+    assert new_date == date(2018, 6, 2)
     assert new_hour == 18
     assert new_leadstart == 5
 
     new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=18, leadstart=11
+        date=date(2018, 6, 2), hour=18, leadstart=11
     )
-    assert new_date == date(2018, 06, 03)
+    assert new_date == date(2018, 6, 3)
     assert new_hour == 0
     assert new_leadstart == 5
 
@@ -186,30 +169,30 @@ def test_adjust_leadstart_4_model_runs_per_day():
     # CASE 4: LimSU + 12 < LeadStart <= LimSU + 18                            #
     ###########################################################################
     new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=0, leadstart=17
+        date=date(2018, 6, 2), hour=0, leadstart=17
     )
-    assert new_date == date(2018, 06, 02)
+    assert new_date == date(2018, 6, 2)
     assert new_hour == 12
     assert new_leadstart == 5
 
     new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=6, leadstart=17
+        date=date(2018, 6, 2), hour=6, leadstart=17
     )
-    assert new_date == date(2018, 06, 02)
+    assert new_date == date(2018, 6, 2)
     assert new_hour == 18
     assert new_leadstart == 5
 
     new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=12, leadstart=17
+        date=date(2018, 6, 2), hour=12, leadstart=17
     )
-    assert new_date == date(2018, 06, 03)
+    assert new_date == date(2018, 6, 3)
     assert new_hour == 0
     assert new_leadstart == 5
 
     new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=18, leadstart=17
+        date=date(2018, 6, 2), hour=18, leadstart=17
     )
-    assert new_date == date(2018, 06, 03)
+    assert new_date == date(2018, 6, 3)
     assert new_hour == 6
     assert new_leadstart == 5
 
@@ -217,30 +200,30 @@ def test_adjust_leadstart_4_model_runs_per_day():
     # CASE 4: LimSU + 18 < LeadStart <= LimSU + 24                            #
     ###########################################################################
     new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=0, leadstart=21
+        date=date(2018, 6, 2), hour=0, leadstart=21
     )
-    assert new_date == date(2018, 06, 02)
+    assert new_date == date(2018, 6, 2)
     assert new_hour == 18
     assert new_leadstart == 3
 
     new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=6, leadstart=21
+        date=date(2018, 6, 2), hour=6, leadstart=21
     )
-    assert new_date == date(2018, 06, 03)
+    assert new_date == date(2018, 6, 3)
     assert new_hour == 0
     assert new_leadstart == 3
 
     new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=12, leadstart=21
+        date=date(2018, 6, 2), hour=12, leadstart=21
     )
-    assert new_date == date(2018, 06, 03)
+    assert new_date == date(2018, 6, 3)
     assert new_hour == 6
     assert new_leadstart == 3
 
     new_date, new_hour, new_leadstart = func(
-        date=date(2018, 06, 02), hour=18, leadstart=21
+        date=date(2018, 6, 2), hour=18, leadstart=21
     )
-    assert new_date == date(2018, 06, 03)
+    assert new_date == date(2018, 6, 3)
     assert new_hour == 12
     assert new_leadstart == 3
 
@@ -249,14 +232,3 @@ def test_generate_steps():
     assert generate_steps(6) == (0, 6)
     assert generate_steps(12) == (0, 6, 12)
     assert generate_steps(24) == (0, 6, 12, 18, 24)
-
-
-def test_compute_accumulated_field():
-    assert compute_accumulated_field(1, 2, 3, 4, 5) == 4
-
-
-def test_compute_weighted_average_field():
-    assert compute_weighted_average_field(2, 4) == 3
-    assert compute_weighted_average_field(2, 4, 6) == 4
-    assert compute_weighted_average_field(2, 4, 4, 6) == 4
-    assert compute_weighted_average_field(2, 4, 8, 4, 6) == 5

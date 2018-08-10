@@ -12,13 +12,13 @@ from core.loaders.GeopointsLoader import (
 )
 from core.loaders.GribLoader import GribLoader
 
-from .computer import Computer
+from ..computations.models import Computation
+
+# [FIXME] - Integrate it into the Computations framework
+from ..computations.utils import compute_local_solar_time
+
 from .utils import (
     adjust_leadstart,
-    compute_accumulated_field,
-    compute_local_solar_time,
-    compute_rms_field,
-    compute_weighted_average_field,
     generate_steps,
     iter_daterange,
     log,
@@ -178,7 +178,7 @@ def run(parameters):
         skip = False
 
         for computation in base_computations:
-            computer = Computer(computation)
+            computer = Computation(computation)
             predictor_code = computer.computation['inputs'][0]
 
             steps = (
@@ -192,7 +192,7 @@ def run(parameters):
                 for step in steps
             ]
 
-            computed_value = computer.compute(computation_steps)
+            computed_value = computer.run(computation_steps)
 
             computations_cache[
                 computation['name']
@@ -261,13 +261,13 @@ def run(parameters):
             continue
 
         for computation in derived_computations:
-            computer = Computer(computation)
+            computer = Computation(computation)
             steps = [
                 computations_cache[field_input]
                 for field_input in computation['inputs']
             ]
 
-            computed_value = computer.compute(steps)
+            computed_value = computer.run(steps)
             geopoints = computed_value.nearest_gridpoint(obs)
 
             geopoints_filtered = Geopoints(

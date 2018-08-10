@@ -3,7 +3,7 @@ import os
 import pandas
 import numpy as np
 
-from core.processing.decision_tree import DecisionTree
+from core.postprocessors.decision_tree import DecisionTree
 
 from .conf import TEST_DATA_DIR
 

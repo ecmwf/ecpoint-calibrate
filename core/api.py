@@ -5,8 +5,8 @@ import os
 
 from flask import Flask, request, Response
 
-from core.computations.predictor import run
-from core.computations.utils import Parameters
+from core.processor import run
+from core.processor.utils import Parameters
 
 app = Flask(__name__)
 
