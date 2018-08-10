@@ -1,8 +1,5 @@
 import operator
-from datetime import timedelta, datetime, time
 from functools import reduce
-
-import attr
 
 from ..loaders.GribLoader import GribLoader
 
@@ -13,13 +10,13 @@ def compute_accumulated_field(*args):
 
 def compute_weighted_average_field(*args):
     weighted_sum_of_first_and_last_items = args[0] * 0.5 + args[-1] * 0.5
-    items_excluding_first_and_last = args[1: len(args)-1]
+    items_excluding_first_and_last = args[1 : len(args) - 1]
 
     if items_excluding_first_and_last:
         total_sum = reduce(
             operator.add,
             items_excluding_first_and_last,
-            weighted_sum_of_first_and_last_items
+            weighted_sum_of_first_and_last_items,
         )
         total_weight = len(items_excluding_first_and_last) * 1 + 2 * 0.5
         return total_sum / total_weight
