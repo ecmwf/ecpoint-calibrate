@@ -1,9 +1,9 @@
 import React from 'react'
 
-import ComputationLogs from './logs'
+import Processing from './processing'
 
 const Step3 = props => (
-  <ComputationLogs />
+  <Processing />
 )
 
 export default Step3

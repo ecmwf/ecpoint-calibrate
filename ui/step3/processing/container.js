@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 
-import ComputationLogs from './component'
+import Processing from './component'
 
 const mapStateToProps = state => ({
   database: state.database,
@@ -10,4 +10,4 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps
-)(ComputationLogs)
+)(Processing)

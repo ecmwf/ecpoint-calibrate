@@ -8,7 +8,7 @@ import {
 
 import client from '~/utils/client'
 
-class ComputationLogs extends Component {
+class Processing extends Component {
   state = { active: false, logs: [] }
 
   appendLog (log) {
@@ -89,4 +89,4 @@ class ComputationLogs extends Component {
   }
 }
 
-export default ComputationLogs
+export default Processing

@@ -47,7 +47,7 @@ const Menu = props => (
       >
         <Icon name='chart bar' />
         <Step.Content>
-          <Step.Title>Result</Step.Title>
+          <Step.Title>Processing</Step.Title>
         </Step.Content>
       </Step>
     </Step.Group>
