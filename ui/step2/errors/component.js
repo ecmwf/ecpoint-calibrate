@@ -4,7 +4,8 @@ import {
   Grid,
   Card,
   Checkbox,
-  Input
+  Input,
+  Icon
 } from 'semantic-ui-react'
 
 import { isEmpty } from './index'
@@ -46,7 +47,14 @@ class Errors extends Component {
     <Grid container centered>
       <Grid.Column>
         <Card fluid color='teal'>
-          <Card.Header>Predictant Errors</Card.Header>
+          <Card.Header>
+            <Grid.Column floated='left'>
+      Predictant Errors
+            </Grid.Column>
+            <Grid.Column floated='right'>
+              {this.isComplete() && <Icon name='check circle' />}
+            </Grid.Column>
+          </Card.Header>
           <Card.Content>
             <Card.Description>
                 Select error(s) to compute:

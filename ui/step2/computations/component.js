@@ -221,7 +221,14 @@ class Computations extends Component {
       <Grid container centered>
         <Grid.Column>
           <Card fluid color='teal'>
-            <Card.Header>Computations</Card.Header>
+            <Card.Header>
+              <Grid.Column floated='left'>
+            Computations
+              </Grid.Column>
+              <Grid.Column floated='right'>
+                {this.isComplete() && <Icon name='check circle' />}
+              </Grid.Column>
+            </Card.Header>
             <Card.Content>
               <Card.Description>
                 <p>
