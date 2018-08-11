@@ -5,7 +5,8 @@ import PostProcessing from './component'
 import { setThresholdSplits } from './actions'
 
 const mapStateToProps = state => ({
-  postprocessing: state.postprocessing
+  postprocessing: state.postprocessing,
+  fields: state.computations.fields
 })
 
 const mapDispatchToProps = dispatch => ({

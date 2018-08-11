@@ -237,7 +237,6 @@ class Computations extends Component {
   }
 
   render () {
-    console.log(this.props.fields)
     return (
       <Grid container centered>
         <Grid.Column>
