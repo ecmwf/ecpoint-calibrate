@@ -9,7 +9,8 @@ import {
   Dropdown,
   Input,
   Label,
-  Radio
+  Radio,
+  Checkbox
 } from 'semantic-ui-react'
 
 import { isNotEmpty, isValid } from './index'
@@ -62,25 +63,36 @@ class Computation extends Component {
       .concat(
         this.props.computedVariables
           .map(v => ({ key: v, text: v, value: v }))
-          .filter(v => v.key !== this.props.name)
+          .filter(v => v.key !== this.props.shortname)
       )
 
   render () {
     return (
       <Table.Row positive={this.isPositive()}>
-        <Table.Cell>
+        <Table.Cell width={4}>
+          <p>Short name:</p>
           <Input
             fluid
-            placeholder='Enter computation name'
-            value={this.props.name}
+            placeholder='Enter short name'
+            value={this.props.shortname}
             onChange={e =>
-              this.props.onNameChange(this.props.index, e.target.value)
+              this.props.onShortNameChange(this.props.index, e.target.value)
+            }
+          />
+          <br />
+          <p>Full name:</p>
+          <Input
+            fluid
+            placeholder='Enter full name'
+            value={this.props.fullname}
+            onChange={e =>
+              this.props.onFullNameChange(this.props.index, e.target.value)
             }
           />
         </Table.Cell>
-        <Table.Cell>
+        <Table.Cell width={4}>
           <Dropdown
-            placeholder='Select field'
+            placeholder='Select field type'
             fluid
             selection
             options={operations}
@@ -90,7 +102,7 @@ class Computation extends Component {
             }
           />
         </Table.Cell>
-        <Table.Cell>
+        <Table.Cell width={4}>
           <Dropdown
             fluid
             multiple
@@ -103,7 +115,7 @@ class Computation extends Component {
             }
           />
         </Table.Cell>
-        <Table.Cell>
+        <Table.Cell collapsing>
           <Grid.Row>
             <Radio
               label='Multiply'
@@ -124,6 +136,7 @@ class Computation extends Component {
               }
             />
           </Grid.Row>
+          <br />
           <Input
             fluid
             value={this.props.scale.value}
@@ -132,11 +145,19 @@ class Computation extends Component {
             }
           />
         </Table.Cell>
-        <Table.Cell textAlign='center'>
+        <Table.Cell collapsing textAlign='center'>
           <Radio
             checked={this.props.isReference === true}
             onChange={() =>
               this.props.setReference(this.props.index)
+            }
+          />
+        </Table.Cell>
+        <Table.Cell collapsing textAlign='center'>
+          <Checkbox
+            checked={this.props.isPostProcessed === true}
+            onChange={() =>
+              this.props.togglePostProcess(this.props.index)
             }
           />
         </Table.Cell>
@@ -160,11 +181,12 @@ class Computations extends Component {
       <Table celled definition>
         <Table.Header fullWidth>
           <Table.Row>
-            <Table.HeaderCell textAlign='center'>Computation</Table.HeaderCell>
-            <Table.HeaderCell textAlign='center'>Operation</Table.HeaderCell>
+            <Table.HeaderCell textAlign='center'>Field name</Table.HeaderCell>
+            <Table.HeaderCell textAlign='center'>Field type</Table.HeaderCell>
             <Table.HeaderCell textAlign='center'>Input variable(s)</Table.HeaderCell>
             <Table.HeaderCell textAlign='center'>Scaling factor</Table.HeaderCell>
-            <Table.HeaderCell textAlign='center'>Reference</Table.HeaderCell>
+            <Table.HeaderCell textAlign='center'>Reference?</Table.HeaderCell>
+            <Table.HeaderCell textAlign='center'>Post-process?</Table.HeaderCell>
             <Table.HeaderCell />
           </Table.Row>
         </Table.Header>
@@ -174,8 +196,9 @@ class Computations extends Component {
             <Computation
               {...each}
               key={each.index}
-              computedVariables={this.props.fields.map(field => field.name)}
-              onNameChange={this.props.onComputationNameChange}
+              computedVariables={this.props.fields.map(field => field.shortname)}
+              onShortNameChange={this.props.onComputationShortNameChange}
+              onFullNameChange={this.props.onComputationFullNameChange}
               onFieldChange={this.props.onComputationFieldChange}
               onInputsChange={this.props.onComputationInputsChange}
               onRemove={this.props.onComputationRemove}
@@ -183,6 +206,7 @@ class Computations extends Component {
               setScaleValue={this.props.setScaleValue}
               predictors={this.props.database.predictorCodes}
               setReference={this.props.setComputationReference}
+              togglePostProcess={this.props.toggleComputationPostProcess}
             />
           ))}
         </Table.Body>
@@ -190,7 +214,7 @@ class Computations extends Component {
         <Table.Footer fullWidth>
           <Table.Row>
             <Table.HeaderCell />
-            <Table.HeaderCell colSpan='4'>
+            <Table.HeaderCell colSpan='6'>
               <Button
                 floated='right'
                 icon
@@ -217,6 +241,7 @@ class Computations extends Component {
   }
 
   render () {
+    console.log(this.props.fields)
     return (
       <Grid container centered>
         <Grid.Column>

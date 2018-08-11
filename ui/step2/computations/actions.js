@@ -1,14 +1,17 @@
-export const addComputation = (name, field, inputs) => ({
-  type: 'COMPUTATIONS.ADD',
-  name,
-  field,
-  inputs
+export const addComputation = () => ({
+  type: 'COMPUTATIONS.ADD'
 })
 
-export const updateComputationName = (index, name) => ({
-  type: 'COMPUTATIONS.UPDATE_NAME',
+export const updateComputationShortName = (index, shortname) => ({
+  type: 'COMPUTATIONS.UPDATE_SHORT_NAME',
   index,
-  name
+  shortname
+})
+
+export const updateComputationFullName = (index, fullname) => ({
+  type: 'COMPUTATIONS.UPDATE_FULL_NAME',
+  index,
+  fullname
 })
 
 export const updateComputationField = (index, field) => ({
@@ -47,6 +50,11 @@ export const appendLog = log => ({
 
 export const setComputationReference = index => ({
   type: 'COMPUTATIONS.SET_REFERENCE',
+  index
+})
+
+export const toggleComputationPostProcess = index => ({
+  type: 'COMPUTATIONS.TOGGLE_POST_PROCESS',
   index
 })
 

@@ -4,13 +4,15 @@ import Computations from './component'
 
 import {
   addComputation,
-  updateComputationName,
+  updateComputationShortName,
+  updateComputationFullName,
   updateComputationField,
   updateComputationInputs,
   removeComputation,
   setScaleOp,
   setScaleValue,
   setComputationReference,
+  toggleComputationPostProcess,
   updatePageCompletion
 } from './actions'
 
@@ -20,8 +22,11 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  onComputationNameChange: (index, name) =>
-    dispatch(updateComputationName(index, name)),
+  onComputationShortNameChange: (index, name) =>
+    dispatch(updateComputationShortName(index, name)),
+
+  onComputationFullNameChange: (index, name) =>
+    dispatch(updateComputationFullName(index, name)),
 
   onComputationFieldChange: (index, field) =>
     dispatch(updateComputationField(index, field)),
@@ -29,7 +34,7 @@ const mapDispatchToProps = dispatch => ({
   onComputationInputsChange: (index, inputs) =>
     dispatch(updateComputationInputs(index, inputs)),
 
-  addEmptyComputation: () => dispatch(addComputation('', '', [])),
+  addEmptyComputation: () => dispatch(addComputation()),
 
   onComputationRemove: index => dispatch(removeComputation(index)),
 
@@ -38,6 +43,8 @@ const mapDispatchToProps = dispatch => ({
   setScaleValue: (index, value) => dispatch(setScaleValue(index, value)),
 
   setComputationReference: index => dispatch(setComputationReference(index)),
+
+  toggleComputationPostProcess: index => dispatch(toggleComputationPostProcess(index)),
 
   updatePageCompletion: (page, isComplete) => dispatch(updatePageCompletion(page, isComplete))
 })

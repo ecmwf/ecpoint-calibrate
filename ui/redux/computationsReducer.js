@@ -16,11 +16,13 @@ export default (state = defaultState, action) => {
           ...state.fields,
           {
             index: state.fields.length,
-            name: action.name,
-            field: action.field,
-            inputs: action.inputs,
+            shortname: '',
+            fullname: '',
+            field: '',
+            inputs: [],
             scale: { op: 'MULTIPLY', value: 1 },
-            isReference: false
+            isReference: false,
+            isPostProcessed: true
           }
         ]
       }
@@ -30,12 +32,23 @@ export default (state = defaultState, action) => {
       return {...state, fields: state.fields.filter(item => item.index !== action.index)}
     }
 
-    case 'COMPUTATIONS.UPDATE_NAME':
+    case 'COMPUTATIONS.UPDATE_SHORT_NAME':
       return {
         ...state,
         fields: state.fields.map(item => {
           if (item.index === action.index) {
-            return { ...item, name: action.name }
+            return { ...item, shortname: action.shortname }
+          }
+          return item
+        })
+      }
+
+    case 'COMPUTATIONS.UPDATE_FULL_NAME':
+      return {
+        ...state,
+        fields: state.fields.map(item => {
+          if (item.index === action.index) {
+            return { ...item, fullname: action.fullname }
           }
           return item
         })
@@ -121,6 +134,17 @@ export default (state = defaultState, action) => {
           } else {
             return { ...item, isReference: false }
           }
+        })
+      }
+
+    case 'COMPUTATIONS.TOGGLE_POST_PROCESS':
+      return {
+        ...state,
+        fields: state.fields.map(item => {
+          if (item.index === action.index) {
+            return { ...item, isPostProcessed: !item.isPostProcessed }
+          }
+          return item
         })
       }
 
