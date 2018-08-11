@@ -4,7 +4,8 @@ import {
   Grid,
   Card,
   Button,
-  Icon
+  Icon,
+  Label
 } from 'semantic-ui-react'
 
 import _ from 'lodash'
@@ -66,12 +67,56 @@ class PostProcessing extends Component {
     this.props.onThresholdSplitsChange(grid)
   }
 
+  hasError () {
+    // Get the grid without the header
+    const grid = this.props.postprocessing.thresholdSplitsGrid.slice(1)
+
+    if (grid.length === 0) {
+      return true
+    }
+
+    // Get the first row without the left (index) column
+    const firstRow = grid[0].slice(1)
+
+    const firstRowisValid = _.every(
+      firstRow,
+      cell => cell.value === 'inf' || cell.value === '-inf' || /^\d+$/.test(cell.value)
+    )
+
+    if (!firstRowisValid) {
+      return true
+    }
+
+    const remainingRows = grid.slice(1)
+
+    if (remainingRows.length === 0) {
+      return false
+    }
+
+    return !_.every(
+      remainingRows,
+      row => _.every(
+        row.slice(1),
+        cell => cell.value === '' || cell.value === 'inf' || cell.value === '-inf' || /^\d+$/.test(cell.value)
+      )
+    )
+  }
+
+  isComplete = () => !this.hasError()
+
   render () {
     return (
       <Grid container centered>
         <Grid.Column>
           <Card fluid color='teal'>
-            <Card.Header>Decision Tree</Card.Header>
+            <Card.Header>
+              <Grid.Column floated='left'>
+                Decision Tree
+              </Grid.Column>
+              <Grid.Column floated='right'>
+                {this.isComplete() && <Icon name='check circle' />}
+              </Grid.Column>
+            </Card.Header>
             <Card.Content>
               <Card.Description>
                 {this.getThresholdSplitsGridSheet()}
@@ -86,9 +131,15 @@ class PostProcessing extends Component {
                 >
                   <Icon name='add circle' /> Add row
                 </Button>
+                <br />
+                <p>
+                  Valid values are <Label>-inf</Label>, <Label>inf</Label>, and all integers.
+                </p>
               </Card.Description>
             </Card.Content>
-            <Card.Content extra />
+            <Card.Content extra>
+              TBA
+            </Card.Content>
           </Card>
         </Grid.Column>
       </Grid>
