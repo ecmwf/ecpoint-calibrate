@@ -14,11 +14,9 @@ from core.loaders.GribLoader import GribLoader
 
 from ..computations.models import Computation
 
-# [FIXME] - Integrate it into the Computations framework
-from ..computations.utils import compute_local_solar_time
-
 from .utils import (
     adjust_leadstart,
+    compute_local_solar_time,
     generate_steps,
     iter_daterange,
     log,

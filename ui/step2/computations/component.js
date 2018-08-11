@@ -45,10 +45,6 @@ const operations = [
     value: 'VECTOR_MODULE'
   },
   {
-    text: 'Local Solar Time (LST)',
-    value: 'LOCAL_SOLAR_TIME'
-  },
-  {
     text: 'Accumulated Solar Radiaton (SR)',
     value: 'ACCUMULATED_SOLAR_RADIATION'
   }
