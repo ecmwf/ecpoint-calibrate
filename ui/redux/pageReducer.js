@@ -3,7 +3,8 @@ import _ from 'lodash'
 const defaultState = {
   0: { isActive: true, isComplete: {database: false, parameters: false} },
   1: { isActive: false, isComplete: {fields: false, errors: false} },
-  2: { isActive: false, isComplete: {results: false} }
+  2: { isActive: false, isComplete: {results: false} },
+  3: { isActive: false, isComplete: {decisionTree: false} }
 }
 
 export default (state = defaultState, action) => {

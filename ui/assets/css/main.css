@@ -13,3 +13,20 @@
   font-size: 13px;
   margin-bottom: 0.2em;
 }
+
+.data-grid-container .data-grid {
+  table-layout: fixed;
+  border-collapse: collapse;
+  width: 100%;
+  margin: auto;
+}
+
+.data-grid-container .data-grid .cell > input {
+  outline: none !important;
+  border: 1.5px solid rgb(33, 133, 208) !important;
+  text-align:right;
+  width: calc(100%) !important;
+  height: 100% !important;
+  background: none;
+  display: block;
+}

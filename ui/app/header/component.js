@@ -20,7 +20,7 @@ const Menu = props => (
       </span>
     </div>
 
-    <Step.Group widths={3}>
+    <Step.Group widths={4}>
       <Step
         active={props.page[0].isActive ? true : null}
         onClick={() => props.onPageChange(0)}
@@ -35,7 +35,7 @@ const Menu = props => (
         disabled={!isPageComplete(props.page[0])}
         onClick={() => props.onPageChange(1)}
       >
-        <Icon name='cogs' />
+        <Icon name='code' />
         <Step.Content>
           <Step.Title>Computations</Step.Title>
         </Step.Content>
@@ -45,9 +45,18 @@ const Menu = props => (
         disabled={!isPageComplete(props.page[0]) || !isPageComplete(props.page[1])}
         onClick={() => props.onPageChange(2)}
       >
-        <Icon name='chart bar' />
+        <Icon name='cogs' />
         <Step.Content>
           <Step.Title>Processing</Step.Title>
+        </Step.Content>
+      </Step>
+      <Step
+        active={props.page[3].isActive ? true : null}
+        onClick={() => props.onPageChange(3)}
+      >
+        <Icon name='chart bar' />
+        <Step.Content>
+          <Step.Title>Post Processing</Step.Title>
         </Step.Content>
       </Step>
     </Step.Group>
