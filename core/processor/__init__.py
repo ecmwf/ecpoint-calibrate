@@ -198,6 +198,9 @@ def run(parameters):
                 computation['shortname']
             ] = computed_value
 
+            if not computation['isReference'] and not computation['isPostProcessed']:
+                continue
+
             yield log.info(
                 'Selecting the nearest grid point to rainfall observations.'
             )
@@ -259,6 +262,11 @@ def run(parameters):
 
         if skip:
             continue
+
+        derived_computations = [
+            computation for computation in derived_computations
+            if computation['isPostProcessed']
+        ]
 
         for computation in derived_computations:
             computer = Computation(computation)
