@@ -30,7 +30,7 @@ class PostProcessing extends Component {
     {readOnly: true, value: index}
   ].concat(
     _.flatMap(
-      this.props.fields,
+      this.props.fields.filter(field => field.isPostProcessed),
       field => [{value: ''}, {value: ''}]
     )
   )
@@ -40,7 +40,7 @@ class PostProcessing extends Component {
       {readOnly: true, value: ''}
     ].concat(
       _.flatMap(
-        this.props.fields,
+        this.props.fields.filter(field => field.isPostProcessed),
         field => [
           {readOnly: true, value: field.shortname + '__L'},
           {readOnly: true, value: field.shortname + '__H'}
