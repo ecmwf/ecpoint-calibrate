@@ -192,7 +192,7 @@ def run(parameters):
                 for step in steps
             ]
 
-            computed_value = computer.run(computation_steps)
+            computed_value = computer.run(*computation_steps)
 
             computations_cache[
                 computation['shortname']
@@ -275,7 +275,7 @@ def run(parameters):
                 for field_input in computation['inputs']
             ]
 
-            computed_value = computer.run(steps)
+            computed_value = computer.run(*steps)
             geopoints = computed_value.nearest_gridpoint(obs)
 
             geopoints_filtered = Geopoints(

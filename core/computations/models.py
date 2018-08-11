@@ -22,15 +22,18 @@ class Computation(object):
 
     computation = attr.ib()
 
-    def run(self, steps):
-        scaling_op = (
-            operator.mul
-            if self.computation["scale"]["op"] == "MULTIPLY"
-            else operator.div
-        )
-
+    def run(self, *args):
         scaling_factor = int(self.computation["scale"]["value"])
 
-        computed_value = self.meta[self.computation["field"]](*steps)
+        computed_value = self.meta[self.computation["field"]](*args)
 
-        return scaling_op(computed_value, scaling_factor)
+        if scaling_factor == 1:
+            return computed_value
+        else:
+            scaling_op = (
+                operator.mul
+                if self.computation["scale"]["op"] == "MULTIPLY"
+                else operator.div
+            )
+
+            return scaling_op(computed_value, scaling_factor)
