@@ -4,6 +4,7 @@ import os
 
 import attr
 import numpy as np
+import pandas
 
 
 @attr.s(slots=True)
@@ -83,7 +84,8 @@ class DecisionTree(object):
                         thrH_matrix[ind_i:ind_f, i] = tempH2
                         counter = ind_f
 
-        self.thrL_out, self.thrH_out = thrL_matrix, thrH_matrix
+        self.thrL_out = pandas.DataFrame(data=thrL_matrix, columns=self.thrL_in.columns)
+        self.thrH_out = pandas.DataFrame(data=thrH_matrix, columns=self.thrH_in.columns)
 
         print(self)
 
@@ -93,11 +95,13 @@ class DecisionTree(object):
 
         out = ""
 
-        for i, _ in enumerate(self.thrL_out):
+        for i, _ in enumerate(self.thrL_out.as_matrix()):
             out += "Weather Type {}\n".format(i)
             for j in range(self.num_predictors):
                 out += "    Level {num}: {low} <= PREDICTOR < {high}\n".format(
-                    num=j, low=self.thrL_out[i][j], high=self.thrH_out[i][j]
+                    num=j,
+                    low=self.thrL_out.as_matrix()[i][j],
+                    high=self.thrH_out.as_matrix()[i][j],
                 )
             out += "\n"
 

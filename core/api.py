@@ -4,8 +4,7 @@ import json
 import os
 
 import pandas
-from flask import Flask, request, Response
-
+from flask import Flask, Response, request
 
 from core.postprocessors.decision_tree import DecisionTree
 from core.processor import run
@@ -44,8 +43,14 @@ def get_naive_decision_tree():
     dt = DecisionTree(thrL_in=thrL, thrH_in=thrH)
     dt.create()
 
-    # [TODO] - Serialize the DataFrame into JSON
-    return Response(json.dumps({}), mimetype="application/json")
+    df_out = dt.thrL_out.join(dt.thrH_out)
+
+    return Response(
+        json.dumps(
+            {"records": df_out.as_matrix().tolist(), "labels": list(df_out.columns)}
+        ),
+        mimetype="application/json",
+    )
 
 
 def main():
