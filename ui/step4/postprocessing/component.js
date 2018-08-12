@@ -116,12 +116,13 @@ class PostProcessing extends Component {
       row => _.flatMap(row.slice(1), cell => cell.value)
     )
 
-    client.post({
-      url: '/postprocessing/create-naive-decision-tree',
-      body: {labels, records},
-      json: true
-    }).on(
-      'success', response => console.log(response)
+    client.post(
+      {
+        url: '/postprocessing/create-naive-decision-tree',
+        body: {labels, records},
+        json: true
+      },
+      (err, httpResponse, body) => console.log(body)
     )
   }
 
