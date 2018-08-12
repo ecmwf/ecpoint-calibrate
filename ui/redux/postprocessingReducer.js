@@ -1,11 +1,12 @@
 const defaultState = {
-  thresholdSplitsGrid: []
+  thrGridIn: [],
+  thrGridOut: []
 }
 
 export default (state = defaultState, action) => {
   switch (action.type) {
     case 'POSTPROCESSING.SET_THRESHOLD_SPLITS': {
-      return { ...state, thresholdSplitsGrid: action.grid }
+      return { ...state, thrGridIn: action.grid }
     }
 
     default: {

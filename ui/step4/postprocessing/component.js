@@ -5,7 +5,8 @@ import {
   Card,
   Button,
   Icon,
-  Label
+  Label,
+  Table
 } from 'semantic-ui-react'
 
 import _ from 'lodash'
@@ -13,13 +14,15 @@ import _ from 'lodash'
 import ReactDataSheet from 'react-datasheet'
 import 'react-datasheet/lib/react-datasheet.css'
 
+import client from '~/utils/client'
+
 class PostProcessing extends Component {
   getThresholdSplitsGridSheet = () => <ReactDataSheet
-    data={this.props.postprocessing.thresholdSplitsGrid}
+    data={this.props.postprocessing.thrGridIn}
     valueRenderer={(cell) => cell.value}
     onContextMenu={(e, cell, i, j) => cell.readOnly ? e.preventDefault() : null}
     onCellsChanged={changes => {
-      const grid = this.props.postprocessing.thresholdSplitsGrid.map(row => [...row])
+      const grid = this.props.postprocessing.thrGridIn.map(row => [...row])
       changes.forEach(({cell, row, col, value}) => {
         grid[row][col] = {...grid[row][col], value}
       })
@@ -55,8 +58,8 @@ class PostProcessing extends Component {
   }
 
   appendBlankRow = () => {
-    const newGrid = this.props.postprocessing.thresholdSplitsGrid.concat(
-      [this.getBlankRow(this.props.postprocessing.thresholdSplitsGrid.length)]
+    const newGrid = this.props.postprocessing.thrGridIn.concat(
+      [this.getBlankRow(this.props.postprocessing.thrGridIn.length)]
     )
 
     this.props.onThresholdSplitsChange(newGrid)
@@ -69,7 +72,7 @@ class PostProcessing extends Component {
 
   hasError () {
     // Get the grid without the header
-    const grid = this.props.postprocessing.thresholdSplitsGrid.slice(1)
+    const grid = this.props.postprocessing.thrGridIn.slice(1)
 
     if (grid.length === 0) {
       return true
@@ -80,7 +83,7 @@ class PostProcessing extends Component {
 
     const firstRowisValid = _.every(
       firstRow,
-      cell => cell.value === 'inf' || cell.value === '-inf' || /^\d+$/.test(cell.value)
+      cell => cell.value === 'Infinity' || cell.value === '-Infinity' || /^\d+$/.test(cell.value)
     )
 
     if (!firstRowisValid) {
@@ -97,12 +100,76 @@ class PostProcessing extends Component {
       remainingRows,
       row => _.every(
         row.slice(1),
-        cell => cell.value === '' || cell.value === 'inf' || cell.value === '-inf' || /^\d+$/.test(cell.value)
+        cell => cell.value === '' || cell.value === 'Infinity' || cell.value === '-Infinity' || /^\d+$/.test(cell.value)
       )
     )
   }
 
   isComplete = () => !this.hasError()
+
+  postThrGridIn () {
+    const labels = this.props.postprocessing.thrGridIn[0].slice(1).map(
+      cell => cell.value
+    )
+
+    const records = this.props.postprocessing.thrGridIn.slice(1).map(
+      row => _.flatMap(row.slice(1), cell => cell.value)
+    )
+
+    client.post({
+      url: '/postprocessing/create-naive-decision-tree',
+      body: {labels, records},
+      json: true
+    }).on(
+      'success', response => console.log(response)
+    )
+  }
+
+  getFullDecisionTree () {
+    return (
+      <Grid centered>
+        <Grid.Row centered>
+          <Button
+            disabled={this.hasError()}
+            icon
+            labelPosition='left'
+            primary
+            size='medium'
+            onClick={() => this.postThrGridIn()}
+          >
+            <Icon name='refresh' /> Generate full Decision Tree
+          </Button>
+        </Grid.Row>
+
+        <Grid.Row centered>
+          <Grid.Column>
+            <Table definition>
+              <Table.Header>
+                <Table.Row>
+                  <Table.HeaderCell />
+                  <Table.HeaderCell>Arguments</Table.HeaderCell>
+                  <Table.HeaderCell>Description</Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell>reset rating</Table.Cell>
+                  <Table.Cell>None</Table.Cell>
+                  <Table.Cell>Resets rating to default value</Table.Cell>
+                </Table.Row>
+                <Table.Row>
+                  <Table.Cell>set rating</Table.Cell>
+                  <Table.Cell>rating (integer)</Table.Cell>
+                  <Table.Cell>Sets the current star rating to specified value</Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
+    )
+  }
 
   render () {
     return (
@@ -133,12 +200,12 @@ class PostProcessing extends Component {
                 </Button>
                 <br />
                 <p>
-                  Valid values are <Label>-inf</Label>, <Label>inf</Label>, and all integers.
+                  Valid values are <Label>-Infinity</Label>, <Label>Infinity</Label>, and all integers.
                 </p>
               </Card.Description>
             </Card.Content>
             <Card.Content extra>
-              TBA
+              {this.getFullDecisionTree()}
             </Card.Content>
           </Card>
         </Grid.Column>
