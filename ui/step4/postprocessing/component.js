@@ -17,6 +17,8 @@ import 'react-datasheet/lib/react-datasheet.css'
 import client from '~/utils/client'
 
 class PostProcessing extends Component {
+  state = {thrGridOut: null}
+
   getThresholdSplitsGridSheet = () => <ReactDataSheet
     data={this.props.postprocessing.thrGridIn}
     valueRenderer={(cell) => cell.value}
@@ -122,7 +124,7 @@ class PostProcessing extends Component {
         body: {labels, records},
         json: true
       },
-      (err, httpResponse, body) => console.log(body)
+      (err, httpResponse, body) => this.setState({thrGridOut: body})
     )
   }
 
@@ -142,32 +144,41 @@ class PostProcessing extends Component {
           </Button>
         </Grid.Row>
 
-        <Grid.Row centered>
-          <Grid.Column>
-            <Table definition>
-              <Table.Header>
-                <Table.Row>
-                  <Table.HeaderCell />
-                  <Table.HeaderCell>Arguments</Table.HeaderCell>
-                  <Table.HeaderCell>Description</Table.HeaderCell>
-                </Table.Row>
-              </Table.Header>
+        {
+          this.state.thrGridOut && <Grid.Row centered>
+            <Grid.Column>
+              <Table definition>
+                <Table.Header>
+                  <Table.Row>
+                    <Table.HeaderCell />
+                    {
+                      this.state.thrGridOut.labels.map(
+                        label => <Table.HeaderCell>{label}</Table.HeaderCell>
+                      )
+                    }
+                  </Table.Row>
+                </Table.Header>
 
-              <Table.Body>
-                <Table.Row>
-                  <Table.Cell>reset rating</Table.Cell>
-                  <Table.Cell>None</Table.Cell>
-                  <Table.Cell>Resets rating to default value</Table.Cell>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell>set rating</Table.Cell>
-                  <Table.Cell>rating (integer)</Table.Cell>
-                  <Table.Cell>Sets the current star rating to specified value</Table.Cell>
-                </Table.Row>
-              </Table.Body>
-            </Table>
-          </Grid.Column>
-        </Grid.Row>
+                <Table.Body>
+                  {
+                    this.state.thrGridOut.records.map(
+                      (rows, idx) => (
+                        <Table.Row>
+                          <Table.Cell>{idx}</Table.Cell>
+                          {
+                            rows.map(
+                              cell => <Table.Cell>{cell}</Table.Cell>
+                            )
+                          }
+                        </Table.Row>
+                      )
+                    )
+                  }
+                </Table.Body>
+              </Table>
+            </Grid.Column>
+          </Grid.Row>
+        }
       </Grid>
     )
   }
@@ -200,9 +211,9 @@ class PostProcessing extends Component {
                   <Icon name='add circle' /> Add row
                 </Button>
                 <br />
-                <p>
-                  Valid values are <Label>-Infinity</Label>, <Label>Infinity</Label>, and all integers.
-                </p>
+
+                Valid values are <Label>-Infinity</Label>, <Label>Infinity</Label>, and all integers.
+
               </Card.Description>
             </Card.Content>
             <Card.Content extra>

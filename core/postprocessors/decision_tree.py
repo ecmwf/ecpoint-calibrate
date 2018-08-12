@@ -28,6 +28,7 @@ class DecisionTree(object):
 
         for i in range(self.num_predictors):
             temp = self.thrL_in.ix[:, i].dropna()
+            temp = temp[temp != ""]
             thresholds_num[i] = len(temp)
             acc = acc * len(temp)
             thresholds_num_acc[i] = acc
@@ -43,7 +44,9 @@ class DecisionTree(object):
         thrH_matrix = np.zeros(dim)
 
         tempL = self.thrL_in.ix[:, -1].dropna()
+        tempL = tempL[tempL != ""]
         tempH = self.thrH_in.ix[:, -1].dropna()
+        tempH = tempH[tempH != ""]
 
         m = len(tempL)
 
@@ -57,7 +60,9 @@ class DecisionTree(object):
         rep = 1
         for i in range(self.num_predictors - 2, -1, -1):
             tempL1 = self.thrL_in.ix[:, i].dropna()
+            tempL1 = tempL1[tempL1 != ""]
             tempH1 = self.thrH_in.ix[:, i].dropna()
+            tempH1 = tempH1[tempH1 != ""]
             m = len(tempL1)
 
             rep *= thresholds_num[i + 1]
