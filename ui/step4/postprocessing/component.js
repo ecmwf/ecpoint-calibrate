@@ -164,7 +164,7 @@ class PostProcessing extends Component {
                     this.state.thrGridOut.records.map(
                       (rows, idx) => (
                         <Table.Row>
-                          <Table.Cell>{idx}</Table.Cell>
+                          <Table.Cell>{idx + 1}</Table.Cell>
                           {
                             rows.map(
                               cell => <Table.Cell>{cell}</Table.Cell>
