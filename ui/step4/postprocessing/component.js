@@ -85,7 +85,7 @@ class PostProcessing extends Component {
 
     const firstRowisValid = _.every(
       firstRow,
-      cell => cell.value === 'Infinity' || cell.value === '-Infinity' || /^\d+$/.test(cell.value)
+      cell => cell.value === 'inf' || cell.value === '-inf' || /^\d+$/.test(cell.value)
     )
 
     if (!firstRowisValid) {
@@ -102,7 +102,7 @@ class PostProcessing extends Component {
       remainingRows,
       row => _.every(
         row.slice(1),
-        cell => cell.value === '' || cell.value === 'Infinity' || cell.value === '-Infinity' || /^\d+$/.test(cell.value)
+        cell => cell.value === '' || cell.value === 'inf' || cell.value === '-inf' || /^\d+$/.test(cell.value)
       )
     )
   }
@@ -212,7 +212,7 @@ class PostProcessing extends Component {
                 </Button>
                 <br />
 
-                Valid values are <Label>-Infinity</Label>, <Label>Infinity</Label>, and all integers.
+                Valid values are <Label>-inf</Label>, <Label>inf</Label>, and all integers.
 
               </Card.Description>
             </Card.Content>
