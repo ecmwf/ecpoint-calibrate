@@ -100,13 +100,13 @@ class DecisionTree(object):
 
         out = ""
 
-        for i, _ in enumerate(self.thrL_out.as_matrix()):
+        for i in range(self.num_wt):
             out += "Weather Type {}\n".format(i)
             for j in range(self.num_predictors):
                 out += "    Level {num}: {low} <= PREDICTOR < {high}\n".format(
                     num=j,
-                    low=self.thrL_out.as_matrix()[i][j],
-                    high=self.thrH_out.as_matrix()[i][j],
+                    low=self.thrL_out.ix[i, j],
+                    high=self.thrH_out.ix[i, j],
                 )
             out += "\n"
 
