@@ -6,6 +6,7 @@ from .utils import (
     compute_accumulated_field,
     compute_rms_field,
     compute_weighted_average_field,
+    compute_ratio_field,
 )
 
 
@@ -16,6 +17,7 @@ class Computation(object):
         "WEIGHTED_AVERAGE_FIELD": compute_weighted_average_field,
         "ACCUMULATED_SOLAR_RADIATION": compute_accumulated_field,
         "VECTOR_MODULE": compute_rms_field,
+        "RATIO_FIELD": compute_ratio_field,
     }
 
     computation = attr.ib()

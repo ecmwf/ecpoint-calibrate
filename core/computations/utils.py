@@ -26,3 +26,7 @@ def compute_weighted_average_field(*args):
 
 def compute_rms_field(*args):
     return GribLoader.rms(*args)
+
+
+def compute_ratio_field(dividend, divisor):
+    return dividend / divisor

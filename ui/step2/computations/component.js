@@ -21,6 +21,10 @@ const operations = [
     value: 'ACCUMULATED_FIELD'
   },
   {
+    text: 'Ratio Field',
+    value: 'RATIO_FIELD'
+  },
+  {
     text: 'Instantaneous Field',
     value: 'INSTANTANEOUS_FIELD'
   },

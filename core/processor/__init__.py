@@ -277,17 +277,30 @@ def run(parameters):
                 for field_input in computation['inputs']
             ]
 
-            computed_value = computer.run(*steps)
-            geopoints = computed_value.nearest_gridpoint(obs)
-
-            geopoints_filtered = Geopoints(
-                geopoint
-                for geopoint, ref_geopoint in zip(geopoints, ref_geopoints)
-                if ref_geopoint.value >= 1
-            )
-            computations_result.append(
-                (computation['shortname'], geopoints_filtered.values)
-            )
+            if computation['field'] == 'RATIO_FIELD':
+                dividend = steps[0]
+                # [TODO] Cache the following in the computations_cache
+                geopoints = dividend.nearest_gridpoint(obs)
+                geopoints_filtered = Geopoints(
+                    geopoint
+                    for geopoint, ref_geopoint in zip(geopoints, ref_geopoints)
+                    if ref_geopoint.value >= 1
+                )
+                computed_value = computer.run(geopoints_filtered.values, ref_geopoints_filtered.values)
+                computations_result.append(
+                   (computation['shortname'], computed_value)
+                )
+            else:
+                computed_value = computer.run(*steps)
+                geopoints = computed_value.nearest_gridpoint(obs)
+                geopoints_filtered = Geopoints(
+                    geopoint
+                    for geopoint, ref_geopoint in zip(geopoints, ref_geopoints)
+                    if ref_geopoint.value >= 1
+                )
+                computations_result.append(
+                    (computation['shortname'], geopoints_filtered.values)
+                )
 
         # Compute other parameters
         obs1 = Geopoints(
@@ -333,6 +346,7 @@ def run(parameters):
             ('lonOBS', lonObs_1),
             ('LST', vals_LST),
         ] + vals_errors + computations_result
+
         serializer.add_columns_chunk(columns)
 
         yield log.info('\n' + '*'*80)
