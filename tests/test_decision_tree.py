@@ -16,16 +16,16 @@ def test_decision_tree_with_predefined_threshold_splits():
     ]
 
     labels = [
-        "cpr_thrL",
-        "cpr_thrH",
-        "tp_thrL",
-        "tp_thrH",
-        "wspd_thrL",
-        "wspd_thrH",
-        "cape_thrL",
-        "cape_thrH",
-        "sr_thrL",
-        "sr_thrH",
+        "CPR_thrL",
+        "CPR_thrH",
+        "TP_thrL",
+        "TP_thrH",
+        "WSPD_thrL",
+        "WSPD_thrH",
+        "CAPE_thrL",
+        "CAPE_thrH",
+        "SR_thrL",
+        "SR_thrH",
     ]
 
     df = pandas.DataFrame.from_records(records, columns=labels)
