@@ -48,8 +48,8 @@ class PostProcessing extends Component {
       _.flatMap(
         this.props.fields.filter(field => field.isPostProcessed),
         field => [
-          {readOnly: true, value: field.shortname + '__L'},
-          {readOnly: true, value: field.shortname + '__H'}
+          {readOnly: true, value: field.shortname + '_thrL'},
+          {readOnly: true, value: field.shortname + '_thrH'}
         ]
       )
     )
