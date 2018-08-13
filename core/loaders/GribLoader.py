@@ -43,6 +43,9 @@ def nearest_value_func(gid, geopoint):
 
 class GribLoader(BasePredictorLoader):
     def __init__(self, path):
+        if not os.path.exists(path):
+            raise IOError
+
         self.path = path
 
     def nearest_gridpoint(self, geopoints):

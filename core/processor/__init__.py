@@ -185,10 +185,14 @@ def run(parameters):
                 else steps
             )
 
-            computation_steps = [
-                GribLoader(path=get_grib_path(predictor_code, step))
-                for step in steps
-            ]
+            try:
+                computation_steps = [
+                    GribLoader(path=get_grib_path(predictor_code, step))
+                    for step in steps
+                ]
+            except IOError:
+                skip = True
+                break
 
             computed_value = computer.run(*computation_steps)
 
