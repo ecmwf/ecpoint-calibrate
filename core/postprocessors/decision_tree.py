@@ -126,15 +126,17 @@ class DecisionTree(object):
             thrL_temp = thrL[thrL_label]
             thrH_temp = thrH[thrH_label]
 
-            predictor_shortname = thrL_label.rstrip("_thrL")
+            predictor_shortname = thrL_label.replace("_thrL", "")
 
             temp_pred = predictor_matrix[predictor_shortname]
 
-            FER = FER[temp_pred >= thrL_temp and temp_pred < thrH_temp]
-            predictor_matrix = predictor_matrix[
-                temp_pred >= thrL_temp and temp_pred < thrH_temp, :
-            ]
+            mask = (temp_pred >= thrL_temp) & (temp_pred < thrH_temp)
+
+            FER = FER[mask]
+            predictor_matrix = predictor_matrix[mask]
 
             title_pred += "({low} <= {pred} < {high}) ".format(
                 low=thrL_temp, pred=predictor_shortname, high=thrH_temp
             )
+
+            return FER, title_pred
