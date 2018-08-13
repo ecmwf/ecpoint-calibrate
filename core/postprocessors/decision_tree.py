@@ -104,10 +104,37 @@ class DecisionTree(object):
             out += "Weather Type {}\n".format(i)
             for j in range(self.num_predictors):
                 out += "    Level {num}: {low} <= PREDICTOR < {high}\n".format(
-                    num=j,
-                    low=self.thrL_out.ix[i, j],
-                    high=self.thrH_out.ix[i, j],
+                    num=j, low=self.thrL_out.ix[i, j], high=self.thrH_out.ix[i, j]
                 )
             out += "\n"
 
         return out
+
+    def evaluate(self, predictor_matrix):
+        for i in range(self.num_wt):
+            thrL = self.thrL_out.ix[i, :]
+            thrH = self.thrH_out.ix[i, :]
+            self.evaluate_weather_type(thrL, thrH, predictor_matrix)
+
+    def evaluate_weather_type(self, thrL, thrH, predictor_matrix):
+        FER = predictor_matrix["FER"]
+        title_pred = ""
+
+        for thrL_label, thrH_label in zip(
+            self.thrL_out.columns.tolist(), self.thrH_out.columns.tolist()
+        ):
+            thrL_temp = thrL[thrL_label]
+            thrH_temp = thrH[thrH_label]
+
+            predictor_shortname = thrL_label.rstrip("_thrL")
+
+            temp_pred = predictor_matrix[predictor_shortname]
+
+            FER = FER[temp_pred >= thrL_temp and temp_pred < thrH_temp]
+            predictor_matrix = predictor_matrix[
+                temp_pred >= thrL_temp and temp_pred < thrH_temp, :
+            ]
+
+            title_pred += "({low} <= {pred} < {high}) ".format(
+                low=thrL_temp, pred=predictor_shortname, high=thrH_temp
+            )
