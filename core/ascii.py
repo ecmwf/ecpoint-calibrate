@@ -3,7 +3,8 @@ from collections import OrderedDict
 import attr
 import pandas
 
-NEW_LINE = '\n\n'
+NEW_LINE = "\n\n"
+
 
 @attr.s(slots=True)
 class ASCIIEncoder(object):
@@ -16,21 +17,18 @@ class ASCIIEncoder(object):
         if self.dataframe.empty:
             self.dataframe = pandas.DataFrame.from_dict(OrderedDict(columns))
         else:
-            self.dataframe.append(
-                pandas.DataFrame.from_dict(OrderedDict(columns)),
-                ignore_index=True
+            self.dataframe = self.dataframe.append(
+                pandas.DataFrame.from_dict(OrderedDict(columns)), ignore_index=True
             )
 
     def write(self):
-        with open(self.path, 'w') as f:
+        with open(self.path, "w") as f:
             if self.header:
                 f.write(self.header)
 
             f.write(NEW_LINE)
-            
-            f.write(
-                self.dataframe.to_string(index=False)
-            )
+
+            f.write(self.dataframe.to_string(index=False))
 
             f.write(NEW_LINE)
 
@@ -44,4 +42,6 @@ class ASCIIDecoder(object):
 
     @property
     def dataframe(self):
-        return pandas.read_table(self.path, comment='#', skip_blank_lines=True, sep='\s+')
+        return pandas.read_table(
+            self.path, comment="#", skip_blank_lines=True, sep="\s+"
+        )
