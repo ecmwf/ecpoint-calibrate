@@ -114,15 +114,28 @@ class DecisionTree(object):
         for i in range(self.num_wt):
             thrL = self.thrL_out.ix[i, :]
             thrH = self.thrH_out.ix[i, :]
-            self.evaluate_weather_type(thrL, thrH, predictor_matrix)
+            wt = WeatherType(
+                thrL=thrL,
+                thrH=thrH,
+                thrL_label=self.thrL_out.columns.tolist(),
+                thrH_label=self.thrH_out.columns.tolist(),
+            )
+            wt.evaluate(predictor_matrix)
 
-    def evaluate_weather_type(self, thrL, thrH, predictor_matrix):
-        FER = predictor_matrix["FER"]
+
+@attr.s(slots=True)
+class WeatherType(object):
+    thrL = attr.ib()
+    thrH = attr.ib()
+
+    thrL_labels = attr.ib()
+    thrH_labels = attr.ib()
+
+    def evaluate(self, predictors_matrix):
+        FER = predictors_matrix["FER"]
         title_pred = ""
 
-        for thrL_label, thrH_label in zip(
-            self.thrL_out.columns.tolist(), self.thrH_out.columns.tolist()
-        ):
+        for thrL_label, thrH_label in zip(self.thrL_labels, thrH_labels):
             thrL_temp = thrL[thrL_label]
             thrH_temp = thrH[thrH_label]
 
