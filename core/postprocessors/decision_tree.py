@@ -1,10 +1,15 @@
 from __future__ import print_function
 
 import os
+from base64 import b64encode
+from io import BytesIO
 
 import attr
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas
+
+from ..utils import tolist
 
 
 @attr.s(slots=True)
@@ -110,6 +115,7 @@ class DecisionTree(object):
 
         return out
 
+    @tolist
     def evaluate(self, predictor_matrix):
         for i in range(self.num_wt):
             thrL = self.thrL_out.ix[i, :]
@@ -117,10 +123,10 @@ class DecisionTree(object):
             wt = WeatherType(
                 thrL=thrL,
                 thrH=thrH,
-                thrL_label=self.thrL_out.columns.tolist(),
-                thrH_label=self.thrH_out.columns.tolist(),
+                thrL_labels=self.thrL_out.columns.tolist(),
+                thrH_labels=self.thrH_out.columns.tolist(),
             )
-            wt.evaluate(predictor_matrix)
+            yield wt.evaluate(predictor_matrix)
 
 
 @attr.s(slots=True)
@@ -131,25 +137,62 @@ class WeatherType(object):
     thrL_labels = attr.ib()
     thrH_labels = attr.ib()
 
-    def evaluate(self, predictors_matrix):
+    def evaluate(self, predictors_matrix, plot=True):
         FER = predictors_matrix["FER"]
         title_pred = ""
 
-        for thrL_label, thrH_label in zip(self.thrL_labels, thrH_labels):
-            thrL_temp = thrL[thrL_label]
-            thrH_temp = thrH[thrH_label]
+        for thrL_label, thrH_label in zip(self.thrL_labels, self.thrH_labels):
+            thrL_temp = self.thrL[thrL_label]
+            thrH_temp = self.thrH[thrH_label]
 
             predictor_shortname = thrL_label.replace("_thrL", "")
 
-            temp_pred = predictor_matrix[predictor_shortname]
+            temp_pred = predictors_matrix[predictor_shortname]
 
             mask = (temp_pred >= thrL_temp) & (temp_pred < thrH_temp)
 
             FER = FER[mask]
-            predictor_matrix = predictor_matrix[mask]
+            predictors_matrix = predictors_matrix[mask]
 
             title_pred += "({low} <= {pred} < {high}) ".format(
                 low=thrL_temp, pred=predictor_shortname, high=thrH_temp
             )
 
+        if plot:
+            return self.plot(data=FER, title=title_pred)
+        else:
             return FER, title_pred
+
+    @staticmethod
+    def plot(data, title):
+        bins = [
+            -1.1,
+            -0.99,
+            -0.75,
+            -0.5,
+            -0.25,
+            0.25,
+            0.5,
+            0.75,
+            1,
+            1.5,
+            2,
+            3,
+            5,
+            10,
+            25,
+            50,
+            1000,
+        ]
+
+        out = pandas.cut(data, bins=bins, include_lowest=True)
+        ax = out.value_counts(sort=False).plot.bar(rot=0, color="b", figsize=(6, 4))
+
+        plt.xlabel("FER Bins [-]")
+        plt.ylabel("Frequencies [-]")
+        plt.title("Forecast Error Ratio " + title)
+
+        img = BytesIO()
+        plt.savefig(img, format="png")
+        img.seek(0)
+        return b64encode(img.read())
