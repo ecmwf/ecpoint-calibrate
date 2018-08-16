@@ -5,6 +5,7 @@ from base64 import b64encode
 from io import BytesIO
 
 import attr
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas
@@ -137,7 +138,7 @@ class WeatherType(object):
     thrL_labels = attr.ib()
     thrH_labels = attr.ib()
 
-    def evaluate(self, predictors_matrix, plot=True):
+    def evaluate(self, predictors_matrix):
         FER = predictors_matrix["FER"]
         title_pred = ""
 
@@ -158,13 +159,11 @@ class WeatherType(object):
                 low=thrL_temp, pred=predictor_shortname, high=thrH_temp
             )
 
-        if plot:
-            return self.plot(data=FER, title=title_pred)
-        else:
-            return FER, title_pred
+        return self.plot(FER, title_pred)
 
     @staticmethod
     def plot(data, title):
+        matplotlib.style.use("seaborn")
         bins = [
             -1.1,
             -0.99,
@@ -186,11 +185,12 @@ class WeatherType(object):
         ]
 
         out = pandas.cut(data, bins=bins, include_lowest=True)
-        ax = out.value_counts(sort=False).plot.bar(rot=0, color="b", figsize=(6, 4))
+        ax = out.value_counts(sort=False).plot.bar()
 
-        plt.xlabel("FER Bins [-]")
-        plt.ylabel("Frequencies [-]")
-        plt.title("Forecast Error Ratio " + title)
+        plt.xlabel("FER Bins")
+        plt.ylabel("Frequencies")
+        plt.title("Weather type: " + title, fontsize=10)
+        plt.tight_layout()
 
         img = BytesIO()
         plt.savefig(img, format="png")

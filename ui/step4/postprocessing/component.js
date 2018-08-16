@@ -6,7 +6,9 @@ import {
   Button,
   Icon,
   Label,
-  Table
+  Table,
+  Modal,
+  Image
 } from 'semantic-ui-react'
 
 import _ from 'lodash'
@@ -121,7 +123,7 @@ class PostProcessing extends Component {
     client.post(
       {
         url: '/postprocessing/create-naive-decision-tree',
-        body: {labels, records},
+        body: {labels, records, outPath: this.props.parameters.outPath},
         json: true
       },
       (err, httpResponse, body) => this.setState({thrGridOut: body})
@@ -164,7 +166,15 @@ class PostProcessing extends Component {
                     this.state.thrGridOut.records.map(
                       (rows, idx) => (
                         <Table.Row>
-                          <Table.Cell>{idx + 1}</Table.Cell>
+                          <Table.Cell>
+                            <Modal size={'large'} trigger={<a href='#'>WT {idx + 1}</a>}>
+                              <Modal.Header>{this.state.thrGridOut.graphs[idx].title}</Modal.Header>
+                              <Modal.Content>
+                                <Image src={`data:image/jpeg;base64,${this.state.thrGridOut.graphs[idx]}`} fluid />
+                              </Modal.Content>
+                            </Modal>
+                          </Table.Cell>
+
                           {
                             rows.map(
                               cell => <Table.Cell>{cell}</Table.Cell>

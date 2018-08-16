@@ -4,8 +4,9 @@ import json
 import os
 
 import pandas
-from flask import Flask, Response, request, jsonify
+from flask import Flask, Response, jsonify, request
 
+from core.ascii import ASCIIDecoder
 from core.postprocessors.decision_tree import DecisionTree
 from core.processor import run
 from core.processor.models import Parameters
@@ -36,7 +37,11 @@ def get_predictors():
 @app.route("/postprocessing/create-naive-decision-tree", methods=("POST",))
 def get_naive_decision_tree():
     payload = request.get_json()
-    labels, records = payload["labels"], payload["records"]
+    labels, records, out_path = (
+        payload["labels"],
+        payload["records"],
+        payload["outPath"],
+    )
 
     df = pandas.DataFrame.from_records(records, columns=labels)
     thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
@@ -47,11 +52,16 @@ def get_naive_decision_tree():
 
     matrix = [[str(cell) for cell in row] for row in df_out.as_matrix().tolist()]
 
-    return jsonify({"records": matrix, "labels": list(df_out.columns)})
+    predictor_matrix = ASCIIDecoder(path=out_path).dataframe
+    graphs = dt.evaluate(predictor_matrix)
+
+    return jsonify(
+        {"records": matrix, "labels": list(df_out.columns), "graphs": graphs}
+    )
 
 
 def main():
-    app.run(host="0.0.0.0", port="8888")
+    app.run(host="0.0.0.0", port="8888", use_reloader=True)
 
 
 if __name__ == "__main__":
