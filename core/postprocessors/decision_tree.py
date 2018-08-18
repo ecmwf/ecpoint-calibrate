@@ -129,6 +129,37 @@ class DecisionTree(object):
             )
             yield wt.evaluate(predictor_matrix)
 
+    def construct_tree(self):
+        # Merge thrL_out and thrH_out into a single 2D matrix
+        matrix = []
+
+        root = Node(None)
+        for i in range(self.num_wt):
+            curr = root
+
+            wt = [
+                (
+                    self.thrL_out.ix[i, j],
+                    self.thrH_out.ix[i, j],
+                    self.thrH_out.columns[j].replace("_thrH", ""),
+                )
+                for j in range(self.num_predictors)
+            ]
+
+            for low, high, pred in wt:
+                text = "{low} < {pred} < {high}".format(low=low, high=high, pred=pred)
+                parent = curr
+
+                matches = [child for child in parent.children if child.name == text]
+                if any(matches):
+                    curr = matches[0]
+                    continue
+                else:
+                    curr = Node(text)
+                    parent.children.append(curr)
+
+        return root
+
 
 @attr.s(slots=True)
 class WeatherType(object):
@@ -196,3 +227,13 @@ class WeatherType(object):
         plt.savefig(img, format="png")
         img.seek(0)
         return b64encode(img.read())
+
+
+@attr.s
+class Node(object):
+    name = attr.ib()
+    children = attr.ib(default=attr.Factory(list))
+
+    @property
+    def json(self):
+        return attr.asdict(self)

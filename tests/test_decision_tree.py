@@ -34,8 +34,7 @@ def test_decision_tree_with_predefined_threshold_splits():
     dt = DecisionTree(thrL_in=thrL, thrH_in=thrH)
     dt.create()
 
-    # import pudb
-    # pudb.set_trace()
+    root = dt.construct_tree()
 
     expected_thrL_matrix = [
         [float("-inf"), float("-inf"), 5., float("-inf"), float("-inf")],
