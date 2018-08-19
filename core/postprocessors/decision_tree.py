@@ -116,8 +116,8 @@ class DecisionTree(object):
 
         return out
 
-    @tolist
-    def evaluate(self, predictor_matrix):
+    def construct_tree(self, predictor_matrix):
+        root = Node(None)
         for i in range(self.num_wt):
             thrL = self.thrL_out.ix[i, :]
             thrH = self.thrH_out.ix[i, :]
@@ -127,27 +127,15 @@ class DecisionTree(object):
                 thrL_labels=self.thrL_out.columns.tolist(),
                 thrH_labels=self.thrH_out.columns.tolist(),
             )
-            yield wt.evaluate(predictor_matrix)
+            graph = wt.evaluate(predictor_matrix)
 
-    def construct_tree(self):
-        # Merge thrL_out and thrH_out into a single 2D matrix
-        matrix = []
+            predictors = [predictor.replace("_thrL", "") for predictor in thrL.keys()]
 
-        root = Node(None)
-        for i in range(self.num_wt):
             curr = root
-
-            wt = [
-                (
-                    self.thrL_out.ix[i, j],
-                    self.thrH_out.ix[i, j],
-                    self.thrH_out.columns[j].replace("_thrH", ""),
+            for low, predictor, high in zip(thrL, predictors, thrH):
+                text = "{low} < {predictor} < {high}".format(
+                    low=low, high=high, predictor=predictor
                 )
-                for j in range(self.num_predictors)
-            ]
-
-            for low, high, pred in wt:
-                text = "{low} < {pred} < {high}".format(low=low, high=high, pred=pred)
                 parent = curr
 
                 matches = [child for child in parent.children if child.name == text]
@@ -157,6 +145,9 @@ class DecisionTree(object):
                 else:
                     curr = Node(text)
                     parent.children.append(curr)
+
+            if not curr.children:
+                curr.meta["graph"] = graph
 
         return root
 
@@ -233,6 +224,7 @@ class WeatherType(object):
 class Node(object):
     name = attr.ib()
     children = attr.ib(default=attr.Factory(list))
+    meta = attr.ib(default=attr.Factory(dict))
 
     @property
     def json(self):

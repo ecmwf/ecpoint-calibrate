@@ -16,6 +16,8 @@ import _ from 'lodash'
 import ReactDataSheet from 'react-datasheet'
 import 'react-datasheet/lib/react-datasheet.css'
 
+import Tree from './tree'
+
 import client from '~/utils/client'
 
 class PostProcessing extends Component {
@@ -130,7 +132,17 @@ class PostProcessing extends Component {
     )
   }
 
-  getFullDecisionTree () {
+  getDecisionTree () {
+    return (
+      <Grid centered>
+        <Grid.Row centered>
+          <Tree data={this.state.thrGridOut.tree} />
+        </Grid.Row>
+      </Grid>
+    )
+  }
+
+  getDecisionTreeOutMatrix () {
     return (
       <Grid centered>
         <Grid.Row centered>
@@ -167,12 +179,7 @@ class PostProcessing extends Component {
                       (rows, idx) => (
                         <Table.Row>
                           <Table.Cell>
-                            <Modal size={'large'} trigger={<a href='#'>WT {idx + 1}</a>}>
-                              <Modal.Header>{this.state.thrGridOut.graphs[idx].title}</Modal.Header>
-                              <Modal.Content>
-                                <Image src={`data:image/jpeg;base64,${this.state.thrGridOut.graphs[idx]}`} fluid />
-                              </Modal.Content>
-                            </Modal>
+                            WT {idx + 1}
                           </Table.Cell>
 
                           {
@@ -227,7 +234,9 @@ class PostProcessing extends Component {
               </Card.Description>
             </Card.Content>
             <Card.Content extra>
-              {this.getFullDecisionTree()}
+              {this.getDecisionTreeOutMatrix()}
+
+              {this.state.thrGridOut && this.getDecisionTree()}
             </Card.Content>
           </Card>
         </Grid.Column>

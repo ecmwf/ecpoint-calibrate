@@ -49,15 +49,12 @@ def get_naive_decision_tree():
     dt.create()
 
     df_out = dt.thrL_out.join(dt.thrH_out)
-
     matrix = [[str(cell) for cell in row] for row in df_out.as_matrix().tolist()]
 
     predictor_matrix = ASCIIDecoder(path=out_path).dataframe
-    graphs = dt.evaluate(predictor_matrix)
+    tree = dt.construct_tree(predictor_matrix).json
 
-    return jsonify(
-        {"records": matrix, "labels": list(df_out.columns), "graphs": graphs}
-    )
+    return jsonify({"records": matrix, "labels": list(df_out.columns), "tree": [tree]})
 
 
 def main():
