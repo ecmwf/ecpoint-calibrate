@@ -117,7 +117,7 @@ class DecisionTree(object):
         return out
 
     def construct_tree(self, predictor_matrix):
-        root = Node(None)
+        root = Node('Root')
         for i in range(self.num_wt):
             thrL = self.thrL_out.ix[i, :]
             thrH = self.thrH_out.ix[i, :]
