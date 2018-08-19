@@ -6,9 +6,7 @@ import {
   Button,
   Icon,
   Label,
-  Table,
-  Modal,
-  Image
+  Table
 } from 'semantic-ui-react'
 
 import _ from 'lodash'
@@ -132,117 +130,111 @@ class PostProcessing extends Component {
     )
   }
 
-  getDecisionTree () {
-    return (
-      <Grid centered>
-        <Grid.Row centered>
-          <Tree data={this.state.thrGridOut.tree} />
-        </Grid.Row>
-      </Grid>
-    )
-  }
+  getDecisionTree = () => (
+    <Grid centered>
+      <Grid.Row centered>
+        <Tree data={this.state.thrGridOut.tree} />
+      </Grid.Row>
+    </Grid>
+  )
 
-  getDecisionTreeOutMatrix () {
-    return (
-      <Grid centered>
-        <Grid.Row centered>
-          <Button
-            disabled={this.hasError()}
-            icon
-            labelPosition='left'
-            primary
-            size='medium'
-            onClick={() => this.postThrGridIn()}
-          >
-            <Icon name='refresh' /> Generate full Decision Tree
-          </Button>
-        </Grid.Row>
+  getDecisionTreeOutMatrix = () => (
+    <Grid centered>
+      <Grid.Row centered>
+        <Button
+          disabled={this.hasError()}
+          icon
+          labelPosition='left'
+          primary
+          size='medium'
+          onClick={() => this.postThrGridIn()}
+        >
+          <Icon name='refresh' /> Generate full Decision Tree
+        </Button>
+      </Grid.Row>
 
-        {
-          this.state.thrGridOut && <Grid.Row centered>
-            <Grid.Column>
-              <Table definition>
-                <Table.Header>
-                  <Table.Row>
-                    <Table.HeaderCell />
-                    {
-                      this.state.thrGridOut.labels.map(
-                        label => <Table.HeaderCell>{label}</Table.HeaderCell>
-                      )
-                    }
-                  </Table.Row>
-                </Table.Header>
-
-                <Table.Body>
+      {
+        this.state.thrGridOut && <Grid.Row centered>
+          <Grid.Column>
+            <Table definition>
+              <Table.Header>
+                <Table.Row>
+                  <Table.HeaderCell />
                   {
-                    this.state.thrGridOut.records.map(
-                      (rows, idx) => (
-                        <Table.Row>
-                          <Table.Cell>
-                            WT {idx + 1}
-                          </Table.Cell>
-
-                          {
-                            rows.map(
-                              cell => <Table.Cell>{cell}</Table.Cell>
-                            )
-                          }
-                        </Table.Row>
-                      )
+                    this.state.thrGridOut.labels.map(
+                      label => <Table.HeaderCell>{label}</Table.HeaderCell>
                     )
                   }
-                </Table.Body>
-              </Table>
-            </Grid.Column>
-          </Grid.Row>
-        }
-      </Grid>
-    )
-  }
+                </Table.Row>
+              </Table.Header>
 
-  render () {
-    return (
-      <Grid container centered>
-        <Grid.Column>
-          <Card fluid color='teal'>
-            <Card.Header>
-              <Grid.Column floated='left'>
+              <Table.Body>
+                {
+                  this.state.thrGridOut.records.map(
+                    (rows, idx) => (
+                      <Table.Row>
+                        <Table.Cell>
+                            WT {idx + 1}
+                        </Table.Cell>
+
+                        {
+                          rows.map(
+                            cell => <Table.Cell>{cell}</Table.Cell>
+                          )
+                        }
+                      </Table.Row>
+                    )
+                  )
+                }
+              </Table.Body>
+            </Table>
+          </Grid.Column>
+        </Grid.Row>
+      }
+    </Grid>
+  )
+
+  render = () => (
+    <Grid container centered>
+      <Grid.Column>
+        <Card fluid color='teal'>
+          <Card.Header>
+            <Grid.Column floated='left'>
                 Decision Tree
-              </Grid.Column>
-              <Grid.Column floated='right'>
-                {this.isComplete() && <Icon name='check circle' />}
-              </Grid.Column>
-            </Card.Header>
-            <Card.Content>
-              <Card.Description>
-                {this.getThresholdSplitsGridSheet()}
-                <br />
-                <Button
-                  floated='right'
-                  icon
-                  labelPosition='left'
-                  primary
-                  size='mini'
-                  onClick={() => this.appendBlankRow()}
-                >
-                  <Icon name='add circle' /> Add row
-                </Button>
-                <br />
+            </Grid.Column>
+            <Grid.Column floated='right'>
+              {this.isComplete() && <Icon name='check circle' />}
+            </Grid.Column>
+          </Card.Header>
+          <Card.Content>
+            <Card.Description>
+              {this.getThresholdSplitsGridSheet()}
+              <br />
+              <Button
+                floated='right'
+                icon
+                labelPosition='left'
+                primary
+                size='mini'
+                onClick={() => this.appendBlankRow()}
+              >
+                <Icon name='add circle' /> Add row
+              </Button>
+              <br />
 
                 Valid values are <Label>-inf</Label>, <Label>inf</Label>, and all integers.
 
-              </Card.Description>
-            </Card.Content>
-            <Card.Content extra>
-              {this.getDecisionTreeOutMatrix()}
+            </Card.Description>
+          </Card.Content>
+          <Card.Content extra>
+            {this.getDecisionTreeOutMatrix()}
 
-              {this.state.thrGridOut && this.getDecisionTree()}
-            </Card.Content>
-          </Card>
-        </Grid.Column>
-      </Grid>
-    )
-  }
+            {this.state.thrGridOut && this.getDecisionTree()}
+          </Card.Content>
+        </Card>
+      </Grid.Column>
+    </Grid>
+  )
 }
 
 export default PostProcessing
