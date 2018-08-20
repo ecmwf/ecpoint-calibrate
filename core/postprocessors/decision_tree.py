@@ -4,13 +4,15 @@ import os
 from base64 import b64encode
 from io import BytesIO
 
+import numpy as np
+
 import attr
 import matplotlib
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas
 
 from ..utils import tolist
+from .generics import Node
 
 
 @attr.s(slots=True)
@@ -117,7 +119,7 @@ class DecisionTree(object):
         return out
 
     def construct_tree(self, predictor_matrix):
-        root = Node('Root')
+        root = Node("Root")
         for i in range(self.num_wt):
             thrL = self.thrL_out.ix[i, :]
             thrH = self.thrH_out.ix[i, :]
@@ -218,14 +220,3 @@ class WeatherType(object):
         plt.savefig(img, format="png")
         img.seek(0)
         return b64encode(img.read())
-
-
-@attr.s
-class Node(object):
-    name = attr.ib()
-    children = attr.ib(default=attr.Factory(list))
-    meta = attr.ib(default=attr.Factory(dict))
-
-    @property
-    def json(self):
-        return attr.asdict(self)
