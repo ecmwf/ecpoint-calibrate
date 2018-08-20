@@ -1,5 +1,5 @@
 const defaultState = {
-  thrGridIn: []
+  thrGridIn: [],
 }
 
 export default (state = defaultState, action) => {

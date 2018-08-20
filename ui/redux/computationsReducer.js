@@ -3,8 +3,8 @@ const defaultState = {
   errors: {
     isFERChecked: false,
     isFEChecked: false,
-    minValueFER: '1'
-  }
+    minValueFER: '1',
+  },
 }
 
 export default (state = defaultState, action) => {
@@ -22,14 +22,17 @@ export default (state = defaultState, action) => {
             inputs: [],
             scale: { op: 'MULTIPLY', value: 1 },
             isReference: false,
-            isPostProcessed: true
-          }
-        ]
+            isPostProcessed: true,
+          },
+        ],
       }
     }
 
     case 'COMPUTATIONS.REMOVE': {
-      return {...state, fields: state.fields.filter(item => item.index !== action.index)}
+      return {
+        ...state,
+        fields: state.fields.filter(item => item.index !== action.index),
+      }
     }
 
     case 'COMPUTATIONS.UPDATE_SHORT_NAME':
@@ -40,7 +43,7 @@ export default (state = defaultState, action) => {
             return { ...item, shortname: action.shortname }
           }
           return item
-        })
+        }),
       }
 
     case 'COMPUTATIONS.UPDATE_FULL_NAME':
@@ -51,7 +54,7 @@ export default (state = defaultState, action) => {
             return { ...item, fullname: action.fullname }
           }
           return item
-        })
+        }),
       }
 
     case 'COMPUTATIONS.UPDATE_FIELD':
@@ -62,7 +65,7 @@ export default (state = defaultState, action) => {
             return { ...item, field: action.field }
           }
           return item
-        })
+        }),
       }
 
     case 'COMPUTATIONS.UPDATE_INPUTS':
@@ -73,7 +76,7 @@ export default (state = defaultState, action) => {
             return { ...item, inputs: action.inputs }
           }
           return item
-        })
+        }),
       }
 
     case 'COMPUTATIONS.SET_SCALE_OP':
@@ -84,7 +87,7 @@ export default (state = defaultState, action) => {
             return { ...item, scale: { ...item.scale, op: action.op } }
           }
           return item
-        })
+        }),
       }
 
     case 'COMPUTATIONS.SET_SCALE_VALUE':
@@ -95,7 +98,7 @@ export default (state = defaultState, action) => {
             return { ...item, scale: { ...item.scale, value: action.value } }
           }
           return item
-        })
+        }),
       }
 
     case 'COMPUTATIONS.TOGGLE_FORECAST_ERROR':
@@ -103,8 +106,8 @@ export default (state = defaultState, action) => {
         ...state,
         errors: {
           ...state.errors,
-          isFEChecked: !state.errors.isFEChecked
-        }
+          isFEChecked: !state.errors.isFEChecked,
+        },
       }
 
     case 'COMPUTATIONS.TOGGLE_FORECAST_ERROR_RATIO':
@@ -112,8 +115,8 @@ export default (state = defaultState, action) => {
         ...state,
         errors: {
           ...state.errors,
-          isFERChecked: !state.errors.isFERChecked
-        }
+          isFERChecked: !state.errors.isFERChecked,
+        },
       }
 
     case 'COMPUTATIONS.CHANGE_MIN_VALUE_FER':
@@ -121,8 +124,8 @@ export default (state = defaultState, action) => {
         ...state,
         errors: {
           ...state.errors,
-          minValueFER: action.data
-        }
+          minValueFER: action.data,
+        },
       }
 
     case 'COMPUTATIONS.SET_REFERENCE':
@@ -134,7 +137,7 @@ export default (state = defaultState, action) => {
           } else {
             return { ...item, isReference: false }
           }
-        })
+        }),
       }
 
     case 'COMPUTATIONS.TOGGLE_POST_PROCESS':
@@ -145,7 +148,7 @@ export default (state = defaultState, action) => {
             return { ...item, isPostProcessed: !item.isPostProcessed }
           }
           return item
-        })
+        }),
       }
 
     default: {

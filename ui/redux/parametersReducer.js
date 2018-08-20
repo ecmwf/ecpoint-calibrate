@@ -4,7 +4,7 @@ const defaultState = {
   acc: '',
   limSU: '',
   range: '',
-  outPath: ''
+  outPath: '',
 }
 
 export default (state = defaultState, action) => {

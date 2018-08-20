@@ -8,7 +8,7 @@
   "scripts": {
     "start": "electron .",
     "postinstall": "webpack --progress --colors",
-    "lint": "eslint --fix ui"
+    "lint": "prettier --write ui/**/*"
   },
   "author": "Anirudha Bose <ani07nov@gmail.com>",
   "license": "MIT",
@@ -62,6 +62,7 @@
     "extract-text-webpack-plugin": "3.0.2",
     "file-loader": "1.1.10",
     "node-loader": "0.6.0",
+    "prettier": "1.14.2",
     "style-loader": "0.21.0",
     "url-loader": "1.0.0",
     "webpack": "3.11.0"

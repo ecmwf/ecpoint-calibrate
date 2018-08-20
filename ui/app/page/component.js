@@ -5,7 +5,7 @@ import Step2 from '~/step2'
 import Step3 from '~/step3'
 import Step4 from '~/step4'
 
-const Page = (props) => {
+const Page = props => {
   if (props.page[0].isActive) {
     return <Step1 />
   }

@@ -6,13 +6,10 @@ import rootReducer from './reducer'
 
 const persistConfig = {
   key: 'root',
-  storage: storageSession
+  storage: storageSession,
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
-export const store = createStore(
-  persistedReducer,
-  applyMiddleware(thunk)
-)
+export const store = createStore(persistedReducer, applyMiddleware(thunk))
 export const persistor = persistStore(store)

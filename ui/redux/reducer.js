@@ -11,7 +11,7 @@ const reducer = combineReducers({
   parameters: parametersReducer,
   computations: computationsReducer,
   postprocessing: postprocessingReducer,
-  page: pageReducer
+  page: pageReducer,
 })
 
 export default reducer
