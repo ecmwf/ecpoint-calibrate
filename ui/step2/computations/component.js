@@ -266,7 +266,7 @@ class Computations extends Component {
             <Card.Content extra>
               <a>
                 <Icon name='cogs' />
-                {this.props.fields.length} computation(s).
+                {this.props.fields.length} computation(s) in total; {this.props.fields.filter(field => field.isPostProcessed).length} selected for post-processing.
               </a>
             </Card.Content>
           </Card>
