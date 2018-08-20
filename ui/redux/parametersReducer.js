@@ -1,6 +1,4 @@
 const defaultState = {
-  date_start: '',
-  date_end: '',
   acc: '',
   limSU: '',
   range: '',

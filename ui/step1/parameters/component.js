@@ -1,13 +1,11 @@
 import React, { Component } from 'react'
 
-import {
-  Grid,
-  Card,
-  Button,
-  Input,
-  Item,
-  Icon
-} from 'semantic-ui-react'
+import { Grid, Card, Button, Input, Item, Icon } from 'semantic-ui-react'
+
+import DatePicker from 'react-datepicker'
+import moment from 'moment'
+
+import 'react-datepicker/dist/react-datepicker.css'
 
 import { remote } from 'electron'
 
@@ -17,8 +15,7 @@ const mainProcess = remote.require('./server')
 
 class Parameters extends Component {
   accHasError = () =>
-    this.props.parameters.acc === '' ||
-    /^(6|12|24)$/.test(this.props.parameters.acc)
+    this.props.parameters.acc === '' || /^(6|12|24)$/.test(this.props.parameters.acc)
       ? null
       : true
 
@@ -26,17 +23,13 @@ class Parameters extends Component {
     <Item>
       <Item.Content>
         <Item.Header>
-          <h5>
-            Enter accumulation (in hours) of the parameter to post-process:
-          </h5>
+          <h5>Enter accumulation (in hours) of the parameter to post-process:</h5>
         </Item.Header>
 
         <Item.Description>
           <Input
             error={this.accHasError()}
-            onChange={e =>
-              this.props.onParametersAccFieldChange(e.target.value)
-            }
+            onChange={e => this.props.onParametersAccFieldChange(e.target.value)}
             value={this.props.parameters.acc || ''}
           />
         </Item.Description>
@@ -45,67 +38,61 @@ class Parameters extends Component {
     </Item>
   )
 
-  dateStartHasError = () =>
-    this.props.parameters.date_start === '' ||
-    /^\d{8}$/.test(this.props.parameters.date_start)
-      ? null
-      : true
+  getDateStartField = () => {
+    const dateStart =
+      this.props.parameters.date_start &&
+      moment(this.props.parameters.date_start, 'YYYYMMDD')
+    const dateEnd =
+      this.props.parameters.date_end &&
+      moment(this.props.parameters.date_end, 'YYYYMMDD')
+    return (
+      <Item>
+        <Item.Content>
+          <Grid columns={5}>
+            <Grid.Column>
+              <Item.Header>
+                <h5>Start date</h5>
+              </Item.Header>
 
-  getDateStartField = () => (
-    <Item>
-      <Item.Content>
-        <Item.Header>
-          <h5>Enter start date:</h5>
-        </Item.Header>
+              <Item.Description>
+                <DatePicker
+                  inline
+                  showYearDropdown
+                  scrollableYearDropdown
+                  selectsStart
+                  selected={dateStart}
+                  startDate={dateStart}
+                  endDate={dateEnd}
+                  onChange={this.props.onParametersDateStartFieldChange}
+                />
+              </Item.Description>
+            </Grid.Column>
+            <Grid.Column>
+              <Item.Header>
+                <h5>End date</h5>
+              </Item.Header>
 
-        <Item.Description>
-          <Input
-            error={this.dateStartHasError()}
-            onChange={e =>
-              this.props.onParametersDateStartFieldChange(e.target.value)
-            }
-            value={this.props.parameters.date_start || ''}
-          />
-        </Item.Description>
-        <Item.Extra>
-          Date must be in <code>YYYYMMDD</code> format.
-        </Item.Extra>
-      </Item.Content>
-    </Item>
-  )
-
-  dateEndHasError = () =>
-    this.props.parameters.date_end === '' ||
-    /^\d{8}$/.test(this.props.parameters.date_end)
-      ? null
-      : true
-
-  getDateEndField = () => (
-    <Item>
-      <Item.Content>
-        <Item.Header>
-          <h5>Enter end date:</h5>
-        </Item.Header>
-
-        <Item.Description>
-          <Input
-            error={this.dateEndHasError()}
-            onChange={e =>
-              this.props.onParametersDateEndFieldChange(e.target.value)
-            }
-            value={this.props.parameters.date_end || ''}
-          />
-        </Item.Description>
-        <Item.Extra>
-          Date must be in <code>YYYYMMDD</code> format.
-        </Item.Extra>
-      </Item.Content>
-    </Item>
-  )
+              <Item.Description>
+                <DatePicker
+                  inline
+                  showYearDropdown
+                  scrollableYearDropdown
+                  selectsEnd
+                  selected={dateEnd}
+                  startDate={dateStart}
+                  endDate={dateEnd}
+                  onChange={this.props.onParametersDateEndFieldChange}
+                />
+              </Item.Description>
+            </Grid.Column>
+          </Grid>
+        </Item.Content>
+      </Item>
+    )
+  }
 
   limSUHasError = () =>
-    this.props.parameters.limSU === '' ||
-    /^\d+$/.test(this.props.parameters.limSU)
+    this.props.parameters.limSU === '' || /^\d+$/.test(this.props.parameters.limSU)
       ? null
       : true
 
@@ -114,17 +101,15 @@ class Parameters extends Component {
       <Item.Content>
         <Item.Header>
           <h5>
-            Enter upper limit (in hours) of the window in the forecast with
-            spin-up problems:
+            Enter upper limit (in hours) of the window in the forecast with spin-up
+            problems:
           </h5>
         </Item.Header>
 
         <Item.Description>
           <Input
             error={this.limSUHasError()}
-            onChange={e =>
-              this.props.onParametersLimSUFieldChange(e.target.value)
-            }
+            onChange={e => this.props.onParametersLimSUFieldChange(e.target.value)}
             value={this.props.parameters.limSU || ''}
           />
         </Item.Description>
@@ -133,8 +118,7 @@ class Parameters extends Component {
   )
 
   rangeHasError = () =>
-    this.props.parameters.range === '' ||
-    /^\d+$/.test(this.props.parameters.range)
+    this.props.parameters.range === '' || /^\d+$/.test(this.props.parameters.range)
       ? null
       : true
 
@@ -148,9 +132,7 @@ class Parameters extends Component {
         <Item.Description>
           <Input
             error={this.rangeHasError()}
-            onChange={e =>
-              this.props.onParametersRangeFieldChange(e.target.value)
-            }
+            onChange={e => this.props.onParametersRangeFieldChange(e.target.value)}
             value={this.props.parameters.range || ''}
           />
         </Item.Description>
@@ -166,9 +148,7 @@ class Parameters extends Component {
         </Item.Header>
 
         <Item.Description>
-          <Button
-            onClick={() => this.props.onOutPathChange(mainProcess.saveFile())}
-          >
+          <Button onClick={() => this.props.onOutPathChange(mainProcess.saveFile())}>
             Browse
           </Button>
         </Item.Description>
@@ -177,49 +157,38 @@ class Parameters extends Component {
     </Item>
   )
 
-  hasError = () => (
-    this.accHasError() ||
-    this.rangeHasError() ||
-    this.dateStartHasError() ||
-    this.dateEndHasError() ||
-    this.limSUHasError()
-  )
+  hasError = () => this.accHasError() || this.rangeHasError() || this.limSUHasError()
 
   isComplete = () => !this.hasError() && !isEmpty(this.props.parameters)
 
-  componentDidUpdate = (prevProps) => {
+  componentDidUpdate = prevProps => {
     this.props.updatePageCompletion(0, this.isComplete())
   }
 
-  render () {
-    return (
-      <Grid container centered>
-        <Grid.Column>
-          <Card fluid color='teal'>
-            <Card.Header>
-              <Grid.Column floated='left'>
-                Parameters
-              </Grid.Column>
-              <Grid.Column floated='right'>
-                {this.isComplete() && <Icon name='check circle' />}
-              </Grid.Column>
-            </Card.Header>
-            <Card.Content>
-              <Card.Description />
-              <Item.Group divided>
-                {this.getDateStartField()}
-                {this.getDateEndField()}
-                {this.getAccField()}
-                {this.getLimSUField()}
-                {this.getRangeField()}
-                {this.getPathOutField()}
-              </Item.Group>
-            </Card.Content>
-          </Card>
-        </Grid.Column>
-      </Grid>
-    )
-  }
+  render = () => (
+    <Grid container centered>
+      <Grid.Column>
+        <Card fluid color="teal">
+          <Card.Header>
+            <Grid.Column floated="left">Parameters</Grid.Column>
+            <Grid.Column floated="right">
+              {this.isComplete() && <Icon name="check circle" />}
+            </Grid.Column>
+          </Card.Header>
+          <Card.Content>
+            <Card.Description />
+            <Item.Group divided>
+              {this.getDateStartField()}
+              {this.getAccField()}
+              {this.getLimSUField()}
+              {this.getRangeField()}
+              {this.getPathOutField()}
+            </Item.Group>
+          </Card.Content>
+        </Card>
+      </Grid.Column>
+    </Grid>
+  )
 }
 
 export default Parameters
