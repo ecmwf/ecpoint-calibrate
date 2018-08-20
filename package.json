@@ -8,7 +8,7 @@
   "scripts": {
     "start": "electron .",
     "postinstall": "webpack --progress --colors",
-    "lint": "prettier --write ui/**/*"
+    "lint": "prettier --config ./.prettierrc --write 'ui/**/*.js'"
   },
   "author": "Anirudha Bose <ani07nov@gmail.com>",
   "license": "MIT",

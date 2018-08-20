@@ -1,13 +1,6 @@
 import React, { Component } from 'react'
 
-import {
-  Grid,
-  Card,
-  Button,
-  Icon,
-  Label,
-  Table
-} from 'semantic-ui-react'
+import { Grid, Card, Button, Icon, Label, Table } from 'semantic-ui-react'
 
 import _ from 'lodash'
 
@@ -19,41 +12,37 @@ import Tree from './tree'
 import client from '~/utils/client'
 
 class PostProcessing extends Component {
-  state = {thrGridOut: null}
+  state = { thrGridOut: null }
 
-  getThresholdSplitsGridSheet = () => <ReactDataSheet
-    data={this.props.postprocessing.thrGridIn}
-    valueRenderer={(cell) => cell.value}
-    onContextMenu={(e, cell, i, j) => cell.readOnly ? e.preventDefault() : null}
-    onCellsChanged={changes => {
-      const grid = this.props.postprocessing.thrGridIn.map(row => [...row])
-      changes.forEach(({cell, row, col, value}) => {
-        grid[row][col] = {...grid[row][col], value}
-      })
-      this.props.onThresholdSplitsChange(grid)
-    }}
-  />
-
-  getBlankRow = (index) => [
-    {readOnly: true, value: index}
-  ].concat(
-    _.flatMap(
-      this.props.fields.filter(field => field.isPostProcessed),
-      field => [{value: ''}, {value: ''}]
-    )
+  getThresholdSplitsGridSheet = () => (
+    <ReactDataSheet
+      data={this.props.postprocessing.thrGridIn}
+      valueRenderer={cell => cell.value}
+      onContextMenu={(e, cell, i, j) => (cell.readOnly ? e.preventDefault() : null)}
+      onCellsChanged={changes => {
+        const grid = this.props.postprocessing.thrGridIn.map(row => [...row])
+        changes.forEach(({ cell, row, col, value }) => {
+          grid[row][col] = { ...grid[row][col], value }
+        })
+        this.props.onThresholdSplitsChange(grid)
+      }}
+    />
   )
 
-  generateInitialGrid () {
-    const header = [
-      {readOnly: true, value: ''}
-    ].concat(
-      _.flatMap(
-        this.props.fields.filter(field => field.isPostProcessed),
-        field => [
-          {readOnly: true, value: field.shortname + '_thrL'},
-          {readOnly: true, value: field.shortname + '_thrH'}
-        ]
-      )
+  getBlankRow = index =>
+    [{ readOnly: true, value: index }].concat(
+      _.flatMap(this.props.fields.filter(field => field.isPostProcessed), field => [
+        { value: '' },
+        { value: '' },
+      ])
+    )
+
+  generateInitialGrid() {
+    const header = [{ readOnly: true, value: '' }].concat(
+      _.flatMap(this.props.fields.filter(field => field.isPostProcessed), field => [
+        { readOnly: true, value: field.shortname + '_thrL' },
+        { readOnly: true, value: field.shortname + '_thrH' },
+      ])
     )
 
     const firstRow = [this.getBlankRow(1)]
@@ -62,19 +51,19 @@ class PostProcessing extends Component {
   }
 
   appendBlankRow = () => {
-    const newGrid = this.props.postprocessing.thrGridIn.concat(
-      [this.getBlankRow(this.props.postprocessing.thrGridIn.length)]
-    )
+    const newGrid = this.props.postprocessing.thrGridIn.concat([
+      this.getBlankRow(this.props.postprocessing.thrGridIn.length),
+    ])
 
     this.props.onThresholdSplitsChange(newGrid)
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const grid = this.generateInitialGrid()
     this.props.onThresholdSplitsChange(grid)
   }
 
-  hasError () {
+  hasError() {
     // Get the grid without the header
     const grid = this.props.postprocessing.thrGridIn.slice(1)
 
@@ -87,7 +76,10 @@ class PostProcessing extends Component {
 
     const firstRowisValid = _.every(
       firstRow,
-      cell => cell.value === 'inf' || cell.value === '-inf' || /^(\d+\.?\d*|\.\d+)$/.test(cell.value)
+      cell =>
+        cell.value === 'inf' ||
+        cell.value === '-inf' ||
+        /^(\d+\.?\d*|\.\d+)$/.test(cell.value)
     )
 
     if (!firstRowisValid) {
@@ -100,33 +92,36 @@ class PostProcessing extends Component {
       return false
     }
 
-    return !_.every(
-      remainingRows,
-      row => _.every(
+    return !_.every(remainingRows, row =>
+      _.every(
         row.slice(1),
-        cell => cell.value === '' || cell.value === 'inf' || cell.value === '-inf' || /^(\d+\.?\d*|\.\d+)$/.test(cell.value)
+        cell =>
+          cell.value === '' ||
+          cell.value === 'inf' ||
+          cell.value === '-inf' ||
+          /^(\d+\.?\d*|\.\d+)$/.test(cell.value)
       )
     )
   }
 
   isComplete = () => !this.hasError()
 
-  postThrGridIn () {
-    const labels = this.props.postprocessing.thrGridIn[0].slice(1).map(
-      cell => cell.value
-    )
+  postThrGridIn() {
+    const labels = this.props.postprocessing.thrGridIn[0]
+      .slice(1)
+      .map(cell => cell.value)
 
-    const records = this.props.postprocessing.thrGridIn.slice(1).map(
-      row => _.flatMap(row.slice(1), cell => cell.value)
-    )
+    const records = this.props.postprocessing.thrGridIn
+      .slice(1)
+      .map(row => _.flatMap(row.slice(1), cell => cell.value))
 
     client.post(
       {
         url: '/postprocessing/create-naive-decision-tree',
-        body: {labels, records, outPath: this.props.parameters.outPath},
-        json: true
+        body: { labels, records, outPath: this.props.parameters.outPath },
+        json: true,
       },
-      (err, httpResponse, body) => this.setState({thrGridOut: body})
+      (err, httpResponse, body) => this.setState({ thrGridOut: body })
     )
   }
 
@@ -144,66 +139,54 @@ class PostProcessing extends Component {
         <Button
           disabled={this.hasError()}
           icon
-          labelPosition='left'
+          labelPosition="left"
           primary
-          size='medium'
+          size="medium"
           onClick={() => this.postThrGridIn()}
         >
-          <Icon name='refresh' /> Generate full Decision Tree
+          <Icon name="refresh" /> Generate full Decision Tree
         </Button>
       </Grid.Row>
 
-      {
-        this.state.thrGridOut && <Grid.Row centered>
+      {this.state.thrGridOut && (
+        <Grid.Row centered>
           <Grid.Column>
             <Table definition>
               <Table.Header>
                 <Table.Row>
                   <Table.HeaderCell />
-                  {
-                    this.state.thrGridOut.labels.map(
-                      label => <Table.HeaderCell>{label}</Table.HeaderCell>
-                    )
-                  }
+                  {this.state.thrGridOut.labels.map(label => (
+                    <Table.HeaderCell>{label}</Table.HeaderCell>
+                  ))}
                 </Table.Row>
               </Table.Header>
 
               <Table.Body>
-                {
-                  this.state.thrGridOut.records.map(
-                    (rows, idx) => (
-                      <Table.Row>
-                        <Table.Cell>
-                            WT {idx + 1}
-                        </Table.Cell>
+                {this.state.thrGridOut.records.map((rows, idx) => (
+                  <Table.Row>
+                    <Table.Cell>WT {idx + 1}</Table.Cell>
 
-                        {
-                          rows.map(
-                            cell => <Table.Cell>{cell}</Table.Cell>
-                          )
-                        }
-                      </Table.Row>
-                    )
-                  )
-                }
+                    {rows.map(cell => (
+                      <Table.Cell>{cell}</Table.Cell>
+                    ))}
+                  </Table.Row>
+                ))}
               </Table.Body>
             </Table>
           </Grid.Column>
         </Grid.Row>
-      }
+      )}
     </Grid>
   )
 
   render = () => (
     <Grid container centered>
       <Grid.Column>
-        <Card fluid color='teal'>
+        <Card fluid color="teal">
           <Card.Header>
-            <Grid.Column floated='left'>
-                Decision Tree
-            </Grid.Column>
-            <Grid.Column floated='right'>
-              {this.isComplete() && <Icon name='check circle' />}
+            <Grid.Column floated="left">Decision Tree</Grid.Column>
+            <Grid.Column floated="right">
+              {this.isComplete() && <Icon name="check circle" />}
             </Grid.Column>
           </Card.Header>
           <Card.Content>
@@ -211,19 +194,18 @@ class PostProcessing extends Component {
               {this.getThresholdSplitsGridSheet()}
               <br />
               <Button
-                floated='right'
+                floated="right"
                 icon
-                labelPosition='left'
+                labelPosition="left"
                 primary
-                size='mini'
+                size="mini"
                 onClick={() => this.appendBlankRow()}
               >
-                <Icon name='add circle' /> Add row
+                <Icon name="add circle" /> Add row
               </Button>
               <br />
-
-                Valid values are <Label>-inf</Label>, <Label>inf</Label>, and all integers.
-
+              Valid values are <Label>-inf</Label>, <Label>inf</Label>, and all
+              integers.
             </Card.Description>
           </Card.Content>
           <Card.Content extra>

@@ -1,8 +1,0 @@
-{
-  "extends": ["standard", "standard-react"],
-  "parser": "babel-eslint",
-  "rules": {
-    "react/prop-types": 0,
-    "handle-callback-err": 0
-  }
-}

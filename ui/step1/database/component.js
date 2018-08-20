@@ -1,15 +1,7 @@
 import React, { Component } from 'react'
 import { remote } from 'electron'
 
-import {
-  Grid,
-  Card,
-  Button,
-  Radio,
-  Item,
-  Icon,
-  Label
-} from 'semantic-ui-react'
+import { Grid, Card, Button, Radio, Item, Icon, Label } from 'semantic-ui-react'
 
 import { isEmpty } from './index'
 
@@ -21,8 +13,8 @@ class Database extends Component {
       <Item.Content>
         <Item.Header>
           <h5>
-            Select directory for the predictants you want to use (rainfall,
-            temperature, etc.)
+            Select directory for the predictants you want to use (rainfall, temperature,
+            etc.)
           </h5>
         </Item.Header>
 
@@ -46,9 +38,7 @@ class Database extends Component {
     <Item>
       <Item.Content>
         <Item.Header>
-          <h5>
-            Select directory for the predictors you want to use (CAPE, SR, etc.)
-          </h5>
+          <h5>Select directory for the predictors you want to use (CAPE, SR, etc.)</h5>
         </Item.Header>
 
         <Item.Description>
@@ -62,12 +52,9 @@ class Database extends Component {
         </Item.Description>
         <Item.Extra>
           <p>{this.props.database.predictorsPath}</p>
-          {
-
-            this.props.database.predictorCodes.map(
-              code => <Label key={code}>{code}</Label>
-            )
-          }
+          {this.props.database.predictorCodes.map(code => (
+            <Label key={code}>{code}</Label>
+          ))}
         </Item.Extra>
       </Item.Content>
     </Item>
@@ -84,16 +71,16 @@ class Database extends Component {
           <Grid columns={2} padded>
             <Grid.Column>
               <Radio
-                label='GRIB'
-                value='grib'
+                label="GRIB"
+                value="grib"
                 checked={this.props.database.type === 'grib'}
                 onChange={() => this.props.onPredictantTypeChange('grib')}
               />
             </Grid.Column>
             <Grid.Column>
               <Radio
-                label='NetCDF'
-                value='netcdf'
+                label="NetCDF"
+                value="netcdf"
                 checked={this.props.database.type === 'netcdf'}
                 onChange={() => this.props.onPredictantTypeChange('netcdf')}
               />
@@ -106,21 +93,19 @@ class Database extends Component {
 
   isComplete = () => !isEmpty(this.props.database)
 
-  componentDidUpdate = (prevProps) => {
+  componentDidUpdate = prevProps => {
     this.props.updatePageCompletion(0, this.isComplete())
   }
 
-  render () {
+  render() {
     return (
       <Grid container centered>
         <Grid.Column>
-          <Card fluid color='teal'>
+          <Card fluid color="teal">
             <Card.Header>
-              <Grid.Column floated='left'>
-                Select Predictant
-              </Grid.Column>
-              <Grid.Column floated='right'>
-                {this.isComplete() && <Icon name='check circle' />}
+              <Grid.Column floated="left">Select Predictant</Grid.Column>
+              <Grid.Column floated="right">
+                {this.isComplete() && <Icon name="check circle" />}
               </Grid.Column>
             </Card.Header>
             <Card.Content>

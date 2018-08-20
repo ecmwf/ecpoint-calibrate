@@ -5,9 +5,7 @@ import Processing from './component'
 const mapStateToProps = state => ({
   database: state.database,
   parameters: state.parameters,
-  computations: state.computations
+  computations: state.computations,
 })
 
-export default connect(
-  mapStateToProps
-)(Processing)
+export default connect(mapStateToProps)(Processing)

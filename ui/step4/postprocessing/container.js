@@ -7,12 +7,11 @@ import { setThresholdSplits } from './actions'
 const mapStateToProps = state => ({
   postprocessing: state.postprocessing,
   fields: state.computations.fields,
-  parameters: state.parameters
+  parameters: state.parameters,
 })
 
 const mapDispatchToProps = dispatch => ({
-  onThresholdSplitsChange: grid =>
-    dispatch(setThresholdSplits(grid))
+  onThresholdSplitsChange: grid => dispatch(setThresholdSplits(grid)),
 })
 
 export default connect(

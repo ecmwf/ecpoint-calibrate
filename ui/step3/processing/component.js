@@ -1,24 +1,20 @@
 import React, { Component } from 'react'
 
-import {
-  Grid,
-  Segment,
-  Button
-} from 'semantic-ui-react'
+import { Grid, Segment, Button } from 'semantic-ui-react'
 
 import client from '~/utils/client'
 
 class Processing extends Component {
   state = { active: false, logs: [] }
 
-  appendLog (log) {
+  appendLog(log) {
     const chunk = log.split('[END]').filter(e => e !== '')
-    this.setState((prevState) => ({
-      logs: [...prevState.logs, ...chunk]
+    this.setState(prevState => ({
+      logs: [...prevState.logs, ...chunk],
     }))
   }
 
-  runComputation () {
+  runComputation() {
     this.setState({ active: true })
     const parameters = {
       date_start: this.props.parameters.date_start,
@@ -28,7 +24,7 @@ class Processing extends Component {
       leadstart_range: this.props.parameters.range,
       observation_path: this.props.database.predictantPath,
       forecast_path: this.props.database.predictorsPath,
-      out_path: this.props.parameters.outPath
+      out_path: this.props.parameters.outPath,
     }
 
     client
@@ -38,9 +34,9 @@ class Processing extends Component {
           ...parameters,
           predictor_codes: this.props.database.predictorCodes,
           computation_fields: this.props.computations.fields,
-          computation_errors: this.props.computations.errors
+          computation_errors: this.props.computations.errors,
         },
-        json: true
+        json: true,
       })
       .on('data', chunk => this.appendLog(chunk.toString()))
       .on('end', () => this.setState({ active: false }))
@@ -50,9 +46,7 @@ class Processing extends Component {
     if (log.startsWith('[WARNING]')) {
       return <span style={{ color: '#d6cc75' }}>{log}</span>
     } else if (log.startsWith('[SUCCESS]')) {
-      return (
-        <span style={{ color: '#42c88a' }}>{log.replace('[SUCCESS]', '')}</span>
-      )
+      return <span style={{ color: '#42c88a' }}>{log.replace('[SUCCESS]', '')}</span>
     } else if (log.startsWith('[ERROR]')) {
       return <span style={{ color: '#f65353' }}>{log}</span>
     }
@@ -60,7 +54,7 @@ class Processing extends Component {
     return <span>{log.replace('[INFO]', '')}</span>
   }
 
-  render () {
+  render() {
     return (
       <Grid columns={2} centered>
         <Grid.Row>
@@ -76,7 +70,7 @@ class Processing extends Component {
             {this.state.logs.length > 0 && (
               <Segment inverted>
                 {this.state.logs.map((log, idx) => (
-                  <p key={idx} className='log'>
+                  <p key={idx} className="log">
                     {this.colorizeLog(log)}
                   </p>
                 ))}

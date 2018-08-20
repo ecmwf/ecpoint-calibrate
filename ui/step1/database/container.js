@@ -6,11 +6,11 @@ import {
   setPredictantType,
   setPredictantPath,
   setPredictorsPath,
-  updatePageCompletion
+  updatePageCompletion,
 } from './actions'
 
 const mapStateToProps = state => ({
-  database: state.database
+  database: state.database,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -20,7 +20,8 @@ const mapDispatchToProps = dispatch => ({
 
   onPredictorsPathChange: path => dispatch(setPredictorsPath(path)),
 
-  updatePageCompletion: (page, isComplete) => dispatch(updatePageCompletion(page, isComplete))
+  updatePageCompletion: (page, isComplete) =>
+    dispatch(updatePageCompletion(page, isComplete)),
 })
 
 export default connect(

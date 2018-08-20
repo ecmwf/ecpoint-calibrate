@@ -13,12 +13,12 @@ import {
   setScaleValue,
   setComputationReference,
   toggleComputationPostProcess,
-  updatePageCompletion
+  updatePageCompletion,
 } from './actions'
 
 const mapStateToProps = state => ({
   database: state.database,
-  fields: state.computations.fields
+  fields: state.computations.fields,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -46,7 +46,8 @@ const mapDispatchToProps = dispatch => ({
 
   toggleComputationPostProcess: index => dispatch(toggleComputationPostProcess(index)),
 
-  updatePageCompletion: (page, isComplete) => dispatch(updatePageCompletion(page, isComplete))
+  updatePageCompletion: (page, isComplete) =>
+    dispatch(updatePageCompletion(page, isComplete)),
 })
 
 export default connect(

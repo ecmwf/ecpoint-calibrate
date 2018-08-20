@@ -10,7 +10,7 @@ import {
   Input,
   Label,
   Radio,
-  Checkbox
+  Checkbox,
 } from 'semantic-ui-react'
 
 import { isNotEmpty, isValid } from './index'
@@ -18,44 +18,44 @@ import { isNotEmpty, isValid } from './index'
 const operations = [
   {
     text: 'Accumulated Field',
-    value: 'ACCUMULATED_FIELD'
+    value: 'ACCUMULATED_FIELD',
   },
   {
     text: 'Ratio Field',
-    value: 'RATIO_FIELD'
+    value: 'RATIO_FIELD',
   },
   {
     text: 'Instantaneous Field',
-    value: 'INSTANTANEOUS_FIELD'
+    value: 'INSTANTANEOUS_FIELD',
   },
   {
     text: 'Maximum Field',
-    value: 'MAXIMUM_FIELD'
+    value: 'MAXIMUM_FIELD',
   },
   {
     text: 'Minimum Field',
-    value: 'MINIMUM_FIELD'
+    value: 'MINIMUM_FIELD',
   },
   {
     text: 'Average Field',
-    value: 'AVERAGE_FIELD'
+    value: 'AVERAGE_FIELD',
   },
   {
     text: 'Weighted Average Field',
-    value: 'WEIGHTED_AVERAGE_FIELD'
+    value: 'WEIGHTED_AVERAGE_FIELD',
   },
   {
     text: 'Vector Module',
-    value: 'VECTOR_MODULE'
+    value: 'VECTOR_MODULE',
   },
   {
     text: 'Accumulated Solar Radiaton (SR)',
-    value: 'ACCUMULATED_SOLAR_RADIATION'
-  }
+    value: 'ACCUMULATED_SOLAR_RADIATION',
+  },
 ]
 
 class Computation extends Component {
-  isPositive = () => isNotEmpty([this.props]) ? true : null
+  isPositive = () => (isNotEmpty([this.props]) ? true : null)
 
   getPredictors = () =>
     this.props.predictors
@@ -66,14 +66,14 @@ class Computation extends Component {
           .filter(v => v.key !== this.props.shortname)
       )
 
-  render () {
+  render() {
     return (
       <Table.Row positive={this.isPositive()}>
         <Table.Cell width={4}>
           <p>Short name:</p>
           <Input
             fluid
-            placeholder='Enter short name'
+            placeholder="Enter short name"
             value={this.props.shortname}
             onChange={e =>
               this.props.onShortNameChange(this.props.index, e.target.value)
@@ -83,7 +83,7 @@ class Computation extends Component {
           <p>Full name:</p>
           <Input
             fluid
-            placeholder='Enter full name'
+            placeholder="Enter full name"
             value={this.props.fullname}
             onChange={e =>
               this.props.onFullNameChange(this.props.index, e.target.value)
@@ -92,7 +92,7 @@ class Computation extends Component {
         </Table.Cell>
         <Table.Cell width={4}>
           <Dropdown
-            placeholder='Select field type'
+            placeholder="Select field type"
             fluid
             selection
             options={operations}
@@ -107,7 +107,7 @@ class Computation extends Component {
             fluid
             multiple
             selection
-            placeholder='Select computation input(s)'
+            placeholder="Select computation input(s)"
             value={this.props.inputs}
             options={this.getPredictors()}
             onChange={(e, { value }) =>
@@ -118,56 +118,42 @@ class Computation extends Component {
         <Table.Cell collapsing>
           <Grid.Row>
             <Radio
-              label='Multiply'
-              value='MULTIPLY'
+              label="Multiply"
+              value="MULTIPLY"
               checked={this.props.scale.op === 'MULTIPLY'}
-              onChange={() =>
-                this.props.setScaleOp(this.props.index, 'MULTIPLY')
-              }
+              onChange={() => this.props.setScaleOp(this.props.index, 'MULTIPLY')}
             />
           </Grid.Row>
           <Grid.Row>
             <Radio
-              label='Divide'
-              value='DIVIDE'
+              label="Divide"
+              value="DIVIDE"
               checked={this.props.scale.op === 'DIVIDE'}
-              onChange={() =>
-                this.props.setScaleOp(this.props.index, 'DIVIDE')
-              }
+              onChange={() => this.props.setScaleOp(this.props.index, 'DIVIDE')}
             />
           </Grid.Row>
           <br />
           <Input
             fluid
             value={this.props.scale.value}
-            onChange={e =>
-              this.props.setScaleValue(this.props.index, e.target.value)
-            }
+            onChange={e => this.props.setScaleValue(this.props.index, e.target.value)}
           />
         </Table.Cell>
-        <Table.Cell collapsing textAlign='center'>
+        <Table.Cell collapsing textAlign="center">
           <Radio
             checked={this.props.isReference === true}
-            onChange={() =>
-              this.props.setReference(this.props.index)
-            }
+            onChange={() => this.props.setReference(this.props.index)}
           />
         </Table.Cell>
-        <Table.Cell collapsing textAlign='center'>
+        <Table.Cell collapsing textAlign="center">
           <Checkbox
             checked={this.props.isPostProcessed === true}
-            onChange={() =>
-              this.props.togglePostProcess(this.props.index)
-            }
+            onChange={() => this.props.togglePostProcess(this.props.index)}
           />
         </Table.Cell>
         <Table.Cell collapsing>
-          <Button
-            icon
-            circular
-            onClick={() => this.props.onRemove(this.props.index)}
-          >
-            <Icon name='delete' />
+          <Button icon circular onClick={() => this.props.onRemove(this.props.index)}>
+            <Icon name="delete" />
           </Button>
         </Table.Cell>
       </Table.Row>
@@ -176,17 +162,17 @@ class Computation extends Component {
 }
 
 class Computations extends Component {
-  getComputationsTable () {
+  getComputationsTable() {
     return (
       <Table celled definition>
         <Table.Header fullWidth>
           <Table.Row>
-            <Table.HeaderCell textAlign='center'>Field name</Table.HeaderCell>
-            <Table.HeaderCell textAlign='center'>Field type</Table.HeaderCell>
-            <Table.HeaderCell textAlign='center'>Input variable(s)</Table.HeaderCell>
-            <Table.HeaderCell textAlign='center'>Scaling factor</Table.HeaderCell>
-            <Table.HeaderCell textAlign='center'>Reference?</Table.HeaderCell>
-            <Table.HeaderCell textAlign='center'>Post-process?</Table.HeaderCell>
+            <Table.HeaderCell textAlign="center">Field name</Table.HeaderCell>
+            <Table.HeaderCell textAlign="center">Field type</Table.HeaderCell>
+            <Table.HeaderCell textAlign="center">Input variable(s)</Table.HeaderCell>
+            <Table.HeaderCell textAlign="center">Scaling factor</Table.HeaderCell>
+            <Table.HeaderCell textAlign="center">Reference?</Table.HeaderCell>
+            <Table.HeaderCell textAlign="center">Post-process?</Table.HeaderCell>
             <Table.HeaderCell />
           </Table.Row>
         </Table.Header>
@@ -214,16 +200,16 @@ class Computations extends Component {
         <Table.Footer fullWidth>
           <Table.Row>
             <Table.HeaderCell />
-            <Table.HeaderCell colSpan='6'>
+            <Table.HeaderCell colSpan="6">
               <Button
-                floated='right'
+                floated="right"
                 icon
-                labelPosition='left'
+                labelPosition="left"
                 primary
-                size='small'
+                size="small"
                 onClick={() => this.props.addEmptyComputation()}
               >
-                <Icon name='add circle' /> Add row
+                <Icon name="add circle" /> Add row
               </Button>
             </Table.HeaderCell>
           </Table.Row>
@@ -236,37 +222,36 @@ class Computations extends Component {
 
   isComplete = () => !this.hasError() && isValid(this.props.fields)
 
-  componentDidUpdate = (prevProps) => {
+  componentDidUpdate = prevProps => {
     this.props.updatePageCompletion(1, this.isComplete())
   }
 
-  render () {
+  render() {
     return (
       <Grid container centered>
         <Grid.Column>
-          <Card fluid color='teal'>
+          <Card fluid color="teal">
             <Card.Header>
-              <Grid.Column floated='left'>
-            Computations
-              </Grid.Column>
-              <Grid.Column floated='right'>
-                {this.isComplete() && <Icon name='check circle' />}
+              <Grid.Column floated="left">Computations</Grid.Column>
+              <Grid.Column floated="right">
+                {this.isComplete() && <Icon name="check circle" />}
               </Grid.Column>
             </Card.Header>
             <Card.Content>
               <Card.Description>
-                <p>
-                  Available predictors that can be used as inputs to
-                  computations:
-                </p>
-                {this.props.database.predictorCodes.map(e => <Label key={e}>{e}</Label>)}
+                <p>Available predictors that can be used as inputs to computations:</p>
+                {this.props.database.predictorCodes.map(e => (
+                  <Label key={e}>{e}</Label>
+                ))}
                 {this.getComputationsTable()}
               </Card.Description>
             </Card.Content>
             <Card.Content extra>
               <a>
-                <Icon name='cogs' />
-                {this.props.fields.length} computation(s) in total; {this.props.fields.filter(field => field.isPostProcessed).length} selected for post-processing.
+                <Icon name="cogs" />
+                {this.props.fields.length} computation(s) in total;{' '}
+                {this.props.fields.filter(field => field.isPostProcessed).length}{' '}
+                selected for post-processing.
               </a>
             </Card.Content>
           </Card>
