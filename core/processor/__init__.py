@@ -6,10 +6,7 @@ from textwrap import dedent
 
 import numpy
 
-from core.loaders.GeopointsLoader import (
-    Geopoints,
-    GeopointsLoader,
-)
+from core.loaders.geopoints import GeopointsLoader
 from core.loaders.GribLoader import GribLoader
 
 from ..computations.models import Computation
@@ -136,7 +133,7 @@ def run(parameters):
         # Reading Rainfall Observations
         yield log.info('Read rainfall observation: '.format(obs_path))
         obs=GeopointsLoader(path=obs_path)
-        nOBS = len(obs.values)
+        nOBS = len(obs)
 
         if nOBS <= 1:
         # which will account for the cases of zero observation in the geopoint file (because the length of the vector will be forced to 1),
@@ -236,13 +233,10 @@ def run(parameters):
                 serializer.header = header
 
                 ref_geopoints = geopoints
-                ref_geopoints_filtered = Geopoints(
-                    geopoint
-                    for geopoint in ref_geopoints
-                    if geopoint.value >= 1
-                )
+                mask = ref_geopoints['value'] >= 1
+                ref_geopoints_filtered = ref_geopoints[mask]
 
-                if not ref_geopoints_filtered:
+                if ref_geopoints_filtered.empty:
                     yield log.warn(
                         'No values of {} >= 1 mm/{}h.'.format(computation['shortname'], Acc)
                     )
@@ -250,16 +244,13 @@ def run(parameters):
                     break
                 elif computation['isPostProcessed']:
                     computations_result.append(
-                        (computation['shortname'], ref_geopoints_filtered.values)
+                        (computation['shortname'], ref_geopoints_filtered['value'])
                     )
             else:
-                geopoints_filtered = Geopoints(
-                    geopoint
-                    for geopoint, ref_geopoint in zip(geopoints, ref_geopoints)
-                    if ref_geopoint.value >= 1
-                )
+                geopoints_filtered = geopoints[mask]
+
                 computations_result.append(
-                    (computation['shortname'], geopoints_filtered.values)
+                    (computation['shortname'], geopoints_filtered['value'])
                 )
 
         if skip:
@@ -281,56 +272,45 @@ def run(parameters):
                 dividend = steps[0]
                 # [TODO] Cache the following in the computations_cache
                 geopoints = dividend.nearest_gridpoint(obs)
-                geopoints_filtered = Geopoints(
-                    geopoint
-                    for geopoint, ref_geopoint in zip(geopoints, ref_geopoints)
-                    if ref_geopoint.value >= 1
-                )
-                computed_value = computer.run(geopoints_filtered.values, ref_geopoints_filtered.values)
+                geopoints_filtered = geopoints[mask]
+
+                computed_value = computer.run(geopoints_filtered['value'], ref_geopoints_filtered['value'])
                 computations_result.append(
                    (computation['shortname'], computed_value)
                 )
             else:
                 computed_value = computer.run(*steps)
                 geopoints = computed_value.nearest_gridpoint(obs)
-                geopoints_filtered = Geopoints(
-                    geopoint
-                    for geopoint, ref_geopoint in zip(geopoints, ref_geopoints)
-                    if ref_geopoint.value >= 1
-                )
+                geopoints_filtered = geopoints[mask]
                 computations_result.append(
-                    (computation['shortname'], geopoints_filtered.values)
+                    (computation['shortname'], geopoints_filtered['value'])
                 )
 
         # Compute other parameters
-        obs1 = Geopoints(
-            obs_geopoint
-            for obs_geopoint, ref_geopoint in zip(obs.geopoints, ref_geopoints)
-            if ref_geopoint.value >= 1
-        )
+        obs1 = obs.dataframe[mask]
 
-        latObs_1 = obs1.latitudes
-        lonObs_1 = obs1.longitudes
+        latObs_1 = obs1['lat']
+        lonObs_1 = obs1['lon']
         # [XXX] CPr = CP_Ob1 / TP_Ob1
 
         vals_errors = []
         if parameters.computation_errors['isFERChecked']:
-            FER = (obs1 - ref_geopoints_filtered) / ref_geopoints_filtered
+            FER = (obs1['value'] - ref_geopoints_filtered['value']) / ref_geopoints_filtered['value']
             vals_errors.append(
-                ('FER', FER.values)
+                ('FER', FER)
             )
 
         if parameters.computation_errors['isFEChecked']:
-            FE = (obs1 - ref_geopoints_filtered)
+            FE = (obs1['value'] - ref_geopoints_filtered['value'])
             vals_errors.append(
-                ('FE', FE.values)
+                ('FE', FE)
             )
 
         vals_LST = compute_local_solar_time(longitudes=lonObs_1,
                                             hour=HourVF_num)
 
         # Saving the output file in ascii format
-        vals_OB = obs1.values
+        vals_OB = obs1['value']
 
         data = []
 
