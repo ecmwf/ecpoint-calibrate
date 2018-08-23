@@ -12,7 +12,7 @@ def get_loader_cls(_type):
     """
     mapping = {
         'GRIB': 'GribLoader',
-        'Geopoints': 'GeopointsLoader',
+        'Geopoints': 'geopoints',
     }
 
     module = importlib.import_module(
