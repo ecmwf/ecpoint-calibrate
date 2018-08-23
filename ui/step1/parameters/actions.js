@@ -10,12 +10,12 @@ export const setAccField = value => ({
 
 export const setDateStartField = moment => ({
   type: 'PARAMETERS.SET_DATE_START_FIELD',
-  value: moment.format('YYYY-MM-DD'),
+  value: moment.format('YYYYMMDD'),
 })
 
 export const setDateEndField = moment => ({
   type: 'PARAMETERS.SET_DATE_END_FIELD',
-  value: moment.format('YYYY-MM-DD'),
+  value: moment.format('YYYYMMDD'),
 })
 
 export const setLimSUField = value => ({
