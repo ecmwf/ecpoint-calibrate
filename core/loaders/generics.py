@@ -5,8 +5,8 @@ import attr
 
 @attr.s
 class Point(object):
-    lat = attr.ib()
-    lon = attr.ib()
+    lat = attr.ib(converter=float)
+    lon = attr.ib(converter=float)
 
     def distance_from(self, point):
         """
