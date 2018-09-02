@@ -190,7 +190,7 @@ class Computations extends Component {
               onRemove={this.props.onComputationRemove}
               setScaleOp={this.props.setScaleOp}
               setScaleValue={this.props.setScaleValue}
-              predictors={this.props.database.predictorCodes}
+              predictors={this.props.predictors.codes}
               setReference={this.props.setComputationReference}
               togglePostProcess={this.props.toggleComputationPostProcess}
             />
@@ -240,7 +240,7 @@ class Computations extends Component {
             <Card.Content>
               <Card.Description>
                 <p>Available predictors that can be used as inputs to computations:</p>
-                {this.props.database.predictorCodes.map(e => (
+                {this.props.predictors.codes.map(e => (
                   <Label key={e}>{e}</Label>
                 ))}
                 {this.getComputationsTable()}

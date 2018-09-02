@@ -22,8 +22,8 @@ class Processing extends Component {
       accumulation: this.props.parameters.acc,
       limit_spin_up: this.props.parameters.limSU,
       leadstart_range: this.props.parameters.range,
-      observation_path: this.props.database.predictandPath,
-      forecast_path: this.props.database.predictorsPath,
+      observation_path: this.props.predictand.path,
+      forecast_path: this.props.predictors.path,
       out_path: this.props.parameters.outPath,
     }
 
@@ -32,7 +32,7 @@ class Processing extends Component {
         url: '/computation-logs',
         body: {
           ...parameters,
-          predictor_codes: this.props.database.predictorCodes,
+          predictor_codes: this.props.predictors.codes,
           computation_fields: this.props.computations.fields,
           computation_errors: this.props.computations.errors,
         },

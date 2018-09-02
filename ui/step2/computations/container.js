@@ -17,7 +17,7 @@ import {
 } from './actions'
 
 const mapStateToProps = state => ({
-  database: state.database,
+  predictors: state.predictors,
   fields: state.computations.fields,
 })
 

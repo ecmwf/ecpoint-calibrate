@@ -7,34 +7,8 @@ import { isEmpty } from './index'
 
 const mainProcess = remote.require('./server')
 
-class Database extends Component {
-  getPredictandField = () => (
-    <Item>
-      <Item.Content>
-        <Item.Header>
-          <h5>
-            Select directory for the predictands you want to use (rainfall, temperature,
-            etc.)
-          </h5>
-        </Item.Header>
-
-        <Item.Description>
-          <Button
-            onClick={() =>
-              this.props.onPredictandPathChange(mainProcess.selectDirectory())
-            }
-          >
-            Browse
-          </Button>
-        </Item.Description>
-        <Item.Extra>
-          <p>{this.props.database.predictandPath}</p>
-        </Item.Extra>
-      </Item.Content>
-    </Item>
-  )
-
-  getPredictorField = () => (
+class Predictors extends Component {
+  getField = () => (
     <Item>
       <Item.Content>
         <Item.Header>
@@ -43,16 +17,14 @@ class Database extends Component {
 
         <Item.Description>
           <Button
-            onClick={() =>
-              this.props.onPredictorsPathChange(mainProcess.selectDirectory())
-            }
+            onClick={() => this.props.onPathChange(mainProcess.selectDirectory())}
           >
             Browse
           </Button>
         </Item.Description>
         <Item.Extra>
-          <p>{this.props.database.predictorsPath}</p>
-          {this.props.database.predictorCodes.map(code => (
+          <p>{this.props.predictors.path}</p>
+          {this.props.predictors.codes.map(code => (
             <Label key={code}>{code}</Label>
           ))}
         </Item.Extra>
@@ -60,7 +32,7 @@ class Database extends Component {
     </Item>
   )
 
-  getPredictandTypeField = () => (
+  getTypeField = () => (
     <Item>
       <Item.Content>
         <Item.Header>
@@ -73,16 +45,16 @@ class Database extends Component {
               <Radio
                 label="GRIB"
                 value="grib"
-                checked={this.props.database.type === 'grib'}
-                onChange={() => this.props.onPredictandTypeChange('grib')}
+                checked={this.props.predictors.type === 'grib'}
+                onChange={() => this.props.onTypeChange('grib')}
               />
             </Grid.Column>
             <Grid.Column>
               <Radio
                 label="NetCDF"
                 value="netcdf"
-                checked={this.props.database.type === 'netcdf'}
-                onChange={() => this.props.onPredictandTypeChange('netcdf')}
+                checked={this.props.predictors.type === 'netcdf'}
+                onChange={() => this.props.onTypeChange('netcdf')}
               />
             </Grid.Column>
           </Grid>
@@ -91,7 +63,7 @@ class Database extends Component {
     </Item>
   )
 
-  isComplete = () => !isEmpty(this.props.database)
+  isComplete = () => !isEmpty(this.props.predictors)
 
   componentDidUpdate = prevProps => {
     this.props.updatePageCompletion(0, this.isComplete())
@@ -103,7 +75,7 @@ class Database extends Component {
         <Grid.Column>
           <Card fluid color="teal">
             <Card.Header>
-              <Grid.Column floated="left">Select Predictand</Grid.Column>
+              <Grid.Column floated="left">Select Predictors</Grid.Column>
               <Grid.Column floated="right">
                 {this.isComplete() && <Icon name="check circle" />}
               </Grid.Column>
@@ -111,9 +83,8 @@ class Database extends Component {
             <Card.Content>
               <Card.Description />
               <Item.Group divided>
-                {this.getPredictandField()}
-                {this.getPredictorField()}
-                {this.getPredictandTypeField()}
+                {this.getField()}
+                {this.getTypeField()}
               </Item.Group>
             </Card.Content>
           </Card>
@@ -123,4 +94,4 @@ class Database extends Component {
   }
 }
 
-export default Database
+export default Predictors

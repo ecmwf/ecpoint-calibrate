@@ -1,11 +1,13 @@
 import React, { Fragment } from 'react'
 
-import Database from './database'
+import Predictand from './predictand'
+import Predictors from './predictors'
 import Parameters from './parameters'
 
 const Step1 = props => (
   <Fragment>
-    <Database />
+    <Predictand />
+    <Predictors />
     <Parameters />
   </Fragment>
 )

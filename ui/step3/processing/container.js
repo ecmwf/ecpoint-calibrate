@@ -3,7 +3,8 @@ import { connect } from 'react-redux'
 import Processing from './component'
 
 const mapStateToProps = state => ({
-  database: state.database,
+  predictand: state.predictand,
+  predictors: state.predictors,
   parameters: state.parameters,
   computations: state.computations,
 })
