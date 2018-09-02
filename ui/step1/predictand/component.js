@@ -12,10 +12,7 @@ class Database extends Component {
     <Item>
       <Item.Content>
         <Item.Header>
-          <h5>
-            Select directory for the predictands you want to use (rainfall, temperature,
-            etc.)
-          </h5>
+          <h5>Select directory of the predictand (rainfall, temperature, etc.)</h5>
         </Item.Header>
 
         <Item.Description>

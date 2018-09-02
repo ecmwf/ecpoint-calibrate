@@ -12,7 +12,7 @@ class Predictors extends Component {
     <Item>
       <Item.Content>
         <Item.Header>
-          <h5>Select directory for the predictors you want to use (CAPE, SR, etc.)</h5>
+          <h5>Select directory containing the predictors (CAPE, SR, etc.)</h5>
         </Item.Header>
 
         <Item.Description>
