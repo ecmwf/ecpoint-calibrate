@@ -3,8 +3,8 @@ import { connect } from 'react-redux'
 import Database from './component'
 
 import {
-  setPredictantType,
-  setPredictantPath,
+  setPredictandType,
+  setPredictandPath,
   setPredictorsPath,
   updatePageCompletion,
 } from './actions'
@@ -14,9 +14,9 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  onPredictantTypeChange: type => dispatch(setPredictantType(type)),
+  onPredictandTypeChange: type => dispatch(setPredictandType(type)),
 
-  onPredictantPathChange: path => dispatch(setPredictantPath(path)),
+  onPredictandPathChange: path => dispatch(setPredictandPath(path)),
 
   onPredictorsPathChange: path => dispatch(setPredictorsPath(path)),
 

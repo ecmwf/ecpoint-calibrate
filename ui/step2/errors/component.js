@@ -40,7 +40,7 @@ class Errors extends Component {
       <Grid.Column>
         <Card fluid color="teal">
           <Card.Header>
-            <Grid.Column floated="left">Predictant Errors</Grid.Column>
+            <Grid.Column floated="left">Predictand Errors</Grid.Column>
             <Grid.Column floated="right">
               {this.isComplete() && <Icon name="check circle" />}
             </Grid.Column>

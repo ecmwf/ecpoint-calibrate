@@ -14,25 +14,25 @@ The bulk of the operations like loading observation/forecast data and running co
 
 ## Usage information for the GUI
 
-### Selecting the predictors and predictants
+### Selecting the predictors and predictands
 
-In this step of the GUI, we specify the paths in the local filesystem where the predictant and predictors are stored. The software has not been tested to work with remote filesystems.
+In this step of the GUI, we specify the paths in the local filesystem where the predictand and predictors are stored. The software has not been tested to work with remote filesystems.
 
 
-#### Predictant
+#### Predictand
 
-We can use the GUI to select a *single* directory that holds the observation data for the predictant we want to use in our computations. The expected format is specified below, where `selectedDirectory` is the directory chosen on the GUI.
+We can use the GUI to select a *single* directory that holds the observation data for the predictand we want to use in our computations. The expected format is specified below, where `selectedDirectory` is the directory chosen on the GUI.
 
-**Expected database format for predictant data:**
+**Expected database format for predictand data:**
 
 ```
-<selectedDirectory>/<accumulation>/<date>/<predictant>_<accumulation>_<date>_<hour>.<dataType>
+<selectedDirectory>/<accumulation>/<date>/<predictand>_<accumulation>_<date>_<hour>.<dataType>
 
 ```
 
 **Example:**
 
-Here is a sample predictant file, where `selectedDirectory` is `/home/username/ecmwf/dissemination.ecmwf.int/vol/ecpoint/ecPoint_DB/OBS/ECMWF/tp`:
+Here is a sample predictand file, where `selectedDirectory` is `/home/username/ecmwf/dissemination.ecmwf.int/vol/ecpoint/ecPoint_DB/OBS/ECMWF/tp`:
 
 ```
 /home/username/ecmwf/dissemination.ecmwf.int/vol/ecpoint/ecPoint_DB/OBS/ECMWF/tp/Acc06h/20150601/tp_06_20150601_23.geo

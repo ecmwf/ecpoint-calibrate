@@ -8,12 +8,12 @@ import { isEmpty } from './index'
 const mainProcess = remote.require('./server')
 
 class Database extends Component {
-  getPredictantField = () => (
+  getPredictandField = () => (
     <Item>
       <Item.Content>
         <Item.Header>
           <h5>
-            Select directory for the predictants you want to use (rainfall, temperature,
+            Select directory for the predictands you want to use (rainfall, temperature,
             etc.)
           </h5>
         </Item.Header>
@@ -21,14 +21,14 @@ class Database extends Component {
         <Item.Description>
           <Button
             onClick={() =>
-              this.props.onPredictantPathChange(mainProcess.selectDirectory())
+              this.props.onPredictandPathChange(mainProcess.selectDirectory())
             }
           >
             Browse
           </Button>
         </Item.Description>
         <Item.Extra>
-          <p>{this.props.database.predictantPath}</p>
+          <p>{this.props.database.predictandPath}</p>
         </Item.Extra>
       </Item.Content>
     </Item>
@@ -60,7 +60,7 @@ class Database extends Component {
     </Item>
   )
 
-  getPredictantTypeField = () => (
+  getPredictandTypeField = () => (
     <Item>
       <Item.Content>
         <Item.Header>
@@ -74,7 +74,7 @@ class Database extends Component {
                 label="GRIB"
                 value="grib"
                 checked={this.props.database.type === 'grib'}
-                onChange={() => this.props.onPredictantTypeChange('grib')}
+                onChange={() => this.props.onPredictandTypeChange('grib')}
               />
             </Grid.Column>
             <Grid.Column>
@@ -82,7 +82,7 @@ class Database extends Component {
                 label="NetCDF"
                 value="netcdf"
                 checked={this.props.database.type === 'netcdf'}
-                onChange={() => this.props.onPredictantTypeChange('netcdf')}
+                onChange={() => this.props.onPredictandTypeChange('netcdf')}
               />
             </Grid.Column>
           </Grid>
@@ -103,7 +103,7 @@ class Database extends Component {
         <Grid.Column>
           <Card fluid color="teal">
             <Card.Header>
-              <Grid.Column floated="left">Select Predictant</Grid.Column>
+              <Grid.Column floated="left">Select Predictand</Grid.Column>
               <Grid.Column floated="right">
                 {this.isComplete() && <Icon name="check circle" />}
               </Grid.Column>
@@ -111,9 +111,9 @@ class Database extends Component {
             <Card.Content>
               <Card.Description />
               <Item.Group divided>
-                {this.getPredictantField()}
+                {this.getPredictandField()}
                 {this.getPredictorField()}
-                {this.getPredictantTypeField()}
+                {this.getPredictandTypeField()}
               </Item.Group>
             </Card.Content>
           </Card>

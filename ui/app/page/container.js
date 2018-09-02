@@ -1,9 +1,9 @@
 import { connect } from 'react-redux'
 
-import PredictantsComponent from './component'
+import PredictandsComponent from './component'
 
 const mapStateToProps = state => ({
   page: state.page,
 })
 
-export default connect(mapStateToProps)(PredictantsComponent)
+export default connect(mapStateToProps)(PredictandsComponent)

@@ -87,10 +87,10 @@ def run(parameters):
             )
             continue
 
-        def get_grib_path(predictant, step):
+        def get_grib_path(predictand, step):
             return os.path.join(
-                PathFC, predictant, thedateNEWSTR + thetimeNEWSTR,
-                '_'.join([predictant, thedateNEWSTR, thetimeNEWSTR,
+                PathFC, predictand, thedateNEWSTR + thetimeNEWSTR,
+                '_'.join([predictand, thedateNEWSTR, thetimeNEWSTR,
                           '{:02d}'.format(step)]) + '.grib'
             )
 

@@ -1,11 +1,11 @@
 import client from '~/utils/client'
 
-export const setPredictantType = type => ({
+export const setPredictandType = type => ({
   type: 'DATABASE.SET_PREDICTANT_TYPE',
   data: type,
 })
 
-export const setPredictantPath = path => ({
+export const setPredictandPath = path => ({
   type: 'DATABASE.SET_PREDICTANT_PATH',
   data: path.length !== 0 ? path.pop() : null,
 })

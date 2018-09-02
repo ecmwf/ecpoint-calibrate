@@ -1,5 +1,5 @@
 const defaultState = {
-  predictantPath: null,
+  predictandPath: null,
   predictorsPath: null,
   type: 'grib',
   predictorCodes: [],
@@ -12,7 +12,7 @@ export default (state = defaultState, action) => {
     }
 
     case 'DATABASE.SET_PREDICTANT_PATH': {
-      return { ...state, predictantPath: action.data }
+      return { ...state, predictandPath: action.data }
     }
 
     case 'DATABASE.SET_PREDICTORS_PATH': {

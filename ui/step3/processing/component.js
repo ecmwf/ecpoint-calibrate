@@ -22,7 +22,7 @@ class Processing extends Component {
       accumulation: this.props.parameters.acc,
       limit_spin_up: this.props.parameters.limSU,
       leadstart_range: this.props.parameters.range,
-      observation_path: this.props.database.predictantPath,
+      observation_path: this.props.database.predictandPath,
       forecast_path: this.props.database.predictorsPath,
       out_path: this.props.parameters.outPath,
     }
