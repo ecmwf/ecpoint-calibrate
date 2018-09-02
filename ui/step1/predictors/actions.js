@@ -6,7 +6,7 @@ export const setType = type => ({
 })
 
 export const setPath = path => async dispatch => {
-  const path_ = path.length !== 0 ? path.pop() : null
+  const path_ = path && path.length !== 0 ? path.pop() : null
 
   if (path_ !== null) {
     await dispatch({ type: 'PREDICTORS.SET_PATH', data: path_ })

@@ -11,7 +11,7 @@ export default (state = defaultState, action) => {
     }
 
     case 'PREDICTORS.SET_PATH': {
-      return { ...state, path: action.data }
+      return action.data !== null ? { ...state, path: action.data } : state
     }
 
     case 'PREDICTORS.SET_CODES': {

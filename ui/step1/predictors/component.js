@@ -23,10 +23,19 @@ class Predictors extends Component {
           </Button>
         </Item.Description>
         <Item.Extra>
-          <p>{this.props.predictors.path}</p>
-          {this.props.predictors.codes.map(code => (
-            <Label key={code}>{code}</Label>
-          ))}
+          {this.props.predictors.path && (
+            <div>
+              <b>Path:</b> {this.props.predictors.path}
+            </div>
+          )}
+          {this.props.predictors.codes.length !== 0 && (
+            <div>
+              <b>Code:</b>{' '}
+              {this.props.predictors.codes.map(code => (
+                <Label key={code}>{code}</Label>
+              ))}
+            </div>
+          )}
         </Item.Extra>
       </Item.Content>
     </Item>

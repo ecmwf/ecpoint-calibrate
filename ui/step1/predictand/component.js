@@ -26,7 +26,16 @@ class Database extends Component {
           </Button>
         </Item.Description>
         <Item.Extra>
-          <p>{this.props.predictand.path}</p>
+          {this.props.predictand.path && (
+            <p>
+              <b>Path:</b> {this.props.predictand.path}
+            </p>
+          )}
+          {this.props.predictand.code && (
+            <div>
+              <b>Code:</b> <Label>{this.props.predictand.code}</Label>
+            </div>
+          )}
         </Item.Extra>
       </Item.Content>
     </Item>

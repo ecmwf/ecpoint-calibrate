@@ -1,6 +1,6 @@
 export const setPath = path => ({
   type: 'PREDICTAND.SET_PATH',
-  data: path.length !== 0 ? path.pop() : null,
+  data: path && path.length !== 0 ? path.pop() : null,
 })
 
 export const updatePageCompletion = (page, isComplete) => ({
