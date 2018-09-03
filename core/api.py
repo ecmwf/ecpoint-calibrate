@@ -58,7 +58,13 @@ def get_naive_decision_tree():
 
 
 def main():
-    app.run(host="0.0.0.0", port="8888", use_reloader=True)
+    kwargs = {
+        "host": "0.0.0.0",
+        "port": "8888",
+        "use_reloader": True if "DEBUG" in os.environ else False,
+    }
+
+    app.run(**kwargs)
 
 
 if __name__ == "__main__":

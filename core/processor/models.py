@@ -29,6 +29,8 @@ class Parameters(object):
     # output file path
     out_path = attr.ib(converter=str)
 
+    predictand_code = attr.ib(converter=str)
+
     computation_fields = attr.ib(default=attr.Factory(list))
 
     computation_errors = attr.ib(default=attr.Factory(dict))

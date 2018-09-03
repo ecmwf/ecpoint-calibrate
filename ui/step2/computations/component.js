@@ -140,12 +140,6 @@ class Computation extends Component {
           />
         </Table.Cell>
         <Table.Cell collapsing textAlign="center">
-          <Radio
-            checked={this.props.isReference === true}
-            onChange={() => this.props.setReference(this.props.index)}
-          />
-        </Table.Cell>
-        <Table.Cell collapsing textAlign="center">
           <Checkbox
             checked={this.props.isPostProcessed === true}
             onChange={() => this.props.togglePostProcess(this.props.index)}
@@ -171,7 +165,6 @@ class Computations extends Component {
             <Table.HeaderCell textAlign="center">Field type</Table.HeaderCell>
             <Table.HeaderCell textAlign="center">Input variable(s)</Table.HeaderCell>
             <Table.HeaderCell textAlign="center">Scaling factor</Table.HeaderCell>
-            <Table.HeaderCell textAlign="center">Reference?</Table.HeaderCell>
             <Table.HeaderCell textAlign="center">Post-process?</Table.HeaderCell>
             <Table.HeaderCell />
           </Table.Row>
@@ -191,7 +184,6 @@ class Computations extends Component {
               setScaleOp={this.props.setScaleOp}
               setScaleValue={this.props.setScaleValue}
               predictors={this.props.predictors.codes}
-              setReference={this.props.setComputationReference}
               togglePostProcess={this.props.toggleComputationPostProcess}
             />
           ))}

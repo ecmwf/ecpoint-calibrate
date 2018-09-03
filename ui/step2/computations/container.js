@@ -11,7 +11,6 @@ import {
   removeComputation,
   setScaleOp,
   setScaleValue,
-  setComputationReference,
   toggleComputationPostProcess,
   updatePageCompletion,
 } from './actions'
@@ -41,8 +40,6 @@ const mapDispatchToProps = dispatch => ({
   setScaleOp: (index, op) => dispatch(setScaleOp(index, op)),
 
   setScaleValue: (index, value) => dispatch(setScaleValue(index, value)),
-
-  setComputationReference: index => dispatch(setComputationReference(index)),
 
   toggleComputationPostProcess: index => dispatch(toggleComputationPostProcess(index)),
 

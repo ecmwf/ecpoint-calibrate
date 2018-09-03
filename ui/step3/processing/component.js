@@ -35,6 +35,7 @@ class Processing extends Component {
           predictor_codes: this.props.predictors.codes,
           computation_fields: this.props.computations.fields,
           computation_errors: this.props.computations.errors,
+          predictand_code: this.props.predictand.code,
         },
         json: true,
       })

@@ -17,5 +17,4 @@ export const isNotEmpty = state =>
 export const isValid = state =>
   isNotEmpty(state) &&
   _.every(state, field => /^\d+$/.test(field.scale.value)) &&
-  _.some(state, field => field.isReference === true) &&
   _.some(state, field => field.isPostProcessed === true)

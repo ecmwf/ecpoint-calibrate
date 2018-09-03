@@ -48,11 +48,6 @@ export const appendLog = log => ({
   log,
 })
 
-export const setComputationReference = index => ({
-  type: 'COMPUTATIONS.SET_REFERENCE',
-  index,
-})
-
 export const toggleComputationPostProcess = index => ({
   type: 'COMPUTATIONS.TOGGLE_POST_PROCESS',
   index,
