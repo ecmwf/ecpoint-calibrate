@@ -15,7 +15,7 @@ class Computation(object):
     meta = {
         "ACCUMULATED_FIELD": compute_accumulated_field,
         "WEIGHTED_AVERAGE_FIELD": compute_weighted_average_field,
-        "ACCUMULATED_SOLAR_RADIATION": compute_accumulated_field,
+        "24H_SOLAR_RADIATION": compute_accumulated_field,
         "VECTOR_MODULE": compute_rms_field,
         "RATIO_FIELD": compute_ratio_field,
     }

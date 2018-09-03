@@ -201,7 +201,7 @@ def run(parameters):
 
             steps = (
                 [step_start_sr, step_end_sr]
-                if computation['field'] == 'ACCUMULATED_SOLAR_RADIATION'
+                if computation['field'] == '24H_SOLAR_RADIATION'
                 else steps
             )
 

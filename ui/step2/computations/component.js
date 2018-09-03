@@ -49,8 +49,8 @@ const operations = [
     value: 'VECTOR_MODULE',
   },
   {
-    text: 'Accumulated Solar Radiaton (SR)',
-    value: 'ACCUMULATED_SOLAR_RADIATION',
+    text: '24h Solar Radiaton',
+    value: '24H_SOLAR_RADIATION',
   },
 ]
 
