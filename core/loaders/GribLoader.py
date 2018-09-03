@@ -110,6 +110,8 @@ class GribLoader(object):
                 geopoints.dataframe[["lat", "lon"]].to_records(index=False),
             )
 
+        return pandas.DataFrame.from_records(result, columns=["lat", "lon", "value"])
+
     nearest_gridpoint = nearest_gridpoint__eccodes
 
     @property
