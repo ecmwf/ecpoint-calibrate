@@ -51,16 +51,20 @@ def load_grib(path):
 @attr.s
 class GribLoader(object):
     path = attr.ib()
+    dataframe = attr.ib(init=False)
+
+    @dataframe.default
+    def _init_df(self):
+        return pandas.DataFrame.from_records(
+            self.__generate_records(), columns=["lat", "lon", "value"]
+        )
 
     @path.validator
     def _check_path(self, attribute, value):
         if not os.path.exists(value):
             raise IOError
 
-    @property
-    def dataframe(self):
-        records = []
-
+    def __generate_records(self):
         with load_grib(self.path) as gid:
             iterid = codes_grib_iterator_new(gid, 0)
             while True:
@@ -68,13 +72,9 @@ class GribLoader(object):
                 if not result:
                     break
 
-                lat, lon, value = result
-
-                records.append((lat, lon, value))
+                yield result
 
             codes_grib_iterator_delete(iterid)
-
-        return pandas.DataFrame.from_records(records, columns=["lat", "lon", "value"])
 
     def nearest_gridpoint__naive(self, geopoints):
         """
