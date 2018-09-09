@@ -43,20 +43,30 @@ parts:
 
 
     organize:
-      usr/bin: bin
       lib/node_modules/ecPoint-PyCal: app
 
     filesets:
-      binaries:
-        - bin/*
-        - app/node_modules/.bin/electron
-
-      so:
+      system:
+        - bin
+        - etc
+        - include
         - lib
+        - share
+        - usr
+        - var
 
       runtime_node_modules:
-        - lib/node_modules/npm
         - app/node_modules/electron
+        - app/node_modules/.bin/electron
+
+    prime:
+      - $system
+      - $runtime_node_modules
+      - app/index.html
+      - app/dist
+      - app/core
+      - app/package.json
+      - app/server.js
 
     after: [ core ]
 
@@ -77,9 +87,11 @@ parts:
 
     stage-packages:
       - python-tk
+      - libgfortran3
+      - libquadmath0
 
 apps:
-  my-snap-name:
+  ecpoint-pycal:
     command: npm start --prefix $SNAP/app
     plugs:
       - browser-support
