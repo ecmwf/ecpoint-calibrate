@@ -12,6 +12,7 @@
     "lint": "prettier --config ./.prettierrc --write 'ui/**/*.js'"
   },
   "author": "Anirudha Bose <ani07nov@gmail.com>",
+  "repository": "github:onyb/ecpoint-PyCal",
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
