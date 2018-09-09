@@ -8,7 +8,7 @@
   "main": "./server.js",
   "scripts": {
     "start": "electron .",
-    "postinstall": "webpack --progress --colors",
+    "build": "webpack --progress --colors",
     "lint": "prettier --config ./.prettierrc --write 'ui/**/*.js'"
   },
   "author": "Anirudha Bose <ani07nov@gmail.com>",
