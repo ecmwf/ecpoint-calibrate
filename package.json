@@ -13,9 +13,9 @@
   },
   "author": "Anirudha Bose <ani07nov@gmail.com>",
   "license": "MIT",
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "axios": "0.18.0",
-    "electron": "^2.0.8",
     "immutable": "3.8.2",
     "lodash": "4.17.10",
     "moment": "2.22.2",
@@ -32,9 +32,7 @@
     "redux-thunk": "2.3.0",
     "request": "2.87.0",
     "semantic-ui-css": "2.3.2",
-    "semantic-ui-react": "0.81.3"
-  },
-  "devDependencies": {
+    "semantic-ui-react": "0.81.3",
     "babel-cli": "6.26.0",
     "babel-core": "6.26.0",
     "babel-eslint": "8.2.3",
@@ -51,6 +49,7 @@
     "babel-preset-stage-2": "6.24.1",
     "copy-webpack-plugin": "4.5.1",
     "css-loader": "0.28.11",
+    "electron": "2.0.8",
     "eslint": "4.19.0",
     "eslint-config-airbnb": "16.1.0",
     "eslint-config-standard": "11.0.0",
