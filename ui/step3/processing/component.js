@@ -34,8 +34,10 @@ class Processing extends Component {
           ...parameters,
           predictor_codes: this.props.predictors.codes,
           computation_fields: this.props.computations.fields,
-          computation_errors: this.props.computations.errors,
           predictand_code: this.props.predictand.code,
+          predictand_type: this.props.predictand.type,
+          predictand_error: this.props.predictand.error,
+          predictand_min_value: this.props.predictand.minValueAcc,
         },
         json: true,
       })

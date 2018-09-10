@@ -1,10 +1,5 @@
 const defaultState = {
   fields: [],
-  errors: {
-    isFERChecked: false,
-    isFEChecked: false,
-    minValueFER: '1',
-  },
 }
 
 export default (state = defaultState, action) => {
@@ -98,33 +93,6 @@ export default (state = defaultState, action) => {
           }
           return item
         }),
-      }
-
-    case 'COMPUTATIONS.TOGGLE_FORECAST_ERROR':
-      return {
-        ...state,
-        errors: {
-          ...state.errors,
-          isFEChecked: !state.errors.isFEChecked,
-        },
-      }
-
-    case 'COMPUTATIONS.TOGGLE_FORECAST_ERROR_RATIO':
-      return {
-        ...state,
-        errors: {
-          ...state.errors,
-          isFERChecked: !state.errors.isFERChecked,
-        },
-      }
-
-    case 'COMPUTATIONS.CHANGE_MIN_VALUE_FER':
-      return {
-        ...state,
-        errors: {
-          ...state.errors,
-          minValueFER: action.data,
-        },
       }
 
     case 'COMPUTATIONS.TOGGLE_POST_PROCESS':

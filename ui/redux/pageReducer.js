@@ -5,7 +5,7 @@ const defaultState = {
     isActive: true,
     isComplete: { predictand: false, predictors: false, parameters: false },
   },
-  1: { isActive: false, isComplete: { fields: false, errors: false } },
+  1: { isActive: false, isComplete: { fields: false } },
   2: { isActive: false, isComplete: { results: false } },
   3: { isActive: false, isComplete: { decisionTree: false } },
 }

@@ -31,8 +31,12 @@ class Parameters(object):
 
     predictand_code = attr.ib(converter=str)
 
-    computation_fields = attr.ib(default=attr.Factory(list))
+    predictand_type = attr.ib(converter=str)
 
-    computation_errors = attr.ib(default=attr.Factory(dict))
+    predictand_error = attr.ib(converter=str)
+
+    predictand_min_value = attr.ib(converter=str)
+
+    computation_fields = attr.ib(default=attr.Factory(list))
 
     predictor_codes = attr.ib(default=attr.Factory(list))

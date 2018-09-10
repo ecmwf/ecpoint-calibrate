@@ -1,13 +1,7 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 
 import Computations from './computations'
-import Errors from './errors'
 
-const Step2 = props => (
-  <Fragment>
-    <Computations />
-    <Errors />
-  </Fragment>
-)
+const Step2 = props => <Computations />
 
 export default Step2

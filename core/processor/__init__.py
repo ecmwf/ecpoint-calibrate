@@ -298,13 +298,13 @@ def run(parameters):
         # [XXX] CPr = CP_Ob1 / TP_Ob1
 
         vals_errors = []
-        if parameters.computation_errors['isFERChecked']:
+        if parameters.predictand_error == 'FER':
             FER = (obs1['value'] - ref_geopoints_filtered['value']) / ref_geopoints_filtered['value']
             vals_errors.append(
                 ('FER', FER)
             )
 
-        if parameters.computation_errors['isFEChecked']:
+        if parameters.predictand_error == 'FE':
             FE = (obs1['value'] - ref_geopoints_filtered['value'])
             vals_errors.append(
                 ('FE', FE)
