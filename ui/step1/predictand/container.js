@@ -2,7 +2,13 @@ import { connect } from 'react-redux'
 
 import Predictand from './component'
 
-import { setPath, updatePageCompletion, setType, set_minValueAcc } from './actions'
+import {
+  setPath,
+  updatePageCompletion,
+  setType,
+  set_minValueAcc,
+  setAccumulation,
+} from './actions'
 
 const mapStateToProps = state => ({
   predictand: state.predictand,
@@ -17,6 +23,8 @@ const mapDispatchToProps = dispatch => ({
     dispatch(updatePageCompletion(page, isComplete)),
 
   change_minValueAcc: value => dispatch(set_minValueAcc(value)),
+
+  onAccumulationChange: value => dispatch(setAccumulation(value)),
 })
 
 export default connect(

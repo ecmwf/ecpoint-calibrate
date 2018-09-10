@@ -19,7 +19,7 @@ class Processing extends Component {
     const parameters = {
       date_start: this.props.parameters.date_start,
       date_end: this.props.parameters.date_end,
-      accumulation: this.props.parameters.acc,
+      accumulation: this.props.predictand.accumulation,
       limit_spin_up: this.props.parameters.limSU,
       leadstart_range: this.props.parameters.range,
       observation_path: this.props.predictand.path,

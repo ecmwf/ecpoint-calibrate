@@ -4,6 +4,7 @@ const defaultState = {
   type: null,
   error: null,
   minValueAcc: '',
+  accumulation: '',
 }
 
 export default (state = defaultState, action) => {
@@ -20,6 +21,10 @@ export default (state = defaultState, action) => {
         type: action.data,
         error: action.data === 'ACCUMULATED' ? 'FER' : 'FE',
       }
+    }
+
+    case 'PREDICTAND.SET_ACCUMULATION': {
+      return { ...state, accumulation: action.value }
     }
 
     case 'PREDICTAND.SET_ACCUMULATED_MIN_VALUE': {

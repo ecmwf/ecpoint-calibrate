@@ -48,10 +48,36 @@ class Database extends Component {
     </Item>
   )
 
+  accHasError = () =>
+    this.props.predictand.accumulation === '' ||
+    /^(6|12|24)$/.test(this.props.predictand.accumulation)
+      ? null
+      : true
+
+  getAccField = () => (
+    <Fragment>
+      <Item>
+        <Item.Content>
+          <Item.Header>
+            <h5>Enter accumulation (in hours) of the parameter to post-process:</h5>
+          </Item.Header>
+
+          <Item.Description>
+            <Input
+              error={this.accHasError()}
+              onChange={e => this.props.onAccumulationChange(e.target.value)}
+              value={this.props.predictand.accumulation || ''}
+            />
+          </Item.Description>
+          <Item.Extra>Valid values are: 6, 12, 24</Item.Extra>
+        </Item.Content>
+      </Item>
+      {this.minValueAcc_field()}
+    </Fragment>
+  )
+
   minValueAcc_field = () => (
     <Fragment>
-      <br />
-      <br />
       <Grid.Row>
         <Input
           error={this.minValueAcc_hasError()}
@@ -68,7 +94,7 @@ class Database extends Component {
   )
 
   minValueAcc_hasError = () =>
-    this.props.predictand.minValueAcc !== '' &&
+    this.props.predictand.minValueAcc === '' ||
     /^\d+$/.test(this.props.predictand.minValueAcc)
       ? null
       : true
@@ -111,24 +137,24 @@ class Database extends Component {
               />
             </Grid.Column>
           </Grid>
-
-          <strong>Predictand error to compute: </strong>
-          {this.props.predictand.type === 'ACCUMULATED' ? (
-            <span>Forecast Error Ratio (FER)</span>
-          ) : (
-            <span>Forecast Error (FE)</span>
-          )}
-
-          {this.props.predictand.type === 'ACCUMULATED' && this.minValueAcc_field()}
+          {this.props.predictand.type && <strong>Predictand error to compute: </strong>}
+          {this.props.predictand.type &&
+            (this.props.predictand.type === 'ACCUMULATED' ? (
+              <span>Forecast Error Ratio (FER)</span>
+            ) : (
+              <span>Forecast Error (FE)</span>
+            ))}
         </Item.Description>
         <Item.Extra />
       </Item.Content>
     </Item>
   )
 
-  isComplete = () =>
-    !isEmpty(this.props.predictand) &&
-    (this.props.predictand.type === 'ACCUMULATED' ? !this.minValueAcc_hasError() : true)
+  hasError = () =>
+    this.accHasError() ||
+    (this.props.predictand.type === 'ACCUMULATED' ? this.minValueAcc_hasError() : false)
+
+  isComplete = () => !isEmpty(this.props.predictand) && !this.hasError()
 
   componentDidUpdate = prevProps => {
     this.props.updatePageCompletion(0, this.isComplete())
@@ -150,6 +176,7 @@ class Database extends Component {
               <Item.Group divided>
                 {this.getField()}
                 {this.getPredictantTypeSwitcher()}
+                {this.props.predictand.type === 'ACCUMULATED' && this.getAccField()}
               </Item.Group>
             </Card.Content>
           </Card>

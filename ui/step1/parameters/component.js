@@ -14,30 +14,6 @@ import { isEmpty } from './index'
 const mainProcess = remote.require('./server')
 
 class Parameters extends Component {
-  accHasError = () =>
-    this.props.parameters.acc === '' || /^(6|12|24)$/.test(this.props.parameters.acc)
-      ? null
-      : true
-
-  getAccField = () => (
-    <Item>
-      <Item.Content>
-        <Item.Header>
-          <h5>Enter accumulation (in hours) of the parameter to post-process:</h5>
-        </Item.Header>
-
-        <Item.Description>
-          <Input
-            error={this.accHasError()}
-            onChange={e => this.props.onParametersAccFieldChange(e.target.value)}
-            value={this.props.parameters.acc || ''}
-          />
-        </Item.Description>
-        <Item.Extra>Valid values are: 6, 12, 24</Item.Extra>
-      </Item.Content>
-    </Item>
-  )
-
   getDateStartField = () => {
     const dateStart =
       this.props.parameters.date_start &&
@@ -157,7 +133,7 @@ class Parameters extends Component {
     </Item>
   )
 
-  hasError = () => this.accHasError() || this.rangeHasError() || this.limSUHasError()
+  hasError = () => this.rangeHasError() || this.limSUHasError()
 
   isComplete = () => !this.hasError() && !isEmpty(this.props.parameters)
 
@@ -179,7 +155,6 @@ class Parameters extends Component {
             <Card.Description />
             <Item.Group divided>
               {this.getDateStartField()}
-              {this.getAccField()}
               {this.getLimSUField()}
               {this.getRangeField()}
               {this.getPathOutField()}

@@ -5,7 +5,6 @@ import Parameters from './component'
 import {
   setDateStartField,
   setDateEndField,
-  setAccField,
   setLimSUField,
   setRangeField,
   setOutPath,
@@ -22,8 +21,6 @@ const mapDispatchToProps = dispatch => ({
   onParametersDateStartFieldChange: value => dispatch(setDateStartField(value)),
 
   onParametersDateEndFieldChange: value => dispatch(setDateEndField(value)),
-
-  onParametersAccFieldChange: value => dispatch(setAccField(value)),
 
   onParametersLimSUFieldChange: value => dispatch(setLimSUField(value)),
 

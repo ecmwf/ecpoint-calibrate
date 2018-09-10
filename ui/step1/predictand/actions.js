@@ -19,3 +19,8 @@ export const set_minValueAcc = value => ({
   type: 'PREDICTAND.SET_ACCUMULATED_MIN_VALUE',
   data: value,
 })
+
+export const setAccumulation = value => ({
+  type: 'PREDICTAND.SET_ACCUMULATION',
+  value,
+})

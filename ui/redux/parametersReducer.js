@@ -1,5 +1,4 @@
 const defaultState = {
-  acc: '',
   limSU: '',
   range: '',
   outPath: '',
@@ -13,10 +12,6 @@ export default (state = defaultState, action) => {
 
     case 'PARAMETERS.SET_DATE_END_FIELD': {
       return { ...state, date_end: action.value }
-    }
-
-    case 'PARAMETERS.SET_ACC_FIELD': {
-      return { ...state, acc: action.value }
     }
 
     case 'PARAMETERS.SET_LIMSU_FIELD': {
