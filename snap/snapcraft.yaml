@@ -1,5 +1,5 @@
 name: ecpoint-pycal
-version: '0.1.0'
+version: '0.1.1'
 summary: Calibration Software in Python developed at ECMWF
 description: |
   [TODO] - This is my-snap's description. You have a paragraph or two to tell the
@@ -8,7 +8,7 @@ description: |
   store.
 
 grade: devel # [TODO] - must be 'stable' to release into candidate/stable channels
-confinement: devmode # [TODO] - use 'strict' once the right plugs and slots have been defined
+confinement: strict
 
 parts:
   electron:
@@ -16,9 +16,6 @@ parts:
     node-engine: 8.11.2
     npm-run: [ build ]
     source: .
-
-    build-packages:
-      - libgdk-pixbuf2.0-dev
 
     stage-packages:
       - libpng-dev
@@ -34,13 +31,6 @@ parts:
       - libgconf-2-4
       - libnss3
       - libasound2
-
-    override-build: |
-      snapcraftctl build
-      touch $SNAPCRAFT_PART_INSTALL/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders.cache
-      chmod +w $SNAPCRAFT_PART_INSTALL/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders.cache
-      gdk-pixbuf-query-loaders > $SNAPCRAFT_PART_INSTALL/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders.cache
-
 
     organize:
       lib/node_modules/ecPoint-PyCal: app
@@ -65,10 +55,10 @@ parts:
       - app/index.html
       - app/dist
       - app/core
-      - app/package.json
       - app/server.js
+      - app/share
 
-    after: [ core ]
+    after: [ desktop-gtk3, core ]
 
   core:
     plugin: python
@@ -77,7 +67,6 @@ parts:
     build-packages:
       - gfortran
       - cmake
-      - gsettings-desktop-schemas
 
     source: .
 
@@ -92,10 +81,13 @@ parts:
 
 apps:
   ecpoint-pycal:
-    command: npm start --prefix $SNAP/app
+    command: desktop-launch $SNAP/app/node_modules/.bin/electron $SNAP/app/server.js
+    desktop: app/share/ecpoint-pycal.desktop
     plugs:
       - browser-support
       - desktop
       - home
       - wayland
       - x11
+      - opengl
+      - gsettings
