@@ -1,55 +1,35 @@
 # ecPoint-PyCal
-ECMWF caliberation software in Python
+
+Calibration Software in Python developed at ECMWF.
 
 ### Installation
 
-##### Install required packages from Ubuntu repositories
+ecPoint-pyCal can be installed from the [Snap Store]().
+
+
+Install using the commandline
 
 ```sh
-$ sudo apt update
-$ sudo apt install python-dev python-numpy python-opengl libsdl-image1.2-dev \
-    libsdl-mixer1.2-dev libsdl-ttf2.0-dev libsmpeg-dev libsdl1.2-dev \
-    libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev libx11-6 \
-    libtiff5-dev libx11-dev fluid-soundfont-gm timgm6mb-soundfont xfonts-base \
-    xfonts-100dpi xfonts-75dpi xfonts-cyrillic fontconfig fonts-freefont-ttf
+sudo snap install --beta ecpoint-pycal
 ```
 
-##### Install ecPoint-PyCal
+**Note:** The `--beta` flag will not be necessary in future when the snap is released on
+a `stable` channel.
 
-First clone the source locally:
-```sh
-$ git clone https://github.com/onyb/ecPoint-PyCal
-$ cd ecPoint-PyCal
-```
+Don't have snapd? [Get set up for snaps](https://docs.snapcraft.io/core/install).
 
-then, create and activate a Python 2.7 virtual environment with `virtualenv`:
-```sh
-$ virtualenv -p python2 .env
-$ source .env/bin/activate
-```
+### Launching the ecPoint-pyCal
 
-then, install ecPoint-PyCal package with:
-```sh
-(env) $ pip install -e . -v
-```
-Optionally, you may install packages required for local development:
+As a part of installation process, ecPoint-pyCal creates a desktop launcher for the GUI,
+which can be found in the  [Application] menu depending upon the flavour of your operating
+system.
+
+The recommended way to launch ecPoint-pyCal is using the terminal:
 
 ```sh
-(env) $ pip install -r dev-requirements.txt
-(env) $ pip install -r test-requirements.txt
+$ ecpoint-pycal
 ```
 
-##### Running the test suite
+It not only gives you better control to exit the program, but is also more transparent
+as you can inspect the logs.
 
-```sh
-(env) $ py.test
-```
-
-##### Launching the ecPoint-PyCal UI
-
-**Note:** Make sure the Python virtual environment is activated.
-
-```sh
-(env) $ npm install
-(env) $ npm start
-```

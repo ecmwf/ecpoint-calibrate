@@ -1,6 +1,6 @@
 {
   "name": "ecPoint-PyCal",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "React frontend for ecPoint-PyCal",
   "engines": {
     "node": "==8.11.2"
