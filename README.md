@@ -49,7 +49,7 @@ $ git clone https://github.com/onyb/ecPoint-PyCal
 $ cd ecPoint-PyCal
 $ virtualenv -p python2 .env
 $ source .env/bin/activate
-(env) $ pip install -e . -v
+(env) $ pip install . -v
 (env) $ bash install_eccodes.sh
 (env) $ npm install
 ```
