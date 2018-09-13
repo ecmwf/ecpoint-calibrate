@@ -52,6 +52,7 @@ $ source .env/bin/activate
 (env) $ pip install . -v
 (env) $ bash install_eccodes.sh
 (env) $ npm install
+(env) $ npm run build
 ```
 
 ###### Launching the ecPoint-PyCal UI
