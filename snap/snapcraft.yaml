@@ -91,3 +91,8 @@ apps:
       - x11
       - opengl
       - gsettings
+      - unity7
+      - network
+      - network-bind
+      - hostname-control
+      - network-control
