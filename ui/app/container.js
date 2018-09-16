@@ -1,16 +1,16 @@
 import { connect } from 'react-redux'
 
 import App from './component'
-
-import { setPage } from './menu/actions'
+import { setScratchValue } from './actions'
 
 const mapStateToProps = state => ({
   page: state.page,
+  app: state.app,
 })
 
 const mapDispatchToProps = dispatch => ({
-  onPageChange: page => {
-    dispatch(setPage(page))
+  setScratchValue: value => {
+    dispatch(setScratchValue(value))
   },
 })
 

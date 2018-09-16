@@ -6,6 +6,7 @@ import parametersReducer from './parametersReducer'
 import pageReducer from './pageReducer'
 import computationsReducer from './computationsReducer'
 import postprocessingReducer from './postprocessingReducer'
+import appReducer from './appReducer'
 
 const reducer = combineReducers({
   predictors: predictorsReducer,
@@ -13,6 +14,7 @@ const reducer = combineReducers({
   parameters: parametersReducer,
   computations: computationsReducer,
   postprocessing: postprocessingReducer,
+  app: appReducer,
   page: pageReducer,
 })
 
