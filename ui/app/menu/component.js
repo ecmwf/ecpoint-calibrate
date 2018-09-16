@@ -43,6 +43,12 @@ const Menu = props => (
     </Step>
     <Step
       active={props.page[3].isActive ? true : null}
+      disabled={
+        !isPageComplete(props.page[0]) ||
+        !isPageComplete(props.page[1]) ||
+        !isPageComplete(props.page[2]) ||
+        props.fromScratch
+      }
       onClick={() => props.onPageChange(3)}
     >
       <Icon name="chart bar" />
