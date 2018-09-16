@@ -38,6 +38,8 @@ def run(parameters):
     BaseDateFSTR=BaseDateF.strftime('%Y%m%d')
     AccSTR = 'Acc%02dh' % Acc
 
+    computations = parameters.computation_fields
+
     serializer = ASCIIEncoder(path=PathOUT)
 
     header = dedent(
@@ -47,17 +49,34 @@ def run(parameters):
         # Created on {now}.
         #
         # Forecast Verification for HRES
+        #
+        # Parameters:
         #     Base date start     = {start}
         #     Base date end       = {end}
-        #     Accumulation        = {acc}h
         #     Spin-up limit       = {limsu}h
-        #     Predictand          = {predictand}
+        #     Range               = 1
+        #
+        # Predictand:
+        #     Short code          = {predictand_code}
+        #     Type                = {predictand_type}
+        #     Error               = {predictand_error}
+        #     Accumulation        = {predictand_acc}
+        #     Minimum value       = {predictand_min_value}
+        #
         '''.format(
             now=datetime.now(), start=BaseDateSSTR, limsu=LimSU,
-            end=BaseDateFSTR, acc=Acc, predictand=parameters.predictand_code
+            end=BaseDateFSTR, acc=Acc, predictand_code=parameters.predictand_code,
+            predictand_type=parameters.predictand_type, predictand_error=parameters.predictand_code,
+            predictand_min_value=parameters.predictand_min_value, predictand_acc=parameters.accumulation
         )
-    ).strip()
-    serializer.header = header
+    )
+
+    header += '# Post-processed computations: ' + ', '.join(
+        computation['shortname'] for computation in computations
+        if computation['isPostProcessed']
+    )
+
+    serializer.header = header.strip()
 
     #############################################################################################
 
@@ -173,8 +192,6 @@ def run(parameters):
             'Computing the required parameters '
             '(FER, cpr, tp, wspd700, cape, sr).'
         )
-
-        computations = parameters.computation_fields
 
         for computation in computations:
             computation['isReference'] = len(computation['inputs']) == 1 and computation['inputs'][0] == parameters.predictand_code
