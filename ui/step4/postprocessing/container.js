@@ -2,7 +2,7 @@ import { connect } from 'react-redux'
 
 import PostProcessing from './component'
 
-import { setThresholdSplits } from './actions'
+import { setThresholdSplits, setFields, onFieldsSortEnd } from './actions'
 
 const getFirstRow = fields =>
   [{ readOnly: true, value: 1 }].concat(
@@ -22,11 +22,14 @@ const generateInitialGrid = fields => {
 }
 
 const mapStateToProps = state => {
-  const fields = state.app.scratch
+  const defaultFields = state.app.scratch
     ? state.computations.fields
         .filter(field => field.isPostProcessed)
         .map(field => field.shortname)
     : state.preloader.fields
+
+  const fields =
+    state.postprocessing.fields.length > 0 ? state.postprocessing.fields : defaultFields
 
   return {
     thrGridIn:
@@ -40,6 +43,11 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   onThresholdSplitsChange: grid => dispatch(setThresholdSplits(grid)),
+
+  setFields: fields => dispatch(setFields(fields)),
+
+  onFieldsSortEnd: (fields, oldIndex, newIndex) =>
+    dispatch(onFieldsSortEnd(fields, oldIndex, newIndex)),
 })
 
 export default connect(

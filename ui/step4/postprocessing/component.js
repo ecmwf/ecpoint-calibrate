@@ -1,32 +1,84 @@
 import React, { Component } from 'react'
 
-import { Grid, Card, Button, Icon, Label, Table } from 'semantic-ui-react'
+import {
+  Grid,
+  Card,
+  Button,
+  Icon,
+  Label,
+  Table,
+  Segment,
+  Item,
+} from 'semantic-ui-react'
 
 import _ from 'lodash'
 
 import ReactDataSheet from 'react-datasheet'
 import 'react-datasheet/lib/react-datasheet.css'
 
+import { SortableContainer, SortableElement } from 'react-sortable-hoc'
+
 import Tree from './tree'
 
 import client from '~/utils/client'
+
+const SortableItem = SortableElement(({ value }) => (
+  <Segment secondary textAlign="center">
+    {value}
+  </Segment>
+))
+
+const SortableList = SortableContainer(({ items }) => {
+  return (
+    <Segment.Group raised size="mini">
+      {items.map((value, index) => (
+        <SortableItem key={`item-${index}`} index={index} value={value} />
+      ))}
+    </Segment.Group>
+  )
+})
 
 class PostProcessing extends Component {
   state = { thrGridOut: null }
 
   getThresholdSplitsGridSheet = () => (
-    <ReactDataSheet
-      data={this.props.thrGridIn}
-      valueRenderer={cell => cell.value}
-      onContextMenu={(e, cell, i, j) => (cell.readOnly ? e.preventDefault() : null)}
-      onCellsChanged={changes => {
-        const grid = this.props.thrGridIn.map(row => [...row])
-        changes.forEach(({ cell, row, col, value }) => {
-          grid[row][col] = { ...grid[row][col], value }
-        })
-        this.props.onThresholdSplitsChange(grid)
-      }}
-    />
+    <Item>
+      <Item.Content>
+        <Item.Header>
+          <h5>Input the threshold breakpoints in the following spreadsheet:</h5>
+        </Item.Header>
+        <Item.Description>
+          <ReactDataSheet
+            data={this.props.thrGridIn}
+            valueRenderer={cell => cell.value}
+            onContextMenu={(e, cell, i, j) =>
+              cell.readOnly ? e.preventDefault() : null
+            }
+            onCellsChanged={changes => {
+              const grid = this.props.thrGridIn.map(row => [...row])
+              changes.forEach(({ cell, row, col, value }) => {
+                grid[row][col] = { ...grid[row][col], value }
+              })
+              this.props.onThresholdSplitsChange(grid)
+            }}
+          />
+        </Item.Description>
+        <Item.Extra>
+          <Button
+            floated="right"
+            icon
+            labelPosition="left"
+            primary
+            size="mini"
+            onClick={() => this.appendBlankRow()}
+          >
+            <Icon name="add circle" /> Add row
+          </Button>
+          <br />
+          Valid values are <Label>-inf</Label>, <Label>inf</Label>, and all integers.
+        </Item.Extra>
+      </Item.Content>
+    </Item>
   )
 
   getBlankRow = index =>
@@ -156,48 +208,61 @@ class PostProcessing extends Component {
     </Grid>
   )
 
-  render = () => {
-    return (
-      this.props.fields.length > 0 && (
-        <Grid container centered>
-          <Grid.Column>
-            <Card fluid color="teal">
-              <Card.Header>
-                <Grid.Column floated="left">Decision Tree</Grid.Column>
-                <Grid.Column floated="right">
-                  {this.isComplete() && <Icon name="check circle" />}
-                </Grid.Column>
-              </Card.Header>
-              <Card.Content>
-                <Card.Description>
-                  {this.getThresholdSplitsGridSheet()}
-                  <br />
-                  <Button
-                    floated="right"
-                    icon
-                    labelPosition="left"
-                    primary
-                    size="mini"
-                    onClick={() => this.appendBlankRow()}
-                  >
-                    <Icon name="add circle" /> Add row
-                  </Button>
-                  <br />
-                  Valid values are <Label>-inf</Label>, <Label>inf</Label>, and all
-                  integers.
-                </Card.Description>
-              </Card.Content>
-              <Card.Content extra>
-                {this.getDecisionTreeOutMatrix()}
-
-                {this.state.thrGridOut && this.getDecisionTree()}
-              </Card.Content>
-            </Card>
-          </Grid.Column>
-        </Grid>
-      )
-    )
+  componentWillMount() {
+    this.props.setFields(this.props.fields)
   }
+
+  getSortableFields = () => (
+    <Item>
+      <Item.Content>
+        <Item.Header>
+          <h5>Rearrange the levels of the decision tree below:</h5>
+        </Item.Header>
+        <Item.Description>
+          <SortableList
+            items={this.props.fields}
+            onSortEnd={({ oldIndex, newIndex }) =>
+              this.props.onFieldsSortEnd(this.props.fields, oldIndex, newIndex)
+            }
+          />
+        </Item.Description>
+        <Item.Extra>
+          <small>
+            <b>Note:</b> Modifying the current arrangement will clear the threshold
+            breakpoints in the sheet below.
+          </small>
+        </Item.Extra>
+      </Item.Content>
+    </Item>
+  )
+
+  render = () =>
+    this.props.fields.length > 0 && (
+      <Grid container centered>
+        <Grid.Column>
+          <Card fluid color="teal">
+            <Card.Header>
+              <Grid.Column floated="left">Decision Tree</Grid.Column>
+              <Grid.Column floated="right">
+                {this.isComplete() && <Icon name="check circle" />}
+              </Grid.Column>
+            </Card.Header>
+            <Card.Content>
+              <Card.Description>
+                <Item.Group divided>
+                  {this.getSortableFields()}
+                  {this.getThresholdSplitsGridSheet()}
+                </Item.Group>
+              </Card.Description>
+            </Card.Content>
+            <Card.Content extra>
+              {this.getDecisionTreeOutMatrix()}
+              {this.state.thrGridOut && this.getDecisionTree()}
+            </Card.Content>
+          </Card>
+        </Grid.Column>
+      </Grid>
+    )
 }
 
 export default PostProcessing
