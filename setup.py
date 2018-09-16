@@ -25,7 +25,7 @@ with open(os.path.join(here, "README.md"), encoding="utf-8") as f:
 
 setup(
     name="ecpoint-cal",
-    version="0.1.1",
+    version="0.1.2",
     description="foo bar",
     long_description=long_description,
     long_description_content_type="text/markdown",
