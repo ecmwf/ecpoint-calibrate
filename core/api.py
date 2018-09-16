@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import json
 import os
+import re
 
 import pandas
 from flask import Flask, Response, jsonify, request
@@ -39,7 +40,9 @@ def get_fields_from_ascii_table():
     payload = request.get_json()
     path = payload['path']
 
-    fields = ["TP", "CP"]
+    comments = ASCIIDecoder(path=out_path).comments
+    m = re.search(r'# Post-processed computations: (.*)\n', comments)
+    fields = m.group(1).split(', ')
 
     return Response(json.dumps(fields), mimetype="application/json")
 
