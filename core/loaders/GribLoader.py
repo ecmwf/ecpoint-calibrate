@@ -104,8 +104,8 @@ class GribLoader(object):
         return pandas.DataFrame.from_records(result, columns=["lat", "lon", "value"])
 
     def nearest_gridpoint__eccodes(self, geopoints):
-        with poolcontext() as pool, load_grib(self.path) as gid:
-            result = pool.map(
+        with load_grib(self.path) as gid:
+            result = map(
                 partial(nearest_value_func, gid),
                 geopoints.dataframe[["lat", "lon"]].to_records(index=False),
             )
