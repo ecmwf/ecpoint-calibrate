@@ -1,8 +1,8 @@
 import { connect } from 'react-redux'
 
-import Header from './component'
+import App from './component'
 
-import { setPage } from './actions'
+import { setPage } from './menu/actions'
 
 const mapStateToProps = state => ({
   page: state.page,
@@ -17,4 +17,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Header)
+)(App)
