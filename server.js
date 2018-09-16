@@ -86,3 +86,9 @@ exports.saveFile = () =>
     title: 'Output file path',
     defaultPath: 'test.ascii',
   })
+
+exports.openFile = () =>
+  dialog.showOpenDialog(mainWindow, {
+    title: 'Input file path',
+    properties: ['openFile'],
+  })

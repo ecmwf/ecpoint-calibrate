@@ -34,6 +34,16 @@ def get_predictors():
     return Response(json.dumps(codes), mimetype="application/json")
 
 
+@app.route("/get-fields-from-ascii-table", methods=("POST",))
+def get_fields_from_ascii_table():
+    payload = request.get_json()
+    path = payload['path']
+
+    fields = ["TP", "CP"]
+
+    return Response(json.dumps(fields), mimetype="application/json")
+
+
 @app.route("/postprocessing/create-naive-decision-tree", methods=("POST",))
 def get_naive_decision_tree():
     payload = request.get_json()
