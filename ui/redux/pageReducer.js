@@ -3,7 +3,12 @@ import _ from 'lodash'
 const defaultState = {
   0: {
     isActive: true,
-    isComplete: { predictand: false, predictors: false, parameters: false },
+    isComplete: {
+      predictand: false,
+      predictors: false,
+      parameters: false,
+      observations: false,
+    },
   },
   1: { isActive: false, isComplete: { fields: false } },
   2: { isActive: false, isComplete: { results: false } },

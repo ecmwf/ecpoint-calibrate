@@ -20,14 +20,16 @@ class Parameters(object):
 
     # path of the database that contains the observations for the parameter
     # to post-process
-    observation_path = attr.ib(converter=str)
+    observations_path = attr.ib(converter=str)
 
     # path of the database that contains the parameter to post-process and the
     # predictors
-    forecast_path = attr.ib(converter=str)
+    predictors_path = attr.ib(converter=str)
 
     # output file path
     out_path = attr.ib(converter=str)
+
+    predictand_path = attr.ib(converter=str)
 
     predictand_code = attr.ib(converter=str)
 

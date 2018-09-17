@@ -27,8 +27,9 @@ def run(parameters):
     Acc = parameters.accumulation
     LimSU = parameters.limit_spin_up
     Range = parameters.leadstart_range
-    PathOBS = parameters.observation_path
-    PathFC = parameters.forecast_path
+    PathOBS = parameters.observations_path
+    PathFC = parameters.predictors_path
+    PathPredictand = parameters.predictand_path
     PathOUT = parameters.out_path
 
     # Set up the input/output parameters
@@ -66,7 +67,7 @@ def run(parameters):
         '''.format(
             now=datetime.now(), start=BaseDateSSTR, limsu=LimSU,
             end=BaseDateFSTR, acc=Acc, predictand_code=parameters.predictand_code,
-            predictand_type=parameters.predictand_type, predictand_error=parameters.predictand_code,
+            predictand_type=parameters.predictand_type, predictand_error=parameters.predictand_error,
             predictand_min_value=parameters.predictand_min_value, predictand_acc=parameters.accumulation
         )
     )
@@ -160,7 +161,7 @@ def run(parameters):
             continue
 
         counterValidTimes.add(validDateF)
-        dirOBS = os.path.join(PathOBS, AccSTR, DateVF)
+        dirOBS = os.path.join(PathOBS, parameters.predictand_code, AccSTR, DateVF)
         fileOBS = 'tp_{:02d}_{}_{}.geo'.format(Acc, DateVF, HourVF)
 
         obs_path = os.path.join(dirOBS, fileOBS)

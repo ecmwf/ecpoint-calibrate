@@ -2,6 +2,7 @@ import { combineReducers } from 'redux'
 
 import predictandReducer from './predictandReducer'
 import predictorsReducer from './predictorsReducer'
+import observationsReducer from './observationsReducer'
 import parametersReducer from './parametersReducer'
 import pageReducer from './pageReducer'
 import computationsReducer from './computationsReducer'
@@ -12,6 +13,7 @@ import preloaderReducer from './preloaderReducer'
 const reducer = combineReducers({
   predictors: predictorsReducer,
   predictand: predictandReducer,
+  observations: observationsReducer,
   parameters: parametersReducer,
   computations: computationsReducer,
   postprocessing: postprocessingReducer,

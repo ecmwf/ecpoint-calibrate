@@ -22,9 +22,10 @@ class Processing extends Component {
       accumulation: this.props.predictand.accumulation,
       limit_spin_up: this.props.parameters.limSU,
       leadstart_range: this.props.parameters.range,
-      observation_path: this.props.predictand.path,
-      forecast_path: this.props.predictors.path,
+      predictand_path: this.props.predictand.path,
+      predictors_path: this.props.predictors.path,
       out_path: this.props.parameters.outPath,
+      observations_path: this.props.observations.path,
     }
 
     client

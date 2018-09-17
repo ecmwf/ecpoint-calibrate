@@ -17,7 +17,7 @@ import { isEmpty } from './index'
 
 const mainProcess = remote.require('./server')
 
-class Database extends Component {
+class Predictand extends Component {
   getField = () => (
     <Item>
       <Item.Content>
@@ -186,4 +186,4 @@ class Database extends Component {
   }
 }
 
-export default Database
+export default Predictand
