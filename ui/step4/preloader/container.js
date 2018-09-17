@@ -5,7 +5,7 @@ import Preloader from './component'
 import { setPath } from './actions'
 
 const mapStateToProps = state => ({
-  path: state.preloader.path,
+  path: state.parameters.outPath || state.preloader.path,
 })
 
 const mapDispatchToProps = dispatch => ({

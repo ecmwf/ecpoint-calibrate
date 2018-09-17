@@ -147,7 +147,7 @@ class PostProcessing extends Component {
     client.post(
       {
         url: '/postprocessing/create-naive-decision-tree',
-        body: { labels, records, outPath: this.props.parameters.outPath },
+        body: { labels, records, path: this.props.path },
         json: true,
       },
       (err, httpResponse, body) => this.setState({ thrGridOut: body })

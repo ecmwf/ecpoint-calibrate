@@ -36,7 +36,7 @@ const mapStateToProps = state => {
       state.postprocessing.thrGridIn.length > 0
         ? state.postprocessing.thrGridIn
         : generateInitialGrid(fields),
-    parameters: state.parameters,
+    path: state.parameters.outPath || state.preloader.path,
     fields: fields,
   }
 }
