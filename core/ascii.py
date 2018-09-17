@@ -44,11 +44,12 @@ class ASCIIDecoder(object):
     def comments(self):
         lines = []
         with open(self.path, 'r') as f:
-            line = f.readline().strip()
-            if line and line.startswith('#'):
-                lines.append(line)
-            else:
-                break
+            while True:
+                line = f.readline().strip()
+                if line and line.startswith('#'):
+                    lines.append(line)
+                else:
+                    break
         return '\n'.join(lines)
 
 

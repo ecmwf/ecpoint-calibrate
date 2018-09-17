@@ -40,9 +40,9 @@ def get_fields_from_ascii_table():
     payload = request.get_json()
     path = payload['path']
 
-    comments = ASCIIDecoder(path=out_path).comments
-    m = re.search(r'# Post-processed computations: (.*)\n', comments)
-    fields = m.group(1).split(', ')
+    comments = ASCIIDecoder(path=path).comments
+    m = re.search(r'# Post-processed computations: (.*)', comments)
+    fields = m.group(1).strip().split(', ')
 
     return Response(json.dumps(fields), mimetype="application/json")
 
