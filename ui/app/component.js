@@ -26,8 +26,12 @@ class App extends Component {
       <Modal.Header>Welcome to ecPoint-pyCal</Modal.Header>
       <Modal.Content>
         <Modal.Description>
-          <p>Write something here.</p>
-          <p>TBA</p>
+          <p>ecPoint-Cal is software that compares numerical model outputs against point
+             observations to identify biases/errors at local scale. It provides a dynamic
+             environment to post-process model parameters to produce probabilistic
+             products for geographical locations.
+          </p>
+          <p>To use ecPoint-pyCal, you can either start from scratch or load a pre-computed ASCII file.</p>
         </Modal.Description>
       </Modal.Content>
       <Modal.Actions>
