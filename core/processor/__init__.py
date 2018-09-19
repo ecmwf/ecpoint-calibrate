@@ -161,7 +161,7 @@ def run(parameters):
             continue
 
         counterValidTimes.add(validDateF)
-        dirOBS = os.path.join(PathOBS, parameters.predictand_code, AccSTR, DateVF)
+        dirOBS = os.path.join(PathOBS, AccSTR, DateVF)
         fileOBS = 'tp_{:02d}_{}_{}.geo'.format(Acc, DateVF, HourVF)
 
         obs_path = os.path.join(dirOBS, fileOBS)
