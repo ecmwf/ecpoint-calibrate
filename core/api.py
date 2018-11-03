@@ -8,17 +8,20 @@ import pandas
 from flask import Flask, Response, jsonify, request
 
 from core.ascii import ASCIIDecoder
+from core.models import Config
 from core.postprocessors.decision_tree import DecisionTree
 from core.processor import run
-from core.processor.models import Parameters
 
 app = Flask(__name__)
 
 
 @app.route("/computation-logs", methods=("POST",))
 def stream_computation_logs():
-    parameters = Parameters(**request.get_json())
-    return Response(run(parameters), mimetype="text/plain")
+    payload = request.get_json()
+
+    config = Config.from_dict(payload)
+
+    return Response(run(config), mimetype="text/plain")
 
 
 @app.route("/predictors", methods=("POST",))

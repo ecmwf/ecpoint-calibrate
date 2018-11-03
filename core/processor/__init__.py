@@ -21,16 +21,16 @@ from .utils import (
 from ..ascii import ASCIIEncoder
 
 
-def run(parameters):
-    BaseDateS = parameters.date_start
-    BaseDateF = parameters.date_end
-    Acc = parameters.accumulation
-    LimSU = parameters.limit_spin_up
-    Range = parameters.leadstart_range
-    PathOBS = parameters.observations_path
-    PathFC = parameters.predictors_path
-    PathPredictand = parameters.predictand_path
-    PathOUT = parameters.out_path
+def run(config):
+    BaseDateS = config.parameters.date_start
+    BaseDateF = config.parameters.date_end
+    Acc = config.predictand.accumulation
+    LimSU = config.parameters.limit_spin_up
+    Range = config.parameters.leadstart_range
+    PathOBS = config.observations.path
+    PathFC = config.predictors.path
+    PathPredictand = config.predictand.path
+    PathOUT = config.parameters.out_path
 
     # Set up the input/output parameters
     BaseDateS = datetime.strptime(BaseDateS, '%Y%m%d').date()
@@ -39,7 +39,7 @@ def run(parameters):
     BaseDateFSTR=BaseDateF.strftime('%Y%m%d')
     AccSTR = 'Acc%02dh' % Acc
 
-    computations = parameters.computation_fields
+    computations = config.computations.fields
 
     serializer = ASCIIEncoder(path=PathOUT)
 
@@ -66,9 +66,9 @@ def run(parameters):
         #
         '''.format(
             now=datetime.now(), start=BaseDateSSTR, limsu=LimSU,
-            end=BaseDateFSTR, acc=Acc, predictand_code=parameters.predictand_code,
-            predictand_type=parameters.predictand_type, predictand_error=parameters.predictand_error,
-            predictand_min_value=parameters.predictand_min_value, predictand_acc=parameters.accumulation
+            end=BaseDateFSTR, acc=Acc, predictand_code=config.predictand.code,
+            predictand_type=config.predictand.type, predictand_error=config.predictand.error,
+            predictand_min_value=config.predictand.min_value, predictand_acc=config.predictand.accumulation
         )
     )
 
@@ -195,9 +195,9 @@ def run(parameters):
         )
 
         for computation in computations:
-            computation['isReference'] = len(computation['inputs']) == 1 and computation['inputs'][0] == parameters.predictand_code
+            computation['isReference'] = len(computation['inputs']) == 1 and computation['inputs'][0] == config.predictand.code
 
-        base_fields = set(parameters.predictor_codes)
+        base_fields = set(config.predictors.codes)
 
         derived_computations = [
             computation for computation in computations
@@ -316,13 +316,13 @@ def run(parameters):
         # [XXX] CPr = CP_Ob1 / TP_Ob1
 
         vals_errors = []
-        if parameters.predictand_error == 'FER':
+        if config.predictand.error == 'FER':
             FER = (obs1['value'] - ref_geopoints_filtered['value']) / ref_geopoints_filtered['value']
             vals_errors.append(
                 ('FER', FER)
             )
 
-        if parameters.predictand_error == 'FE':
+        if config.predictand.error == 'FE':
             FE = (obs1['value'] - ref_geopoints_filtered['value'])
             vals_errors.append(
                 ('FE', FE)

@@ -19,26 +19,42 @@ class Processing extends Component {
     const parameters = {
       date_start: this.props.parameters.date_start,
       date_end: this.props.parameters.date_end,
-      accumulation: this.props.predictand.accumulation,
       limit_spin_up: this.props.parameters.limSU,
       leadstart_range: this.props.parameters.range,
-      predictand_path: this.props.predictand.path,
-      predictors_path: this.props.predictors.path,
       out_path: this.props.parameters.outPath,
-      observations_path: this.props.observations.path,
+    }
+
+    const predictand = {
+      path: this.props.predictand.path,
+      accumulation: this.props.predictand.accumulation,
+      code: this.props.predictand.code,
+      type: this.props.predictand.type,
+      error: this.props.predictand.error,
+      min_value: this.props.predictand.minValueAcc,
+    }
+
+    const observations = {
+      path: this.props.observations.path,
+    }
+
+    const predictors = {
+      path: this.props.predictors.path,
+      codes: this.props.predictors.codes,
+    }
+
+    const computations = {
+      fields: this.props.computations.fields,
     }
 
     client
       .post({
         url: '/computation-logs',
         body: {
-          ...parameters,
-          predictor_codes: this.props.predictors.codes,
-          computation_fields: this.props.computations.fields,
-          predictand_code: this.props.predictand.code,
-          predictand_type: this.props.predictand.type,
-          predictand_error: this.props.predictand.error,
-          predictand_min_value: this.props.predictand.minValueAcc,
+          parameters,
+          predictand,
+          observations,
+          predictors,
+          computations,
         },
         json: true,
       })
