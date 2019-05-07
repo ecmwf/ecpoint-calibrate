@@ -46,7 +46,7 @@ setup(
         "attrs>=18.1.0",
         "numpy>=1.14.3",
         "flask>=1.0.2",
-        "pandas==0.17.1",
+        "pandas==0.24.2",
         "matplotlib>=2.2.3",
     ],
     extras_require={"dev": ["check-manifest"], "test": ["coverage", "pytest"]},
