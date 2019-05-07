@@ -4,8 +4,6 @@ import os
 from datetime import datetime, timedelta
 from textwrap import dedent
 
-import numpy
-
 from core.loaders.geopoints import GeopointsLoader
 from core.loaders.GribLoader import GribLoader
 
