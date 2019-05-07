@@ -12,8 +12,7 @@ const PY_MODULE = 'api' // without .py suffix
 
 let pyProc = null
 
-const getScriptPath = () =>
-  path.join(__dirname, PY_FOLDER, `${PY_MODULE}.py`)
+const getScriptPath = () => path.join(__dirname, PY_FOLDER, `${PY_MODULE}.py`)
 
 const createPyProc = () => {
   const script = getScriptPath()
@@ -43,6 +42,7 @@ let mainWindow = null
 
 const createWindow = () => {
   mainWindow = new BrowserWindow()
+
   mainWindow.maximize()
   mainWindow.loadURL(
     require('url').format({
