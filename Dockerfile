@@ -53,4 +53,6 @@ RUN pipenv install --system --deploy --ignore-pipfile
 RUN npm install
 RUN npm run build
 
+RUN python -m core.smoke
+
 CMD [ "npm", "start" ]

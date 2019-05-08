@@ -1,16 +1,10 @@
-import os
+import subprocess
 import sys
 
 
-def runtime_smoke_tests():
-    if sys.version_info.major == 3:
-        raise RuntimeError(
-            'Python 3 is not supported.'
-        )
+if sys.version_info.major == 2:
+    raise RuntimeError("Python 2 is not supported.")
 
-    try:
-        import eccodes  # noqa: F401
-    except ImportError:
-        raise RuntimeError(
-            'eccodes package is not installed.'
-        )
+status = subprocess.check_call(["python", "-m", "metview", "selfcheck"])
+if status != 0:
+    raise RuntimeError("metview package is not installed.")
