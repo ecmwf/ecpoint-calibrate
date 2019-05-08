@@ -28,7 +28,9 @@ def adjust_leadstart(date, hour, leadstart, limSU, model_runs_per_day):
 
 
 def generate_steps(accumulation):
-    return tuple(range(0, accumulation, 6) + [accumulation])
+    return tuple(
+        list(range(0, accumulation, 6)) + [accumulation]
+    )
 
 
 def compute_local_solar_time(longitudes, hour):
