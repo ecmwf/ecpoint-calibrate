@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from textwrap import dedent
 
 from core.loaders.geopoints import GeopointsLoader
-from core.loaders.GribLoader import GribLoader
+from core.loaders.Fieldset import Fieldset
 
 from ..computations.models import Computation
 
@@ -223,7 +223,7 @@ def run(config):
 
             try:
                 computation_steps = [
-                    GribLoader(path=get_grib_path(predictor_code, step))
+                    Fieldset(path=get_grib_path(predictor_code, step))
                     for step in steps
                 ]
             except IOError:

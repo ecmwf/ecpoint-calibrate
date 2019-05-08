@@ -11,7 +11,7 @@ def get_loader_cls(_type):
     :return: Loader class.
     """
     mapping = {
-        'GRIB': 'GribLoader',
+        'GRIB': 'Fieldset',
         'Geopoints': 'geopoints',
     }
 

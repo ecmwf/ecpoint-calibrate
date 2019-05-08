@@ -1,7 +1,7 @@
 import operator
 from functools import reduce
 
-from ..loaders.GribLoader import GribLoader
+from ..loaders.Fieldset import Fieldset
 
 
 def compute_accumulated_field(*args):
@@ -25,7 +25,7 @@ def compute_weighted_average_field(*args):
 
 
 def compute_rms_field(*args):
-    return GribLoader.rms(*args)
+    return Fieldset.rms(*args)
 
 
 def compute_ratio_field(dividend, divisor):
