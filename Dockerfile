@@ -1,18 +1,15 @@
-FROM node:12.1.0-stretch
+FROM nikolaik/python-nodejs:python3.7-nodejs12
 
 RUN apt-get update && apt-get install -y \
-    cmake \
     fluid-soundfont-gm \
     fontconfig \
     fonts-freefont-ttf \
-    gfortran \
     libasound2 \
     libavcodec-dev \
     libavformat-dev \
     libcanberra-gtk-module \
     libcanberra-gtk3-module \
     libgconf-2-4 \
-    libgfortran3 \
     libgtk-3-0 \
     libnss3 \
     libpng-dev \
@@ -33,11 +30,8 @@ RUN apt-get update && apt-get install -y \
     libxext6 \
     libxss1 \
     libxtst6 \
-    python-dev \
-    python-numpy \
-    python-opengl \
-    python-pip \
-    python-tk \
+    metview \
+    python3.7-tk \
     timgm6mb-soundfont \
     xfonts-100dpi \
     xfonts-75dpi \
@@ -45,13 +39,17 @@ RUN apt-get update && apt-get install -y \
     xfonts-cyrillic \
     zlib1g-dev
 
+RUN rm -rf /root/* /tmp/* /var/cache/apt/archives/*.deb
+
 COPY . /app
 ENV WORKDIR /app
 WORKDIR $WORKDIR
 
-RUN pip install . -v
-RUN bash /app/install_eccodes.sh
 
+ENV PYTHONPATH $WORKDIR
+ENV ECCODES_DEFINITION_PATH /usr/share/eccodes/definitions
+
+RUN pipenv install --system --deploy --ignore-pipfile
 RUN npm install
 RUN npm run build
 
