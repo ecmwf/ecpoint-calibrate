@@ -230,3 +230,4 @@ venv.bak/
 
 .idea
 .vscode
+*.idx
