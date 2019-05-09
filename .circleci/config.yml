@@ -1,0 +1,19 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/buildpack-deps:disco
+
+    steps:
+      - checkout
+
+      - run:
+          command: apt-get update && install -y metview libmetview-dev python3 python3-pip
+
+      - run:
+          command: pip3 install -U pip pipenv
+
+      - run:
+          command: pipenv install --dev --system --three
+      - run:
+          command: pipenv run "py.test && codecov"
