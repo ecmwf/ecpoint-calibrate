@@ -17,7 +17,11 @@ jobs:
             - ".git"
 
       - run:
-          command: sudo apt-get update && sudo apt-get install -y metview libmetview-dev python3 python3-pip
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y metview libmetview-dev python3 python3-pip
+            sudo ln -s /usr/lib/x86_64-linux-gnu/libMv* /usr/lib/
+            sudo ln -s /usr/lib/x86_64-linux-gnu/libMetview* /usr/lib/
 
       - run:
           command: sudo pip3 install -U pip pipenv
