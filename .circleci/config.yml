@@ -25,7 +25,7 @@ jobs:
       - restore_cache:
           key: pipenvdeps-{{ checksum "Pipfile.lock" }}
       - run:
-          command: pipenv install --dev --system --three
+          command: pipenv install --dev
       - save_cache:
           key: pipenvdeps-{{ checksum "Pipfile.lock" }}
           paths:
