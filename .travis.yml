@@ -10,6 +10,7 @@ addons:
       - build-essential
       - gfortran
       - metview
+      - libmetview-dev
 
 
 cache:
