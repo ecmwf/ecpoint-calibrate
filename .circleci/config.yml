@@ -1,8 +1,6 @@
 version: 2
 jobs:
   build:
-    machine:
-        docker_layer_caching: true
     docker:
       - image: circleci/buildpack-deps:disco
 
