@@ -36,4 +36,8 @@ jobs:
             - pipenv --venv
 
       - run:
-          command: pipenv run "py.test && codecov"
+          command: pipenv run py.test
+
+      - run:
+          command:
+            pipenv run codecov
