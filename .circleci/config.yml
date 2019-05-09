@@ -22,7 +22,7 @@ jobs:
       - run:
           command: sudo pip3 install -U pip pipenv
 
-     - restore_cache:
+      - restore_cache:
           key: pipenvdeps-{{ checksum "Pipfile.lock" }}
       - run:
           command: pipenv install --dev --system --three
