@@ -1,6 +1,6 @@
 language: python
 python:
-  - "2.7"
+  - "3.7"
 
 
 addons:
@@ -9,6 +9,7 @@ addons:
       - coreutils
       - build-essential
       - gfortran
+      - metview
 
 
 cache:
@@ -17,8 +18,7 @@ cache:
     - $HOME/.cache/pip
 
 install:
-  - pip install . -vv
-  - pip install -r test-requirements.txt
+  - pipenv install --dev
 
 script:
   - py.test
