@@ -20,9 +20,16 @@ jobs:
           command: sudo apt-get update && sudo apt-get install -y metview libmetview-dev python3 python3-pip
 
       - run:
-          command: pip3 install -U pip pipenv
+          command: sudo pip3 install -U pip pipenv
 
+     - restore_cache:
+          key: pipenvdeps-{{ checksum "Pipfile.lock" }}
       - run:
           command: pipenv install --dev --system --three
+      - save_cache:
+          key: pipenvdeps-{{ checksum "Pipfile.lock" }}
+          paths:
+            - pipenv --venv
+
       - run:
           command: pipenv run "py.test && codecov"
