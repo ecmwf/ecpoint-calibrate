@@ -1,51 +1,28 @@
 import logging
 
+import metview as mv
 import attr
 import pandas
 
 logger = logging.getLogger(__name__)
 
 
-@attr.s(slots=True, repr=False)
-class GeopointsLoader(object):
-    HEADER = ["lat", "lon", "height", "date", "time", "value"]
+class Geopoints(mv.bindings.Geopoints):
+    def __init__(self, path):
+        raise PermissionError("Initilizing this class directly is not allowed.")
 
-    path = attr.ib()
+    @classmethod
+    def from_native(cls, path):
+        obj = mv.read(path)
+        obj.__class__ = cls
+        return obj
 
-    dataframe = attr.ib(init=False)
+    @property
+    def dataframe(self):
+        return pandas.DataFrame.from_records(list(self)).apply(pandas.to_numeric)
 
-    @dataframe.default
-    def _init_df(self):
-        self.validate()
-        return self.read()
-
-    def __repr__(self):
-        return repr(self.dataframe)
-
-    def read(self):
-        logger.info("Reading: " + self.path)
-
-        with open(self.path) as f:
-            f.readline()
-            f.readline()
-
-            records = []
-
-            while True:
-                raw_data = f.readline()
-                if not raw_data.strip() or raw_data.lstrip("#").strip() == "DATA":
-                    break
-
-            for line in f:
-                lat, lon, _, _, _, value = line.strip().split()
-                records.append((lat, lon, value))
-
-        return pandas.DataFrame.from_records(
-            records, columns=["lat", "lon", "value"]
-        ).apply(pandas.to_numeric)
-
-    def __len__(self):
-        return len(self.dataframe)
+    def to_dataframe(self):
+        return self.dataframe
 
     @property
     def values(self):
@@ -53,27 +30,8 @@ class GeopointsLoader(object):
 
     @property
     def latitudes(self):
-        return self.dataframe["lat"]
+        return self.dataframe["latitudes"]
 
     @property
     def longitudes(self):
-        return self.dataframe["lon"]
-
-    def validate(self):
-        with open(self.path) as f:
-            l1 = f.readline().lstrip("#").strip()
-            l2 = f.readline().lstrip("#").strip()
-            while True:
-                raw_data = f.readline()
-                if not raw_data.strip():
-                    data = ""
-                    break
-                if raw_data.lstrip("#").strip() == "DATA":
-                    data = "DATA"
-                    break
-
-            if l1 == "GEO" and l2.split() == self.HEADER and data == "DATA":
-                # OK
-                pass
-            else:
-                raise ValueError("Corrupt Geopoint file")
+        return self.dataframe["longitudes"]

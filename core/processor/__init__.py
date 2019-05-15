@@ -4,7 +4,7 @@ import os
 from datetime import datetime, timedelta
 from textwrap import dedent
 
-from core.loaders.geopoints import GeopointsLoader
+from core.loaders.geopoints import Geopoints
 from core.loaders.fieldset import Fieldset
 
 from ..computations.models import Computation
@@ -169,7 +169,7 @@ def run(config):
 
         # Reading Rainfall Observations
         yield log.info('Read rainfall observation: '.format(obs_path))
-        obs=GeopointsLoader(path=obs_path)
+        obs=Geopoints(path=obs_path)
         nOBS = len(obs)
 
         if nOBS <= 1:
