@@ -10,6 +10,7 @@ import numpy as np
 import pandas
 
 from .BaseLoader import BasePredictorLoader
+from .geopoints import Geopoints
 from .generics import Point
 from .utils import poolcontext
 
@@ -17,6 +18,15 @@ logger = logging.getLogger(__name__)
 
 
 class Fieldset(mv.Fieldset):
+    def __init__(self, path):
+        raise PermissionError("Initilizing this class directly is not allowed.")
+
+    @classmethod
+    def from_native(cls, path):
+        obj = mv.read(path)
+        obj.__class__ = cls
+        return obj
+
     @property
     def dataframe(self):
         data_variables = list(self.to_dataset().data_vars)
@@ -24,7 +34,7 @@ class Fieldset(mv.Fieldset):
             ["latitude", "longitude"] + data_variables
         ]
 
-    def nearest_gridpoint__naive(self, geopoints):
+    def nearest_gridpoint(self, geopoints):
         """
         Instance method to take a list of observation geopoints and match the
         forecast in the GRIB data for the nearest grid-point.
@@ -39,28 +49,9 @@ class Fieldset(mv.Fieldset):
             the forecast data.
         :rtype: Geopoints
         """
-        df = self.dataframe.to_records(index=False)
-        result = []
-
-        for _, row in geopoints.dataframe.iterrows():
-            point = Point(lat=row["lat"], lon=row["lon"])
-            nearest = min(
-                df, key=lambda p: point.distance_from(Point(lat=p[0], lon=p[1]))
-            )
-            result.append((point.lat, point.lon, nearest[2]))
-
-        return pandas.DataFrame.from_records(result, columns=["lat", "lon", "value"])
-
-    def nearest_gridpoint__eccodes(self, geopoints):
-        with load_grib(self.path) as gid:
-            result = map(
-                partial(nearest_value_func, gid),
-                geopoints.dataframe[["lat", "lon"]].to_records(index=False),
-            )
-
-        return pandas.DataFrame.from_records(result, columns=["lat", "lon", "value"])
-
-    nearest_gridpoint = nearest_gridpoint__eccodes
+        geopoints_out = mv.nearest_gridpoint(self, geopoints)
+        geopoints_out.__class__ = Geopoints
+        return geopoints_out.dataframe
 
     @property
     def values(self):

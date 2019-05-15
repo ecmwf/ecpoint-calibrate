@@ -223,7 +223,7 @@ def run(config):
 
             try:
                 computation_steps = [
-                    Fieldset(path=get_grib_path(predictor_code, step))
+                    Fieldset.from_native(path=get_grib_path(predictor_code, step))
                     for step in steps
                 ]
             except IOError:
