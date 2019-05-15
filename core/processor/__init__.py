@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from textwrap import dedent
 
 from core.loaders.geopoints import GeopointsLoader
-from core.loaders.Fieldset import Fieldset
+from core.loaders.fieldset import Fieldset
 
 from ..computations.models import Computation
 

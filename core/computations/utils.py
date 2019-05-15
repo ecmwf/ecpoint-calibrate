@@ -1,7 +1,7 @@
 import operator
 from functools import reduce
 
-from ..loaders.Fieldset import Fieldset
+from ..loaders.fieldset import Fieldset
 
 
 def compute_accumulated_field(*args):

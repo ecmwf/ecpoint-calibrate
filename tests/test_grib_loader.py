@@ -6,7 +6,7 @@ from random import randint
 import numpy as np
 import pandas
 
-from core.loaders.Fieldset import Fieldset
+from core.loaders.fieldset import Fieldset
 from .conf import TEST_DATA_DIR
 
 
@@ -81,7 +81,7 @@ def test_binary_operation_with_scalar(op):
     expected_value = op_func(grib_a_values, scalar)
 
     if op == "pow":
-        # [FIXME] - highly inaccurate: 85 and 84 are considered the equal
+        # [FIXME] - highly inaccurate: 85 and 84 are considered equal
         decimal = -1
     else:
         decimal = 10
