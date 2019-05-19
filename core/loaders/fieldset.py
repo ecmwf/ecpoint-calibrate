@@ -1,29 +1,25 @@
 import logging
-import os
-import tempfile
-from contextlib import contextmanager
-from functools import partial
+from pathlib import Path
+from typing import Union
 
-import attr
-import metview as mv
+import metview
 import numpy as np
-import pandas
 
-from .BaseLoader import BasePredictorLoader
 from .geopoints import Geopoints
-from .generics import Point
-from .utils import poolcontext
 
 logger = logging.getLogger(__name__)
 
 
-class Fieldset(mv.Fieldset):
+class Fieldset(metview.Fieldset):
     def __init__(self, path):
         raise PermissionError("Initilizing this class directly is not allowed.")
 
     @classmethod
-    def from_native(cls, path):
-        obj = mv.read(path)
+    def from_native(cls, path: Union[Path, str]):
+        if isinstance(path, Path):
+            path = str(path)
+
+        obj = metview.read(path)
         obj.__class__ = cls
         return obj
 
@@ -49,7 +45,7 @@ class Fieldset(mv.Fieldset):
             the forecast data.
         :rtype: Geopoints
         """
-        geopoints_out = mv.nearest_gridpoint(self, geopoints)
+        geopoints_out = metview.nearest_gridpoint(self, geopoints)
         geopoints_out.__class__ = Geopoints
         return geopoints_out.dataframe
 
@@ -62,7 +58,7 @@ class Fieldset(mv.Fieldset):
         :rtype: numpy.ndarray
         """
 
-        return mv.values(self)
+        return metview.values(self)
 
     @values.setter
     def values(self, values):
@@ -120,7 +116,7 @@ class Fieldset(mv.Fieldset):
         # for var in ds.data_vars:
         #     updated_ds[var].attrs = ds[var].attrs.copy()
 
-        # mv_fieldset = mv.dataset_to_fieldset(
+        # mv_fieldset = metview.dataset_to_fieldset(
         #     updated_ds
         # )
 

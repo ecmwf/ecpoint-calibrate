@@ -1,19 +1,23 @@
 import logging
+from pathlib import Path
+from typing import Union
 
-import metview as mv
-import attr
+import metview
 import pandas
 
 logger = logging.getLogger(__name__)
 
 
-class Geopoints(mv.bindings.Geopoints):
+class Geopoints(metview.bindings.Geopoints):
     def __init__(self, path):
         raise PermissionError("Initilizing this class directly is not allowed.")
 
     @classmethod
-    def from_native(cls, path):
-        obj = mv.read(path)
+    def from_native(cls, path: Union[Path, str]):
+        if isinstance(path, Path):
+            path = str(path)
+
+        obj = metview.read(path)
         obj.__class__ = cls
         return obj
 

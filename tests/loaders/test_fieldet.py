@@ -1,17 +1,15 @@
 import operator
-import os
 
-import pytest
-from random import randint
 import numpy as np
 import pandas
+import pytest
 
 from core.loaders.fieldset import Fieldset
 from tests.conf import TEST_DATA_DIR
 
 
 def test_dataframe():
-    path = os.path.join(TEST_DATA_DIR, "cape_20150601_00_03.grib")
+    path = TEST_DATA_DIR / "cape_20150601_00_03.grib"
 
     grib = Fieldset.from_native(path=path)
 
@@ -20,7 +18,7 @@ def test_dataframe():
 
 
 def test_values_getter():
-    path = os.path.join(TEST_DATA_DIR, "cape_20150601_00_03.grib")
+    path = TEST_DATA_DIR / "cape_20150601_00_03.grib"
 
     grib = Fieldset.from_native(path=path)
     values = grib.values
@@ -30,7 +28,7 @@ def test_values_getter():
 
 
 def test_values_setter():
-    path = os.path.join(TEST_DATA_DIR, "cape_20150601_00_03.grib")
+    path = TEST_DATA_DIR / "cape_20150601_00_03.grib"
 
     grib = Fieldset.from_native(path=path)
 
@@ -42,15 +40,11 @@ def test_values_setter():
 def test_binary_operation_with_vector(op):
     op_func = getattr(operator, op)
 
-    grib_a = Fieldset.from_native(
-        path=os.path.join(TEST_DATA_DIR, "cape_20150601_00_03.grib")
-    )
+    grib_a = Fieldset.from_native(path=TEST_DATA_DIR / "cape_20150601_00_03.grib")
     grib_a_values = grib_a.values
     assert isinstance(grib_a_values, np.ndarray)
 
-    grib_b = Fieldset.from_native(
-        path=os.path.join(TEST_DATA_DIR, "cape_20150601_00_27.grib")
-    )
+    grib_b = Fieldset.from_native(path=TEST_DATA_DIR / "cape_20150601_00_27.grib")
     grib_b_values = grib_b.values
     assert isinstance(grib_b_values, np.ndarray)
 
@@ -72,9 +66,7 @@ def test_binary_operation_with_vector(op):
 def test_binary_operation_with_scalar(op):
     op_func = getattr(operator, op)
 
-    grib_a = Fieldset.from_native(
-        path=os.path.join(TEST_DATA_DIR, "cape_20150601_00_03.grib")
-    )
+    grib_a = Fieldset.from_native(path=TEST_DATA_DIR / "cape_20150601_00_03.grib")
     grib_a_values = grib_a.values
     assert isinstance(grib_a_values, np.ndarray)
 
@@ -101,15 +93,11 @@ def test_binary_operation_with_scalar(op):
 
 
 def test_complex_math_operations():
-    grib_a = Fieldset.from_native(
-        path=os.path.join(TEST_DATA_DIR, "cape_20150601_00_03.grib")
-    )
+    grib_a = Fieldset.from_native(path=TEST_DATA_DIR / "cape_20150601_00_03.grib")
     grib_a_values = grib_a.values
     assert isinstance(grib_a_values, np.ndarray)
 
-    grib_b = Fieldset.from_native(
-        path=os.path.join(TEST_DATA_DIR, "cape_20150601_00_27.grib")
-    )
+    grib_b = Fieldset.from_native(path=TEST_DATA_DIR / "cape_20150601_00_27.grib")
     grib_b_values = grib_b.values
     assert isinstance(grib_b_values, np.ndarray)
 
