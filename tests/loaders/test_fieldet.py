@@ -7,7 +7,7 @@ import numpy as np
 import pandas
 
 from core.loaders.fieldset import Fieldset
-from .conf import TEST_DATA_DIR
+from tests.conf import TEST_DATA_DIR
 
 
 def test_dataframe():

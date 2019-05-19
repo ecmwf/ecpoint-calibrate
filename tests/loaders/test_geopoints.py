@@ -1,7 +1,7 @@
 import os
 
 from core.loaders.geopoints import Geopoints
-from .conf import TEST_DATA_DIR
+from tests.conf import TEST_DATA_DIR
 
 
 def test_geopoints_loader_header_ok():
