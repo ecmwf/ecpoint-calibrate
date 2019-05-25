@@ -4,37 +4,6 @@ const path = require('path')
 const { app, BrowserWindow, dialog } = electron
 
 /*
- * Python process
- */
-
-const PY_FOLDER = 'core'
-const PY_MODULE = 'api' // without .py suffix
-
-let pyProc = null
-
-const getScriptPath = () => path.join(__dirname, PY_FOLDER, `${PY_MODULE}.py`)
-
-const createPyProc = () => {
-  const script = getScriptPath()
-
-  pyProc = require('child_process').spawn('python', [script], {
-    stdio: 'inherit',
-  })
-
-  if (pyProc != null) {
-    console.log(`child process success`)
-  }
-}
-
-const exitPyProc = () => {
-  pyProc.kill()
-  pyProc = null
-}
-
-app.on('ready', createPyProc)
-app.on('will-quit', exitPyProc)
-
-/*
  * Electron Window Management
  */
 

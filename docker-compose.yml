@@ -1,0 +1,22 @@
+version: '3.7'
+
+services:
+  core:
+    build:
+      context: .
+      dockerfile: Dockerfile.core
+    command: python -m core.api
+    ports:
+      - 8888:8888
+
+  electron:
+    build:
+      context: .
+      dockerfile: Dockerfile.electron
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    environment:
+      - DISPLAY=$DISPLAY
+    devices:
+      - /dev/dri:/dev/dri
+    command: wait-for-it core:8888/healthcheck --timeout=5 -- npm start
