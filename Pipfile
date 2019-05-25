@@ -17,7 +17,7 @@ flask = "*"
 pandas = "*"
 matplotlib = "*"
 metview = "*"
-cfgrib = "*"
+cfgrib = {file = "https://github.com/ecmwf/cfgrib/archive/stable/0.9.7.x.zip"}
 xarray = "*"
 healthcheck = "*"
 

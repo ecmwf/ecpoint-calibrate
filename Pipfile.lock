@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "3b1a38d0ff045f55d8008da5a49fb50390af1a0df2c1769435f338f250b15650"
+            "sha256": "1eb587ec82ade5ecebff09b2abcb15835b3f9667386509ce448cad9c1bd9b149"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -58,12 +58,7 @@
             "version": "==1.12.3"
         },
         "cfgrib": {
-            "hashes": [
-                "sha256:cafc20769b200a1cec9d688f5508048f8f48a958469fdf1ef3ac8a397a8ccf9b",
-                "sha256:e50111ebfbf8762f9e64312fcb4ac2eb53120b2a8459a8692e2c2ca360996581"
-            ],
-            "index": "pypi",
-            "version": "==0.9.6.2"
+            "file": "https://github.com/ecmwf/cfgrib/archive/stable/0.9.7.x.zip"
         },
         "click": {
             "hashes": [
@@ -86,12 +81,6 @@
             ],
             "index": "pypi",
             "version": "==1.0.3"
-        },
-        "future": {
-            "hashes": [
-                "sha256:67045236dcfd6816dc439556d009594abf643e5eb48992e36beac09c2ca659b8"
-            ],
-            "version": "==0.17.1"
         },
         "healthcheck": {
             "hashes": [
@@ -290,14 +279,6 @@
                 "sha256:d16a0141ec1a18405cd4ce8b4613101da75da0e9a7aec5bdd4fa804d0e0eba73"
             ],
             "version": "==1.12.0"
-        },
-        "typing": {
-            "hashes": [
-                "sha256:4027c5f6127a6267a435201981ba156de91ad0d1d98e9ddc2aa173453453492d",
-                "sha256:57dcf675a99b74d64dacf6fba08fb17cf7e3d5fdff53d4a30ea2a5e7e52543d4",
-                "sha256:a4c8473ce11a65999c8f59cb093e70686b6c84c98df58c1dae9b3b196089858a"
-            ],
-            "version": "==3.6.6"
         },
         "werkzeug": {
             "hashes": [
