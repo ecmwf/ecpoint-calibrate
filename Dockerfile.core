@@ -28,6 +28,8 @@ COPY Pipfile Pipfile.lock $WORKDIR/
 WORKDIR $WORKDIR
 RUN pipenv install --system --deploy --ignore-pipfile
 
-COPY . $WORKDIR
+COPY pytest.ini $WORKDIR/
+COPY core $WORKDIR/core/
+COPY tests $WORKDIR/tests/
 
 CMD [ "python", "-m", "core.api" ]
