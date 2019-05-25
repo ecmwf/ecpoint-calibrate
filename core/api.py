@@ -6,6 +6,7 @@ import re
 
 import pandas
 from flask import Flask, Response, jsonify, request
+from healthcheck import HealthCheck, EnvironmentDump
 
 from core.ascii import ASCIIDecoder
 from core.models import Config
@@ -13,6 +14,10 @@ from core.postprocessors.decision_tree import DecisionTree
 from core.processor import run
 
 app = Flask(__name__)
+
+# wrap the flask app and give a heathcheck url
+health = HealthCheck(app, "/healthcheck")
+envdump = EnvironmentDump(app, "/environment")
 
 
 @app.route("/computation-logs", methods=("POST",))

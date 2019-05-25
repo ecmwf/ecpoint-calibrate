@@ -19,6 +19,7 @@ matplotlib = "*"
 metview = "*"
 cfgrib = "*"
 xarray = "*"
+healthcheck = "*"
 
 [requires]
 python_version = "3.7"
