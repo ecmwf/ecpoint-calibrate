@@ -10,6 +10,7 @@ pytest = "*"
 pytest-cov = "*"
 codecov = "*"
 black = "==19.3b0"
+isort = "*"
 
 [packages]
 attrs = "*"
@@ -23,3 +24,6 @@ healthcheck = "*"
 
 [requires]
 python_version = "3.7"
+
+[scripts]
+lint = "bash -c 'isort -rc core && black core'"
