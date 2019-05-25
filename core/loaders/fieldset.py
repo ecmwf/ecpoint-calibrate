@@ -47,7 +47,7 @@ class Fieldset(metview.Fieldset):
         """
         geopoints_out = metview.nearest_gridpoint(self, geopoints)
         geopoints_out.__class__ = Geopoints
-        return geopoints_out.dataframe
+        return geopoints_out
 
     @property
     def values(self):
