@@ -34,8 +34,8 @@ class Geopoints(metview.bindings.Geopoints):
 
     @property
     def latitudes(self):
-        return self.dataframe["latitudes"]
+        return self.dataframe["latitude"]
 
     @property
     def longitudes(self):
-        return self.dataframe["longitudes"]
+        return self.dataframe["longitude"]
