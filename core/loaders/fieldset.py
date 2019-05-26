@@ -123,3 +123,68 @@ class Fieldset(metview.Fieldset):
         mv_fieldset = super().__pow__(other)
         mv_fieldset.__class__ = type(self)
         return mv_fieldset
+
+
+class NetCDF:
+    def __init__(self, dataframe):
+        self.dataframe = dataframe
+
+    @classmethod
+    def from_path(cls, path: Union[Path, str]):
+        if isinstance(path, Path):
+            path = str(path)
+
+        mv_instance = metview.read(path)
+
+        dataset = mv_instance.to_dataset()
+        data_vars = list(dataset.data_vars)
+        coords = list(
+            {"lat", "lon", "latitude", "longitude", "latitudes", "longitudes"}
+            & set(dataset.coords)
+        )
+
+        df = dataset.to_dataframe().reset_index()
+
+        df = df[coords + data_vars]
+
+        for coord in coords:
+            df[coord] = df[coord].apply(str)
+
+        return cls(df)
+
+    from_native = from_path
+
+    def __mul__(self, other):
+        s = self.dataframe.select_dtypes(include=[np.number]) * other
+        df = self.dataframe.copy()
+        df[s.columns] = s
+
+        return type(self)(df)
+
+    def __add__(self, other):
+        s = self.dataframe.select_dtypes(include=[np.number]) + other
+        df = self.dataframe.copy()
+        df[s.columns] = s
+
+        return type(self)(df)
+
+    def __sub__(self, other):
+        s = self.dataframe.select_dtypes(include=[np.number]) - other
+        df = self.dataframe.copy()
+        df[s.columns] = s
+
+        return type(self)(df)
+
+    def __truediv__(self, other):
+        s = self.dataframe.select_dtypes(include=[np.number]) / other
+        df = self.dataframe.copy()
+        df[s.columns] = s
+
+        return type(self)(df)
+
+    def __pow__(self, power, modulo=None):
+        s = self.dataframe.select_dtypes(include=[np.number]) ** power
+        df = self.dataframe.copy()
+        df[s.columns] = s
+
+        return type(self)(df)
