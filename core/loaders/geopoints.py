@@ -13,7 +13,7 @@ class Geopoints(metview.bindings.Geopoints):
         raise PermissionError("Initilizing this class directly is not allowed.")
 
     @classmethod
-    def from_native(cls, path: Union[Path, str]):
+    def from_path(cls, path: Union[Path, str]):
         if isinstance(path, Path):
             path = str(path)
 

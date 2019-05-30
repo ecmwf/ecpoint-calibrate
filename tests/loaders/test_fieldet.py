@@ -12,7 +12,7 @@ from tests.conf import TEST_DATA_DIR
 def test_dataframe():
     path = TEST_DATA_DIR / "cape_20150601_00_03.grib"
 
-    grib = Fieldset.from_native(path=path)
+    grib = Fieldset.from_path(path=path)
 
     assert isinstance(grib.dataframe, pandas.DataFrame)
     assert len(grib.dataframe) == 2140702
@@ -21,7 +21,7 @@ def test_dataframe():
 def test_values_getter():
     path = TEST_DATA_DIR / "cape_20150601_00_03.grib"
 
-    grib = Fieldset.from_native(path=path)
+    grib = Fieldset.from_path(path=path)
     values = grib.values
 
     assert isinstance(values, np.ndarray)
@@ -31,7 +31,7 @@ def test_values_getter():
 def test_values_setter():
     path = TEST_DATA_DIR / "cape_20150601_00_03.grib"
 
-    grib = Fieldset.from_native(path=path)
+    grib = Fieldset.from_path(path=path)
 
     with pytest.raises(NotImplementedError):
         grib.values = "WHATEVER"
@@ -41,11 +41,11 @@ def test_values_setter():
 def test_binary_operation_with_vector(op):
     op_func = getattr(operator, op)
 
-    grib_a = Fieldset.from_native(path=TEST_DATA_DIR / "cape_20150601_00_03.grib")
+    grib_a = Fieldset.from_path(path=TEST_DATA_DIR / "cape_20150601_00_03.grib")
     grib_a_values = grib_a.values
     assert isinstance(grib_a_values, np.ndarray)
 
-    grib_b = Fieldset.from_native(path=TEST_DATA_DIR / "cape_20150601_00_27.grib")
+    grib_b = Fieldset.from_path(path=TEST_DATA_DIR / "cape_20150601_00_27.grib")
     grib_b_values = grib_b.values
     assert isinstance(grib_b_values, np.ndarray)
 
@@ -67,7 +67,7 @@ def test_binary_operation_with_vector(op):
 def test_binary_operation_with_scalar(op):
     op_func = getattr(operator, op)
 
-    grib_a = Fieldset.from_native(path=TEST_DATA_DIR / "cape_20150601_00_03.grib")
+    grib_a = Fieldset.from_path(path=TEST_DATA_DIR / "cape_20150601_00_03.grib")
     grib_a_values = grib_a.values
     assert isinstance(grib_a_values, np.ndarray)
 
@@ -94,11 +94,11 @@ def test_binary_operation_with_scalar(op):
 
 
 def test_complex_math_operations():
-    grib_a = Fieldset.from_native(path=TEST_DATA_DIR / "cape_20150601_00_03.grib")
+    grib_a = Fieldset.from_path(path=TEST_DATA_DIR / "cape_20150601_00_03.grib")
     grib_a_values = grib_a.values
     assert isinstance(grib_a_values, np.ndarray)
 
-    grib_b = Fieldset.from_native(path=TEST_DATA_DIR / "cape_20150601_00_27.grib")
+    grib_b = Fieldset.from_path(path=TEST_DATA_DIR / "cape_20150601_00_27.grib")
     grib_b_values = grib_b.values
     assert isinstance(grib_b_values, np.ndarray)
 
@@ -109,9 +109,9 @@ def test_complex_math_operations():
 
 
 def test_nearest_gridpoint():
-    fieldset = Fieldset.from_native(path=TEST_DATA_DIR / "cape_20150601_00_03.grib")
+    fieldset = Fieldset.from_path(path=TEST_DATA_DIR / "cape_20150601_00_03.grib")
 
-    geopoints_in = Geopoints.from_native(path=TEST_DATA_DIR / "good_geo_file.geo")
+    geopoints_in = Geopoints.from_path(path=TEST_DATA_DIR / "good_geo_file.geo")
 
     geopoints_out = fieldset.nearest_gridpoint(geopoints_in)
 

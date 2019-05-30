@@ -16,7 +16,7 @@ class Fieldset(metview.Fieldset):
         raise PermissionError("Initilizing this class directly is not allowed.")
 
     @classmethod
-    def from_native(cls, path: Union[Path, str]):
+    def from_path(cls, path: Union[Path, str]):
         if isinstance(path, Path):
             path = str(path)
 
@@ -159,8 +159,6 @@ class NetCDF:
             df[coord] = df[coord].apply(str)
 
         return cls(df)
-
-    from_native = from_path
 
     def __mul__(self, other):
         s = self.dataframe.select_dtypes(include=[np.number]) * other
