@@ -1,5 +1,5 @@
 name: ecpoint-pycal
-version: '0.1.6'
+version: '0.2.0'
 summary: Calibration Software in Python developed at ECMWF
 description: |
   [TODO] - This is my-snap's description. You have a paragraph or two to tell the
@@ -9,11 +9,12 @@ description: |
 
 grade: devel # [TODO] - must be 'stable' to release into candidate/stable channels
 confinement: strict
+base: core18
 
 parts:
   electron:
     plugin: nodejs
-    node-engine: 8.11.2
+    node-engine: 12.1.0
     npm-run: [ build ]
     source: .
 
@@ -62,7 +63,7 @@ parts:
 
   core:
     plugin: python
-    python-version: python2
+    python-version: python3
 
     build-packages:
       - gfortran
@@ -72,12 +73,13 @@ parts:
 
     override-build: |
       snapcraftctl build
-      bash install_eccodes.sh
 
     stage-packages:
-      - python-tk
+      - python3-tk
       - libgfortran3
       - libquadmath0
+      - libmetview-dev
+      - metview
 
 apps:
   ecpoint-pycal:
