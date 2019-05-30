@@ -121,12 +121,12 @@ class Fieldset(metview.Fieldset):
 
         # ds = self.to_dataset()
         # updated_ds = ds ** other
-        # for var in ds.data_vars:
-        #     updated_ds[var].attrs = ds[var].attrs.copy()
-
-        # mv_fieldset = metview.dataset_to_fieldset(
-        #     updated_ds
-        # )
+        # var = ds.data_vars[0]
+        #
+        # updated_values_data_array = updated_ds[var]
+        # updated_values_numpy = updated_values_data_array.to_series().to_numpy()
+        #
+        # mv_fieldset = metview.set_values(updated_values_numpy)
 
         mv_fieldset = super().__pow__(other)
         mv_fieldset.__class__ = type(self)
