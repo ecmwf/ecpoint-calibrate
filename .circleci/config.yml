@@ -36,7 +36,7 @@ jobs:
             - pipenv --venv
 
       - run:
-          command: pipenv run py.test
+          command: pipenv run test
 
       - run:
           command:

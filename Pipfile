@@ -28,3 +28,4 @@ python_version = "3.7"
 
 [scripts]
 lint = "bash -c 'isort -rc core && black core'"
+test = "py.test"
