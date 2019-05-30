@@ -43,18 +43,17 @@ class ASCIIDecoder(object):
     @property
     def comments(self):
         lines = []
-        with open(self.path, 'r') as f:
+        with open(self.path, "r") as f:
             while True:
                 line = f.readline().strip()
-                if line and line.startswith('#'):
+                if line and line.startswith("#"):
                     lines.append(line)
                 else:
                     break
-        return '\n'.join(lines)
-
+        return "\n".join(lines)
 
     @property
     def dataframe(self):
         return pandas.read_table(
-            self.path, comment="#", skip_blank_lines=True, sep="\s+"
+            self.path, comment="#", skip_blank_lines=True, sep=r"\s+"
         )
