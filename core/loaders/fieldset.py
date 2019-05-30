@@ -88,7 +88,11 @@ class Fieldset(metview.Fieldset):
         mean_squared_values = sum_squared_values / 2.0
 
         values = np.sqrt(mean_squared_values)
-        return term_1.clone_with_new_values(values)
+
+        mv_fieldset = metview.set_values(term_1, values)
+        mv_fieldset.__class__ = cls
+
+        return mv_fieldset
 
     def __add__(self, other):
         mv_fieldset = super().__add__(other)
