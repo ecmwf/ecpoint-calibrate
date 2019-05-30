@@ -1,4 +1,5 @@
 import logging
+import os
 from pathlib import Path
 from typing import Union
 
@@ -18,6 +19,9 @@ class Fieldset(metview.Fieldset):
     def from_native(cls, path: Union[Path, str]):
         if isinstance(path, Path):
             path = str(path)
+
+        if not os.path.exists(path):
+            raise IOError
 
         obj = metview.read(path)
         obj.__class__ = cls
