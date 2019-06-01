@@ -6,9 +6,9 @@ import re
 
 import pandas
 from flask import Flask, Response, jsonify, request
-from healthcheck import HealthCheck, EnvironmentDump
+from healthcheck import EnvironmentDump, HealthCheck
 
-from core.ascii import ASCIIDecoder
+from core.loaders.ascii import ASCIIDecoder
 from core.models import Config
 from core.postprocessors.decision_tree import DecisionTree
 from core.processor import run
