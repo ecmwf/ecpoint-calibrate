@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.core
+    image: onyb/ecpoint-pycal-core
     volumes:
       - /media:/media
     command: python -m core.api
@@ -14,6 +15,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.electron
+    image: onyb/ecpoint-pycal-electron
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - /media:/media
