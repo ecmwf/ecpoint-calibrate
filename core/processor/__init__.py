@@ -4,19 +4,13 @@ import os
 from datetime import datetime, timedelta
 from textwrap import dedent
 
-from core.loaders.geopoints import Geopoints
+from core.loaders.ascii import ASCIIEncoder
 from core.loaders.fieldset import Fieldset
+from core.loaders.geopoints import Geopoints
 
 from ..computations.models import Computation
-
-from .utils import (
-    adjust_leadstart,
-    compute_local_solar_time,
-    generate_steps,
-    iter_daterange,
-    log,
-)
-from ..ascii import ASCIIEncoder
+from .utils import (adjust_leadstart, compute_local_solar_time, generate_steps,
+                    iter_daterange, log)
 
 
 def run(config):
@@ -169,7 +163,7 @@ def run(config):
 
         # Reading Rainfall Observations
         yield log.info('Read rainfall observation: '.format(obs_path))
-        obs=Geopoints(path=obs_path)
+        obs=Geopoints.from_path(path=obs_path)
         nOBS = len(obs)
 
         if nOBS <= 1:
@@ -223,7 +217,7 @@ def run(config):
 
             try:
                 computation_steps = [
-                    Fieldset.from_native(path=get_grib_path(predictor_code, step))
+                    Fieldset.from_path(path=get_grib_path(predictor_code, step))
                     for step in steps
                 ]
             except IOError:
@@ -253,10 +247,10 @@ def run(config):
             if computation['isReference']:
                 reference_predictor = computation['shortname']
                 ref_geopoints = geopoints
-                mask = ref_geopoints['value'] >= 1
-                ref_geopoints_filtered = ref_geopoints[mask]
+                mask = ref_geopoints.values >= 1
+                ref_geopoints_filtered_df = ref_geopoints.dataframe[mask]
 
-                if ref_geopoints_filtered.empty:
+                if ref_geopoints_filtered_df.empty:
                     yield log.warn(
                         'No values of {} >= 1 mm/{}h.'.format(computation['shortname'], Acc)
                     )
@@ -264,13 +258,13 @@ def run(config):
                     break
                 elif computation['isPostProcessed']:
                     computations_result.append(
-                        (computation['shortname'], ref_geopoints_filtered['value'])
+                        (computation['shortname'], ref_geopoints_filtered_df['value'])
                     )
             else:
-                geopoints_filtered = geopoints[mask]
+                geopoints_filtered_df = geopoints.dataframe[mask]
 
                 computations_result.append(
-                    (computation['shortname'], geopoints_filtered['value'])
+                    (computation['shortname'], geopoints_filtered_df['value'])
                 )
 
         if skip:
@@ -292,36 +286,36 @@ def run(config):
                 dividend = steps[0]
                 # [TODO] Cache the following in the computations_cache
                 geopoints = dividend.nearest_gridpoint(obs)
-                geopoints_filtered = geopoints[mask]
+                geopoints_filtered_df = geopoints.dataframe[mask]
 
-                computed_value = computer.run(geopoints_filtered['value'], ref_geopoints_filtered['value'])
+                computed_value = computer.run(geopoints_filtered_df['value'], ref_geopoints_filtered_df['value'])
                 computations_result.append(
                    (computation['shortname'], computed_value)
                 )
             else:
                 computed_value = computer.run(*steps)
                 geopoints = computed_value.nearest_gridpoint(obs)
-                geopoints_filtered = geopoints[mask]
+                geopoints_filtered_df = geopoints.dataframe[mask]
                 computations_result.append(
-                    (computation['shortname'], geopoints_filtered['value'])
+                    (computation['shortname'], geopoints_filtered_df['value'])
                 )
 
         # Compute other parameters
         obs1 = obs.dataframe[mask]
 
-        latObs_1 = obs1['lat']
-        lonObs_1 = obs1['lon']
+        latObs_1 = obs1['latitude']
+        lonObs_1 = obs1['longitude']
         # [XXX] CPr = CP_Ob1 / TP_Ob1
 
         vals_errors = []
         if config.predictand.error == 'FER':
-            FER = (obs1['value'] - ref_geopoints_filtered['value']) / ref_geopoints_filtered['value']
+            FER = (obs1['value'] - ref_geopoints_filtered_df['value']) / ref_geopoints_filtered_df['value']
             vals_errors.append(
                 ('FER', FER)
             )
 
         if config.predictand.error == 'FE':
-            FE = (obs1['value'] - ref_geopoints_filtered['value'])
+            FE = (obs1['value'] - ref_geopoints_filtered_df['value'])
             vals_errors.append(
                 ('FE', FE)
             )
