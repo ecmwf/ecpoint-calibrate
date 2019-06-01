@@ -1,64 +1,37 @@
 # ecPoint-PyCal
 
-Calibration Software in Python developed at ECMWF.
+Meteorological software for calibration of model outputs, and conditional verification of short and medium range weather forecasts.
 
-#### Installation using Snap
+![CircleCI](https://img.shields.io/circleci/build/github/esowc/ecPoint-PyCal.svg)
+[![codecov](https://codecov.io/gh/esowc/ecPoint-PyCal/branch/master/graph/badge.svg)](https://codecov.io/gh/esowc/ecPoint-PyCal)
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python3.7-1f425f.svg)](https://www.python.org/)
 
-ecPoint-pyCal provides easy-to-install **snaps** powered by [Snapcraft](http://snapcraft.io). Snaps are completely self-contained, and run on all major Linux systems.
+### Requirements
 
-```sh
-sudo snap install --beta ecpoint-pycal
-```
+- [Docker](https://www.docker.com/products/docker-desktop)
+- [Docker Compose](https://docs.docker.com/compose/install)
 
-**Note:** The `--beta` flag will not be necessary in future when the snap is released on
-a `stable` channel.
-
-Don't have `snapd`? [Get set up for snaps](https://docs.snapcraft.io/core/install).
-
-###### Launching the ecPoint-pyCal
-
-As a part of installation process, ecPoint-pyCal creates a desktop launcher for the GUI,
-which can be found in the  [Application] menu depending upon the flavour of your operating
-system.
-
-However, the recommended way to launch ecPoint-pyCal is using the terminal:
+### Setup
 
 ```sh
-$ ecpoint-pycal
-```
-
-Using the command-line not only gives you better control to exit the program, but is also more transparent
-as you can see the logs in case something goes wrong.
-
-#### Manual installation
-
-###### Install required packages from Ubuntu repositories
-
-```sh
-$ sudo apt update
-$ sudo apt install python-dev python-numpy python-opengl libsdl-image1.2-dev \
-    libsdl-mixer1.2-dev libsdl-ttf2.0-dev libsmpeg-dev libsdl1.2-dev \
-    libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev libx11-6 \
-    libtiff5-dev libx11-dev fluid-soundfont-gm timgm6mb-soundfont xfonts-base \
-    xfonts-100dpi xfonts-75dpi xfonts-cyrillic fontconfig fonts-freefont-ttf
-```
-###### Install ecPoint-PyCal
-
-```sh
-$ git clone https://github.com/onyb/ecPoint-PyCal
+$ git clone git@github.com:esowc/ecPoint-PyCal.git
 $ cd ecPoint-PyCal
-$ virtualenv -p python2 .env
-$ source .env/bin/activate
-(env) $ pip install . -v
-(env) $ bash install_eccodes.sh
-(env) $ npm install
-(env) $ npm run build
+$ docker-compose pull
 ```
 
-###### Launching the ecPoint-PyCal UI
+At this point, you must configure the source of your dataset on the filesystem, and make it available to the Docker services using [volumes](https://docs.docker.com/storage/volumes). Normally, if the data lives on a removable media, such as an external HDD, you shouldn't need to do anything.
 
-**Note:** Make sure the Python virtual environment is activated.
+To configure a volume, simply add it to the two services (`core`, and `electron`) in the [`docker_compose.yml`](/docker-compose.yml) file.
 
 ```sh
-(env) $ npm start
+$ ./go.sh
 ```
+
+
+### Collaborators
+
+| Name           | Position            | Affiliation    |
+|----------------|---------------------|----------------|
+| Anirudha Bose  | Software Engineer   | Ledger, Paris  |
+| Fatima Pillosu | Scientist           | ECMWF, Reading |
+| Timothy Hewson | Principal Scientist | ECMWF, Reading |
