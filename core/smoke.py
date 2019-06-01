@@ -1,7 +1,6 @@
 import subprocess
 import sys
 
-
 if sys.version_info.major == 2:
     raise RuntimeError("Python 2 is not supported.")
 

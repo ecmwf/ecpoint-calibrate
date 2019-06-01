@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime, time
+from datetime import datetime, time, timedelta
 
 
 def daterange(start_date, end_date):
@@ -28,9 +28,7 @@ def adjust_leadstart(date, hour, leadstart, limSU, model_runs_per_day):
 
 
 def generate_steps(accumulation):
-    return tuple(
-        list(range(0, accumulation, 6)) + [accumulation]
-    )
+    return tuple(list(range(0, accumulation, 6)) + [accumulation])
 
 
 def compute_local_solar_time(longitudes, hour):
@@ -61,7 +59,6 @@ def compute_local_solar_time(longitudes, hour):
     tempNeg = lstNeg * (lstNeg > 0) + temp_lstNegLess0
     # Combine both subsets
     return tempPos + tempNeg  # [XXX] Review this line
-
 
 
 class log(object):

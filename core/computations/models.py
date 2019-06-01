@@ -4,9 +4,9 @@ import attr
 
 from .utils import (
     compute_accumulated_field,
+    compute_ratio_field,
     compute_rms_field,
     compute_weighted_average_field,
-    compute_ratio_field,
 )
 
 

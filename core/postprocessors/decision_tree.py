@@ -1,14 +1,11 @@
-from __future__ import print_function
-
 import os
 from base64 import b64encode
 from io import BytesIO
 
-import numpy as np
-
 import attr
 import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas
 
 from ..utils import tolist
