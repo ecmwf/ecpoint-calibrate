@@ -5,10 +5,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.core
+    volumes:
+      - /media:/media
     command: python -m core.api
     ports:
       - 8888:8888
-
   electron:
     build:
       context: .
