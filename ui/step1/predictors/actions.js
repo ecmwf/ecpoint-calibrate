@@ -13,8 +13,13 @@ export const setPath = path => async dispatch => {
 
     client.post(
       { url: '/predictors', body: { path: path_ }, json: true },
-      (err, httpResponse, body) =>
-        dispatch({ type: 'PREDICTORS.SET_CODES', data: body })
+      (err, httpResponse, body) => {
+        if (!!err) {
+          console.error(err)
+        } else {
+          dispatch({ type: 'PREDICTORS.SET_CODES', data: body })
+        }
+      }
     )
   }
 }

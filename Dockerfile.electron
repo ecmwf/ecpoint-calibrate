@@ -12,7 +12,8 @@ RUN \
   npm i -g npm@^6
 
 ENV WORKDIR /app
-ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBIAN_FRONTEND noninteractive
+ENV RUNNING_IN_DOCKER true
 
 RUN apt-get update && apt-get install -y  --no-install-recommends \
     fontconfig \
