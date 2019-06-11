@@ -6,6 +6,8 @@ import { Provider } from 'react-redux'
 import { store, persistor } from './redux/store'
 import Root from './config/Root'
 
+import 'semantic-ui-css/semantic.min.css'
+
 const render = Component => {
   ReactDOM.render(
     <Provider store={store}>

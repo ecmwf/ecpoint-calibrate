@@ -1,18 +1,15 @@
-const { resolve } = require('path');
+const { resolve, join } = require('path')
 
-const webpack = require('webpack');
+const webpack = require('webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const config = {
   devtool: 'cheap-module-eval-source-map',
 
-  entry: [
-    'babel-polyfill',
-    './main.js',
-  ],
+  entry: ['babel-polyfill', './main.js'],
 
   output: {
-    filename: 'bundle.js',
+    filename: join('js', 'bundle.js'),
     path: resolve(__dirname, 'dist'),
     publicPath: '',
   },
@@ -31,13 +28,11 @@ const config = {
     rules: [
       {
         test: /\.node$/,
-        use: 'node-loader'
+        use: 'node-loader',
       },
       {
         test: /\.jsx?$/,
-        loaders: [
-          'babel-loader',
-        ],
+        loaders: ['babel-loader'],
         exclude: /node_modules/,
       },
       {
@@ -48,9 +43,10 @@ const config = {
             options: {
               limit: 8192,
               mimetype: 'image/png',
-              name: 'images/[name].[ext]',
-            }
-          }
+              name: 'img/[name].[ext]',
+              publicPath: 'dist',
+            },
+          },
         ],
       },
       {
@@ -59,9 +55,10 @@ const config = {
           {
             loader: 'file-loader',
             options: {
-              name: 'fonts/[name].[ext]'
-            }
-          }
+              name: 'fonts/[name].[ext]',
+              publicPath: 'dist',
+            },
+          },
         ],
       },
       {
@@ -73,8 +70,9 @@ const config = {
               limit: 8192,
               mimetype: 'application/font-woff',
               name: 'fonts/[name].[ext]',
-            }
-          }
+              publicPath: 'dist',
+            },
+          },
         ],
       },
       {
@@ -86,8 +84,9 @@ const config = {
               limit: 8192,
               mimetype: 'application/octet-stream',
               name: 'fonts/[name].[ext]',
-            }
-          }
+              publicPath: 'dist',
+            },
+          },
         ],
       },
       {
@@ -98,24 +97,23 @@ const config = {
             options: {
               limit: 8192,
               mimetype: 'image/svg+xml',
-              name: 'images/[name].[ext]',
-            }
-          }
+              name: 'img/[name].[ext]',
+              publicPath: 'dist',
+            },
+          },
         ],
       },
       {
         test: /\.css$/,
-        use: [ 'style-loader', 'css-loader' ]
-      }
-    ]
+        use: ['style-loader', 'css-loader'],
+      },
+    ],
   },
 
   plugins: [
     new webpack.optimize.ModuleConcatenationPlugin(),
-    new CopyWebpackPlugin([
-      { from: 'assets', to: './assets' }
-    ]),
+    new CopyWebpackPlugin([{ from: 'assets', to: './' }]),
   ],
-};
+}
 
-module.exports = config;
+module.exports = config

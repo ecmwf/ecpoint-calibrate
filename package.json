@@ -64,7 +64,7 @@
     "redux-persist-electron-storage": "1.1.2",
     "redux-thunk": "2.3.0",
     "request": "2.87.0",
-    "semantic-ui-css": "2.3.2",
+    "semantic-ui-css": "^2.3.2",
     "semantic-ui-react": "0.81.3",
     "style-loader": "0.21.0",
     "url-loader": "1.0.0",
