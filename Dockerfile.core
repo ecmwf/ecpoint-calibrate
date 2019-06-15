@@ -32,4 +32,4 @@ COPY pytest.ini $WORKDIR/
 COPY core $WORKDIR/core/
 COPY tests $WORKDIR/tests/
 
-CMD [ "python", "-m", "core.api" ]
+CMD [ "pipenv", "run", "server" ]
