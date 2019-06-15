@@ -30,3 +30,13 @@
   background: none;
   display: block;
 }
+
+code {
+  font-family: Courier, 'New Courier', monospace;
+  font-size: 12px !important;
+  margin: 1em .25em !important;
+  background-color: #f7f7f9;
+  color: #e01e5a;
+  padding: 2px 3px 1px;
+  border: 1px solid #e1e1e8;
+}
