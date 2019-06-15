@@ -8,6 +8,7 @@ import {
   setLimSUField,
   setRangeField,
   setOutPath,
+  setModelType,
   updatePageCompletion,
 } from './actions'
 
@@ -25,6 +26,8 @@ const mapDispatchToProps = dispatch => ({
   onParametersLimSUFieldChange: value => dispatch(setLimSUField(value)),
 
   onParametersRangeFieldChange: value => dispatch(setRangeField(value)),
+
+  onModelTypeChange: type => dispatch(setModelType(type)),
 
   updatePageCompletion: (page, isComplete) =>
     dispatch(updatePageCompletion(page, isComplete)),

@@ -41,37 +41,6 @@ class Predictors extends Component {
     </Item>
   )
 
-  getTypeField = () => (
-    <Item>
-      <Item.Content>
-        <Item.Header>
-          <h5>Select the data type you want to load:</h5>
-        </Item.Header>
-
-        <Item.Description>
-          <Grid columns={2} padded>
-            <Grid.Column>
-              <Radio
-                label="GRIB"
-                value="grib"
-                checked={this.props.predictors.type === 'grib'}
-                onChange={() => this.props.onTypeChange('grib')}
-              />
-            </Grid.Column>
-            <Grid.Column>
-              <Radio
-                label="NetCDF"
-                value="netcdf"
-                checked={this.props.predictors.type === 'netcdf'}
-                onChange={() => this.props.onTypeChange('netcdf')}
-              />
-            </Grid.Column>
-          </Grid>
-        </Item.Description>
-      </Item.Content>
-    </Item>
-  )
-
   isComplete = () => !isEmpty(this.props.predictors)
 
   componentDidUpdate = prevProps => {
@@ -91,10 +60,7 @@ class Predictors extends Component {
             </Card.Header>
             <Card.Content>
               <Card.Description />
-              <Item.Group divided>
-                {this.getField()}
-                {this.getTypeField()}
-              </Item.Group>
+              <Item.Group divided>{this.getField()}</Item.Group>
             </Card.Content>
           </Card>
         </Grid.Column>

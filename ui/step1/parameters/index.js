@@ -5,4 +5,5 @@ export const isEmpty = state =>
   state.date_end === '' ||
   state.limSU === '' ||
   state.range === '' ||
-  state.outPath === ''
+  state.outPath === '' ||
+  state.modelType === ''

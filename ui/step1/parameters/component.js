@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { Grid, Card, Button, Input, Item, Icon } from 'semantic-ui-react'
+import { Grid, Card, Button, Input, Item, Icon, Radio } from 'semantic-ui-react'
 
 import DatePicker from 'react-datepicker'
 import moment from 'moment'
@@ -14,6 +14,38 @@ import { isEmpty } from './index'
 const mainProcess = remote.require('./server')
 
 class Parameters extends Component {
+  getTypeField = () => (
+    <Item>
+      <Item.Content>
+        <Item.Header>
+          <h3>Model Data Format</h3>
+          <h5>Select the type of model data:</h5>
+        </Item.Header>
+
+        <Item.Description>
+          <Grid columns={2} padded>
+            <Grid.Column>
+              <Radio
+                label="GRIB"
+                value="grib"
+                checked={this.props.parameters.modelType === 'grib'}
+                onChange={() => this.props.onModelTypeChange('grib')}
+              />
+            </Grid.Column>
+            <Grid.Column>
+              <Radio
+                label="NetCDF"
+                value="netcdf"
+                checked={this.props.parameters.modelType === 'netcdf'}
+                onChange={() => this.props.onModelTypeChange('netcdf')}
+              />
+            </Grid.Column>
+          </Grid>
+        </Item.Description>
+      </Item.Content>
+    </Item>
+  )
+
   getDateStartField = () => {
     const dateStart =
       this.props.parameters.date_start &&
@@ -154,6 +186,7 @@ class Parameters extends Component {
           <Card.Content>
             <Card.Description />
             <Item.Group divided>
+              {this.getTypeField()}
               {this.getDateStartField()}
               {this.getLimSUField()}
               {this.getRangeField()}

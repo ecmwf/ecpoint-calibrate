@@ -18,6 +18,9 @@ class Parameters(object):
     # output file path
     out_path = attr.ib(converter=str)
 
+    # Model type: {grib, netcdf}
+    model_type = attr.ib(converter=str)
+
 
 @attr.s
 class Predictand(object):
@@ -27,8 +30,6 @@ class Predictand(object):
     path = attr.ib(converter=str)
 
     code = attr.ib(converter=str)
-
-    type = attr.ib(converter=str)
 
     error = attr.ib(converter=str)
 

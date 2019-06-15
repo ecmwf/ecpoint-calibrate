@@ -22,13 +22,13 @@ class Processing extends Component {
       limit_spin_up: this.props.parameters.limSU,
       leadstart_range: this.props.parameters.range,
       out_path: this.props.parameters.outPath,
+      model_type: this.props.parameters.modelType,
     }
 
     const predictand = {
       path: this.props.predictand.path,
       accumulation: this.props.predictand.accumulation,
       code: this.props.predictand.code,
-      type: this.props.predictand.type,
       error: this.props.predictand.error,
       min_value: this.props.predictand.minValueAcc,
     }

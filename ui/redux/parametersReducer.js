@@ -2,6 +2,7 @@ const defaultState = {
   limSU: '',
   range: '',
   outPath: '',
+  modelType: 'grib',
 }
 
 export default (state = defaultState, action) => {
@@ -24,6 +25,10 @@ export default (state = defaultState, action) => {
 
     case 'PARAMETERS.SET_OUT_PATH': {
       return { ...state, outPath: action.data }
+    }
+
+    case 'PARAMETERS.SET_MODEL_TYPE': {
+      return { ...state, modelType: action.data }
     }
 
     default: {

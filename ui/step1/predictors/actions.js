@@ -1,10 +1,5 @@
 import client from '~/utils/client'
 
-export const setType = type => ({
-  type: 'PREDICTORS.SET_TYPE',
-  data: type,
-})
-
 export const setPath = path => async dispatch => {
   const path_ = path && path.length !== 0 ? path.pop() : null
 

@@ -47,6 +47,7 @@ def run(config):
         # Forecast Verification for HRES
         #
         # Parameters:
+        #     Model Type          = {config.parameters.model_type}
         #     Base date start     = {BaseDateSSTR}
         #     Base date end       = {BaseDateFSTR}
         #     Spin-up limit       = {LimSU}h
@@ -54,7 +55,6 @@ def run(config):
         #
         # Predictand:
         #     Short code          = {config.predictand.code}
-        #     Type                = {config.predictand.type}
         #     Error               = {config.predictand.error}
         #     Accumulation        = {config.predictand.accumulation}
         #     Minimum value       = {config.predictand.min_value}

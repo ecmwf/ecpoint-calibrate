@@ -29,3 +29,8 @@ export const updatePageCompletion = (page, isComplete) => ({
   section: 'parameters',
   isComplete,
 })
+
+export const setModelType = type => ({
+  type: 'PARAMETERS.SET_MODEL_TYPE',
+  data: type,
+})
