@@ -12,7 +12,10 @@ class Predictors extends Component {
     <Item>
       <Item.Content>
         <Item.Header>
-          <h5>Select directory containing the predictors (CAPE, SR, etc.)</h5>
+          <h5>
+            Select the directory that contains the model data for the computation of the
+            predictors:
+          </h5>
         </Item.Header>
 
         <Item.Description>
@@ -30,7 +33,7 @@ class Predictors extends Component {
           )}
           {this.props.predictors.codes.length !== 0 && (
             <div>
-              <b>Code:</b>{' '}
+              <b>Predictor short names:</b>{' '}
               {this.props.predictors.codes.map(code => (
                 <Label key={code}>{code}</Label>
               ))}

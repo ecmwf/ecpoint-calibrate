@@ -22,7 +22,7 @@ class Observation extends Component {
     <Item>
       <Item.Content>
         <Item.Header>
-          <h5>Select directory containing the observations</h5>
+          <h5>Select the directory that contains the observations:</h5>
         </Item.Header>
 
         <Item.Description>
@@ -56,7 +56,7 @@ class Observation extends Component {
       <Grid.Column>
         <Card fluid color="teal">
           <Card.Header>
-            <Grid.Column floated="left">Select Observations</Grid.Column>
+            <Grid.Column floated="left">Observational Data</Grid.Column>
             <Grid.Column floated="right">
               {this.isComplete() && <Icon name="check circle" />}
             </Grid.Column>

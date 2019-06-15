@@ -56,6 +56,11 @@ class Parameters extends Component {
     return (
       <Item>
         <Item.Content>
+          <Item.Header>
+            <h3>Calibration Period</h3>
+            <br />
+          </Item.Header>
+
           <Grid columns={5}>
             <Grid.Column>
               <Item.Header>
@@ -108,9 +113,9 @@ class Parameters extends Component {
     <Item>
       <Item.Content>
         <Item.Header>
+          <h3>Spin-up</h3>
           <h5>
-            Enter upper limit (in hours) of the window in the forecast with spin-up
-            problems:
+            Enter upper limit, in hours, for the spin-up window in the model data:
           </h5>
         </Item.Header>
 
@@ -134,6 +139,7 @@ class Parameters extends Component {
     <Item>
       <Item.Content>
         <Item.Header>
+          <h3>Lead Time</h3>
           <h5>Enter a range for the Leadtime (in hours):</h5>
         </Item.Header>
 
@@ -152,6 +158,7 @@ class Parameters extends Component {
     <Item>
       <Item.Content>
         <Item.Header>
+          <h3>Output ASCII Data</h3>
           <h5>Select output filename and directory for storing results:</h5>
         </Item.Header>
 
@@ -178,7 +185,7 @@ class Parameters extends Component {
       <Grid.Column>
         <Card fluid color="teal">
           <Card.Header>
-            <Grid.Column floated="left">Parameters</Grid.Column>
+            <Grid.Column floated="left">Model Data</Grid.Column>
             <Grid.Column floated="right">
               {this.isComplete() && <Icon name="check circle" />}
             </Grid.Column>
