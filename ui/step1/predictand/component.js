@@ -22,8 +22,9 @@ class Predictand extends Component {
     <Item>
       <Item.Content>
         <Item.Header>
-          <h5>Select directory of the predictand (rainfall, temperature, etc.)</h5>
+          <h5>Select the directory that contains the predictand:</h5>
         </Item.Header>
+        <Item.Extra>For example, rainfall, temperature, etc.</Item.Extra>
 
         <Item.Description>
           <Button
@@ -40,7 +41,7 @@ class Predictand extends Component {
           )}
           {this.props.predictand.code && (
             <div>
-              <b>Code:</b> <Label>{this.props.predictand.code}</Label>
+              <b>Predictand Code:</b> <Label>{this.props.predictand.code}</Label>
             </div>
           )}
         </Item.Extra>
