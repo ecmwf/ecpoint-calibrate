@@ -168,7 +168,11 @@ class Parameters extends Component {
           </Button>
         </Item.Description>
         <Item.Extra>
-          <b>Path:</b> <code>{this.props.parameters.outPath}</code>
+          {this.props.parameters.outPath && (
+            <p>
+              <b>Path:</b> <code>{this.props.parameters.outPath}</code>
+            </p>
+          )}
         </Item.Extra>
       </Item.Content>
     </Item>
