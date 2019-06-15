@@ -36,7 +36,7 @@ class Predictand extends Component {
         <Item.Extra>
           {this.props.predictand.path && (
             <p>
-              <b>Path:</b> {this.props.predictand.path}
+              <b>Path:</b> <code>{this.props.predictand.path}</code>
             </p>
           )}
           {this.props.predictand.code && (

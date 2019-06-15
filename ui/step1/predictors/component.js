@@ -28,7 +28,7 @@ class Predictors extends Component {
         <Item.Extra>
           {this.props.predictors.path && (
             <div>
-              <b>Path:</b> {this.props.predictors.path}
+              <b>Path:</b> <code>{this.props.predictors.path}</code>
             </div>
           )}
           {this.props.predictors.codes.length !== 0 && (

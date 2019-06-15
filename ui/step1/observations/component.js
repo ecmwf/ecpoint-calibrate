@@ -35,7 +35,7 @@ class Observation extends Component {
         <Item.Extra>
           {this.props.observations.path && (
             <p>
-              <b>Path:</b> {this.props.observations.path}
+              <b>Path:</b> <code>{this.props.observations.path}</code>
             </p>
           )}
         </Item.Extra>
