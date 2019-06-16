@@ -126,7 +126,7 @@ class App extends Component {
       <div className="details">
         <div className="temp" />
         <div className="right">
-          <div id="date">{this.getAppVersion()}</div>
+          <div id="date">v{this.getAppVersion()}</div>
           <div id="summary">ecPoint-PyCal</div>
         </div>
       </div>
