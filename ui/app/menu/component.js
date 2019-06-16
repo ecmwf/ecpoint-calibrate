@@ -9,7 +9,6 @@ const Menu = props => (
   <Step.Group widths={4}>
     <Step
       active={props.page[0].isActive ? true : null}
-      disabled={!props.fromScratch}
       onClick={() => props.onPageChange(0)}
     >
       <Icon name="cloud upload" />
@@ -19,7 +18,7 @@ const Menu = props => (
     </Step>
     <Step
       active={props.page[1].isActive ? true : null}
-      disabled={!isPageComplete(props.page[0]) || !props.fromScratch}
+      disabled={!isPageComplete(props.page[0])}
       onClick={() => props.onPageChange(1)}
     >
       <Icon name="code" />
@@ -29,11 +28,7 @@ const Menu = props => (
     </Step>
     <Step
       active={props.page[2].isActive ? true : null}
-      disabled={
-        !isPageComplete(props.page[0]) ||
-        !isPageComplete(props.page[1]) ||
-        !props.fromScratch
-      }
+      disabled={!isPageComplete(props.page[0]) || !isPageComplete(props.page[1])}
       onClick={() => props.onPageChange(2)}
     >
       <Icon name="cogs" />
@@ -46,8 +41,7 @@ const Menu = props => (
       disabled={
         !isPageComplete(props.page[0]) ||
         !isPageComplete(props.page[1]) ||
-        !isPageComplete(props.page[2]) ||
-        props.fromScratch
+        !isPageComplete(props.page[2])
       }
       onClick={() => props.onPageChange(3)}
     >

@@ -10,8 +10,8 @@ class App extends Component {
   getApp = fromScratch => (
     <Fragment>
       <Header />
-      <Menu fromScratch={fromScratch} />
-      <Page fromScratch={fromScratch} />
+      <Menu />
+      <Page />
     </Fragment>
   )
 
@@ -62,7 +62,7 @@ class App extends Component {
       return this.getAppSwitcher()
     }
 
-    return this.getApp(this.props.app.scratch)
+    return this.getApp()
   }
 }
 
