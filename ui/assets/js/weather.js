@@ -92,14 +92,10 @@ requestAnimationFrame(tick)
 function init() {
   onResize()
 
-  // 🖱 bind weather menu buttons
-
-  for (var i = 0; i < weather.length; i++) {
-    var w = weather[i]
-    var b = $('#button-' + w.type)
-    w.button = b
-    b.bind('click', w, changeWeather)
-  }
+  setInterval(function() {
+    var rand = weather[Math.floor(Math.random() * weather.length)]
+    changeWeather(rand)
+  }, 5000)
 
   // ☁️ draw clouds
 
@@ -515,13 +511,6 @@ function tick() {
   requestAnimationFrame(tick)
 }
 
-function reset() {
-  for (var i = 0; i < weather.length; i++) {
-    container.removeClass(weather[i].type)
-    weather[i].button.removeClass('active')
-  }
-}
-
 function updateSummaryText() {
   summary.html(currentWeather.name)
   TweenMax.fromTo(summary, 1.5, { x: 30 }, { opacity: 1, x: 0, ease: Power4.easeOut })
@@ -564,6 +553,12 @@ function lightning() {
   })
 }
 
+function reset() {
+  for (var i = 0; i < weather.length; i++) {
+    container.removeClass(weather[i].type)
+  }
+}
+
 function changeWeather(weather) {
   if (weather.data) weather = weather.data
   reset()
@@ -579,7 +574,6 @@ function changeWeather(weather) {
   })
 
   container.addClass(weather.type)
-  weather.button.addClass('active')
 
   // windSpeed
 
