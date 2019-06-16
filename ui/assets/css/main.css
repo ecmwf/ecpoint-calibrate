@@ -40,3 +40,20 @@ code {
   padding: 2px 3px 1px;
   border: 1px solid #e1e1e8;
 }
+
+#root {
+  height: inherit;
+  width: inherit;
+}
+
+#cta button {
+  width: 300px;
+  margin: -8px 0;
+}
+
+.splash-footer {
+  bottom: 0;
+  left: 0;
+  position: absolute !important;
+  padding: 20px;
+}

@@ -1,11 +1,10 @@
 // Fetch all DOM nodes in jQuery and Snap SVG
 
-var container = $('.container')
+var splashContainer = $('.splashContainer')
 var card = $('#card')
 var innerSVG = Snap('#inner')
 var outerSVG = Snap('#outer')
 var backSVG = Snap('#back')
-var summary = $('#summary')
 var date = $('#date')
 var weatherContainer1 = Snap.select('#layer1')
 var weatherContainer2 = Snap.select('#layer2')
@@ -35,7 +34,7 @@ outerLeafHolder.attr({
 // create sizes object, we update this later
 
 var sizes = {
-  container: { width: 0, height: 0 },
+  splashContainer: { width: 0, height: 0 },
   card: { width: 0, height: 0 },
 }
 
@@ -113,8 +112,8 @@ function init() {
 function onResize() {
   // 📏 grab window and card sizes
 
-  sizes.container.width = container.width()
-  sizes.container.height = container.height()
+  sizes.splashContainer.width = splashContainer.width()
+  sizes.splashContainer.height = splashContainer.height()
   sizes.card.width = card.width()
   sizes.card.height = card.height()
   sizes.card.offset = card.offset()
@@ -127,18 +126,18 @@ function onResize() {
   })
 
   outerSVG.attr({
-    width: sizes.container.width,
-    height: sizes.container.height,
+    width: sizes.splashContainer.width,
+    height: sizes.splashContainer.height,
   })
 
   backSVG.attr({
-    width: sizes.container.width,
-    height: sizes.container.height,
+    width: sizes.splashContainer.width,
+    height: sizes.splashContainer.height,
   })
 
   TweenMax.set(sunburst.node, {
     transformOrigin: '50% 50%',
-    x: sizes.container.width / 2,
+    x: sizes.splashContainer.width / 2,
     y: sizes.card.height / 2 + sizes.card.offset.top,
   })
   TweenMax.fromTo(
@@ -148,14 +147,14 @@ function onResize() {
     { rotation: 360, repeat: -1, ease: Power0.easeInOut }
   )
   // 🍃 The leaf mask is for the leafs that float out of the
-  // container, it is full window height and starts on the left
+  // splashContainer, it is full window height and starts on the left
   // inline with the card
 
   leafMask.attr({
     x: sizes.card.offset.left,
     y: 0,
-    width: sizes.container.width - sizes.card.offset.left,
-    height: sizes.container.height,
+    width: sizes.splashContainer.width - sizes.card.offset.left,
+    height: sizes.splashContainer.height,
   })
 }
 
@@ -315,7 +314,7 @@ function makeSplash(x, type) {
   // We animate the dasharray to have the line travel along the path
 
   var pathLength = Snap.path.getTotalLength(splash)
-  var xOffset = sizes.card.offset.left //(sizes.container.width - sizes.card.width) / 2
+  var xOffset = sizes.card.offset.left //(sizes.splashContainer.width - sizes.card.width) / 2
   var yOffset = sizes.card.offset.top + sizes.card.height
   splash.node.style.strokeDasharray = splashLength + ' ' + pathLength
 
@@ -372,8 +371,8 @@ function makeLeaf() {
     endY = endY + sizes.card.offset.top / 2
 
     x = sizes.card.offset.left - 100
-    xBezier = x + (sizes.container.width - sizes.card.offset.left) / 2
-    endX = sizes.container.width + 50
+    xBezier = x + (sizes.splashContainer.width - sizes.card.offset.left) / 2
+    endX = sizes.splashContainer.width + 50
   } else {
     newLeaf = leaf
       .clone()
@@ -433,11 +432,11 @@ function makeSnow() {
     newSnow = outerSnowHolder.circle(0, 0, 5).attr({
       fill: 'white',
     })
-    endY = sizes.container.height + 10
+    endY = sizes.splashContainer.height + 10
     y = sizes.card.offset.top + settings.cloudHeight
     x = x + sizes.card.offset.left
-    //xBezier = x + (sizes.container.width - sizes.card.offset.left) / 2;
-    //endX = sizes.container.width + 50;
+    //xBezier = x + (sizes.splashContainer.width - sizes.card.offset.left) / 2;
+    //endX = sizes.splashContainer.width + 50;
   } else {
     newSnow = innerSnowHolder.circle(0, 0, 5).attr({
       fill: 'white',
@@ -511,11 +510,6 @@ function tick() {
   requestAnimationFrame(tick)
 }
 
-function updateSummaryText() {
-  summary.html(currentWeather.name)
-  TweenMax.fromTo(summary, 1.5, { x: 30 }, { opacity: 1, x: 0, ease: Power4.easeOut })
-}
-
 function startLightningTimer() {
   if (lightningTimeout) clearTimeout(lightningTimeout)
   if (currentWeather.type == 'thunder') {
@@ -555,7 +549,7 @@ function lightning() {
 
 function reset() {
   for (var i = 0; i < weather.length; i++) {
-    container.removeClass(weather[i].type)
+    splashContainer.removeClass(weather[i].type)
   }
 }
 
@@ -564,16 +558,7 @@ function changeWeather(weather) {
   reset()
 
   currentWeather = weather
-
-  TweenMax.killTweensOf(summary)
-  TweenMax.to(summary, 1, {
-    opacity: 0,
-    x: -30,
-    onComplete: updateSummaryText,
-    ease: Power4.easeIn,
-  })
-
-  container.addClass(weather.type)
+  splashContainer.addClass(weather.type)
 
   // windSpeed
 
@@ -651,7 +636,7 @@ function changeWeather(weather) {
       TweenMax.to(sunburst.node, 2, {
         scale: 0.4,
         opacity: 0,
-        y: sizes.container.height / 2 - 50,
+        y: sizes.splashContainer.height / 2 - 50,
         ease: Power2.easeInOut,
       })
       break
