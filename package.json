@@ -1,6 +1,6 @@
 {
   "name": "ecPoint-PyCal",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "GUI for ecPoint-PyCal powered by Electron and React",
   "engines": {
     "node": "==12.1.0"
