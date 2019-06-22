@@ -1,4 +1,5 @@
 import logging
+import os
 from pathlib import Path
 from typing import Union
 
@@ -16,6 +17,9 @@ class Geopoints(metview.bindings.Geopoints):
     def from_path(cls, path: Union[Path, str]):
         if isinstance(path, Path):
             path = str(path)
+
+        if not os.path.exists(path):
+            raise IOError(f"File does not exist: {path}")
 
         obj = metview.read(path)
         obj.__class__ = cls

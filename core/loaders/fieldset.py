@@ -21,7 +21,7 @@ class Fieldset(metview.Fieldset):
             path = str(path)
 
         if not os.path.exists(path):
-            raise IOError
+            raise IOError(f"File does not exist: {path}")
 
         obj = metview.read(path)
         obj.__class__ = cls
