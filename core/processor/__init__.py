@@ -172,19 +172,24 @@ def run(config):
         fileOBS = f"tp_{Acc:02d}_{DateVF}_{HourVF}.geo"
 
         obs_path = os.path.join(dirOBS, fileOBS)
-        if not os.path.exists(obs_path):
-            yield log.warn(f"File not found in DB: {obs_path}.")
-            continue
 
         # Reading Rainfall Observations
-        yield log.info(f"Read rainfall observation: {obs_path}")
-        obs = Geopoints.from_path(path=obs_path)
-        nOBS = len(obs)
+        yield log.info(f"Read observation: {obs_path}")
+        try:
+            obs = Geopoints.from_path(path=obs_path)
+        except IOError:
+            yield log.warn(f"File not found in DB: {obs_path}.")
+            continue
+        except Exception:
+            yield log.error(f"Error reading observation file {obs_path}")
+            continue
+
+        nOBS = len(obs.dataframe)
 
         if nOBS <= 1:
             # which will account for the cases of zero observation in the geopoint file (because the length of the vector will be forced to 1),
             # or cases in which there is only one observation in the geopoint file
-            yield log.warn(f"No rainfall observations: {fileOBS}.")
+            yield log.warn(f"No observations: {obs_path}.")
             continue
 
         obsTOT += nOBS
@@ -242,7 +247,7 @@ def run(config):
                     Fieldset.from_path(path=get_grib_path(predictor_code, step))
                     for step in steps
                 ]
-            except IOError:
+            except (IOError, Exception):
                 skip = True
                 break
 
@@ -256,7 +261,7 @@ def run(config):
             yield log.info("Selecting the nearest grid point to rainfall observations.")
             geopoints = computed_value.nearest_gridpoint(obs)
 
-            yield log.info(f"Selecting values that correspond to " "tp >= 1 mm/{Acc}h.")
+            yield log.info(f"Selecting values that correspond to tp >= 1 mm/{Acc}h.")
 
             # Select only the values that correspond to TP>=1
             if computation["isReference"]:
@@ -337,8 +342,6 @@ def run(config):
 
         # Saving the output file in ascii format
         vals_OB = obs1["value"]
-
-        data = []
 
         n = len(vals_OB)
         obsUSED = obsUSED + n
