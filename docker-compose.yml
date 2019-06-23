@@ -6,8 +6,13 @@ services:
       context: .
       dockerfile: Dockerfile.core
     image: onyb/ecpoint-pycal-core
+    environment:
+      - DISPLAY=$DISPLAY
     volumes:
       - /media:/media
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    devices:
+      - /dev/dri:/dev/dri
     command: python -m core.api
     ports:
       - 8888:8888
