@@ -193,10 +193,14 @@ def run(config):
             continue
 
         obsTOT += nOBS
-        if steps[-1] <= 24:
-            step_start_sr, step_end_sr = 1, 25
+
+        if Acc == 24:
+            step_start_sr, step_end_sr = steps[0], steps[-1]
         else:
-            step_start_sr, step_end_sr = steps[-1] - 24, steps[-1]
+            if steps[-1] <= 24:
+                step_start_sr, step_end_sr = 0, 24
+            else:
+                step_start_sr, step_end_sr = steps[-1] - 24, steps[-1]
 
         yield log.info("Read forecast data")
 
