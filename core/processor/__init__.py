@@ -62,11 +62,13 @@ def run(config):
         """
     )
 
-    header += "# Post-processed computations: " + ", ".join(
+    codes_to_compute = [
         computation["shortname"]
         for computation in computations
         if computation["isPostProcessed"]
-    )
+    ]
+
+    header += "# Post-processed computations: " + ", ".join(codes_to_compute)
 
     serializer.header = header.strip()
 
@@ -193,9 +195,8 @@ def run(config):
 
         yield log.info("Read forecast data")
 
-        # [TODO] - Should be dynamic
         yield log.info(
-            "Computing the required parameters " "(FER, cpr, tp, wspd700, cape, sr)."
+            f"Computing the following parameters: {', '.join(codes_to_compute)}"
         )
 
         for computation in computations:
