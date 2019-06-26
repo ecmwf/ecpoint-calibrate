@@ -216,4 +216,4 @@ class WeatherType(object):
         img = BytesIO()
         plt.savefig(img, format="png")
         img.seek(0)
-        return b64encode(img.read())
+        return b64encode(img.read()).decode()
