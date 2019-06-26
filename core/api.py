@@ -64,7 +64,7 @@ def get_naive_decision_tree():
     dt.create()
 
     df_out = dt.thrL_out.join(dt.thrH_out)
-    matrix = [[str(cell) for cell in row] for row in df_out.as_matrix().tolist()]
+    matrix = [[str(cell) for cell in row] for row in df_out.values]
 
     predictor_matrix = ASCIIDecoder(path=path).dataframe
     tree = dt.construct_tree(predictor_matrix).json
