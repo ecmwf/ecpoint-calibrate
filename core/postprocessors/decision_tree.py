@@ -126,7 +126,7 @@ class DecisionTree(object):
                 thrL_labels=self.thrL_out.columns.tolist(),
                 thrH_labels=self.thrH_out.columns.tolist(),
             )
-            graph = wt.evaluate(predictor_matrix)
+            plot = wt.evaluate(predictor_matrix)
 
             predictors = [predictor.replace("_thrL", "") for predictor in thrL.keys()]
 
@@ -146,7 +146,7 @@ class DecisionTree(object):
                     parent.children.append(curr)
 
             if not curr.children:
-                curr.meta["graph"] = graph
+                curr.meta["histogram"] = plot
 
         return root
 
@@ -160,7 +160,7 @@ class WeatherType(object):
     thrH_labels = attr.ib()
 
     def evaluate(self, predictors_matrix):
-        FER = predictors_matrix["FER"]
+        error = predictors_matrix["FER"]
         title_pred = ""
 
         for thrL_label, thrH_label in zip(self.thrL_labels, self.thrH_labels):
@@ -173,14 +173,14 @@ class WeatherType(object):
 
             mask = (temp_pred >= thrL_temp) & (temp_pred < thrH_temp)
 
-            FER = FER[mask]
+            error = error[mask]
             predictors_matrix = predictors_matrix[mask]
 
             title_pred += "({low} <= {pred} < {high}) ".format(
                 low=thrL_temp, pred=predictor_shortname, high=thrH_temp
             )
 
-        return self.plot(FER, title_pred)
+        return self.plot(error.to_list(), title_pred)
 
     @staticmethod
     def plot(data, title):
@@ -205,15 +205,19 @@ class WeatherType(object):
             1000,
         ]
 
-        out = pandas.cut(data, bins=bins, include_lowest=True)
-        ax = out.value_counts(sort=False).plot.bar()
+        fig, ax = plt.subplots()
 
-        plt.xlabel("FER Bins")
-        plt.ylabel("Frequencies")
-        plt.title("Weather type: " + title, fontsize=10)
-        plt.tight_layout()
+        ax.set_xlabel("FER Bins", fontsize=8)
+        ax.set_ylabel("Frequencies", fontsize=8)
+        ax.set_title(title, fontsize=8)
+
+        ax.xaxis.set_tick_params(labelsize=7)
+        ax.yaxis.set_tick_params(labelsize=7)
+
+        out = pandas.cut(data, bins=bins, include_lowest=True)
+        out.value_counts().plot.bar(ax=ax, rot=45)
 
         img = BytesIO()
-        plt.savefig(img, format="png")
+        fig.savefig(img, format="png")
         img.seek(0)
         return b64encode(img.read()).decode()

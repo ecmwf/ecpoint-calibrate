@@ -3,22 +3,18 @@ import Tree from 'react-d3-tree'
 
 import { Modal, Image } from 'semantic-ui-react'
 
-const containerStyles = {
-  width: '100%',
-  height: '100vh',
+const Graph = props => {
+  const Hist = <Image src={`data:image/jpeg;base64,${props.image}`} fluid />
+  return (
+    <Modal size={'large'} open={props.open} onClose={props.onClose}>
+      <Modal.Header>Weather Type</Modal.Header>
+      <Modal.Content>{Hist}</Modal.Content>
+    </Modal>
+  )
 }
 
-const Graph = props => (
-  <Modal size={'large'} open={props.open} onClose={props.onClose}>
-    <Modal.Header>Weather Type</Modal.Header>
-    <Modal.Content>
-      <Image src={`data:image/jpeg;base64,${props.image}`} fluid />
-    </Modal.Content>
-  </Modal>
-)
-
 export default class DecisionTree extends Component {
-  state = { open: false, image: null }
+  state = { open: false, histogram: null }
 
   componentDidMount() {
     const dimensions = this.treeContainer.getBoundingClientRect()
@@ -37,12 +33,14 @@ export default class DecisionTree extends Component {
         translate={this.state.translate}
         orientation={'vertical'}
         onClick={(node, event) =>
-          !node._children && this.setState({ open: true, image: node.meta.graph })
+          !node._children &&
+          this.setState({ open: true, histogram: node.meta.histogram })
         }
       />
       <Graph
-        onClose={() => this.setState({ open: false, image: null })}
-        {...this.state}
+        onClose={() => this.setState({ open: false, histogram: null })}
+        open={this.state.open}
+        image={this.state.histogram}
       />
     </div>
   )

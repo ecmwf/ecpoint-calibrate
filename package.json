@@ -33,7 +33,6 @@
     "babel-preset-stage-2": "6.24.1",
     "copy-webpack-plugin": "4.5.1",
     "css-loader": "0.28.11",
-    "d3": "^5.9.4",
     "electron": "4.2.0",
     "eslint": "4.19.0",
     "eslint-config-airbnb": "16.1.0",
