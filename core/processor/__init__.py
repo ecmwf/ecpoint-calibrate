@@ -103,7 +103,9 @@ def run(config):
     obsTOT = 0
     obsUSED = 0
 
-    for curr_date, curr_time, leadstart in iter_daterange(BaseDateS, BaseDateF, model_runs_per_day=2, leadstart_increment=Range):
+    for curr_date, curr_time, leadstart in iter_daterange(
+        BaseDateS, BaseDateF, model_runs_per_day=2, leadstart_increment=Range
+    ):
         yield log.info("FORECAST PARAMETERS")
         yield log.info(
             "BaseDate={} BaseTime={:02d} UTC (t+{}, t+{})".format(
