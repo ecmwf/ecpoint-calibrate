@@ -2,6 +2,8 @@ import { connect } from 'react-redux'
 
 import Processing from './component'
 
+import { updatePageCompletion } from './actions'
+
 const mapStateToProps = state => ({
   predictand: state.predictand,
   observations: state.observations,
@@ -10,4 +12,11 @@ const mapStateToProps = state => ({
   computations: state.computations,
 })
 
-export default connect(mapStateToProps)(Processing)
+const mapDispatchToProps = dispatch => ({
+  updatePageCompletion: () => dispatch(updatePageCompletion()),
+})
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Processing)

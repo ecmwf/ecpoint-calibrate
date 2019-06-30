@@ -59,7 +59,11 @@ class Processing extends Component {
         json: true,
       })
       .on('data', chunk => this.appendLog(chunk.toString()))
-      .on('end', () => this.setState({ active: false }))
+      .on('end', () => {
+        this.setState({ active: false })
+        console.log('Completing page 3')
+        this.props.updatePageCompletion(3, true)
+      })
   }
 
   colorizeLog = log => {
