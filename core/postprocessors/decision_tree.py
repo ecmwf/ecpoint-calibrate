@@ -1,4 +1,3 @@
-import os
 from base64 import b64encode
 from io import BytesIO
 
@@ -8,8 +7,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas
 
-from ..utils import tolist
 from .generics import Node
+
+matplotlib.style.use("seaborn")
 
 
 @attr.s(slots=True)
@@ -184,7 +184,6 @@ class WeatherType(object):
 
     @staticmethod
     def plot(data, title):
-        matplotlib.style.use("seaborn")
         bins = [
             -1.1,
             -0.99,
@@ -215,9 +214,50 @@ class WeatherType(object):
         ax.yaxis.set_tick_params(labelsize=7)
 
         out = pandas.cut(data, bins=bins, include_lowest=True)
-        out.value_counts().plot.bar(ax=ax, rot=45)
+        subplot = out.value_counts().plot.bar(ax=ax, rot=45)
+        patches = subplot.patches
+
+        label_bars(ax, patches)
+
+        green_patches, white_patches, yellow_patches, red_patches = (
+            patches[:4],
+            patches[4:5],
+            patches[5:10],
+            patches[10:],
+        )
+
+        for patch in green_patches:
+            patch.set_facecolor("#2ecc71")
+
+        for patch in white_patches:
+            patch.set_facecolor("#ffffff")
+            patch.set_edgecolor("#000000")
+
+        for patch in yellow_patches:
+            patch.set_facecolor("#fef160")
+
+        for patch in red_patches:
+            patch.set_facecolor("#d64541")
 
         img = BytesIO()
         fig.savefig(img, format="png")
         img.seek(0)
         return b64encode(img.read()).decode()
+
+
+def label_bars(ax, bars):
+    max_y_value = ax.get_ylim()[1]
+    padding = max_y_value * 0.01
+
+    for bar in bars:
+        value = bar.get_height()
+        if value == 0:
+            continue
+
+        text = value
+        text_x = bar.get_x() + bar.get_width() / 2
+        text_y = bar.get_height() + padding
+
+        ax.text(
+            text_x, text_y, text, ha="center", va="bottom", color="black", fontsize=7
+        )
