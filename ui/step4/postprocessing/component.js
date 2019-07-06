@@ -157,7 +157,9 @@ class PostProcessing extends Component {
   getDecisionTree = () => (
     <Grid centered>
       <Grid.Row centered>
-        <Tree data={this.state.thrGridOut.tree} />
+        <Grid.Column>
+          <Tree data={this.state.thrGridOut.tree} />
+        </Grid.Column>
       </Grid.Row>
     </Grid>
   )
