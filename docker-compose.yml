@@ -5,27 +5,50 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.core
+
     image: onyb/ecpoint-pycal-core
+
+    volumes:
+      # Forward UNIX domain sockets
+      - /tmp/.X11-unix:/tmp/.X11-unix
+
+      # Mount externally plugged devices
+      - /media:/media
+
+      # Mount home directory of host as /host
+      - /host:$HOST
+
     environment:
       - DISPLAY=$DISPLAY
-    volumes:
-      - /media:/media
-      - /tmp/.X11-unix:/tmp/.X11-unix
+
     devices:
       - /dev/dri:/dev/dri
+
     command: python -m core.api
+
     ports:
       - 8888:8888
   electron:
     build:
       context: .
       dockerfile: Dockerfile.electron
+
     image: onyb/ecpoint-pycal-electron
+
     volumes:
+      # Forward UNIX domain sockets
       - /tmp/.X11-unix:/tmp/.X11-unix
+
+      # Mount externally plugged devices
       - /media:/media
+
+      # Mount home directory of host as /host
+      - /host:$HOST
+
     environment:
       - DISPLAY=$DISPLAY
+
     devices:
       - /dev/dri:/dev/dri
+
     command: wait-for-it core:8888/healthcheck --timeout=5 -- npm start
