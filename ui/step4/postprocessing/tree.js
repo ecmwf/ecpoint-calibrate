@@ -3,7 +3,9 @@ import Tree from 'react-d3-tree'
 
 import { Modal, Image, Button } from 'semantic-ui-react'
 
-import { saveSvgAsPng, download as downloadURIasPNG } from 'save-svg-as-png'
+import { saveSvgAsPng } from 'save-svg-as-png'
+
+import download from '~/utils/download'
 
 const containerStyles = {
   width: '100%',
@@ -24,7 +26,7 @@ const Graph = props => {
           labelPosition="left"
           floated="right"
           onClick={() => {
-            downloadURIasPNG('WT.png', histURI) // [TODO] - Add WT code in the filename
+            download('WT.png', histURI) // [TODO] - Add WT code in the filename
           }}
         />
       </Modal.Header>
