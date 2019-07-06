@@ -3,7 +3,7 @@ import Tree from 'react-d3-tree'
 
 import { Modal, Image, Button } from 'semantic-ui-react'
 
-import { saveSvgAsPng } from 'save-svg-as-png'
+import { saveSvgAsPng, download as downloadURIasPNG } from 'save-svg-as-png'
 
 const containerStyles = {
   width: '100%',
@@ -11,10 +11,23 @@ const containerStyles = {
 }
 
 const Graph = props => {
-  const Hist = <Image src={`data:image/jpeg;base64,${props.image}`} fluid />
+  const histURI = `data:image/jpeg;base64,${props.image}`
+  const Hist = <Image src={histURI} fluid />
+
   return (
     <Modal size={'large'} open={props.open} onClose={props.onClose}>
-      <Modal.Header>Weather Type</Modal.Header>
+      <Modal.Header>
+        Weather Type
+        <Button
+          content="Save image"
+          icon="download"
+          labelPosition="left"
+          floated="right"
+          onClick={() => {
+            downloadURIasPNG('WT.png', histURI) // [TODO] - Add WT code in the filename
+          }}
+        />
+      </Modal.Header>
       <Modal.Content>{Hist}</Modal.Content>
     </Modal>
   )
