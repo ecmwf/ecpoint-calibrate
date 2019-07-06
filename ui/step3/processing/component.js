@@ -3,9 +3,11 @@ import React, { Component } from 'react'
 import { Grid, Segment, Button } from 'semantic-ui-react'
 
 import client from '~/utils/client'
+import download from '~/utils/download'
+import * as jetpack from 'fs-jetpack'
 
 class Processing extends Component {
-  state = { active: false, logs: [] }
+  state = { status: 'initial', logs: [] }
 
   appendLog(log) {
     const chunk = log.split('[END]').filter(e => e !== '')
@@ -15,7 +17,7 @@ class Processing extends Component {
   }
 
   runComputation() {
-    this.setState({ active: true })
+    this.setState({ status: 'running' })
     const parameters = {
       date_start: this.props.parameters.date_start,
       date_end: this.props.parameters.date_end,
@@ -60,7 +62,7 @@ class Processing extends Component {
       })
       .on('data', chunk => this.appendLog(chunk.toString()))
       .on('end', () => {
-        this.setState({ active: false })
+        this.setState({ status: 'completed' })
         console.log('Completing page 3')
         this.props.updatePageCompletion(3, true)
       })
@@ -84,10 +86,21 @@ class Processing extends Component {
         <Grid.Row>
           <Button
             onClick={() => this.runComputation()}
-            disabled={this.state.active ? true : null}
+            disabled={this.state.status == 'running' ? true : null}
           >
             Launch computation
           </Button>
+          {this.state.status == 'completed' && (
+            <Button
+              content="Save ASCII table"
+              icon="download"
+              labelPosition="left"
+              onClick={() => {
+                const asciiData = jetpack.read(this.props.parameters.outPath)
+                download('output.ascii', asciiData)
+              }}
+            />
+          )}
         </Grid.Row>
         <Grid.Row>
           <Grid.Column>
