@@ -16,7 +16,7 @@ services:
       - /media:/media
 
       # Mount home directory of host as /host
-      - /host:$HOST
+      - /host:$HOME
 
     environment:
       - DISPLAY=$DISPLAY
@@ -43,7 +43,7 @@ services:
       - /media:/media
 
       # Mount home directory of host as /host
-      - /host:$HOST
+      - /host:$HOME
 
     environment:
       - DISPLAY=$DISPLAY
