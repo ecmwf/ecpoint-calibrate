@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 
-import { Grid, Segment, Button } from 'semantic-ui-react'
+import { Grid, Segment, Button, Modal } from 'semantic-ui-react'
 
 import client from '~/utils/client'
 import download from '~/utils/download'
 import * as jetpack from 'fs-jetpack'
 
 class Processing extends Component {
-  state = { status: 'initial', logs: [] }
+  state = { status: 'initial', logs: [], asciiModelOpen: false }
 
   appendLog(log) {
     const chunk = log.split('[END]').filter(e => e !== '')
@@ -80,16 +80,40 @@ class Processing extends Component {
     return <span>{log.replace('[INFO]', '')}</span>
   }
 
+  getAsciiTableModal = () => (
+    <Modal
+      size={'large'}
+      open={this.state.asciiModelOpen}
+      onClose={() => this.setState({ asciiModelOpen: false })}
+    >
+      <Modal.Header>ASCII Table</Modal.Header>
+      <Modal.Content>
+        <pre>{jetpack.read(this.props.parameters.outPath)}</pre>
+      </Modal.Content>
+    </Modal>
+  )
+
   render() {
     return (
       <Grid columns={2} centered>
         <Grid.Row>
           <Button
+            content="Launch computation"
             onClick={() => this.runComputation()}
             disabled={this.state.status == 'running' ? true : null}
-          >
-            Launch computation
-          </Button>
+            icon="cog"
+            labelPosition="left"
+          />
+          {this.state.status == 'completed' && (
+            <Button
+              content="View ASCII table"
+              icon="eye"
+              labelPosition="left"
+              onClick={() => {
+                this.setState({ asciiModelOpen: true })
+              }}
+            />
+          )}
           {this.state.status == 'completed' && (
             <Button
               content="Save ASCII table"
@@ -114,6 +138,7 @@ class Processing extends Component {
               </Segment>
             )}
           </Grid.Column>
+          {this.getAsciiTableModal()}
         </Grid.Row>
       </Grid>
     )
