@@ -15,8 +15,8 @@ services:
       # Mount externally plugged devices
       - /media:/media
 
-      # Mount home directory of host as /host
-      - /host:$HOME
+      # Mount home directory of host as /root
+      - $HOME:/root
 
     environment:
       - DISPLAY=$DISPLAY
@@ -42,8 +42,8 @@ services:
       # Mount externally plugged devices
       - /media:/media
 
-      # Mount home directory of host as /host
-      - /host:$HOME
+      # Mount home directory of host as /root
+      - $HOME:/root
 
     environment:
       - DISPLAY=$DISPLAY
