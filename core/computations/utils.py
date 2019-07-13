@@ -28,5 +28,9 @@ def compute_rms_field(*args):
     return Fieldset.rms(*args)
 
 
+def compute_vector(*args):
+    return Fieldset.vector_of(*args)
+
+
 def compute_ratio_field(dividend, divisor):
     return dividend / divisor

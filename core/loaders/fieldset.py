@@ -94,6 +94,28 @@ class Fieldset(metview.Fieldset):
 
         return mv_fieldset
 
+    @classmethod
+    def vector_of(cls, *args):
+        """
+        classmethod to compute the vector of sequence of Fieldset instances.
+
+        :param args: (Tuple[Fieldset]) Sequence of Fieldset instances.
+        :return: New `Fieldset` instance containing the vector value
+        :rtype: Fieldset
+        """
+        if len(args) == 0:
+            raise Exception
+
+        term_1 = args[0]
+
+        sum_squared_values = sum(abs(term.values) ** 2 for term in args)
+        values = np.sqrt(sum_squared_values)
+
+        mv_fieldset = metview.set_values(term_1, values)
+        mv_fieldset.__class__ = cls
+
+        return mv_fieldset
+
     def __add__(self, other):
         mv_fieldset = super().__add__(other)
         mv_fieldset.__class__ = type(self)

@@ -6,6 +6,7 @@ from .utils import (
     compute_accumulated_field,
     compute_ratio_field,
     compute_rms_field,
+    compute_vector,
     compute_weighted_average_field,
 )
 
@@ -16,7 +17,8 @@ class Computation(object):
         "ACCUMULATED_FIELD": compute_accumulated_field,
         "WEIGHTED_AVERAGE_FIELD": compute_weighted_average_field,
         "24H_SOLAR_RADIATION": compute_accumulated_field,
-        "VECTOR_MODULE": compute_rms_field,
+        "VECTOR_MODULE": compute_vector,
+        "ROOT_MEAN_SQUARE": compute_rms_field,
         "RATIO_FIELD": compute_ratio_field,
     }
 
