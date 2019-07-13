@@ -8,6 +8,10 @@ def compute_accumulated_field(*args):
     return args[-1] - args[0]
 
 
+def compute_24h_solar_radiation(*args):
+    return compute_accumulated_field(*args) / 86400.0
+
+
 def compute_weighted_average_field(*args):
     weighted_sum_of_first_and_last_items = args[0] * 0.5 + args[-1] * 0.5
     items_excluding_first_and_last = args[1 : len(args) - 1]
