@@ -5,6 +5,9 @@ import attr
 from .utils import (
     compute_24h_solar_radiation,
     compute_accumulated_field,
+    compute_average_field,
+    compute_maximum,
+    compute_minimum,
     compute_ratio_field,
     compute_rms_field,
     compute_vector,
@@ -21,6 +24,9 @@ class Computation(object):
         "VECTOR_MODULE": compute_vector,
         "ROOT_MEAN_SQUARE": compute_rms_field,
         "RATIO_FIELD": compute_ratio_field,
+        "MAXIMUM_FIELD": compute_maximum,
+        "MINIMUM_FIELD": compute_minimum,
+        "AVERAGE_FIELD": compute_average_field,
     }
 
     computation = attr.ib()

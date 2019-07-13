@@ -28,12 +28,24 @@ def compute_weighted_average_field(*args):
         return weighted_sum_of_first_and_last_items
 
 
+def compute_average_field(*args):
+    return sum(args) / len(args)
+
+
 def compute_rms_field(*args):
     return Fieldset.rms(*args)
 
 
 def compute_vector(*args):
     return Fieldset.vector_of(*args)
+
+
+def compute_maximum(*args):
+    pass
+
+
+def compute_minimum(*args):
+    pass
 
 
 def compute_ratio_field(dividend, divisor):
