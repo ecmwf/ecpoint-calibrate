@@ -1,5 +1,6 @@
 import logging
 import os
+from functools import reduce
 from pathlib import Path
 from typing import Union
 
@@ -110,6 +111,34 @@ class Fieldset(metview.Fieldset):
 
         sum_squared_values = sum(abs(term.values) ** 2 for term in args)
         values = np.sqrt(sum_squared_values)
+
+        mv_fieldset = metview.set_values(term_1, values)
+        mv_fieldset.__class__ = cls
+
+        return mv_fieldset
+
+    @classmethod
+    def max_of(cls, *args):
+        if len(args) == 0:
+            raise Exception
+
+        term_1 = args[0]
+
+        values = reduce(np.maximum, args)
+
+        mv_fieldset = metview.set_values(term_1, values)
+        mv_fieldset.__class__ = cls
+
+        return mv_fieldset
+
+    @classmethod
+    def min_of(cls, *args):
+        if len(args) == 0:
+            raise Exception
+
+        term_1 = args[0]
+
+        values = reduce(np.minimum, args)
 
         mv_fieldset = metview.set_values(term_1, values)
         mv_fieldset.__class__ = cls

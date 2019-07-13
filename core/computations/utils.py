@@ -41,11 +41,11 @@ def compute_vector(*args):
 
 
 def compute_maximum(*args):
-    pass
+    return Fieldset.max_of(*args)
 
 
 def compute_minimum(*args):
-    pass
+    return Fieldset.min_of(*args)
 
 
 def compute_ratio_field(dividend, divisor):
