@@ -67,10 +67,12 @@ code {
 }
 
 .cta-left {
-  padding-left: 0!important
+  padding-left: 0 !important;
+  padding-right: 50px !important;
 }
 
 .cta-right {
+  padding-left: 50px !important;
   padding-right: 0!important
 }
 
