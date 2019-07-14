@@ -226,7 +226,7 @@ class Computations extends Component {
     return (
       <Grid container centered>
         <Grid.Column>
-          <Card fluid color="teal">
+          <Card fluid color="black">
             <Card.Header>
               <Grid.Column floated="left">Computations</Grid.Column>
               <Grid.Column floated="right">

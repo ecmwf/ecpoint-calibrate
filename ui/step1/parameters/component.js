@@ -189,7 +189,7 @@ class Parameters extends Component {
   render = () => (
     <Grid container centered>
       <Grid.Column>
-        <Card fluid color="teal">
+        <Card fluid color="black">
           <Card.Header>
             <Grid.Column floated="left">Model Data</Grid.Column>
             <Grid.Column floated="right">

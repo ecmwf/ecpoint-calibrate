@@ -48,7 +48,7 @@ class Preloader extends Component {
   render = () => (
     <Grid container centered>
       <Grid.Column>
-        <Card fluid color="teal">
+        <Card fluid color="black">
           <Card.Header>
             <Grid.Column floated="left">
               Select ascii table file containing computed fields

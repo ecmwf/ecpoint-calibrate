@@ -1,6 +1,26 @@
+html, body, .background {
+  width: 100%;
+  height: 94%;
+  margin: 0 !important;
+  padding: 0;
+  font-family: 'Lato', sans-serif;
+}
+
+html {
+  background: #fff;
+}
+
+body {
+  background: #eee;
+}
+
+.background {
+  background: #fff2cc;
+}
+
 .card > .header {
   color: #fff;
-  background-color: #46B6AC;
+  background-color: #24252a;
   font-size: 24px;
   font-weight: 300;
   height: 70px;
@@ -46,9 +66,12 @@ code {
   width: inherit;
 }
 
-#cta button {
-  width: 300px;
-  margin: -8px 0;
+.cta-left {
+  padding-left: 0!important
+}
+
+.cta-right {
+  padding-right: 0!important
 }
 
 .splash-footer {

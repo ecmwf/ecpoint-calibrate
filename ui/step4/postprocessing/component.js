@@ -242,7 +242,7 @@ class PostProcessing extends Component {
     this.props.fields.length > 0 && (
       <Grid container centered>
         <Grid.Column>
-          <Card fluid color="teal">
+          <Card fluid color="black">
             <Card.Header>
               <Grid.Column floated="left">Decision Tree</Grid.Column>
               <Grid.Column floated="right">
