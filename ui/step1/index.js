@@ -4,6 +4,7 @@ import Predictand from './predictand'
 import Observations from './observations'
 import Predictors from './predictors'
 import Parameters from './parameters'
+import Output from './output'
 
 const Step1 = props => (
   <Fragment>
@@ -11,6 +12,7 @@ const Step1 = props => (
     <Parameters />
     <Predictand />
     <Predictors />
+    <Output />
   </Fragment>
 )
 

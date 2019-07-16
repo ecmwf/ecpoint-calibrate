@@ -114,17 +114,6 @@ class Processing extends Component {
               }}
             />
           )}
-          {this.state.status == 'completed' && (
-            <Button
-              content="Save ASCII table"
-              icon="download"
-              labelPosition="left"
-              onClick={() => {
-                const asciiData = jetpack.read(this.props.parameters.outPath)
-                download('output.ascii', asciiData)
-              }}
-            />
-          )}
         </Grid.Row>
         <Grid.Row>
           <Grid.Column>

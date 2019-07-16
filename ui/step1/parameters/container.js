@@ -7,7 +7,6 @@ import {
   setDateEndField,
   setLimSUField,
   setRangeField,
-  setOutPath,
   setModelType,
   updatePageCompletion,
 } from './actions'
@@ -17,8 +16,6 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  onOutPathChange: path => dispatch(setOutPath(path)),
-
   onParametersDateStartFieldChange: value => dispatch(setDateStartField(value)),
 
   onParametersDateEndFieldChange: value => dispatch(setDateEndField(value)),

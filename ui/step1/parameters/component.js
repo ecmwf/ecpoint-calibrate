@@ -183,30 +183,6 @@ class Parameters extends Component {
     </Item>
   )
 
-  getPathOutField = () => (
-    <Item>
-      <Item.Content>
-        <Item.Header>
-          <h3>Output ASCII Data</h3>
-          <h5>Select output filename and directory for storing results:</h5>
-        </Item.Header>
-
-        <Item.Description>
-          <Button onClick={() => this.props.onOutPathChange(mainProcess.saveFile())}>
-            Browse
-          </Button>
-        </Item.Description>
-        <Item.Extra>
-          {this.props.parameters.outPath && (
-            <p>
-              <b>Path:</b> <code>{this.props.parameters.outPath}</code>
-            </p>
-          )}
-        </Item.Extra>
-      </Item.Content>
-    </Item>
-  )
-
   hasError = () => this.rangeHasError() || this.limSUHasError()
 
   isComplete = () => !this.hasError() && !isEmpty(this.props.parameters)
@@ -237,12 +213,7 @@ class Parameters extends Component {
                 </Item.Group>
               </Grid.Column>
 
-              <Grid.Column width={7}>
-                <Item.Group divided>
-                  {this.getDateStartField()}
-                  {this.getPathOutField()}
-                </Item.Group>
-              </Grid.Column>
+              <Grid.Column width={7}>{this.getDateStartField()}</Grid.Column>
             </Grid>
           </Card.Content>
         </Card>

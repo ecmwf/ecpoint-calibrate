@@ -1,8 +1,3 @@
-export const setOutPath = path => ({
-  type: 'PARAMETERS.SET_OUT_PATH',
-  data: path,
-})
-
 export const setDateStartField = moment => ({
   type: 'PARAMETERS.SET_DATE_START_FIELD',
   value: moment.format('YYYYMMDD'),

@@ -8,6 +8,7 @@ const defaultState = {
       predictors: false,
       parameters: false,
       observations: false,
+      output: false,
     },
   },
   1: { isActive: false, isComplete: { fields: false } },
