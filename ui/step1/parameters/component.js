@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { Grid, Card, Button, Input, Item, Icon, Radio } from 'semantic-ui-react'
+import { Grid, Card, Button, Input, Item, Icon, Radio, Popup } from 'semantic-ui-react'
 
 import DatePicker from 'react-datepicker'
 import moment from 'moment'
@@ -23,13 +23,19 @@ class Parameters extends Component {
         </Item.Header>
 
         <Item.Description>
-          <Grid columns={2} padded>
+          <Grid columns={2}>
             <Grid.Column>
               <Radio
                 label="GRIB"
                 value="grib"
                 checked={this.props.parameters.modelType === 'grib'}
                 onChange={() => this.props.onModelTypeChange('grib')}
+              />
+              &nbsp;&nbsp;&nbsp;
+              <Popup
+                trigger={<Icon name="info circle" />}
+                content="General Regularly-distributed Information in Binary form"
+                size="tiny"
               />
             </Grid.Column>
             <Grid.Column>
@@ -38,6 +44,12 @@ class Parameters extends Component {
                 value="netcdf"
                 checked={this.props.parameters.modelType === 'netcdf'}
                 onChange={() => this.props.onModelTypeChange('netcdf')}
+              />
+              &nbsp;&nbsp;&nbsp;
+              <Popup
+                trigger={<Icon name="info circle" />}
+                content="NETwork Common Data Form"
+                size="tiny"
               />
             </Grid.Column>
           </Grid>
@@ -61,7 +73,7 @@ class Parameters extends Component {
             <br />
           </Item.Header>
 
-          <Grid columns={5}>
+          <Grid columns={2}>
             <Grid.Column>
               <Item.Header>
                 <h5>Start date</h5>
@@ -131,7 +143,8 @@ class Parameters extends Component {
   )
 
   rangeHasError = () =>
-    this.props.parameters.range === '' || /^\d+$/.test(this.props.parameters.range)
+    this.props.parameters.range === '' ||
+    /^(1|2|3|3|4|6|12|24)$/.test(this.props.parameters.range)
       ? null
       : true
 
@@ -139,10 +152,22 @@ class Parameters extends Component {
     <Item>
       <Item.Content>
         <Item.Header>
-          <h3>Lead Time</h3>
-          <h5>Enter a range for the Leadtime (in hours):</h5>
+          <h3>Range</h3>
+          <h5>Discretization of accumulation period's starting times (in hours):</h5>
         </Item.Header>
-
+        <Item.Extra>
+          Examples:
+          <ul>
+            <li>
+              If observation period starts at <code>0</code>, <code>6</code>,{' '}
+              <code>12</code>, <code>18</code> UTC, then enter <code>6</code>.
+            </li>
+            <li>
+              If observation period starts at <code>0</code>, <code>12</code> UTC, then
+              enter <code>12</code>.
+            </li>
+          </ul>
+        </Item.Extra>
         <Item.Description>
           <Input
             error={this.rangeHasError()}
@@ -150,6 +175,10 @@ class Parameters extends Component {
             value={this.props.parameters.range || ''}
           />
         </Item.Description>
+        <Item.Extra>
+          Valid values are: <code>1</code>, <code>2</code>, <code>3</code>,{' '}
+          <code>4</code>, <code>6</code>, <code>12</code>, and <code>24</code>.
+        </Item.Extra>
       </Item.Content>
     </Item>
   )
@@ -191,20 +220,30 @@ class Parameters extends Component {
       <Grid.Column>
         <Card fluid color="black">
           <Card.Header>
-            <Grid.Column floated="left">Model Data</Grid.Column>
+            <Grid.Column floated="left">Model Data — General parameters</Grid.Column>
             <Grid.Column floated="right">
               {this.isComplete() && <Icon name="check circle" />}
             </Grid.Column>
           </Card.Header>
           <Card.Content>
             <Card.Description />
-            <Item.Group divided>
-              {this.getTypeField()}
-              {this.getDateStartField()}
-              {this.getLimSUField()}
-              {this.getRangeField()}
-              {this.getPathOutField()}
-            </Item.Group>
+
+            <Grid divided>
+              <Grid.Column width={9}>
+                <Item.Group divided>
+                  {this.getTypeField()}
+                  {this.getLimSUField()}
+                  {this.getRangeField()}
+                </Item.Group>
+              </Grid.Column>
+
+              <Grid.Column width={7}>
+                <Item.Group divided>
+                  {this.getDateStartField()}
+                  {this.getPathOutField()}
+                </Item.Group>
+              </Grid.Column>
+            </Grid>
           </Card.Content>
         </Card>
       </Grid.Column>

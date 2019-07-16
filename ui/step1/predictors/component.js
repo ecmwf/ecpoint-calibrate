@@ -13,8 +13,8 @@ class Predictors extends Component {
       <Item.Content>
         <Item.Header>
           <h5>
-            Select the directory that contains the model data for the computation of the
-            predictors:
+            Select the directory that contains the variables that will be used to
+            compute the predictors:
           </h5>
         </Item.Header>
 
@@ -56,7 +56,9 @@ class Predictors extends Component {
         <Grid.Column>
           <Card fluid color="black">
             <Card.Header>
-              <Grid.Column floated="left">Select Predictors</Grid.Column>
+              <Grid.Column floated="left">
+                Model data — Variables to compute predictors
+              </Grid.Column>
               <Grid.Column floated="right">
                 {this.isComplete() && <Icon name="check circle" />}
               </Grid.Column>

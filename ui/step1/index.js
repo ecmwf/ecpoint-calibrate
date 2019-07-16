@@ -7,10 +7,10 @@ import Parameters from './parameters'
 
 const Step1 = props => (
   <Fragment>
-    <Predictand />
     <Observations />
-    <Predictors />
     <Parameters />
+    <Predictand />
+    <Predictors />
   </Fragment>
 )
 

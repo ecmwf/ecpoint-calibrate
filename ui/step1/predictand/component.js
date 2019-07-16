@@ -186,7 +186,7 @@ class Predictand extends Component {
         <Grid.Column>
           <Card fluid color="black">
             <Card.Header>
-              <Grid.Column floated="left">Select Predictand</Grid.Column>
+              <Grid.Column floated="left">Model data — Predictand</Grid.Column>
               <Grid.Column floated="right">
                 {this.isComplete() && <Icon name="check circle" />}
               </Grid.Column>

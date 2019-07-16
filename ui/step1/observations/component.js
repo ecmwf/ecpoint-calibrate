@@ -56,7 +56,9 @@ class Observation extends Component {
       <Grid.Column>
         <Card fluid color="black">
           <Card.Header>
-            <Grid.Column floated="left">Observational Data</Grid.Column>
+            <Grid.Column floated="left">
+              Observational Data — Select observations
+            </Grid.Column>
             <Grid.Column floated="right">
               {this.isComplete() && <Icon name="check circle" />}
             </Grid.Column>
