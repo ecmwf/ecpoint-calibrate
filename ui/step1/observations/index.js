@@ -1,3 +1,4 @@
 export { default } from './container'
 
-export const isEmpty = observations => !observations.path
+export const isEmpty = state =>
+  !state.path || state.discretization === '' || state.startTime === ''

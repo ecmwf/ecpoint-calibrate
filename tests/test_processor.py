@@ -9,26 +9,26 @@ def test_generate_leadstart():
         iter_daterange(
             start=date(2018, 7, 1),
             end=date(2018, 7, 3),
-            model_runs_per_day=4,
+            discretization=4,
             leadstart_increment=2,
         )
     )
 
-    # 3 days, 4 runs per day, 12 increments
-    assert len(cases) == 3 * 4 * 12
+    # 3 days, 6 runs per day (4-hourly), 12 increments
+    assert len(cases) == 3 * 6 * 12
 
     dates = set(i for i, _, _ in cases)
     assert dates == {date(2018, 7, 1), date(2018, 7, 2), date(2018, 7, 3)}
 
     times = set(i for _, i, _ in cases)
-    assert times == {0, 6, 12, 18}
+    assert times == {0, 4, 8, 12, 16, 20}
 
     leadstarts = set(i for _, _, i in cases)
     assert leadstarts == set(range(0, 24, 2))
 
 
 def test_adjust_leadstart_2_model_runs_per_day():
-    func = partial(adjust_leadstart, limSU=2, model_runs_per_day=2)
+    func = partial(adjust_leadstart, limSU=2, discretization=12)
     ###########################################################################
     # CASE 1: LeadStart <= LimSU                                              #
     ###########################################################################
@@ -79,7 +79,7 @@ def test_adjust_leadstart_2_model_runs_per_day():
 
 
 def test_adjust_leadstart_4_model_runs_per_day():
-    func = partial(adjust_leadstart, limSU=2, model_runs_per_day=4)
+    func = partial(adjust_leadstart, limSU=2, discretization=6)
     ###########################################################################
     # CASE 1: LeadStart <= LimSU                                              #
     ###########################################################################

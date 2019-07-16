@@ -6,15 +6,15 @@ def daterange(start_date, end_date):
         yield start_date + timedelta(n)
 
 
-def iter_daterange(start, end, model_runs_per_day=2, leadstart_increment=1):
+def iter_daterange(start, end, start_time=0, discretization=6, leadstart_increment=1):
     for curr_date in daterange(start, end):
-        for curr_time in range(0, 24, 24 // model_runs_per_day):
+        for curr_time in range(start_time, 24, discretization):
             for leadstart in range(0, 24, leadstart_increment):
                 yield curr_date, curr_time, leadstart
 
 
-def adjust_leadstart(date, hour, leadstart, limSU, model_runs_per_day):
-    leadstart_difference = 24 // model_runs_per_day
+def adjust_leadstart(date, hour, leadstart, limSU, discretization=6):
+    leadstart_difference = discretization
     timestamp = datetime.combine(date, time(hour=hour))
 
     if 0 <= leadstart <= limSU:

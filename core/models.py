@@ -12,9 +12,6 @@ class Parameters(object):
     # upper limit (in hours) of the window in forecast with spin-up problems
     limit_spin_up = attr.ib(converter=int)
 
-    # range for the leadtime (in hours)
-    leadstart_range = attr.ib(converter=int)
-
     # output file path
     out_path = attr.ib(converter=str)
 
@@ -41,6 +38,12 @@ class Observations(object):
     # path of the database that contains the observations for the parameter
     # to post-process
     path = attr.ib(converter=str)
+
+    # discretization (in hours)
+    discretization = attr.ib(converter=int)
+
+    # observation start time
+    start_time = attr.ib(converter=int)
 
 
 @attr.s

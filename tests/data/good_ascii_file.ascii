@@ -8,7 +8,6 @@
 #     Base date start     = 20150601
 #     Base date end       = 20150610
 #     Spin-up limit       = 1h
-#     Range               = 1
 #
 # Predictand:
 #     Short code          = tp

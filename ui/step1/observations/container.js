@@ -2,7 +2,12 @@ import { connect } from 'react-redux'
 
 import Observation from './component'
 
-import { setPath, updatePageCompletion } from './actions'
+import {
+  setPath,
+  setDiscretizationField,
+  setStartTimeField,
+  updatePageCompletion,
+} from './actions'
 
 const mapStateToProps = state => ({
   observations: state.observations,
@@ -10,6 +15,10 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   onPathChange: path => dispatch(setPath(path)),
+
+  onDiscretizationFieldChange: value => dispatch(setDiscretizationField(value)),
+
+  onStartTimeFieldChange: value => dispatch(setStartTimeField(value)),
 
   updatePageCompletion: (page, isComplete) =>
     dispatch(updatePageCompletion(page, isComplete)),

@@ -22,7 +22,6 @@ class Processing extends Component {
       date_start: this.props.parameters.date_start,
       date_end: this.props.parameters.date_end,
       limit_spin_up: this.props.parameters.limSU,
-      leadstart_range: this.props.parameters.range,
       out_path: this.props.parameters.outPath,
       model_type: this.props.parameters.modelType,
     }
@@ -37,6 +36,8 @@ class Processing extends Component {
 
     const observations = {
       path: this.props.observations.path,
+      discretization: this.props.observations.discretization,
+      start_time: this.props.observations.startTime,
     }
 
     const predictors = {

@@ -6,7 +6,6 @@ import {
   setDateStartField,
   setDateEndField,
   setLimSUField,
-  setRangeField,
   setModelType,
   updatePageCompletion,
 } from './actions'
@@ -21,8 +20,6 @@ const mapDispatchToProps = dispatch => ({
   onParametersDateEndFieldChange: value => dispatch(setDateEndField(value)),
 
   onParametersLimSUFieldChange: value => dispatch(setLimSUField(value)),
-
-  onParametersRangeFieldChange: value => dispatch(setRangeField(value)),
 
   onModelTypeChange: type => dispatch(setModelType(type)),
 

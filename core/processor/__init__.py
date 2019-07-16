@@ -21,7 +21,6 @@ def run(config):
     BaseDateF = config.parameters.date_end
     Acc = config.predictand.accumulation
     LimSU = config.parameters.limit_spin_up
-    Range = config.parameters.leadstart_range
     PathOBS = config.observations.path
     PathFC = config.predictors.path
     PathPredictand = config.predictand.path
@@ -51,7 +50,10 @@ def run(config):
         #     Base date start     = {BaseDateSSTR}
         #     Base date end       = {BaseDateFSTR}
         #     Spin-up limit       = {LimSU}h
-        #     Range               = 1
+        #
+        # Observations:
+        #     Start time          = {config.observations.start_time} UTC
+        #     Discretization      = {config.observations.discretization} hour(s)
         #
         # Predictand:
         #     Short code          = {config.predictand.code}
@@ -104,7 +106,10 @@ def run(config):
     obsUSED = 0
 
     for curr_date, curr_time, leadstart in iter_daterange(
-        BaseDateS, BaseDateF, model_runs_per_day=2, leadstart_increment=Range
+        BaseDateS,
+        BaseDateF,
+        discretization=config.observations.discretization,
+        start_time=config.observations.start_time,
     ):
         yield log.info("FORECAST PARAMETERS")
         yield log.info(
@@ -118,7 +123,7 @@ def run(config):
             hour=curr_time,
             leadstart=leadstart,
             limSU=LimSU,
-            model_runs_per_day=2,
+            discretization=config.observations.discretization,
         )
         thedateNEWSTR = curr_date.strftime("%Y%m%d")
         thetimeNEWSTR = f"{curr_time:02d}"

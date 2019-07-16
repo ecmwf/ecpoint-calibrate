@@ -142,48 +142,7 @@ class Parameters extends Component {
     </Item>
   )
 
-  rangeHasError = () =>
-    this.props.parameters.range === '' ||
-    /^(1|2|3|3|4|6|12|24)$/.test(this.props.parameters.range)
-      ? null
-      : true
-
-  getRangeField = () => (
-    <Item>
-      <Item.Content>
-        <Item.Header>
-          <h3>Range</h3>
-          <h5>Discretization of accumulation period's starting times (in hours):</h5>
-        </Item.Header>
-        <Item.Extra>
-          Examples:
-          <ul>
-            <li>
-              If observation period starts at <code>0</code>, <code>6</code>,{' '}
-              <code>12</code>, <code>18</code> UTC, then enter <code>6</code>.
-            </li>
-            <li>
-              If observation period starts at <code>0</code>, <code>12</code> UTC, then
-              enter <code>12</code>.
-            </li>
-          </ul>
-        </Item.Extra>
-        <Item.Description>
-          <Input
-            error={this.rangeHasError()}
-            onChange={e => this.props.onParametersRangeFieldChange(e.target.value)}
-            value={this.props.parameters.range || ''}
-          />
-        </Item.Description>
-        <Item.Extra>
-          Valid values are: <code>1</code>, <code>2</code>, <code>3</code>,{' '}
-          <code>4</code>, <code>6</code>, <code>12</code>, and <code>24</code>.
-        </Item.Extra>
-      </Item.Content>
-    </Item>
-  )
-
-  hasError = () => this.rangeHasError() || this.limSUHasError()
+  hasError = () => this.limSUHasError()
 
   isComplete = () => !this.hasError() && !isEmpty(this.props.parameters)
 
@@ -209,7 +168,6 @@ class Parameters extends Component {
                 <Item.Group divided>
                   {this.getTypeField()}
                   {this.getLimSUField()}
-                  {this.getRangeField()}
                 </Item.Group>
               </Grid.Column>
 
