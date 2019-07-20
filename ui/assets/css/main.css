@@ -16,6 +16,10 @@ body {
 
 .background {
   background: #fff2cc;
+  background-image: url("../img/background.jpg");
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
 }
 
 .card > .header {
