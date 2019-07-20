@@ -87,7 +87,7 @@ class Observation extends Component {
   startTimeHasError = () =>
     this.props.observations.startTime === '' ||
     (/^\d+$/.test(this.props.observations.startTime) &&
-      this.props.observations.startTime > 0 &&
+      this.props.observations.startTime >= 0 &&
       this.props.observations.startTime < 24)
       ? null
       : true
@@ -117,7 +117,7 @@ class Observation extends Component {
         />
       </Item.Description>
       <Item.Extra>
-        Valid values are integers between <code>1</code> and <code>23</code>.
+        Valid values are integers between <code>0</code> and <code>23</code>.
       </Item.Extra>
     </Fragment>
   )
