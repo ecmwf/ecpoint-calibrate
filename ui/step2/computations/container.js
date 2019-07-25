@@ -18,6 +18,7 @@ import {
 const mapStateToProps = state => ({
   predictors: state.predictors,
   fields: state.computations.fields,
+  predictand: state.predictand,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -33,7 +34,7 @@ const mapDispatchToProps = dispatch => ({
   onComputationInputsChange: (index, inputs) =>
     dispatch(updateComputationInputs(index, inputs)),
 
-  addEmptyComputation: () => dispatch(addComputation()),
+  addComputation: data => dispatch(addComputation(data)),
 
   onComputationRemove: index => dispatch(removeComputation(index)),
 

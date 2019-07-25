@@ -5,17 +5,20 @@ const defaultState = {
 export default (state = defaultState, action) => {
   switch (action.type) {
     case 'COMPUTATIONS.ADD': {
+      const isFirstComputation = state.fields.length === 0
       return {
         ...state,
         fields: [
           ...state.fields,
           {
             index: state.fields.length,
-            shortname: '',
-            fullname: '',
-            field: '',
-            inputs: [],
-            scale: { op: 'MULTIPLY', value: 1 },
+            shortname: isFirstComputation ? action.data.shortname : '',
+            fullname: isFirstComputation ? action.data.fullname : '',
+            field: isFirstComputation ? action.data.field : '',
+            inputs: isFirstComputation ? action.data.inputs : [],
+            scale: isFirstComputation
+              ? action.data.scale
+              : { op: 'MULTIPLY', value: 1 },
             isPostProcessed: true,
           },
         ],

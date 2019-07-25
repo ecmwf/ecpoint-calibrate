@@ -74,6 +74,7 @@ class Computation extends Component {
     return (
       <Table.Row positive={this.isPositive()}>
         <Table.Cell width={4}>
+          {this.props.index === 0 && <Label ribbon>Pre-computed variable</Label>}
           <p>Short name:</p>
           <Input
             fluid
@@ -203,7 +204,7 @@ class Computations extends Component {
                 labelPosition="left"
                 primary
                 size="small"
-                onClick={() => this.props.addEmptyComputation()}
+                onClick={() => this.addComputation()}
               >
                 <Icon name="add circle" /> Add row
               </Button>
@@ -222,20 +223,41 @@ class Computations extends Component {
     this.props.updatePageCompletion(1, this.isComplete())
   }
 
+  constructor(props) {
+    super(props)
+    this.props.fields.length === 0 && this.addComputation()
+  }
+
+  addComputation = () => {
+    this.props.addComputation({
+      shortname: this.props.predictand.code.toUpperCase(),
+      fullname: this.props.predictand.code.toUpperCase(),
+      field:
+        this.props.predictand.type === 'ACCUMULATED'
+          ? 'ACCUMULATED_FIELD'
+          : 'INSTANTANEOUS_FIELD',
+      inputs: [this.props.predictand.code],
+      scale: {
+        op: 'MULTIPLY',
+        value: 1000,
+      } /* [FIXME] - read the predictand GRIB file to determine this */,
+    })
+  }
+
   render() {
     return (
       <Grid container centered>
         <Grid.Column>
           <Card fluid color="black">
             <Card.Header>
-              <Grid.Column floated="left">Computations</Grid.Column>
+              <Grid.Column floated="left">Predictor Computations</Grid.Column>
               <Grid.Column floated="right">
                 {this.isComplete() && <Icon name="check circle" />}
               </Grid.Column>
             </Card.Header>
             <Card.Content>
               <Card.Description>
-                <p>Available predictors that can be used as inputs to computations:</p>
+                <p>Available variables to compute the predictors:</p>
                 {this.props.predictors.codes.map(e => (
                   <Label key={e}>{e}</Label>
                 ))}

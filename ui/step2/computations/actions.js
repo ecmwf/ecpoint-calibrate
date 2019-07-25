@@ -1,5 +1,6 @@
-export const addComputation = () => ({
+export const addComputation = data => ({
   type: 'COMPUTATIONS.ADD',
+  data,
 })
 
 export const updateComputationShortName = (index, shortname) => ({
