@@ -1,40 +1,42 @@
 import _ from 'lodash'
 
 const defaultState = {
-  0: {
-    isActive: true,
-    isComplete: {
-      predictand: false,
-      predictors: false,
-      parameters: false,
+  activePageNumber: 1,
+  B: {
+    1: {
       observations: false,
       output: false,
+      parameters: false,
+      predictand: false,
+      predictors: false,
     },
+    2: { computations: false },
+    3: { processing: false },
   },
-  1: { isActive: false, isComplete: { fields: false } },
-  2: { isActive: false, isComplete: { results: false } },
-  3: { isActive: false, isComplete: { decisionTree: false } },
+  C: {
+    1: { preloader: false, postprocessing: false },
+  },
 }
 
 export default (state = defaultState, action) => {
   switch (action.type) {
-    case 'PAGE.SET_PAGE': {
+    case 'PAGE.COMPLETE_SECTION': {
       return {
-        ..._.mapValues(state, o => ({ ...o, isActive: false })),
-        [action.page]: { ...state[action.page], isActive: true },
+        ...state,
+        [action.workflow]: {
+          ...state[action.workflow],
+          [action.page]: {
+            ...state[action.workflow][action.page],
+            [action.section]: true,
+          },
+        },
       }
     }
 
-    case 'PAGE.UPDATE_PAGE_COMPLETION': {
+    case 'PAGE.SET_PAGE': {
       return {
         ...state,
-        [action.page]: {
-          ...state[action.page], // isActive
-          isComplete: {
-            ...state[action.page].isComplete,
-            [action.section]: action.isComplete,
-          },
-        },
+        activePageNumber: action.page,
       }
     }
 

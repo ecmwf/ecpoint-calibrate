@@ -22,7 +22,6 @@ class App extends Component {
   getApp = fromScratch => (
     <Fragment>
       <Header />
-      <Menu />
       <Page />
     </Fragment>
   )
@@ -62,7 +61,7 @@ class App extends Component {
                 color="black"
                 icon="edit outline"
                 labelPosition="right"
-                onClick={() => this.props.setScratchValue(true)}
+                onClick={() => this.props.setWorkflow('B')}
                 size="big"
                 fluid
               >
@@ -85,7 +84,7 @@ class App extends Component {
                 color="black"
                 icon="cloud upload"
                 labelPosition="right"
-                onClick={() => this.props.setScratchValue(false)}
+                onClick={() => this.props.setWorkflow('C')}
                 size="big"
                 fluid
               >
@@ -180,8 +179,7 @@ class App extends Component {
     </Fragment>
   )
 
-  render = () =>
-    this.props.app.scratch === null ? this.getSplashScreen() : this.getApp()
+  render = () => (this.props.workflow === null ? this.getSplashScreen() : this.getApp())
 }
 
 export default App

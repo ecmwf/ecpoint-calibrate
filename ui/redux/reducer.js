@@ -9,6 +9,7 @@ import computationsReducer from './computationsReducer'
 import postprocessingReducer from './postprocessingReducer'
 import appReducer from './appReducer'
 import preloaderReducer from './preloaderReducer'
+import workflowReducer from './workflowReducer'
 
 const reducer = combineReducers({
   predictors: predictorsReducer,
@@ -20,6 +21,15 @@ const reducer = combineReducers({
   app: appReducer,
   preloader: preloaderReducer,
   page: pageReducer,
+  workflow: workflowReducer,
 })
 
-export default reducer
+const rootReducer = (state, action) => {
+  if (action.type === 'RESET_APP') {
+    state = undefined
+  }
+
+  return reducer(state, action)
+}
+
+export default rootReducer

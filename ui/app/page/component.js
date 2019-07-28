@@ -1,22 +1,65 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 
-import Step1 from '~/step1'
-import Step2 from '~/step2'
-import Step3 from '~/step3'
-import Step4 from '~/step4'
+import WorkflowB_Page1 from '~/workflows/B/pages/1'
+import WorkflowB_Page2 from '~/workflows/B/pages/2'
+import WorkflowB_Page3 from '~/workflows/B/pages/3'
+import WorkflowC_Page1 from '~/workflows/C/pages/1'
+
+import MenuFactory from '~/app/menu'
+
+const WorkflowB_Menu = MenuFactory([
+  {
+    icon: 'cloud upload',
+    title: 'Input Parameters',
+  },
+  {
+    icon: 'code',
+    title: 'Computations',
+  },
+  {
+    icon: 'cogs',
+    title: 'Processing',
+  },
+])
+const WorkflowC_Menu = MenuFactory([
+  {
+    icon: 'chart bar',
+    title: 'Post Processing',
+  },
+])
 
 const Page = props => {
-  if (props.page[0].isActive) {
-    return <Step1 />
+  if (props.workflow === 'B' && props.page.activePageNumber === 1) {
+    return (
+      <Fragment>
+        <WorkflowB_Menu {...props} />
+        <WorkflowB_Page1 />
+      </Fragment>
+    )
   }
-  if (props.page[1].isActive) {
-    return <Step2 />
+  if (props.workflow === 'B' && props.page.activePageNumber === 2) {
+    return (
+      <Fragment>
+        <WorkflowB_Menu {...props} />
+        <WorkflowB_Page2 />
+      </Fragment>
+    )
   }
-  if (props.page[2].isActive) {
-    return <Step3 />
+  if (props.workflow === 'B' && props.page.activePageNumber === 3) {
+    return (
+      <Fragment>
+        <WorkflowB_Menu {...props} />
+        <WorkflowB_Page3 />
+      </Fragment>
+    )
   }
-  if (props.page[3].isActive) {
-    return <Step4 />
+  if (props.workflow === 'C' && props.page.activePageNumber === 1) {
+    return (
+      <Fragment>
+        <WorkflowC_Menu {...props} />
+        <WorkflowC_Page1 />
+      </Fragment>
+    )
   }
 }
 
