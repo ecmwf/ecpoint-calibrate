@@ -15,7 +15,7 @@ const WorkflowB_Menu = MenuFactory([
   },
   {
     icon: 'code',
-    title: 'Computations',
+    title: 'Predictor Computation',
   },
   {
     icon: 'cogs',
