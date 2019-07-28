@@ -18,10 +18,3 @@ export const setPath = path => async dispatch => {
     )
   }
 }
-
-export const updatePageCompletion = (page, isComplete) => ({
-  type: 'PAGE.UPDATE_PAGE_COMPLETION',
-  page,
-  section: 'predictors',
-  isComplete,
-})

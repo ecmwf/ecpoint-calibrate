@@ -2,7 +2,7 @@ import { connect } from 'react-redux'
 
 import Predictors from './component'
 
-import { setPath, updatePageCompletion } from './actions'
+import { setPath } from './actions'
 import { completeSection } from '~/commonActions'
 
 const mapStateToProps = state => ({

@@ -2,12 +2,7 @@ import { connect } from 'react-redux'
 
 import Observation from './component'
 
-import {
-  setPath,
-  setDiscretizationField,
-  setStartTimeField,
-  updatePageCompletion,
-} from './actions'
+import { setPath, setDiscretizationField, setStartTimeField } from './actions'
 
 import { completeSection } from '~/commonActions'
 

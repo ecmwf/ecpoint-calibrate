@@ -12,10 +12,3 @@ export const setStartTimeField = value => ({
   type: 'OBSERVATIONS.SET_START_TIME_FIELD',
   value,
 })
-
-export const updatePageCompletion = (page, isComplete) => ({
-  type: 'PAGE.UPDATE_PAGE_COMPLETION',
-  page,
-  section: 'observations',
-  isComplete,
-})

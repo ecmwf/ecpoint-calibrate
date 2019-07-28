@@ -53,10 +53,3 @@ export const toggleComputationPostProcess = index => ({
   type: 'COMPUTATIONS.TOGGLE_POST_PROCESS',
   index,
 })
-
-export const updatePageCompletion = (page, isComplete) => ({
-  type: 'PAGE.UPDATE_PAGE_COMPLETION',
-  page,
-  section: 'fields',
-  isComplete,
-})

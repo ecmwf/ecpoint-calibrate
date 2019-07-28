@@ -7,7 +7,6 @@ import {
   setDateEndField,
   setLimSUField,
   setModelType,
-  updatePageCompletion,
 } from './actions'
 import { completeSection } from '~/commonActions'
 
