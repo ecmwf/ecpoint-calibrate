@@ -45,6 +45,14 @@ class Preloader extends Component {
     </Item>
   )
 
+  hasError = () => false
+
+  isComplete = () => !this.hasError() && this.props.path !== null
+
+  componentDidUpdate = prevProps => {
+    this.isComplete() && this.props.completeSection()
+  }
+
   render = () => (
     <Grid container centered>
       <Grid.Column>
@@ -53,7 +61,9 @@ class Preloader extends Component {
             <Grid.Column floated="left">
               Select ascii table file containing computed fields
             </Grid.Column>
-            <Grid.Column floated="right">{<Icon name="check circle" />}</Grid.Column>
+            <Grid.Column floated="right">
+              {this.isComplete() && <Icon name="check circle" />}
+            </Grid.Column>
           </Card.Header>
           <Card.Content>
             <Card.Description />

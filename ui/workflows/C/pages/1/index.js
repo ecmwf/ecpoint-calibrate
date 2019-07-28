@@ -1,13 +1,7 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 
-import PostProcessing from './postprocessing'
 import Preloader from './preloader'
 
-const Step4 = props => (
-  <Fragment>
-    <Preloader />
-    <PostProcessing />
-  </Fragment>
-)
+const Page1 = props => <Preloader />
 
-export default Step4
+export default Page1
