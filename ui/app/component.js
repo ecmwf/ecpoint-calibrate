@@ -18,6 +18,8 @@ import Page from './page'
 
 import ring from '~/assets/img/ring.png'
 
+const { shell } = require('electron')
+
 class App extends Component {
   getApp = fromScratch => (
     <Fragment>
@@ -146,14 +148,32 @@ class App extends Component {
 
       <Grid.Row centered columns={3}>
         <Grid.Column textAlign="left">
-          <Icon name="facebook" size="big" />
+          <Button
+            color="facebook"
+            onClick={() => shell.openExternal('https://facebook.com/ESoWC')}
+          >
+            <Icon name="facebook" />
+            Facebook
+          </Button>
         </Grid.Column>
 
         <Grid.Column textAlign="center">
-          <Icon name="twitter" size="big" />
+          <Button
+            color="twitter"
+            onClick={() => shell.openExternal('https://twitter.com/esowc_ecmwf')}
+          >
+            <Icon name="twitter" />
+            Twitter
+          </Button>
         </Grid.Column>
         <Grid.Column textAlign="right">
-          <Icon name="github" size="big" />
+          <Button
+            color="github"
+            onClick={() => shell.openExternal('https://github.com/esowc/ecPoint-PyCal')}
+          >
+            <Icon name="github" />
+            GitHub
+          </Button>
         </Grid.Column>
       </Grid.Row>
     </Grid>
