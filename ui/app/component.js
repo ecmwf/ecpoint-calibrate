@@ -65,7 +65,7 @@ class App extends Component {
                 size="big"
                 fluid
               >
-                Generate new <br /> Point Data Table
+                Generate a New <br /> Point Data Table
                 <Icon name="edit outline" />
               </Button>
             }
@@ -88,7 +88,7 @@ class App extends Component {
                 size="big"
                 fluid
               >
-                Upload existing <br />
+                Upload an Existing <br />
                 Point Data Table
                 <Icon name="cloud upload" />
               </Button>
@@ -108,7 +108,7 @@ class App extends Component {
           <Popup
             trigger={
               <Button color="black" icon="tree" labelPosition="right" size="big" fluid>
-                Construct new <br />
+                Construct a New <br />
                 Decision Tree
                 <Icon name="tree" />
               </Button>
@@ -127,7 +127,7 @@ class App extends Component {
           <Popup
             trigger={
               <Button color="black" icon="lab" labelPosition="right" size="big" fluid>
-                Test existing <br />
+                Test an Existing <br />
                 Decision Tree
                 <Icon name="lab" />
               </Button>
