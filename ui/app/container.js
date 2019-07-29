@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 
 import App from './component'
-import { setScratchValue, setWorkflow } from './actions'
+import { setWorkflow } from './actions'
 
 const mapStateToProps = state => ({
   page: state.page,
@@ -10,9 +10,6 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  setScratchValue: value => {
-    dispatch(setScratchValue(value))
-  },
   setWorkflow: workflow => dispatch(setWorkflow(workflow)),
 })
 

@@ -22,22 +22,13 @@ const generateInitialGrid = fields => {
 }
 
 const mapStateToProps = state => {
-  const defaultFields = state.app.scratch
-    ? state.computations.fields
-        .filter(field => field.isPostProcessed)
-        .map(field => field.shortname)
-    : state.preloader.fields
-
-  const fields =
-    state.postprocessing.fields.length > 0 ? state.postprocessing.fields : defaultFields
-
   return {
     thrGridIn:
       state.postprocessing.thrGridIn.length > 0
         ? state.postprocessing.thrGridIn
-        : generateInitialGrid(fields),
-    path: state.parameters.outPath || state.preloader.path,
-    fields: fields,
+        : generateInitialGrid(state.preloader.fields),
+    path: state.preloader.path,
+    fields: state.preloader.fields,
   }
 }
 

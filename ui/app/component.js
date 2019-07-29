@@ -21,7 +21,7 @@ import ring from '~/assets/img/ring.png'
 const { shell } = require('electron')
 
 class App extends Component {
-  getApp = fromScratch => (
+  getApp = () => (
     <Fragment>
       <Header />
       <Page />
