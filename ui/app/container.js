@@ -1,8 +1,7 @@
 import { connect } from 'react-redux'
 
 import App from './component'
-import { setScratchValue } from './actions'
-import { setWorkflow } from '~/commonActions'
+import { setScratchValue, setWorkflow } from './actions'
 
 const mapStateToProps = state => ({
   page: state.page,

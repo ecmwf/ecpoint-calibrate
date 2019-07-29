@@ -2,7 +2,7 @@ import { connect } from 'react-redux'
 
 import Processing from './component'
 
-import { completeSection, setWorkflow } from '~/commonActions'
+import { completeSection } from '~/commonActions'
 
 const mapStateToProps = state => ({
   predictand: state.predictand,
@@ -14,7 +14,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   completeSection: (workflow, page) => dispatch(completeSection('B', 3, 'processing')),
-  resetApp: () => dispatch({ type: 'RESET_APP' }),
 })
 
 export default connect(

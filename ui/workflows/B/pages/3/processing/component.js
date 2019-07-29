@@ -114,12 +114,6 @@ class Processing extends Component {
               }}
             />
           )}
-          <Button
-            content="Go back to main menu"
-            icon="eye"
-            labelPosition="left"
-            onClick={() => this.props.resetApp()}
-          />
         </Grid.Row>
         <Grid.Row>
           <Grid.Column>

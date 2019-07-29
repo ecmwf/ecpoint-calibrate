@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Image } from 'semantic-ui-react'
+import { Image, Icon, Button } from 'semantic-ui-react'
 import logo from '~/assets/img/ECMWF_logo.png'
 
 const Header = props => (
@@ -19,6 +19,20 @@ const Header = props => (
     <span style={{ paddingLeft: '10px', color: 'white' }}>
       v{window.require('electron').remote.app.getVersion()}
     </span>
+    {props.workflow !== null && (
+      <div
+        style={{
+          float: 'right',
+          paddingRight: '10px',
+          marginTop: '-10px',
+        }}
+      >
+        <Button icon labelPosition="left" onClick={() => props.resetApp()}>
+          <Icon name="left arrow" />
+          Main menu
+        </Button>
+      </div>
+    )}
   </div>
 )
 
