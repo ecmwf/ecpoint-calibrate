@@ -22,7 +22,6 @@ class Predictand extends Component {
         <Item.Header>
           <h5>Select the directory that contains the predictand:</h5>
         </Item.Header>
-        <Item.Extra>For example, rainfall, temperature, etc.</Item.Extra>
 
         <Item.Description>
           <Button
@@ -148,7 +147,7 @@ class Predictand extends Component {
               &nbsp;&nbsp;&nbsp;
               <Popup
                 trigger={<Icon name="info circle" />}
-                content="An instantaneous value is the observation at a particular instant. For example, temperature."
+                content="An instantaneous value is one that corresponds to a particular instant in time, eg. temperature."
                 size="tiny"
               />
             </Grid.Column>

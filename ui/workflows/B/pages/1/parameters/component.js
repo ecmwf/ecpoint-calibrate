@@ -69,7 +69,7 @@ class Parameters extends Component {
       <Item>
         <Item.Content>
           <Item.Header>
-            <h3>Calibration Period</h3>
+            <h3>Calibration period (Model data time)</h3>
             <br />
           </Item.Header>
 
@@ -125,9 +125,13 @@ class Parameters extends Component {
     <Item>
       <Item.Content>
         <Item.Header>
-          <h3>Spin-up</h3>
+          <h3>Spin-up Window</h3>
           <h5>
-            Enter upper limit, in hours, for the spin-up window in the model data:
+            Enter upper limit, in hours, for the spin-up window: &nbsp;&nbsp;&nbsp;
+            <Popup trigger={<Icon name="info circle" />} size="tiny">
+              Model data for forecast lead time less than or equal to the value entered
+              will not be used for the point data table
+            </Popup>
           </h5>
         </Item.Header>
 

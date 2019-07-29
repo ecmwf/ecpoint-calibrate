@@ -105,6 +105,7 @@ class Computation extends Component {
             onChange={(e, { value }) =>
               this.props.onFieldChange(this.props.index, value)
             }
+            disabled={this.props.index === 0 ? true : null}
           />
         </Table.Cell>
         <Table.Cell width={4}>
@@ -118,6 +119,7 @@ class Computation extends Component {
             onChange={(e, { value }) =>
               this.props.onInputsChange(this.props.index, value)
             }
+            disabled={this.props.index === 0 ? true : null}
           />
         </Table.Cell>
         <Table.Cell collapsing>
@@ -148,10 +150,16 @@ class Computation extends Component {
           <Checkbox
             checked={this.props.isPostProcessed === true}
             onChange={() => this.props.togglePostProcess(this.props.index)}
+            disabled={this.props.index === 0 ? true : null}
           />
         </Table.Cell>
         <Table.Cell collapsing>
-          <Button icon circular onClick={() => this.props.onRemove(this.props.index)}>
+          <Button
+            icon
+            circular
+            onClick={() => this.props.onRemove(this.props.index)}
+            disabled={this.props.index === 0 ? true : null}
+          >
             <Icon name="delete" />
           </Button>
         </Table.Cell>
@@ -170,7 +178,7 @@ class Computations extends Component {
             <Table.HeaderCell textAlign="center">Field type</Table.HeaderCell>
             <Table.HeaderCell textAlign="center">Input variable(s)</Table.HeaderCell>
             <Table.HeaderCell textAlign="center">Scaling factor</Table.HeaderCell>
-            <Table.HeaderCell textAlign="center">Post-process?</Table.HeaderCell>
+            <Table.HeaderCell textAlign="center">Predictor?</Table.HeaderCell>
             <Table.HeaderCell />
           </Table.Row>
         </Table.Header>
@@ -239,7 +247,7 @@ class Computations extends Component {
       inputs: [this.props.predictand.code],
       scale: {
         op: 'MULTIPLY',
-        value: 1000,
+        value: 1,
       } /* [FIXME] - read the predictand GRIB file to determine this */,
     })
   }
@@ -250,14 +258,14 @@ class Computations extends Component {
         <Grid.Column>
           <Card fluid color="black">
             <Card.Header>
-              <Grid.Column floated="left">Predictor Computations</Grid.Column>
+              <Grid.Column floated="left">Computations (Define Predictors)</Grid.Column>
               <Grid.Column floated="right">
                 {this.isComplete() && <Icon name="check circle" />}
               </Grid.Column>
             </Card.Header>
             <Card.Content>
               <Card.Description>
-                <p>Available variables to compute the predictors:</p>
+                <p>Variables available for computing predictors:</p>
                 {this.props.predictors.codes.map(e => (
                   <Label key={e}>{e}</Label>
                 ))}
@@ -267,9 +275,9 @@ class Computations extends Component {
             <Card.Content extra>
               <a>
                 <Icon name="cogs" />
-                {this.props.fields.length} computation(s) in total;{' '}
+                {this.props.fields.length} computation(s);{' '}
                 {this.props.fields.filter(field => field.isPostProcessed).length}{' '}
-                selected for post-processing.
+                variable(s) chosen as predictor(s).
               </a>
             </Card.Content>
           </Card>
