@@ -55,54 +55,28 @@ class App extends Component {
         </Popup>
       </Grid.Row>
 
-      <Grid.Row centered columns={2}>
-        <Grid.Column verticalAlign="middle" className="cta-left">
-          <Popup
-            trigger={
-              <Button
-                color="black"
-                icon="edit outline"
-                labelPosition="right"
-                onClick={() => this.props.setWorkflow('B')}
-                size="big"
-                fluid
-              >
-                Generate a New <br /> Point Data Table
-                <Icon name="edit outline" />
-              </Button>
-            }
-            position="left center"
-            wide
-          >
-            Generate a new data table containing the modelled and observed values of the
-            considered predictand, and all the chosen predictors, for every instance
-            evaluated in the calibration period.
-          </Popup>
-        </Grid.Column>
-        <Grid.Column verticalAlign="middle" className="cta-right">
-          <Popup
-            trigger={
-              <Button
-                color="black"
-                icon="cloud upload"
-                labelPosition="right"
-                onClick={() => this.props.setWorkflow('C')}
-                size="big"
-                fluid
-              >
-                Upload an Existing <br />
-                Point Data Table
-                <Icon name="cloud upload" />
-              </Button>
-            }
-            position="right center"
-            wide
-          >
-            Upload a previously-generated data table containing the modelled and
-            observed values of the considered predictand, and all the chosen predictors,
-            for every instance evaluated in the calibration period.
-          </Popup>
-        </Grid.Column>
+      <Grid.Row centered columns={1}>
+        <Popup
+          trigger={
+            <Button
+              color="black"
+              icon="edit outline"
+              labelPosition="right"
+              onClick={() => this.props.setWorkflow('B')}
+              size="big"
+              fluid
+            >
+              Generate a New <br /> Point Data Table
+              <Icon name="edit outline" />
+            </Button>
+          }
+          position="left center"
+          wide
+        >
+          Generate a new data table containing the modelled and observed values of the
+          considered predictand, and all the chosen predictors, for every instance
+          evaluated in the calibration period.
+        </Popup>
       </Grid.Row>
 
       <Grid.Row centered columns={2}>
@@ -128,7 +102,14 @@ class App extends Component {
         <Grid.Column verticalAlign="middle" className="cta-right">
           <Popup
             trigger={
-              <Button color="black" icon="lab" labelPosition="right" size="big" fluid>
+              <Button
+                color="black"
+                icon="lab"
+                labelPosition="right"
+                size="big"
+                onClick={() => this.props.setWorkflow('C')}
+                fluid
+              >
                 Test an Existing <br />
                 Decision Tree
                 <Icon name="lab" />
