@@ -60,7 +60,7 @@ class Predictand extends Component {
             <h5>Enter an accumulation period, in hours, for the predictand:</h5>
           </Item.Header>
           <Item.Extra>
-            For example, insert the value <code>24</code> for a 24-hourly accumulation
+            For example, insert the value <code>24</code> for a 24-hour accumulation
             period.
           </Item.Extra>
 
