@@ -8,7 +8,7 @@ from core.loaders.geopoints import Geopoints
 
 from ..computations.models import Computation
 from .utils import (
-    adjust_leadstart,
+    adjust_steps,
     compute_local_solar_time,
     generate_steps,
     iter_daterange,
@@ -101,50 +101,64 @@ def run(config):
     )
 
     # Counter for the BaseDate and BaseTime to avoid repeating the same forecasts in different cases
-    counterValidTimes = set()
+    counter_used_FC = {}
     obsTOT = 0
     obsUSED = 0
+    DiscBT = config.observations.discretization
+    BaseTimeS = config.observations.start_time
 
-    for curr_date, curr_time, leadstart in iter_daterange(
-        BaseDateS,
-        BaseDateF,
-        discretization=config.observations.discretization,
-        start_time=config.observations.start_time,
+    for curr_date, curr_time, step_s, case in iter_daterange(
+        start=BaseDateS, end=BaseDateF, start_hour=BaseTimeS, interval=DiscBT
     ):
-        yield log.info("FORECAST PARAMETERS")
+        step_f = step_s + Acc
+        yield log.info(f"Case {case}")
+        yield log.info("FORECAST PARAMETERS:")
         yield log.info(
-            "BaseDate={} BaseTime={:02d} UTC (t+{}, t+{})".format(
-                curr_date.strftime("%Y%m%d"), curr_time, leadstart, leadstart + Acc
-            )
+            f'  {curr_date.strftime("%Y%m%d")}, {curr_time:02d} UTC, (t+{step_s}, t+{step_f})'
         )
 
-        curr_date, curr_time, leadstart = adjust_leadstart(
+        new_curr_date, new_curr_time, new_step_s, msgs = adjust_steps(
             date=curr_date,
             hour=curr_time,
-            leadstart=leadstart,
+            step=step_s,
+            start_hour=BaseTimeS,
             limSU=LimSU,
-            discretization=config.observations.discretization,
-        )
-        thedateNEWSTR = curr_date.strftime("%Y%m%d")
-        thetimeNEWSTR = f"{curr_time:02d}"
-
-        yield log.info(
-            f"BaseDate={thedateNEWSTR} BaseTime={thetimeNEWSTR} UTC (t+{leadstart}, t+{leadstart + Acc})"
+            interval=DiscBT,
         )
 
-        # Reading the forecasts
-        if curr_date < BaseDateS or curr_date > BaseDateF:
+        for msg in msgs:
+            yield log.info(msg)
+
+        new_step_f = new_step_s + Acc
+
+        new_curr_date_str = new_curr_date.strftime("%Y%m%d")
+        new_curr_time_str = f"{new_curr_time:02d}"
+
+        used_forecast = f"{new_curr_date_str}, {new_curr_time_str} UTC, (t+{new_step_s}, t+{new_step_f})"
+        if used_forecast in counter_used_FC:
             log.warn(
-                f"Requested date {curr_date} outside input date range: {BaseDateSSTR} - {BaseDateFSTR}"
+                f"  The above forecast already considered for computation in Case {counter_used_FC[used_forecast]}"
             )
             continue
+
+        # Reading the forecasts
+        if new_curr_date < BaseDateS or new_curr_date > BaseDateF:
+            log.warn(
+                f"  Forecast out of the calibration period {BaseDateSSTR} - {BaseDateFSTR}. Forecast not considered."
+            )
+            continue
+
+        counter_used_FC[used_forecast] = case
+        yield log.info(f"  {used_forecast}")
 
         def get_grib_path(predictand, step):
             return os.path.join(
                 PathFC,
                 predictand,
-                thedateNEWSTR + thetimeNEWSTR,
-                "_".join([predictand, thedateNEWSTR, thetimeNEWSTR, f"{step:02d}"])
+                new_curr_date_str + new_curr_time_str,
+                "_".join(
+                    [predictand, new_curr_date_str, new_curr_time_str, f"{step:02d}"]
+                )
                 + ".grib",
             )
 
@@ -153,13 +167,13 @@ def run(config):
         # One wants the 24h. The 24h mean is obtained by taking the difference between the beginning and the end of the 24 hourly period
         # and dividing by the number of seconds in that period (24h = 86400 sec). Thus, the unit will be W/m2
 
-        steps = [leadstart + step for step in generate_steps(Acc)]
+        steps = [new_step_s + step for step in generate_steps(Acc)]
 
         # Defining the parameters for the rainfall observations
         validDateF = (
-            datetime.combine(curr_date, datetime.min.time())
-            + timedelta(hours=curr_time)
-            + timedelta(hours=steps[-1])
+            datetime.combine(new_curr_date, datetime.min.time())
+            + timedelta(hours=new_curr_time)
+            + timedelta(hours=new_step_f)
         )
         DateVF = validDateF.strftime("%Y%m%d")
         HourVF = validDateF.strftime("%H")
@@ -169,12 +183,6 @@ def run(config):
             f"Validity date/time (end of {Acc} hourly " f"period) = {validDateF}"
         )
 
-        # Looking for no repetions in the computed dates and times
-        if validDateF in counterValidTimes:
-            yield log.warn("Valid Date and Time already computed.")
-            continue
-
-        counterValidTimes.add(validDateF)
         dirOBS = os.path.join(PathOBS, AccSTR, DateVF)
         fileOBS = f"tp_{Acc:02d}_{DateVF}_{HourVF}.geo"
 
@@ -193,9 +201,7 @@ def run(config):
 
         nOBS = len(obs.dataframe)
 
-        if nOBS <= 1:
-            # which will account for the cases of zero observation in the geopoint file (because the length of the vector will be forced to 1),
-            # or cases in which there is only one observation in the geopoint file
+        if nOBS == 0:
             yield log.warn(f"No observations: {obs_path}.")
             continue
 

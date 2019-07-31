@@ -74,7 +74,9 @@ class Computation extends Component {
     return (
       <Table.Row positive={this.isPositive()}>
         <Table.Cell width={4}>
-          {this.props.index === 0 && <Label ribbon>Predictand variable (pre-computed)</Label>}
+          {this.props.index === 0 && (
+            <Label ribbon>Predictand variable (pre-computed)</Label>
+          )}
           <p>Short name:</p>
           <Input
             fluid

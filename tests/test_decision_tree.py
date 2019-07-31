@@ -1,7 +1,7 @@
 import os
 
-import pandas
 import numpy as np
+import pandas
 
 from core.postprocessors.decision_tree import DecisionTree
 
@@ -37,21 +37,21 @@ def test_decision_tree_with_predefined_threshold_splits():
     # root = dt.construct_tree()
 
     expected_thrL_matrix = [
-        [float("-inf"), float("-inf"), 5., float("-inf"), float("-inf")],
-        [float("-inf"), float("-inf"), 5., float("-inf"), 70.],
-        [float("-inf"), float("-inf"), 5., float("-inf"), 275.],
-        [float("-inf"), float("-inf"), 20., float("-inf"), float("-inf")],
-        [float("-inf"), float("-inf"), 20., float("-inf"), 70.],
-        [float("-inf"), float("-inf"), 20., float("-inf"), 275.],
+        [float("-inf"), float("-inf"), 5.0, float("-inf"), float("-inf")],
+        [float("-inf"), float("-inf"), 5.0, float("-inf"), 70.0],
+        [float("-inf"), float("-inf"), 5.0, float("-inf"), 275.0],
+        [float("-inf"), float("-inf"), 20.0, float("-inf"), float("-inf")],
+        [float("-inf"), float("-inf"), 20.0, float("-inf"), 70.0],
+        [float("-inf"), float("-inf"), 20.0, float("-inf"), 275.0],
     ]
     assert np.array_equal(dt.thrL_out, expected_thrL_matrix)
 
     expected_thrH_matrix = [
-        [0.25, 2., 20., float("inf"), 70.],
-        [0.25, 2., 20., float("inf"), 275.],
-        [0.25, 2., 20., float("inf"), float("inf")],
-        [0.25, 2., float("inf"), float("inf"), 70.],
-        [0.25, 2., float("inf"), float("inf"), 275.],
-        [0.25, 2., float("inf"), float("inf"), float("inf")],
+        [0.25, 2.0, 20.0, float("inf"), 70.0],
+        [0.25, 2.0, 20.0, float("inf"), 275.0],
+        [0.25, 2.0, 20.0, float("inf"), float("inf")],
+        [0.25, 2.0, float("inf"), float("inf"), 70.0],
+        [0.25, 2.0, float("inf"), float("inf"), 275.0],
+        [0.25, 2.0, float("inf"), float("inf"), float("inf")],
     ]
     assert np.array_equal(dt.thrH_out, expected_thrH_matrix)
