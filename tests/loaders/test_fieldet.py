@@ -18,6 +18,14 @@ def test_dataframe():
     assert len(grib.dataframe) == 2140702
 
 
+def test_units():
+    path = TEST_DATA_DIR / "cape_20150601_00_03.grib"
+
+    grib = Fieldset.from_path(path=path)
+
+    assert grib.units == "J kg**-1"
+
+
 def test_values_getter():
     path = TEST_DATA_DIR / "cape_20150601_00_03.grib"
 

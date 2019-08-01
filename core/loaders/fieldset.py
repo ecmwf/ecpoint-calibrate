@@ -16,6 +16,10 @@ class Fieldset(metview.Fieldset):
     def __init__(self, path):
         raise PermissionError("Initilizing this class directly is not allowed.")
 
+    @property
+    def units(self):
+        return metview.grib_get_string(self, "units")
+
     @classmethod
     def from_path(cls, path: Union[Path, str]):
         if isinstance(path, Path):

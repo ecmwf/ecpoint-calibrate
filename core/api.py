@@ -1,12 +1,13 @@
 import json
 import os
-import re
+from pathlib import Path
 
 import pandas
 from flask import Flask, Response, jsonify, request
 from healthcheck import EnvironmentDump, HealthCheck
 
 from core.loaders.ascii import ASCIIDecoder
+from core.loaders.fieldset import Fieldset
 from core.models import Config
 from core.postprocessors.decision_tree import DecisionTree
 from core.processor import run
@@ -68,6 +69,19 @@ def get_naive_decision_tree():
     tree = dt.construct_tree(predictor_matrix).json
 
     return jsonify({"records": matrix, "labels": list(df_out.columns), "tree": [tree]})
+
+
+@app.route("/get-predictor-units", methods=("POST",))
+def get_predictor_units():
+    payload = request.get_json()
+    path = payload["path"]
+
+    base_predictor_path = Path(path)
+    first_grib_file = next(base_predictor_path.glob("**/*.grib"))
+
+    units = Fieldset.from_path(first_grib_file).units
+
+    return Response(json.dumps({"units": units}), mimetype="application/json")
 
 
 def main():
