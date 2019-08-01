@@ -27,6 +27,6 @@ netcdf4 = "*"
 python_version = "3.7"
 
 [scripts]
-lint = "bash -c 'isort -rc core && black core --exclude core/processor/log_factory.py'"
+lint = "bash -c 'isort -rc core tests && black tests core --exclude core/processor/log_factory.py'"
 test = "py.test"
 server = "python -m core.api"
