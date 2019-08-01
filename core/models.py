@@ -56,8 +56,16 @@ class Predictors(object):
 
 
 @attr.s
-class Computations(object):
-    fields = attr.ib(default=attr.Factory(list))
+class Computation:
+    index = attr.ib(converter=int)
+    shortname = attr.ib(converter=str)
+    fullname = attr.ib(converter=str)
+    field = attr.ib(converter=str)
+    isPostProcessed = attr.ib(converter=bool)
+    inputs = attr.ib(default=attr.Factory(list))
+    scale = attr.ib(default=attr.Factory(dict))
+
+    is_reference = attr.ib(default=False)
 
 
 @attr.s
@@ -75,5 +83,5 @@ class Config(object):
             predictand=Predictand(**data["predictand"]),
             observations=Observations(**data["observations"]),
             predictors=Predictors(**data["predictors"]),
-            computations=Computations(**data["computations"]),
+            computations=[Computation(**field) for field in data["computations"]],
         )
