@@ -32,6 +32,8 @@ class Predictand(object):
 
     min_value = attr.ib(converter=str)
 
+    type_ = attr.ib(converter=str)
+
 
 @attr.s
 class Observations(object):
