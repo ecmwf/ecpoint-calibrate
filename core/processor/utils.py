@@ -108,19 +108,25 @@ def compute_local_solar_time(longitudes, hour):
     return tempPos + tempNeg  # [XXX] Review this line
 
 
-class log(object):
+class log:
+    raw = False
+
     @classmethod
     def info(cls, message):
-        return "[INFO] " + message + "[END]"
+        return message if cls.raw else "[INFO] " + message + "[END]"
 
     @classmethod
     def warn(cls, message):
-        return "[WARNING] " + message + "[END]"
+        return message if cls.raw else "[WARNING] " + message + "[END]"
 
     @classmethod
     def error(cls, message):
-        return "[ERROR] " + message + "[END]"
+        return message if cls.raw else "[ERROR] " + message + "[END]"
 
     @classmethod
     def success(cls, message):
-        return "[SUCCESS] " + message + "[END]"
+        return message if cls.raw else "[SUCCESS] " + message + "[END]"
+
+    @classmethod
+    def bold(cls, message):
+        return message if cls.raw else "[TITLE] " + message + "[END]"
