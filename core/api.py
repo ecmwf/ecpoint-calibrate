@@ -46,10 +46,8 @@ def get_fields_from_ascii_table():
     payload = request.get_json()
     path = payload["path"]
 
-    comments = ASCIIDecoder(path=path).comments
-    m = re.search(r"# Post-processed computations: (.*)", comments)
-    fields = m.group(1).strip().split(", ")
-
+    df = ASCIIDecoder(path=path).dataframe
+    fields = set(df.columns) - {"latOBS", "lonOBS", "TimeUTC", "Date", "FER", "LST"}
     return Response(json.dumps(fields), mimetype="application/json")
 
 
