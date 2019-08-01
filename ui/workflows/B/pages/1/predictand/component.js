@@ -122,7 +122,7 @@ class Predictand extends Component {
 
   minValueAcc_hasError = () =>
     this.props.predictand.minValueAcc === '' ||
-    /^\d+$/.test(this.props.predictand.minValueAcc)
+    /^(\d+\.?\d*|\.\d+)$/.test(this.props.predictand.minValueAcc)
       ? null
       : true
 

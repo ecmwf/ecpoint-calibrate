@@ -30,9 +30,11 @@ class Predictand(object):
 
     error = attr.ib(converter=str)
 
-    min_value = attr.ib(converter=str)
+    min_value = attr.ib(converter=float)
 
     type_ = attr.ib(converter=str)
+
+    units = attr.ib(converter=str)
 
 
 @attr.s

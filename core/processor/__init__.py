@@ -270,7 +270,7 @@ def run(config):
 
                 yield log.info(
                     f"  Selecting values that correspond to {computation.shortname}"
-                    f" >= {config.predictand.min_value} mm/{Acc}h."
+                    f" >= {config.predictand.min_value} {config.predictand.units}/{Acc}h."
                 )
 
                 ref_geopoints_filtered_df = ref_geopoints.dataframe[mask]
@@ -377,13 +377,13 @@ def run(config):
     )
     yield log.success(
         f"Number of observations actually used in the calibration period "
-        f"(tp >= {config.predictand.min_value} mm/{Acc}h): {obsUSED}"
+        f"({reference_predictor} >= {config.predictand.min_value} {config.predictand.units}/{Acc}h): {obsUSED}"
     )
 
     footer = dedent(
         f"""
         # Number of observations in the whole calibration period = {obsTOT}
-        # Number of observations actually used in the calibration period (corresponding to {reference_predictor} => {config.predictand.min_value}mm/{Acc}h) = {obsUSED}
+        # Number of observations actually used in the calibration period (corresponding to {reference_predictor} => {config.predictand.min_value} {config.predictand.units}/{Acc}h) = {obsUSED}
         """
     ).strip()
     serializer.footer = footer
