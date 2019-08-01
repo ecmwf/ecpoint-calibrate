@@ -16,62 +16,22 @@ def iter_daterange(start, end, interval, start_hour=0):
 
 
 def adjust_steps(date, hour, step, start_hour, limSU, interval):
+    msgs = []
     timestamp = datetime.combine(date, time(hour=hour))
 
     if 0 <= step <= limSU:
         timestamp -= timedelta(hours=interval)
-        return timestamp.date(), timestamp.time().hour, step + interval, []
+        msgs.append(
+            "  Forecast within the spin-up window. Let's consider instead the following."
+        )
+        return timestamp.date(), timestamp.time().hour, step + interval, msgs
 
     for each in range(start_hour, 24, interval):
         if each + limSU < step <= each + limSU + interval:
+            if each != 0:
+                msgs.append("  A shorter range forecast can be considered.")
             timestamp += timedelta(hours=each)
-            return timestamp.date(), timestamp.time().hour, step - each, []
-
-
-def __adjust_steps(date, hour, step, start_hour, limSU, interval):
-    msgs = []
-    end_time = list(range(start_hour, 24, interval))[-1]
-
-    # Checks for the forecasts
-    if step <= limSU:  # The forecast is within the spin-up window
-        msgs.append("Forecast within the spin-up window. Let's consider instead...")
-        new_hour = hour - interval
-        new_step = step + interval
-        if new_hour < 0:
-            new_date = date - timedelta(1)
-            new_hour = end_time
-        else:
-            new_date = date
-    else:  # The forecast is not within the spin-up window
-        if step >= interval:  # There is a shorter range forecast available
-            msgs.append("A shorter range forecast can be considered...")
-            new_hour_tmp = hour + interval
-            new_step_tmp = step - interval
-            if new_hour_tmp > end_time:
-                new_date_tmp = date + timedelta(1)
-                new_hour_tmp = start_hour
-            else:
-                new_date_tmp = date
-
-            if (
-                new_step_tmp <= limSU
-            ):  # The shorter range forecast is within the spin-up window
-                new_date = date
-                new_hour = hour
-                new_step = step
-                msgs.append(
-                    "Forecast within the spin-up window. Let's consider the previous forecast instead..."
-                )
-            else:
-                new_date = new_date_tmp
-                new_hour = new_hour_tmp
-                new_step = new_step_tmp
-        else:
-            new_date = date
-            new_hour = hour
-            new_step = step
-
-    return new_date, new_hour, new_step, msgs
+            return timestamp.date(), timestamp.time().hour, step - each, msgs
 
 
 def generate_steps(accumulation):

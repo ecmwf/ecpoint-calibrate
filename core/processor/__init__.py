@@ -109,9 +109,6 @@ def run(config):
             interval=DiscBT,
         )
 
-        for msg in msgs:
-            yield log.info(msg)
-
         new_step_f = new_step_s + Acc
 
         new_curr_date_str = new_curr_date.strftime("%Y%m%d")
@@ -132,6 +129,10 @@ def run(config):
             continue
 
         counter_used_FC[used_forecast] = case
+
+        for msg in msgs:
+            yield log.info(msg)
+
         yield log.info(f"  {used_forecast}")
         yield log.info("")
 
