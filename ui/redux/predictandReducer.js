@@ -5,6 +5,7 @@ const defaultState = {
   error: null,
   minValueAcc: '',
   accumulation: '',
+  units: null,
 }
 
 export default (state = defaultState, action) => {
@@ -13,6 +14,13 @@ export default (state = defaultState, action) => {
       return action.data !== null
         ? { ...state, path: action.data, code: action.data.replace(/^.*[\\\/]/, '') }
         : state
+    }
+
+    case 'PREDICTAND.SET_UNITS': {
+      return {
+        ...state,
+        units: action.data,
+      }
     }
 
     case 'PREDICTAND.SET_TYPE': {

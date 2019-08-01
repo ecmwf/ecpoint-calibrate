@@ -37,9 +37,15 @@ class Predictand extends Component {
             </p>
           )}
           {this.props.predictand.code && (
-            <div>
+            <p>
               <b>Predictand Code:</b> <Label>{this.props.predictand.code}</Label>
-            </div>
+            </p>
+          )}
+
+          {this.props.predictand.units && (
+            <p>
+              <b>Units:</b> <code>{this.props.predictand.units}</code>
+            </p>
           )}
         </Item.Extra>
       </Item.Content>
@@ -89,9 +95,13 @@ class Predictand extends Component {
             </h5>
           </Item.Header>
           <Item.Extra>
-            For example, enter the value <code>1</code> for <code>1 mm/12h</code>.<br />
+            For example, enter the value <code>1</code> for{' '}
+            <code>
+              1 {this.props.predictand.units}/{this.props.predictand.accumulation}h
+            </code>
+            .<br />
             The entered value must be consistent with the units in which the predictand
-            is represented, i.e., <code>1 mm/12h</code> vs <code>0.001 m/12h</code>.
+            is represented.
           </Item.Extra>
 
           <Item.Description>
@@ -100,6 +110,8 @@ class Predictand extends Component {
               placeholder="Enter a number"
               value={this.props.predictand.minValueAcc}
               onChange={e => this.props.change_minValueAcc(e.target.value)}
+              label={{ basic: true, content: this.props.predictand.units || '' }}
+              labelPosition="right"
             />
           </Item.Description>
           <Item.Extra />
