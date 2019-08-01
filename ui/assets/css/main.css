@@ -35,7 +35,7 @@ body {
   color: #edede3;
   font-family: "RobotoMono",Monaco,"Courier New",monospace;
   font-size: 13px;
-  margin-bottom: 0.2em;
+  height: 4px;
 }
 
 .data-grid-container .data-grid {

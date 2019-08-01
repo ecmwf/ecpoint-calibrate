@@ -28,10 +28,11 @@ class Processing extends Component {
 
     const predictand = {
       path: this.props.predictand.path,
-      accumulation: this.props.predictand.accumulation,
+      accumulation: this.props.predictand.accumulation || 0,
       code: this.props.predictand.code,
       error: this.props.predictand.error,
       min_value: this.props.predictand.minValueAcc,
+      type_: this.props.predictand.type,
     }
 
     const observations = {
@@ -45,10 +46,6 @@ class Processing extends Component {
       codes: this.props.predictors.codes,
     }
 
-    const computations = {
-      fields: this.props.computations.fields,
-    }
-
     client
       .post({
         url: '/computation-logs',
@@ -57,7 +54,7 @@ class Processing extends Component {
           predictand,
           observations,
           predictors,
-          computations,
+          computations: this.props.computations.fields,
         },
         json: true,
       })
@@ -68,16 +65,40 @@ class Processing extends Component {
       })
   }
 
-  colorizeLog = log => {
-    if (log.startsWith('[WARNING]')) {
-      return <span style={{ color: '#d6cc75' }}>{log}</span>
-    } else if (log.startsWith('[SUCCESS]')) {
-      return <span style={{ color: '#42c88a' }}>{log.replace('[SUCCESS]', '')}</span>
-    } else if (log.startsWith('[ERROR]')) {
-      return <span style={{ color: '#f65353' }}>{log}</span>
+  colorizeLog = (log, key) => {
+    if (log.includes('[WARNING]')) {
+      return (
+        <pre key={key} className="log" style={{ color: '#d6cc75' }}>
+          {log.replace('[WARNING]', '')}
+        </pre>
+      )
+    } else if (log.includes('[SUCCESS]')) {
+      return (
+        <pre key={key} className="log" style={{ color: '#42c88a' }}>
+          {log.replace('[SUCCESS]', '')}
+        </pre>
+      )
+    } else if (log.includes('[ERROR]')) {
+      return (
+        <pre key={key} className="log" style={{ color: '#f65353' }}>
+          {log.replace('[ERROR]', '')}
+        </pre>
+      )
+    } else if (log.includes('[TITLE]')) {
+      return (
+        <b>
+          <pre key={key} className="log" style={{ color: '#89c4f4' }}>
+            {log.replace('[TITLE]', '')}
+          </pre>
+        </b>
+      )
     }
 
-    return <span>{log.replace('[INFO]', '')}</span>
+    return (
+      <pre key={key} className="log">
+        {log.replace('[INFO]', '')}
+      </pre>
+    )
   }
 
   getAsciiTableModal = () => (
@@ -119,11 +140,7 @@ class Processing extends Component {
           <Grid.Column>
             {this.state.logs.length > 0 && (
               <Segment inverted>
-                {this.state.logs.map((log, idx) => (
-                  <p key={idx} className="log">
-                    {this.colorizeLog(log)}
-                  </p>
-                ))}
+                {this.state.logs.map((log, idx) => this.colorizeLog(log, idx))}
               </Segment>
             )}
           </Grid.Column>
