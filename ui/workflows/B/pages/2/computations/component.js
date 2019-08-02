@@ -59,7 +59,8 @@ const operations = [
 ]
 
 class Computation extends Component {
-  isPositive = () => (isNotEmpty([this.props]) ? true : null)
+  isPositive = () =>
+    isNotEmpty([this.props]) && !this.newUnitsHasError() ? true : null
 
   getPredictors = () =>
     this.props.predictors.codes
@@ -69,6 +70,14 @@ class Computation extends Component {
           .map(v => ({ key: v, text: v, value: v }))
           .filter(v => v.key !== this.props.shortname)
       )
+  newUnitsHasError = () =>
+    this.props.index === 0
+      ? this.props.inputs
+          .map(input => input.newUnits)
+          .includes(this.props.observations.units)
+        ? null
+        : true
+      : null
 
   render() {
     return (
@@ -132,12 +141,12 @@ class Computation extends Component {
           />
 
           {this.props.inputs.length > 0 && (
-            <Table size="small" compact="very" basic="very" celled>
+            <Table size="small" compact="very" basic="very">
               <Table.Header>
                 <Table.Row>
-                  <Table.HeaderCell colSpan="2">
-                    <b>Units:</b>
-                  </Table.HeaderCell>
+                  <Table.HeaderCell />
+                  <Table.HeaderCell textAlign="center">Original units</Table.HeaderCell>
+                  <Table.HeaderCell textAlign="center">New units</Table.HeaderCell>
                 </Table.Row>
               </Table.Header>
               <Table.Body>
@@ -145,6 +154,23 @@ class Computation extends Component {
                   <Table.Row textAlign="center">
                     <Table.Cell collapsing>{input.code}</Table.Cell>
                     <Table.Cell collapsing>{input.units}</Table.Cell>
+                    <Table.Cell collapsing>
+                      <Input
+                        fluid
+                        error={this.newUnitsHasError()}
+                        value={
+                          this.props.scale.value === '1' ? input.units : input.newUnits
+                        }
+                        onChange={e =>
+                          this.props.updateNewInputUnits(
+                            this.props.index,
+                            input,
+                            e.target.value
+                          )
+                        }
+                        disabled={this.props.scale.value === '1'}
+                      />
+                    </Table.Cell>
                   </Table.Row>
                 ))}
               </Table.Body>
@@ -227,7 +253,9 @@ class Computations extends Component {
               setScaleOp={this.props.setScaleOp}
               setScaleValue={this.props.setScaleValue}
               predictors={this.props.predictors}
+              observations={this.props.observations}
               togglePostProcess={this.props.toggleComputationPostProcess}
+              updateNewInputUnits={this.props.updateNewInputUnits}
             />
           ))}
         </Table.Body>
@@ -281,11 +309,11 @@ class Computations extends Component {
       inputs: [input],
       scale: {
         op: 'MULTIPLY',
-        value: 1,
+        value: '1',
       } /* [FIXME] - read the predictand GRIB file to determine this */,
     })
 
-    this.props.updateComputationInputUnit(0, input)
+    this.props.fetchAndUpdateInputUnits(this.props.fields.length, input)
   }
 
   render() {

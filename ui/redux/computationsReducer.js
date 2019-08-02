@@ -93,6 +93,23 @@ export default (state = defaultState, action) => {
         }),
       }
 
+    case 'COMPUTATIONS.SET_INPUT_NEW_UNITS':
+      return {
+        ...state,
+        fields: state.fields.map(item => {
+          if (item.index === action.index) {
+            return {
+              ...item,
+              inputs: item.inputs.map(input => ({
+                ...input,
+                newUnits: input.code === action.code ? action.newUnits : input.newUnits,
+              })),
+            }
+          }
+          return item
+        }),
+      }
+
     case 'COMPUTATIONS.SET_SCALE_OP':
       return {
         ...state,

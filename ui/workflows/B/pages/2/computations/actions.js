@@ -29,7 +29,7 @@ export const updateComputationInputs = (index, inputs) => ({
   inputs,
 })
 
-export const updateComputationInputUnit = (index, input) => async dispatch => {
+export const fetchAndUpdateInputUnits = (index, input) => async dispatch => {
   client.post(
     { url: '/get-predictor-units', body: { path: input.path }, json: true },
     (err, httpResponse, body) => {
@@ -46,6 +46,13 @@ export const updateComputationInputUnit = (index, input) => async dispatch => {
     }
   )
 }
+
+export const updateNewInputUnits = (index, input, newUnits) => ({
+  type: 'COMPUTATIONS.SET_INPUT_NEW_UNITS',
+  code: input.code,
+  newUnits,
+  index,
+})
 
 export const removeComputation = index => ({
   type: 'COMPUTATIONS.REMOVE',

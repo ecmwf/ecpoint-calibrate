@@ -12,7 +12,8 @@ import {
   setScaleOp,
   setScaleValue,
   toggleComputationPostProcess,
-  updateComputationInputUnit,
+  fetchAndUpdateInputUnits,
+  updateNewInputUnits,
 } from './actions'
 
 import { completeSection } from '~/commonActions'
@@ -21,6 +22,7 @@ const mapStateToProps = state => ({
   predictors: state.predictors,
   fields: state.computations.fields,
   predictand: state.predictand,
+  observations: state.observations,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -35,11 +37,14 @@ const mapDispatchToProps = dispatch => ({
 
   onComputationInputsChange: (index, inputs) => {
     dispatch(updateComputationInputs(index, inputs)),
-      inputs.map(input => dispatch(updateComputationInputUnit(index, input)))
+      inputs.map(input => dispatch(fetchAndUpdateInputUnits(index, input)))
   },
 
-  updateComputationInputUnit: (index, input) =>
-    dispatch(updateComputationInputUnit(index, input)),
+  fetchAndUpdateInputUnits: (index, input) =>
+    dispatch(fetchAndUpdateInputUnits(index, input)),
+
+  updateNewInputUnits: (index, input, newUnits) =>
+    dispatch(updateNewInputUnits(index, input, newUnits)),
 
   addComputation: data => dispatch(addComputation(data)),
 
