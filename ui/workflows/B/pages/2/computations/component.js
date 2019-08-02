@@ -131,7 +131,9 @@ class Computation extends Component {
                 this.props.index,
                 value.map(input => ({
                   code: input,
-                  units: null,
+                  units: this.props.computedVariables.includes(input)
+                    ? this.props.fields.filter(x => x.shortname === input)[0].units
+                    : null,
                   path: this.props.predictors.path + '/' + input,
                 }))
               )
@@ -195,13 +197,7 @@ class Computation extends Component {
           <Input
             fluid
             error={this.unitsHasError() !== null}
-            value={
-              this.props.scale.value === '1'
-                ? this.props.inputs.length > 0
-                  ? this.props.inputs[0].units
-                  : ''
-                : this.props.units
-            }
+            value={this.props.units}
             onChange={e => this.props.updateUnits(this.props.index, e.target.value)}
             disabled={this.props.scale.value === '1'}
           />
@@ -248,6 +244,7 @@ class Computations extends Component {
             <Computation
               {...each}
               key={each.index}
+              fields={this.props.fields}
               computedVariables={this.props.fields.map(field => field.shortname)}
               onShortNameChange={this.props.onComputationShortNameChange}
               onFullNameChange={this.props.onComputationFullNameChange}

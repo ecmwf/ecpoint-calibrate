@@ -60,7 +60,11 @@ export default (state = defaultState, action) => {
         ...state,
         fields: state.fields.map(item => {
           if (item.index === action.index) {
-            return { ...item, field: action.field }
+            return {
+              ...item,
+              field: action.field,
+              units: action.field === 'RATIO_FIELD' ? '-' : item.units,
+            }
           }
           return item
         }),
@@ -71,7 +75,16 @@ export default (state = defaultState, action) => {
         ...state,
         fields: state.fields.map(item => {
           if (item.index === action.index) {
-            return { ...item, inputs: action.inputs }
+            return {
+              ...item,
+              inputs: action.inputs,
+              units:
+                item.field !== 'RATIO_FIELD'
+                  ? action.inputs.length > 0
+                    ? action.inputs[0].units
+                    : item.units
+                  : item.units,
+            }
           }
           return item
         }),
@@ -88,6 +101,14 @@ export default (state = defaultState, action) => {
                 ...input,
                 units: input.code === action.code ? action.units : input.units,
               })),
+              units:
+                item.field !== 'RATIO_FIELD'
+                  ? item.scale.value === '1'
+                    ? item.inputs.length > 0
+                      ? action.units
+                      : '-'
+                    : item.units
+                  : item.units,
             }
           }
           return item
@@ -110,7 +131,18 @@ export default (state = defaultState, action) => {
         ...state,
         fields: state.fields.map(item => {
           if (item.index === action.index) {
-            return { ...item, scale: { ...item.scale, value: action.value } }
+            return {
+              ...item,
+              scale: { ...item.scale, value: action.value },
+              units:
+                item.field !== 'RATIO_FIELD'
+                  ? action.value === '1'
+                    ? item.inputs.length > 0
+                      ? item.inputs[0].units
+                      : '-'
+                    : item.units
+                  : item.units,
+            }
           }
           return item
         }),
@@ -121,7 +153,10 @@ export default (state = defaultState, action) => {
         ...state,
         fields: state.fields.map(item => {
           if (item.index === action.index) {
-            return { ...item, units: action.value }
+            return {
+              ...item,
+              units: action.value,
+            }
           }
           return item
         }),

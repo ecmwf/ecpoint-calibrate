@@ -36,7 +36,10 @@ const mapDispatchToProps = dispatch => ({
 
   onComputationInputsChange: (index, inputs) => {
     dispatch(updateComputationInputs(index, inputs))
-    inputs.map(input => dispatch(fetchAndUpdateInputUnits(index, input)))
+
+    inputs
+      .filter(input => !input.units)
+      .map(input => dispatch(fetchAndUpdateInputUnits(index, input)))
   },
 
   fetchAndUpdateInputUnits: (index, input) =>
