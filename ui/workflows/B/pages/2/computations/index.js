@@ -11,7 +11,8 @@ export const isNotEmpty = state =>
       field.fullname &&
       field.field &&
       field.inputs.length > 0 &&
-      field.scale.value
+      field.scale.value &&
+      field.units
   )
 
 export const isValid = state =>

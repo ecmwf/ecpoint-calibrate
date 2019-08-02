@@ -13,7 +13,6 @@ import {
   setScaleValue,
   toggleComputationPostProcess,
   fetchAndUpdateInputUnits,
-  updateNewInputUnits,
 } from './actions'
 
 import { completeSection } from '~/commonActions'
@@ -36,15 +35,15 @@ const mapDispatchToProps = dispatch => ({
     dispatch(updateComputationField(index, field)),
 
   onComputationInputsChange: (index, inputs) => {
-    dispatch(updateComputationInputs(index, inputs)),
-      inputs.map(input => dispatch(fetchAndUpdateInputUnits(index, input)))
+    dispatch(updateComputationInputs(index, inputs))
+    inputs.map(input => dispatch(fetchAndUpdateInputUnits(index, input)))
   },
 
   fetchAndUpdateInputUnits: (index, input) =>
     dispatch(fetchAndUpdateInputUnits(index, input)),
 
-  updateNewInputUnits: (index, input, newUnits) =>
-    dispatch(updateNewInputUnits(index, input, newUnits)),
+  updateUnits: (index, value) =>
+    dispatch({ type: 'COMPUTATIONS.SET_UNITS', index, value }),
 
   addComputation: data => dispatch(addComputation(data)),
 

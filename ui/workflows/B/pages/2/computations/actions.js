@@ -47,13 +47,6 @@ export const fetchAndUpdateInputUnits = (index, input) => async dispatch => {
   )
 }
 
-export const updateNewInputUnits = (index, input, newUnits) => ({
-  type: 'COMPUTATIONS.SET_INPUT_NEW_UNITS',
-  code: input.code,
-  newUnits,
-  index,
-})
-
 export const removeComputation = index => ({
   type: 'COMPUTATIONS.REMOVE',
   index,

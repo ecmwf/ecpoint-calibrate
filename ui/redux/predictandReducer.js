@@ -28,6 +28,7 @@ export default (state = defaultState, action) => {
         ...state,
         type: action.data,
         error: action.data === 'ACCUMULATED' ? 'FER' : 'FE',
+        accumulation: action.data !== 'ACCUMULATED' ? '0' : state.accumulation,
       }
     }
 

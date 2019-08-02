@@ -11,6 +11,7 @@ import {
   Label,
   Radio,
   Checkbox,
+  Message,
 } from 'semantic-ui-react'
 
 import { isNotEmpty, isValid } from './index'
@@ -59,8 +60,7 @@ const operations = [
 ]
 
 class Computation extends Component {
-  isPositive = () =>
-    isNotEmpty([this.props]) && !this.newUnitsHasError() ? true : null
+  isPositive = () => (isNotEmpty([this.props]) && !this.unitsHasError() ? true : null)
 
   getPredictors = () =>
     this.props.predictors.codes
@@ -70,13 +70,12 @@ class Computation extends Component {
           .map(v => ({ key: v, text: v, value: v }))
           .filter(v => v.key !== this.props.shortname)
       )
-  newUnitsHasError = () =>
+
+  unitsHasError = () =>
     this.props.index === 0
-      ? this.props.inputs
-          .map(input => input.newUnits)
-          .includes(this.props.observations.units)
+      ? this.props.units === this.props.observations.units
         ? null
-        : true
+        : 'Predictand variable units should match observation units.'
       : null
 
   render() {
@@ -144,37 +143,25 @@ class Computation extends Component {
             <Table size="small" compact="very" basic="very">
               <Table.Header>
                 <Table.Row>
-                  <Table.HeaderCell />
-                  <Table.HeaderCell textAlign="center">Original units</Table.HeaderCell>
-                  <Table.HeaderCell textAlign="center">New units</Table.HeaderCell>
+                  <Table.HeaderCell textAlign="center" colSpan="2">
+                    <b>Units</b>
+                  </Table.HeaderCell>
                 </Table.Row>
               </Table.Header>
               <Table.Body>
-                {this.props.inputs.map(input => (
-                  <Table.Row textAlign="center">
+                {this.props.inputs.map((input, key) => (
+                  <Table.Row textAlign="center" key={key}>
                     <Table.Cell collapsing>{input.code}</Table.Cell>
                     <Table.Cell collapsing>{input.units}</Table.Cell>
-                    <Table.Cell collapsing>
-                      <Input
-                        fluid
-                        error={this.newUnitsHasError()}
-                        value={
-                          this.props.scale.value === '1' ? input.units : input.newUnits
-                        }
-                        onChange={e =>
-                          this.props.updateNewInputUnits(
-                            this.props.index,
-                            input,
-                            e.target.value
-                          )
-                        }
-                        disabled={this.props.scale.value === '1'}
-                      />
-                    </Table.Cell>
                   </Table.Row>
                 ))}
               </Table.Body>
             </Table>
+          )}
+          {this.unitsHasError() !== null && (
+            <Message size="mini" negative>
+              {this.unitsHasError()}
+            </Message>
           )}
         </Table.Cell>
 
@@ -200,6 +187,23 @@ class Computation extends Component {
             fluid
             value={this.props.scale.value}
             onChange={e => this.props.setScaleValue(this.props.index, e.target.value)}
+          />
+
+          <br />
+          <b>Units:</b>
+
+          <Input
+            fluid
+            error={this.unitsHasError() !== null}
+            value={
+              this.props.scale.value === '1'
+                ? this.props.inputs.length > 0
+                  ? this.props.inputs[0].units
+                  : ''
+                : this.props.units
+            }
+            onChange={e => this.props.updateUnits(this.props.index, e.target.value)}
+            disabled={this.props.scale.value === '1'}
           />
         </Table.Cell>
         <Table.Cell collapsing textAlign="center">
@@ -255,7 +259,7 @@ class Computations extends Component {
               predictors={this.props.predictors}
               observations={this.props.observations}
               togglePostProcess={this.props.toggleComputationPostProcess}
-              updateNewInputUnits={this.props.updateNewInputUnits}
+              updateUnits={this.props.updateUnits}
             />
           ))}
         </Table.Body>
