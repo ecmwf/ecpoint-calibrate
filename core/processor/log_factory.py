@@ -29,10 +29,10 @@ def predictand_logs(config, raw=False):
 
     yield f.info(f"PREDICTAND")
     yield f.info(f"  Path          = {config.predictand.path}")
-    yield f.info(f"  Parameter     = {config.predictand.code}, in mm")
+    yield f.info(f"  Parameter     = {config.predictand.code} (in {config.predictand.units})")
     yield f.info(f"  Type          = {config.predictand.type_.title()}")
     yield f.info(f"  Accumulation  = {config.predictand.accumulation}h")
-    yield f.info(f"  Minimum Value = {config.predictand.min_value}mm")
+    yield f.info(f"  Minimum Value = {config.predictand.min_value} {config.predictand.units}")
 
     error = (
         "Forecast Error Ratio (FER)"
@@ -52,7 +52,7 @@ def predictors_logs(config, raw=False):
     yield f.info(f'PREDICTORS')
     yield f.info(f'  Path = {config.predictors.path}')
     for computation in config.computations:
-        yield f.info(f'   - {computation.fullname}, {computation.shortname} [-]')
+        yield f.info(f'   - {computation.fullname}, {computation.shortname} [{computation.units}]')
     yield f.info('')
 
 
@@ -63,7 +63,8 @@ def observations_logs(config, raw=False):
         f = noop
 
     yield f.info(f'OBSERVATIONS')
-    yield f.info(f'  Path = {config.observations.path}')
+    yield f.info(f'  Path  = {config.observations.path}')
+    yield f.info(f'  Units = {config.observations.units}')
     yield f.info('')
 
 

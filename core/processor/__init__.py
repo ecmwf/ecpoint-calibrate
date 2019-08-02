@@ -262,11 +262,11 @@ def run(config):
             yield log.info("  Selecting the nearest grid point to observations.")
             geopoints = computed_value.nearest_gridpoint(obs)
 
-            # Select only the values that correspond to TP>=1
+            # Select only the values that correspond to a minimum value of the predictand.
             if computation.is_reference:
                 reference_predictor = computation.shortname
                 ref_geopoints = geopoints
-                mask = ref_geopoints.values >= 1
+                mask = ref_geopoints.values >= config.predictand.min_value
 
                 yield log.info(
                     f"  Selecting values that correspond to {computation.shortname}"
