@@ -75,6 +75,8 @@ class Predictand extends Component {
               error={this.accHasError()}
               onChange={e => this.props.onAccumulationChange(e.target.value)}
               value={this.props.predictand.accumulation || ''}
+              label={{ basic: true, content: 'hours' }}
+              labelPosition="right"
             />
           </Item.Description>
           <Item.Extra>

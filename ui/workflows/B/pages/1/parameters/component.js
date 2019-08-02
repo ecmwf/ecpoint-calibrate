@@ -127,7 +127,7 @@ class Parameters extends Component {
         <Item.Header>
           <h3>Spin-up Window</h3>
           <h5>
-            Enter upper limit, in hours, for the spin-up window: &nbsp;&nbsp;&nbsp;
+            Enter upper limit, for the spin-up window: &nbsp;&nbsp;&nbsp;
             <Popup trigger={<Icon name="info circle" />} size="tiny">
               Model data for forecast lead time less than or equal to the value entered
               will not be used for the point data table
@@ -140,6 +140,8 @@ class Parameters extends Component {
             error={this.limSUHasError()}
             onChange={e => this.props.onParametersLimSUFieldChange(e.target.value)}
             value={this.props.parameters.limSU || ''}
+            label={{ basic: true, content: 'hours' }}
+            labelPosition="right"
           />
         </Item.Description>
       </Item.Content>
@@ -154,11 +156,13 @@ class Parameters extends Component {
 
   getIntervalField = () => (
     <Fragment>
-      <h5>Interval between model runs (in hours)</h5>
+      <h5>Interval between model runs:</h5>
       <Input
         error={this.intervalHasError()}
         onChange={e => this.props.onIntervalFieldChange(e.target.value)}
         value={this.props.parameters.interval || ''}
+        label={{ basic: true, content: 'hours' }}
+        labelPosition="right"
       />
     </Fragment>
   )
@@ -173,11 +177,13 @@ class Parameters extends Component {
 
   getStartTimeField = () => (
     <Fragment>
-      <h5>First model run on a day (in UTC time)</h5>
+      <h5>First model run on a day:</h5>
       <Input
         error={this.startTimeHasError()}
         onChange={e => this.props.onStartTimeFieldChange(e.target.value)}
         value={this.props.parameters.startTime || ''}
+        label={{ basic: true, content: 'UTC' }}
+        labelPosition="right"
       />
     </Fragment>
   )
