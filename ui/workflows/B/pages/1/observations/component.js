@@ -43,6 +43,23 @@ class Observation extends Component {
     </Item>
   )
 
+  getObsUnitsField = () => (
+    <Item>
+      <Item.Content>
+        <Item.Header>
+          <h5>Enter the units in which the observations are stored:</h5>
+        </Item.Header>
+
+        <Item.Description>
+          <Input
+            onChange={e => this.props.onUnitsChange(e.target.value)}
+            value={this.props.observations.units || ''}
+          />
+        </Item.Description>
+      </Item.Content>
+    </Item>
+  )
+
   discretizationHasError = () =>
     this.props.observations.discretization === '' ||
     /^(1|2|3|4|6|12|24)$/.test(this.props.observations.discretization)
@@ -146,6 +163,7 @@ class Observation extends Component {
             <Card.Description />
             <Item.Group divided>
               {this.getObsPathField()}
+              {this.getObsUnitsField()}
               <Item>
                 <Item.Content>
                   <Grid divided columns={2}>

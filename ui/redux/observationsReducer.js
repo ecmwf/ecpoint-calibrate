@@ -2,6 +2,7 @@ const defaultState = {
   path: null,
   discretization: '',
   startTime: '',
+  units: '',
 }
 
 export default (state = defaultState, action) => {
@@ -16,6 +17,10 @@ export default (state = defaultState, action) => {
 
     case 'OBSERVATIONS.SET_START_TIME_FIELD': {
       return { ...state, startTime: action.value }
+    }
+
+    case 'OBSERVATIONS.SET_UNITS': {
+      return { ...state, units: action.value }
     }
 
     default: {

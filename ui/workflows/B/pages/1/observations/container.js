@@ -17,6 +17,8 @@ const mapDispatchToProps = dispatch => ({
 
   onStartTimeFieldChange: value => dispatch(setStartTimeField(value)),
 
+  onUnitsChange: value => dispatch({ type: 'OBSERVATIONS.SET_UNITS', value }),
+
   completeSection: () => dispatch(completeSection('B', 1, 'observations')),
 })
 
