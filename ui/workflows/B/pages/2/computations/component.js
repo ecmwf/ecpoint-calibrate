@@ -62,7 +62,7 @@ class Computation extends Component {
   isPositive = () => (isNotEmpty([this.props]) ? true : null)
 
   getPredictors = () =>
-    this.props.predictors
+    this.props.predictors.codes
       .map(e => ({ key: e, text: e, value: e }))
       .concat(
         this.props.computedVariables
@@ -116,14 +116,42 @@ class Computation extends Component {
             multiple
             selection
             placeholder="Select computation input(s)"
-            value={this.props.inputs}
+            value={this.props.inputs.map(input => input.code)}
             options={this.getPredictors()}
             onChange={(e, { value }) =>
-              this.props.onInputsChange(this.props.index, value)
+              this.props.onInputsChange(
+                this.props.index,
+                value.map(input => ({
+                  code: input,
+                  units: null,
+                  path: this.props.predictors.path + '/' + input,
+                }))
+              )
             }
             disabled={this.props.index === 0 ? true : null}
           />
+
+          {this.props.inputs.length > 0 && (
+            <Table size="small" compact="very" basic="very" celled>
+              <Table.Header>
+                <Table.Row>
+                  <Table.HeaderCell colSpan="2">
+                    <b>Units:</b>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+                {this.props.inputs.map(input => (
+                  <Table.Row textAlign="center">
+                    <Table.Cell collapsing>{input.code}</Table.Cell>
+                    <Table.Cell collapsing>{input.units}</Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table>
+          )}
         </Table.Cell>
+
         <Table.Cell collapsing>
           <Grid.Row>
             <Radio
@@ -160,7 +188,7 @@ class Computation extends Component {
             icon
             circular
             onClick={() => this.props.onRemove(this.props.index)}
-            disabled={this.props.index === 0 ? true : null}
+            //disabled={this.props.index === 0 ? true : null}
           >
             <Icon name="delete" />
           </Button>
@@ -198,7 +226,7 @@ class Computations extends Component {
               onRemove={this.props.onComputationRemove}
               setScaleOp={this.props.setScaleOp}
               setScaleValue={this.props.setScaleValue}
-              predictors={this.props.predictors.codes}
+              predictors={this.props.predictors}
               togglePostProcess={this.props.toggleComputationPostProcess}
             />
           ))}
@@ -239,6 +267,10 @@ class Computations extends Component {
   }
 
   addComputation = () => {
+    const input = {
+      code: this.props.predictand.code,
+      path: this.props.predictors.path + '/' + this.props.predictand.code,
+    }
     this.props.addComputation({
       shortname: this.props.predictand.code.toUpperCase(),
       fullname: this.props.predictand.code.toUpperCase(),
@@ -246,12 +278,14 @@ class Computations extends Component {
         this.props.predictand.type === 'ACCUMULATED'
           ? 'ACCUMULATED_FIELD'
           : 'INSTANTANEOUS_FIELD',
-      inputs: [this.props.predictand.code],
+      inputs: [input],
       scale: {
         op: 'MULTIPLY',
         value: 1,
       } /* [FIXME] - read the predictand GRIB file to determine this */,
     })
+
+    this.props.updateComputationInputUnit(0, input)
   }
 
   render() {

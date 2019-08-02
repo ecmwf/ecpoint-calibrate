@@ -76,6 +76,23 @@ export default (state = defaultState, action) => {
         }),
       }
 
+    case 'COMPUTATIONS.SET_INPUT_UNITS':
+      return {
+        ...state,
+        fields: state.fields.map(item => {
+          if (item.index === action.index) {
+            return {
+              ...item,
+              inputs: item.inputs.map(input => ({
+                ...input,
+                units: input.code === action.code ? action.units : input.units,
+              })),
+            }
+          }
+          return item
+        }),
+      }
+
     case 'COMPUTATIONS.SET_SCALE_OP':
       return {
         ...state,

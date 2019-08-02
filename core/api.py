@@ -1,5 +1,6 @@
 import json
 import os
+from functools import lru_cache
 from pathlib import Path
 
 import pandas
@@ -39,6 +40,10 @@ def get_predictors():
         if os.path.isdir(os.path.join(path, name)) and not name.startswith(".")
     ]
 
+    # Warming up the LRU cache for fetching units
+    for code in codes:
+        get_units(os.path.join(path, code))
+
     return Response(json.dumps(codes), mimetype="application/json")
 
 
@@ -76,12 +81,20 @@ def get_predictor_units():
     payload = request.get_json()
     path = payload["path"]
 
-    base_predictor_path = Path(path)
-    first_grib_file = next(base_predictor_path.glob("**/*.grib"))
-
-    units = Fieldset.from_path(first_grib_file).units
+    units = get_units(path)
 
     return Response(json.dumps({"units": units}), mimetype="application/json")
+
+
+@lru_cache(maxsize=None)
+def get_units(path):
+    base_predictor_path = Path(path)
+
+    if not base_predictor_path.exists():
+        return '-'
+
+    first_grib_file = next(base_predictor_path.glob("**/*.grib"))
+    return Fieldset.from_path(first_grib_file).units
 
 
 def main():

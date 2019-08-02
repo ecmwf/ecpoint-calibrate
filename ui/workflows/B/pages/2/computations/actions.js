@@ -1,3 +1,5 @@
+import client from '~/utils/client'
+
 export const addComputation = data => ({
   type: 'COMPUTATIONS.ADD',
   data,
@@ -26,6 +28,24 @@ export const updateComputationInputs = (index, inputs) => ({
   index,
   inputs,
 })
+
+export const updateComputationInputUnit = (index, input) => async dispatch => {
+  client.post(
+    { url: '/get-predictor-units', body: { path: input.path }, json: true },
+    (err, httpResponse, body) => {
+      if (!!err) {
+        console.error(err)
+      } else {
+        dispatch({
+          type: 'COMPUTATIONS.SET_INPUT_UNITS',
+          code: input.code,
+          units: body.units,
+          index,
+        })
+      }
+    }
+  )
+}
 
 export const removeComputation = index => ({
   type: 'COMPUTATIONS.REMOVE',

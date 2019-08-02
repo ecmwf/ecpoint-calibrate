@@ -12,6 +12,7 @@ import {
   setScaleOp,
   setScaleValue,
   toggleComputationPostProcess,
+  updateComputationInputUnit,
 } from './actions'
 
 import { completeSection } from '~/commonActions'
@@ -32,8 +33,13 @@ const mapDispatchToProps = dispatch => ({
   onComputationFieldChange: (index, field) =>
     dispatch(updateComputationField(index, field)),
 
-  onComputationInputsChange: (index, inputs) =>
+  onComputationInputsChange: (index, inputs) => {
     dispatch(updateComputationInputs(index, inputs)),
+      inputs.map(input => dispatch(updateComputationInputUnit(index, input)))
+  },
+
+  updateComputationInputUnit: (index, input) =>
+    dispatch(updateComputationInputUnit(index, input)),
 
   addComputation: data => dispatch(addComputation(data)),
 
