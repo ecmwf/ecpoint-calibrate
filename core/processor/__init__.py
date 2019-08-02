@@ -84,6 +84,10 @@ def run(config):
     obsUSED = 0
     DiscBT = config.parameters.interval
     BaseTimeS = config.parameters.start_time
+    predictand_min_value = config.predictand.min_value * float(
+        config.computations[0].scale["value"]
+    )
+    predictand_scaled_units = config.observations.units
 
     for curr_date, curr_time, step_s, case in iter_daterange(
         start=BaseDateS, end=BaseDateF, start_hour=BaseTimeS, interval=DiscBT
@@ -266,11 +270,11 @@ def run(config):
             if computation.is_reference:
                 reference_predictor = computation.shortname
                 ref_geopoints = geopoints
-                mask = ref_geopoints.values >= config.predictand.min_value
+                mask = ref_geopoints.values >= predictand_min_value
 
                 yield log.info(
                     f"  Selecting values that correspond to {computation.shortname}"
-                    f" >= {config.predictand.min_value} {config.predictand.units}/{Acc}h."
+                    f" >= {predictand_min_value} {predictand_scaled_units}/{Acc}h."
                 )
 
                 ref_geopoints_filtered_df = ref_geopoints.dataframe[mask]
@@ -378,13 +382,13 @@ def run(config):
     )
     yield log.success(
         f"Number of observations actually used in the calibration period "
-        f"({reference_predictor} >= {config.predictand.min_value} {config.predictand.units}/{Acc}h): {obsUSED}"
+        f"({reference_predictor} >= {predictand_min_value} {predictand_scaled_units}/{Acc}h): {obsUSED}"
     )
 
     footer = dedent(
         f"""
         # Number of observations in the whole calibration period = {obsTOT}
-        # Number of observations actually used in the calibration period (corresponding to {reference_predictor} => {config.predictand.min_value} {config.predictand.units}/{Acc}h) = {obsUSED}
+        # Number of observations actually used in the calibration period (corresponding to {reference_predictor} => {predictand_min_value} {predictand_scaled_units}/{Acc}h) = {obsUSED}
         """
     ).strip()
     serializer.footer = footer

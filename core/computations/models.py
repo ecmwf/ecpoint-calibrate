@@ -32,7 +32,7 @@ class Computer(object):
     computation = attr.ib()
 
     def run(self, *args):
-        scaling_factor = int(self.computation.scale["value"])
+        scaling_factor = float(self.computation.scale["value"])
 
         computed_value = self.meta[self.computation.field](*args)
 
