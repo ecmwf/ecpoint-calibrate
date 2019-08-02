@@ -82,7 +82,7 @@ def run(config):
     counter_used_FC = {}
     obsTOT = 0
     obsUSED = 0
-    DiscBT = config.parameters.discretization
+    DiscBT = config.parameters.interval
     BaseTimeS = config.parameters.start_time
 
     for curr_date, curr_time, step_s, case in iter_daterange(
@@ -208,7 +208,7 @@ def run(config):
         for computation in computations:
             computation.is_reference = (
                 len(computation.inputs) == 1
-                and computation.inputs[0] == config.predictand.code
+                and computation.inputs[0]["code"] == config.predictand.code
             )
 
         base_fields = set(config.predictors.codes)
@@ -216,7 +216,7 @@ def run(config):
         derived_computations = [
             computation
             for computation in computations
-            if set(computation.inputs) - base_fields != set()
+            if {input["code"] for input in computation.inputs} - base_fields != set()
         ]
 
         base_computations = sorted(
@@ -235,7 +235,7 @@ def run(config):
 
         for computation in base_computations:
             computer = Computer(computation)
-            predictor_code = computer.computation.inputs[0]
+            predictor_code = computer.computation.inputs[0]["code"]
 
             steps = (
                 [step_start_sr, step_end_sr]
@@ -304,7 +304,8 @@ def run(config):
         for computation in derived_computations:
             computer = Computer(computation)
             steps = [
-                computations_cache[field_input] for field_input in computation.inputs
+                computations_cache[field_input["code"]]
+                for field_input in computation.inputs
             ]
 
             if computation.field == "RATIO_FIELD":

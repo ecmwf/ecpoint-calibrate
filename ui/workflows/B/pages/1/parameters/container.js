@@ -7,7 +7,7 @@ import {
   setDateEndField,
   setLimSUField,
   setModelType,
-  setDiscretizationField,
+  setIntervalField,
   setStartTimeField,
 } from './actions'
 import { completeSection } from '~/commonActions'
@@ -25,7 +25,7 @@ const mapDispatchToProps = dispatch => ({
 
   onModelTypeChange: type => dispatch(setModelType(type)),
 
-  onDiscretizationFieldChange: value => dispatch(setDiscretizationField(value)),
+  onIntervalFieldChange: value => dispatch(setIntervalField(value)),
 
   onStartTimeFieldChange: value => dispatch(setStartTimeField(value)),
 

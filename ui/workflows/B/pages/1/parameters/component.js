@@ -146,19 +146,19 @@ class Parameters extends Component {
     </Item>
   )
 
-  discretizationHasError = () =>
-    this.props.parameters.discretization === '' ||
-    /^(1|2|3|4|6|12|24)$/.test(this.props.parameters.discretization)
+  intervalHasError = () =>
+    this.props.parameters.interval === '' ||
+    /^(1|2|3|4|6|12|24)$/.test(this.props.parameters.interval)
       ? null
       : true
 
-  getDiscretizationField = () => (
+  getIntervalField = () => (
     <Fragment>
       <h5>Interval between model runs (in hours)</h5>
       <Input
-        error={this.discretizationHasError()}
-        onChange={e => this.props.onDiscretizationFieldChange(e.target.value)}
-        value={this.props.parameters.discretization || ''}
+        error={this.intervalHasError()}
+        onChange={e => this.props.onIntervalFieldChange(e.target.value)}
+        value={this.props.parameters.interval || ''}
       />
     </Fragment>
   )
@@ -183,7 +183,7 @@ class Parameters extends Component {
   )
 
   hasError = () =>
-    this.limSUHasError() || this.startTimeHasError() || this.discretizationHasError()
+    this.limSUHasError() || this.startTimeHasError() || this.intervalHasError()
 
   isComplete = () => !this.hasError() && !isEmpty(this.props.parameters)
 
@@ -225,7 +225,7 @@ class Parameters extends Component {
                       <br />
                       <Grid divided columns={2}>
                         <Grid.Column>{this.getStartTimeField()}</Grid.Column>
-                        <Grid.Column>{this.getDiscretizationField()}</Grid.Column>
+                        <Grid.Column>{this.getIntervalField()}</Grid.Column>
                       </Grid>
                     </Item.Content>
                   </Item>

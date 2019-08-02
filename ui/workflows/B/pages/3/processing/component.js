@@ -24,7 +24,7 @@ class Processing extends Component {
       limit_spin_up: this.props.parameters.limSU,
       out_path: this.props.parameters.outPath,
       model_type: this.props.parameters.modelType,
-      discretization: this.props.parameters.discretization,
+      interval: this.props.parameters.interval,
       start_time: this.props.parameters.startTime,
     }
 
@@ -38,24 +38,14 @@ class Processing extends Component {
       units: this.props.predictand.units,
     }
 
-    const observations = {
-      path: this.props.observations.path,
-      units: this.props.observations.units,
-    }
-
-    const predictors = {
-      path: this.props.predictors.path,
-      codes: this.props.predictors.codes,
-    }
-
     client
       .post({
         url: '/computation-logs',
         body: {
           parameters,
           predictand,
-          observations,
-          predictors,
+          observations: this.props.observations,
+          predictors: this.props.predictors,
           computations: this.props.computations.fields,
         },
         json: true,

@@ -18,8 +18,8 @@ class Parameters(object):
     # Model type: {grib, netcdf}
     model_type = attr.ib(converter=str)
 
-    # discretization (in hours)
-    discretization = attr.ib(converter=int)
+    # interval (in hours)
+    interval = attr.ib(converter=int)
 
     # observation start time
     start_time = attr.ib(converter=int)
@@ -49,6 +49,8 @@ class Observations(object):
     # to post-process
     path = attr.ib(converter=str)
 
+    units = attr.ib(converter=str)
+
 
 @attr.s
 class Predictors(object):
@@ -65,6 +67,7 @@ class Computation:
     shortname = attr.ib(converter=str)
     fullname = attr.ib(converter=str)
     field = attr.ib(converter=str)
+    units = attr.ib(converter=str)
     isPostProcessed = attr.ib(converter=bool)
     inputs = attr.ib(default=attr.Factory(list))
     scale = attr.ib(default=attr.Factory(dict))

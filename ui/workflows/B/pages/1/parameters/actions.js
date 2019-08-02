@@ -18,8 +18,8 @@ export const setModelType = type => ({
   data: type,
 })
 
-export const setDiscretizationField = value => ({
-  type: 'PARAMETERS.SET_DISCRETIZATION_FIELD',
+export const setIntervalField = value => ({
+  type: 'PARAMETERS.SET_INTERVAL_FIELD',
   value,
 })
 
