@@ -217,8 +217,11 @@ class Parameters extends Component {
                           calibration.
                         </h5>
                       </Item.Header>
-                      <br />
-                      <br />
+                      <Item.Extra>
+                        For example, if the considered model runs in the calibration are
+                        00, 06, 12, and 18 UTC, enter <code>0</code> and <code>6</code>{' '}
+                        in the boxes below.
+                      </Item.Extra>
                       <br />
                       <Grid divided columns={2}>
                         <Grid.Column>{this.getStartTimeField()}</Grid.Column>
@@ -226,8 +229,8 @@ class Parameters extends Component {
                       </Grid>
                     </Item.Content>
                   </Item>
+                  {this.getLimSUField()}
                 </Item.Group>
-                {this.getLimSUField()}
               </Grid.Column>
 
               <Grid.Column width={7}>{this.getDateStartField()}</Grid.Column>
