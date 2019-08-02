@@ -91,7 +91,7 @@ def get_units(path):
     base_predictor_path = Path(path)
 
     if not base_predictor_path.exists():
-        return '-'
+        return "-"
 
     first_grib_file = next(base_predictor_path.glob("**/*.grib"))
     return Fieldset.from_path(first_grib_file).units

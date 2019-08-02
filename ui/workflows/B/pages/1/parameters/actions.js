@@ -17,3 +17,13 @@ export const setModelType = type => ({
   type: 'PARAMETERS.SET_MODEL_TYPE',
   data: type,
 })
+
+export const setDiscretizationField = value => ({
+  type: 'PARAMETERS.SET_DISCRETIZATION_FIELD',
+  value,
+})
+
+export const setStartTimeField = value => ({
+  type: 'PARAMETERS.SET_START_TIME_FIELD',
+  value,
+})

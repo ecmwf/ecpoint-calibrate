@@ -82,8 +82,8 @@ def run(config):
     counter_used_FC = {}
     obsTOT = 0
     obsUSED = 0
-    DiscBT = config.observations.discretization
-    BaseTimeS = config.observations.start_time
+    DiscBT = config.parameters.discretization
+    BaseTimeS = config.parameters.start_time
 
     for curr_date, curr_time, step_s, case in iter_daterange(
         start=BaseDateS, end=BaseDateF, start_hour=BaseTimeS, interval=DiscBT

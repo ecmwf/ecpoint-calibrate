@@ -2,6 +2,8 @@ const defaultState = {
   limSU: '',
   outPath: '',
   modelType: 'grib',
+  discretization: '',
+  startTime: '',
 }
 
 export default (state = defaultState, action) => {
@@ -24,6 +26,14 @@ export default (state = defaultState, action) => {
 
     case 'PARAMETERS.SET_MODEL_TYPE': {
       return { ...state, modelType: action.data }
+    }
+
+    case 'PARAMETERS.SET_DISCRETIZATION_FIELD': {
+      return { ...state, discretization: action.value }
+    }
+
+    case 'PARAMETERS.SET_START_TIME_FIELD': {
+      return { ...state, startTime: action.value }
     }
 
     default: {

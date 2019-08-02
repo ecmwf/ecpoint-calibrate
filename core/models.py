@@ -18,6 +18,12 @@ class Parameters(object):
     # Model type: {grib, netcdf}
     model_type = attr.ib(converter=str)
 
+    # discretization (in hours)
+    discretization = attr.ib(converter=int)
+
+    # observation start time
+    start_time = attr.ib(converter=int)
+
 
 @attr.s
 class Predictand(object):
@@ -42,12 +48,6 @@ class Observations(object):
     # path of the database that contains the observations for the parameter
     # to post-process
     path = attr.ib(converter=str)
-
-    # discretization (in hours)
-    discretization = attr.ib(converter=int)
-
-    # observation start time
-    start_time = attr.ib(converter=int)
 
 
 @attr.s

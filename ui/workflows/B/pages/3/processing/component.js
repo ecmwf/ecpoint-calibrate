@@ -24,6 +24,8 @@ class Processing extends Component {
       limit_spin_up: this.props.parameters.limSU,
       out_path: this.props.parameters.outPath,
       model_type: this.props.parameters.modelType,
+      discretization: this.props.parameters.discretization,
+      start_time: this.props.parameters.startTime,
     }
 
     const predictand = {
@@ -33,12 +35,12 @@ class Processing extends Component {
       error: this.props.predictand.error,
       min_value: this.props.predictand.minValueAcc,
       type_: this.props.predictand.type,
+      units: this.props.predictand.units,
     }
 
     const observations = {
       path: this.props.observations.path,
-      discretization: this.props.observations.discretization,
-      start_time: this.props.observations.startTime,
+      units: this.props.observations.units,
     }
 
     const predictors = {

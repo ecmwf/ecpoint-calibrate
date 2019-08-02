@@ -1,7 +1,3 @@
 export { default } from './container'
 
-export const isEmpty = state =>
-  !state.path ||
-  state.discretization === '' ||
-  state.startTime === '' ||
-  state.units === ''
+export const isEmpty = state => !state.path || state.units === ''

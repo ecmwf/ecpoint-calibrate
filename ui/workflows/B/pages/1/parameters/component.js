@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 
 import { Grid, Card, Button, Input, Item, Icon, Radio, Popup } from 'semantic-ui-react'
 
@@ -146,7 +146,44 @@ class Parameters extends Component {
     </Item>
   )
 
-  hasError = () => this.limSUHasError()
+  discretizationHasError = () =>
+    this.props.parameters.discretization === '' ||
+    /^(1|2|3|4|6|12|24)$/.test(this.props.parameters.discretization)
+      ? null
+      : true
+
+  getDiscretizationField = () => (
+    <Fragment>
+      <h5>Interval between model runs (in hours)</h5>
+      <Input
+        error={this.discretizationHasError()}
+        onChange={e => this.props.onDiscretizationFieldChange(e.target.value)}
+        value={this.props.parameters.discretization || ''}
+      />
+    </Fragment>
+  )
+
+  startTimeHasError = () =>
+    this.props.parameters.startTime === '' ||
+    (/^\d+$/.test(this.props.parameters.startTime) &&
+      this.props.parameters.startTime >= 0 &&
+      this.props.parameters.startTime < 24)
+      ? null
+      : true
+
+  getStartTimeField = () => (
+    <Fragment>
+      <h5>First model run on a day (in UTC time)</h5>
+      <Input
+        error={this.startTimeHasError()}
+        onChange={e => this.props.onStartTimeFieldChange(e.target.value)}
+        value={this.props.parameters.startTime || ''}
+      />
+    </Fragment>
+  )
+
+  hasError = () =>
+    this.limSUHasError() || this.startTimeHasError() || this.discretizationHasError()
 
   isComplete = () => !this.hasError() && !isEmpty(this.props.parameters)
 
@@ -171,8 +208,26 @@ class Parameters extends Component {
               <Grid.Column width={9}>
                 <Item.Group divided>
                   {this.getTypeField()}
-                  {this.getLimSUField()}
+                  <Item>
+                    <Item.Content>
+                      <Item.Header>
+                        <h3>Model Runs</h3>
+                        <h5>
+                          Select which model runs are going to be considered in the
+                          calibration.
+                        </h5>
+                      </Item.Header>
+                      <br />
+                      <br />
+                      <br />
+                      <Grid divided columns={2}>
+                        <Grid.Column>{this.getStartTimeField()}</Grid.Column>
+                        <Grid.Column>{this.getDiscretizationField()}</Grid.Column>
+                      </Grid>
+                    </Item.Content>
+                  </Item>
                 </Item.Group>
+                {this.getLimSUField()}
               </Grid.Column>
 
               <Grid.Column width={7}>{this.getDateStartField()}</Grid.Column>
