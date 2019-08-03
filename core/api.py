@@ -54,7 +54,7 @@ def get_fields_from_ascii_table():
 
     df = ASCIIDecoder(path=path).dataframe
     fields = set(df.columns) - {"latOBS", "lonOBS", "TimeUTC", "Date", "FER", "LST"}
-    return Response(json.dumps(fields), mimetype="application/json")
+    return Response(json.dumps(list(fields)), mimetype="application/json")
 
 
 @app.route("/postprocessing/create-naive-decision-tree", methods=("POST",))
