@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile.core
 
-    image: onyb/ecpoint-pycal-core
+    image: onyb/ecpoint-calibrate-core
 
     volumes:
       # Forward UNIX domain sockets
@@ -33,7 +33,7 @@ services:
       context: .
       dockerfile: Dockerfile.electron
 
-    image: onyb/ecpoint-pycal-electron
+    image: onyb/ecpoint-calibrate-electron
 
     volumes:
       # Forward UNIX domain sockets
