@@ -150,7 +150,7 @@ class App extends Component {
         <Grid.Column textAlign="right">
           <Button
             color="github"
-            onClick={() => shell.openExternal('https://github.com/esowc/ecPoint-PyCal')}
+            onClick={() => shell.openExternal('https://github.com/esowc/ecPoint-Calibrate')}
           >
             <Icon name="github" />
             GitHub

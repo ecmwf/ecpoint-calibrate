@@ -1,9 +1,9 @@
-# ecPoint-PyCal
+# ecPoint-Calibrate
 
 Meteorological software for calibration of model outputs, and conditional verification of short and medium range weather forecasts.
 
-[![CircleCI](https://circleci.com/gh/esowc/ecPoint-PyCal.svg?style=svg)](https://circleci.com/gh/esowc/ecPoint-PyCal)
-[![codecov](https://codecov.io/gh/esowc/ecPoint-PyCal/branch/master/graph/badge.svg)](https://codecov.io/gh/esowc/ecPoint-PyCal)
+[![CircleCI](https://circleci.com/gh/esowc/ecPoint-Calibrate.svg?style=svg)](https://circleci.com/gh/esowc/ecPoint-Calibrate)
+[![codecov](https://codecov.io/gh/esowc/ecPoint-Calibrate/branch/master/graph/badge.svg)](https://codecov.io/gh/esowc/ecPoint-Calibrate)
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python3.7-1f425f.svg)](https://www.python.org/)
 
 ### Requirements
@@ -14,8 +14,8 @@ Meteorological software for calibration of model outputs, and conditional verifi
 ### Setup
 
 ```sh
-$ git clone git@github.com:esowc/ecPoint-PyCal.git
-$ cd ecPoint-PyCal
+$ git clone git@github.com:esowc/ecPoint-Calibrate.git
+$ cd ecPoint-Calibrate
 $ docker-compose pull
 ```
 
