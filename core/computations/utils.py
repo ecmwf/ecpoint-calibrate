@@ -50,3 +50,7 @@ def compute_minimum(*args):
 
 def compute_ratio_field(dividend, divisor):
     return dividend / divisor
+
+
+def compute_instantaneous_field(*args):
+    return args[0]

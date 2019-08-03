@@ -6,6 +6,7 @@ from .utils import (
     compute_24h_solar_radiation,
     compute_accumulated_field,
     compute_average_field,
+    compute_instantaneous_field,
     compute_maximum,
     compute_minimum,
     compute_ratio_field,
@@ -19,6 +20,7 @@ from .utils import (
 class Computer(object):
     meta = {
         "ACCUMULATED_FIELD": compute_accumulated_field,
+        "INSTANTANEOUS_FIELD": compute_instantaneous_field,
         "WEIGHTED_AVERAGE_FIELD": compute_weighted_average_field,
         "24H_SOLAR_RADIATION": compute_24h_solar_radiation,
         "VECTOR_MODULE": compute_vector,
