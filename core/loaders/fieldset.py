@@ -128,7 +128,7 @@ class Fieldset(metview.Fieldset):
 
         term_1 = args[0]
 
-        values = reduce(np.maximum, args)
+        values = reduce(np.maximum, (arg.values for arg in args))
 
         mv_fieldset = metview.set_values(term_1, values)
         mv_fieldset.__class__ = cls
@@ -142,7 +142,7 @@ class Fieldset(metview.Fieldset):
 
         term_1 = args[0]
 
-        values = reduce(np.minimum, args)
+        values = reduce(np.minimum, (arg.values for arg in args))
 
         mv_fieldset = metview.set_values(term_1, values)
         mv_fieldset.__class__ = cls
