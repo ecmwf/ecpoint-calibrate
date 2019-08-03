@@ -136,6 +136,7 @@ class App extends Component {
             <Icon name="facebook" />
             Facebook
           </Button>
+          <b>fb.com/ESoWC</b>
         </Grid.Column>
 
         <Grid.Column textAlign="center">
@@ -146,15 +147,19 @@ class App extends Component {
             <Icon name="twitter" />
             Twitter
           </Button>
+          <b>@esowc_ecmwf</b>
         </Grid.Column>
         <Grid.Column textAlign="right">
           <Button
             color="github"
-            onClick={() => shell.openExternal('https://github.com/esowc/ecPoint-Calibrate')}
+            onClick={() =>
+              shell.openExternal('https://github.com/esowc/ecPoint-Calibrate')
+            }
           >
             <Icon name="github" />
             GitHub
           </Button>
+          <b>esowc/ecPoint-Calibrate</b>
         </Grid.Column>
       </Grid.Row>
     </Grid>
