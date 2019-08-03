@@ -1,10 +1,10 @@
 import React, { Fragment } from 'react'
 
-import WorkflowB_Page1 from '~/workflows/B/pages/1'
-import WorkflowB_Page2 from '~/workflows/B/pages/2'
-import WorkflowB_Page3 from '~/workflows/B/pages/3'
-import WorkflowC_Page1 from '~/workflows/C/pages/1'
-import WorkflowC_Page2 from '~/workflows/C/pages/2'
+import WorkflowB_Page1 from '~/workflows/B/1'
+import WorkflowB_Page2 from '~/workflows/B/2'
+import WorkflowB_Page3 from '~/workflows/B/3'
+import WorkflowC_Page1 from '~/workflows/C/1'
+import WorkflowC_Page2 from '~/workflows/C/2'
 
 import MenuFactory from '~/app/menu'
 
