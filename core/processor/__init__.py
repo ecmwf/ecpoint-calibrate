@@ -140,13 +140,18 @@ def run(config):
         yield log.info(f"  {used_forecast}")
         yield log.info("")
 
-        def get_grib_path(predictand, step):
+        def get_grib_path(predictor_code, step):
             return os.path.join(
                 PathFC,
-                predictand,
+                predictor_code,
                 new_curr_date_str + new_curr_time_str,
                 "_".join(
-                    [predictand, new_curr_date_str, new_curr_time_str, f"{step:02d}"]
+                    [
+                        predictor_code,
+                        new_curr_date_str,
+                        new_curr_time_str,
+                        f"{step:02d}",
+                    ]
                 )
                 + ".grib",
             )
