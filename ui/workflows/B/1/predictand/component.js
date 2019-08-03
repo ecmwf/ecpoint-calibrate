@@ -98,10 +98,8 @@ class Predictand extends Component {
           </Item.Header>
           <Item.Extra>
             For example, enter the value <code>1</code> for{' '}
-            <code>
-              1 {this.props.predictand.units}/{this.props.predictand.accumulation}h
-            </code>
-            .<br />
+            <code>1 {this.props.predictand.units}</code> over the accumulation period. .
+            <br />
             The entered value must be consistent with the units in which the predictand
             is represented.
           </Item.Extra>
