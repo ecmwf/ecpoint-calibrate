@@ -29,7 +29,7 @@ def compute_weighted_average_field(*args):
 
 
 def compute_average_field(*args):
-    return sum(args) / len(args)
+    return reduce(operator.add, args) / len(args)
 
 
 def compute_rms_field(*args):
