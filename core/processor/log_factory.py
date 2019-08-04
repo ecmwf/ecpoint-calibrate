@@ -15,7 +15,7 @@ def general_parameters_logs(config, raw=False):
     yield f.info(f"  Start Calibration Period = {config.parameters.date_start}")
     yield f.info(f"  End Calibration Period   = {config.parameters.date_end}")
     yield f.info(f"  Start Base Time          = {config.parameters.start_time} UTC")
-    yield f.info(f"  End Base Time            = 24 UTC")
+    yield f.info(f"  End Base Time            = {24 - config.parameters.interval} UTC")
     yield f.info(f"  Base Time Interval       = {config.parameters.interval}h")
     yield f.info(f"  Spin-Up Window           = {config.parameters.limit_spin_up}h")
     yield f.info(f"")
