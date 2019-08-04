@@ -99,10 +99,8 @@ def run(config):
         yield log.bold("FORECAST PARAMETERS:")
 
         step_f = step_s + Acc
-        yield log.info(
-            f'  {curr_date.strftime("%Y%m%d")}, {curr_time:02d} UTC, (t+{step_s}, t+{step_f})'
-        )
-        yield log.info("")
+        original_forecast = f'{curr_date.strftime("%Y%m%d")}, {curr_time:02d} UTC, (t+{step_s}, t+{step_f})'
+        yield log.info(f"  {original_forecast}")
 
         new_curr_date, new_curr_time, new_step_s, msgs = adjust_steps(
             date=curr_date,
@@ -114,30 +112,30 @@ def run(config):
         )
 
         new_step_f = new_step_s + Acc
-
         new_curr_date_str = new_curr_date.strftime("%Y%m%d")
         new_curr_time_str = f"{new_curr_time:02d}"
 
         used_forecast = f"{new_curr_date_str}, {new_curr_time_str} UTC, (t+{new_step_s}, t+{new_step_f})"
+
+        for msg in msgs:
+            yield log.info(msg)
+        if used_forecast != original_forecast:
+            yield log.info(f"  {used_forecast}")
+
         if used_forecast in counter_used_FC:
-            log.warn(
+            yield log.warn(
                 f"  The above forecast was already considered for computation in Case {counter_used_FC[used_forecast]}"
             )
             continue
 
         # Reading the forecasts
         if new_curr_date < BaseDateS or new_curr_date > BaseDateF:
-            log.warn(
+            yield log.warn(
                 f"  Forecast out of the calibration period {BaseDateSSTR} - {BaseDateFSTR}. Forecast not considered."
             )
             continue
 
         counter_used_FC[used_forecast] = case
-
-        for msg in msgs:
-            yield log.info(msg)
-
-        yield log.info(f"  {used_forecast}")
         yield log.info("")
 
         def get_grib_path(predictor_code, step):
@@ -252,15 +250,34 @@ def run(config):
                 else steps
             )
 
-            try:
-                computation_steps = [
-                    Fieldset.from_path(path=get_grib_path(predictor_code, step))
-                    for step in steps
-                ]
-            except (IOError, Exception):
-                skip = True
+            computation_steps = []
+            for step in steps:
+                grib_path = get_grib_path(predictor_code, step)
+                yield log.info(
+                    f"  Reading forecast file: {os.path.basename(grib_path)}"
+                )
+
+                try:
+                    fieldset = Fieldset.from_path(
+                        path=get_grib_path(predictor_code, step)
+                    )
+                except IOError:
+                    yield log.warn(f"  Forecast file not found: {grib_path}.")
+                    skip = True
+                    break
+                except Exception:
+                    yield log.error(f"  Reading forecast file failed: {grib_path}.")
+                    skip = True
+                    break
+                else:
+                    computation_steps.append(fieldset)
+
+            if skip:
                 break
 
+            yield log.info(
+                f"  Computing {computer.computation.fullname} using {len(computation_steps)} inputs."
+            )
             computed_value = computer.run(*computation_steps)
 
             computations_cache[computation.shortname] = computed_value
