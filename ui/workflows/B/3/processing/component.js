@@ -7,7 +7,7 @@ import download from '~/utils/download'
 import * as jetpack from 'fs-jetpack'
 
 class Processing extends Component {
-  state = { status: 'initial', logs: [], asciiModelOpen: false }
+  state = { status: 'initial', logs: [] }
 
   appendLog(log) {
     const chunk = log.split('[END]').filter(e => e !== '')
@@ -93,19 +93,6 @@ class Processing extends Component {
     )
   }
 
-  getAsciiTableModal = () => (
-    <Modal
-      size={'large'}
-      open={this.state.asciiModelOpen}
-      onClose={() => this.setState({ asciiModelOpen: false })}
-    >
-      <Modal.Header>ASCII Table</Modal.Header>
-      <Modal.Content>
-        <pre>{jetpack.read(this.props.parameters.outPath)}</pre>
-      </Modal.Content>
-    </Modal>
-  )
-
   render() {
     return (
       <Grid columns={2} centered>
@@ -117,16 +104,6 @@ class Processing extends Component {
             icon="cog"
             labelPosition="left"
           />
-          {this.state.status == 'completed' && (
-            <Button
-              content="View ASCII table"
-              icon="eye"
-              labelPosition="left"
-              onClick={() => {
-                this.setState({ asciiModelOpen: true })
-              }}
-            />
-          )}
         </Grid.Row>
         <Grid.Row>
           <Grid.Column>
@@ -136,7 +113,6 @@ class Processing extends Component {
               </Segment>
             )}
           </Grid.Column>
-          {this.getAsciiTableModal()}
         </Grid.Row>
       </Grid>
     )
