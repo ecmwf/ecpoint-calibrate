@@ -76,7 +76,10 @@ class Computation extends Component {
       ? this.props.units === this.props.observations.units
         ? null
         : 'Predictand variable units should match observation units.'
-      : null
+      : this.props.field === 'RATIO_FIELD' &&
+        new Set(this.props.inputs.map(i => i.units)).size > 1
+        ? 'The units of the chosen variables should match.'
+        : null
 
   render() {
     return (

@@ -63,7 +63,7 @@ export default (state = defaultState, action) => {
             return {
               ...item,
               field: action.field,
-              units: action.field === 'RATIO_FIELD' ? '-' : item.units,
+              units: action.field === 'RATIO_FIELD' ? 'NoUnit' : item.units,
             }
           }
           return item
