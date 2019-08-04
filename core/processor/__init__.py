@@ -318,6 +318,8 @@ def run(config):
                     (computation.shortname, geopoints_filtered_df["value"])
                 )
 
+            yield log.info('')
+
         if skip:
             continue
 
@@ -361,7 +363,6 @@ def run(config):
 
         vals_errors = []
 
-        yield log.info("")
         yield log.info(f"  Computing the {config.predictand.error}.")
         if config.predictand.error == "FER":
             FER = (
