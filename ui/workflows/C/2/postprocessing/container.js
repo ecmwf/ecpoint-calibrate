@@ -28,7 +28,7 @@ const mapStateToProps = state => {
         ? state.postprocessing.thrGridIn
         : generateInitialGrid(state.preloader.fields),
     path: state.preloader.path,
-    fields: state.preloader.fields,
+    fields: state.postprocessing.fields,
   }
 }
 
