@@ -53,7 +53,7 @@ def get_fields_from_ascii_table():
     path = payload["path"]
 
     df = ASCIIDecoder(path=path).dataframe
-    fields = set(df.columns) - {"latOBS", "lonOBS", "TimeUTC", "Date", "FER", "LST"}
+    fields = set(df.columns) - {"latOBS", "lonOBS", "TimeUTC", "Date", "FER", "LST", "OBS"}
     return Response(json.dumps(list(fields)), mimetype="application/json")
 
 
