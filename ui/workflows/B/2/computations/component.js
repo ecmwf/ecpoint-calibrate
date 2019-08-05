@@ -50,10 +50,6 @@ const operations = [
     value: 'VECTOR_MODULE',
   },
   {
-    text: 'Root Mean Square (RMS)',
-    value: 'ROOT_MEAN_SQUARE',
-  },
-  {
     text: '24h Solar Radiaton',
     value: '24H_SOLAR_RADIATION',
   },

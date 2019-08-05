@@ -74,32 +74,6 @@ class Fieldset(metview.Fieldset):
         raise NotImplementedError
 
     @classmethod
-    def rms(cls, *args):
-        """
-        classmethod to compute the root mean square value of sequence of
-        Fieldset instances.
-
-        :param args: (Tuple[Fieldset]) Sequence of Fieldset instances.
-        :return: New `Fieldset` instance containing the root mean square
-            value.
-        :rtype: Fieldset
-        """
-        if len(args) == 0:
-            raise Exception
-
-        term_1 = args[0]
-
-        sum_squared_values = sum(abs(term.values) ** 2 for term in args)
-        mean_squared_values = sum_squared_values / 2.0
-
-        values = np.sqrt(mean_squared_values)
-
-        mv_fieldset = metview.set_values(term_1, values)
-        mv_fieldset.__class__ = cls
-
-        return mv_fieldset
-
-    @classmethod
     def vector_of(cls, *args):
         """
         classmethod to compute the vector of sequence of Fieldset instances.

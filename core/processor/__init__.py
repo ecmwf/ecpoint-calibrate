@@ -318,7 +318,7 @@ def run(config):
                     (computation.shortname, geopoints_filtered_df["value"])
                 )
 
-            yield log.info('')
+            yield log.info("")
 
         if skip:
             continue

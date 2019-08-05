@@ -32,10 +32,6 @@ def compute_average_field(*args):
     return reduce(operator.add, args) / len(args)
 
 
-def compute_rms_field(*args):
-    return Fieldset.rms(*args)
-
-
 def compute_vector(*args):
     return Fieldset.vector_of(*args)
 

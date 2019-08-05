@@ -97,8 +97,8 @@ class Predictand extends Component {
             </h5>
           </Item.Header>
           <Item.Extra>
-            For example, enter the value <code>1</code> for{' '}
-            <code>1 mm</code> over the accumulation period.
+            For example, enter the value <code>1</code> for <code>1 mm</code> over the
+            accumulation period.
             <br />
             The entered value must be consistent with the units in which the predictand
             is represented.

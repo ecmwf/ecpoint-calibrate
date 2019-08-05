@@ -10,7 +10,6 @@ from .utils import (
     compute_maximum,
     compute_minimum,
     compute_ratio_field,
-    compute_rms_field,
     compute_vector,
     compute_weighted_average_field,
 )
@@ -24,7 +23,6 @@ class Computer(object):
         "WEIGHTED_AVERAGE_FIELD": compute_weighted_average_field,
         "24H_SOLAR_RADIATION": compute_24h_solar_radiation,
         "VECTOR_MODULE": compute_vector,
-        "ROOT_MEAN_SQUARE": compute_rms_field,
         "RATIO_FIELD": compute_ratio_field,
         "MAXIMUM_FIELD": compute_maximum,
         "MINIMUM_FIELD": compute_minimum,
