@@ -51,7 +51,13 @@ def predictors_logs(config, raw=False):
 
     yield f.info(f'PREDICTORS')
     yield f.info(f'  Path = {config.predictors.path}')
-    for computation in config.computations:
+
+    post_processed_computations = [
+        computation
+        for computation in config.computations
+        if computation.isPostProcessed
+    ]
+    for computation in post_processed_computations:
         yield f.info(f'   - {computation.fullname}, {computation.shortname} [{computation.units}]')
     yield f.info('')
 
