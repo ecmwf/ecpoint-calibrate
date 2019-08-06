@@ -8,6 +8,14 @@ export const setThresholdSplits = grid => ({
   }),
 })
 
+export const setWeatherTypeMatrix = grid => ({
+  type: 'POSTPROCESSING.SET_WT_MATRIX',
+  grid: grid.map((row, idx) => {
+    const [_, ...rest] = row
+    return [{ readOnly: true, value: idx === 0 ? '' : `WT ${idx}` }].concat(rest)
+  }),
+})
+
 export const setFields = fields => ({
   type: 'PRELOADER.SET_FIELDS',
   data: fields,

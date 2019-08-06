@@ -2,7 +2,12 @@ import { connect } from 'react-redux'
 
 import PostProcessing from './component'
 
-import { setThresholdSplits, setFields, onFieldsSortEnd } from './actions'
+import {
+  setThresholdSplits,
+  setFields,
+  onFieldsSortEnd,
+  setWeatherTypeMatrix,
+} from './actions'
 
 const getFirstRow = fields =>
   [{ readOnly: true, value: 1 }].concat(
@@ -26,6 +31,8 @@ const mapStateToProps = state => ({
     state.postprocessing.thrGridIn.length > 0
       ? state.postprocessing.thrGridIn
       : generateInitialGrid(state.preloader.fields),
+
+  thrGridOut: state.postprocessing.thrGridOut,
   path: state.preloader.path,
   fields: state.preloader.fields,
 })
@@ -37,6 +44,8 @@ const mapDispatchToProps = dispatch => ({
 
   onFieldsSortEnd: (fields, oldIndex, newIndex) =>
     dispatch(onFieldsSortEnd(fields, oldIndex, newIndex)),
+
+  onWeatherTypeMatrixChange: grid => dispatch(setWeatherTypeMatrix(grid)),
 })
 
 export default connect(

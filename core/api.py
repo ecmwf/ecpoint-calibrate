@@ -53,27 +53,53 @@ def get_fields_from_ascii_table():
     path = payload["path"]
 
     df = ASCIIDecoder(path=path).dataframe
-    fields = set(df.columns) - {"latOBS", "lonOBS", "TimeUTC", "Date", "FER", "LST", "OBS"}
+    fields = set(df.columns) - {
+        "latOBS",
+        "lonOBS",
+        "TimeUTC",
+        "Date",
+        "FER",
+        "LST",
+        "OBS",
+    }
     return Response(json.dumps(list(fields)), mimetype="application/json")
 
 
-@app.route("/postprocessing/create-naive-decision-tree", methods=("POST",))
-def get_naive_decision_tree():
+@app.route("/postprocessing/create-wt-matrix", methods=("POST",))
+def create_weather_types_matrix():
     payload = request.get_json()
-    labels, records, path = (payload["labels"], payload["records"], payload["path"])
+    labels, records = payload["labels"], payload["records"]
 
     df = pandas.DataFrame.from_records(records, columns=labels)
     thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
     dt = DecisionTree(thrL_in=thrL, thrH_in=thrH)
-    dt.create()
+    thrL, thrH = dt.create()
 
-    df_out = dt.thrL_out.join(dt.thrH_out)
-    matrix = [[str(cell) for cell in row] for row in df_out.values]
+    df_out = pandas.concat([thrL, thrH], axis=1)
+    df_out = df_out[labels]
+
+    matrix = [list(df_out.columns)] + [
+        [str(cell) for cell in row] for row in df_out.values
+    ]
+
+    return jsonify(matrix)
+
+
+@app.route("/postprocessing/create-decision-tree", methods=("POST",))
+def get_decision_tree():
+    payload = request.get_json()
+    labels, records, path = (payload["labels"], payload["records"], payload["path"])
+
+    records = [[float(cell) for cell in row] for row in records]
+
+    df = pandas.DataFrame.from_records(records, columns=labels)
+
+    thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
 
     predictor_matrix = ASCIIDecoder(path=path).dataframe
-    tree = dt.construct_tree(predictor_matrix).json
+    tree = DecisionTree.construct_tree(predictor_matrix, thrL_out=thrL, thrH_out=thrH)
 
-    return jsonify({"records": matrix, "labels": list(df_out.columns), "tree": [tree]})
+    return jsonify([tree.json])
 
 
 @app.route("/get-predictor-units", methods=("POST",))

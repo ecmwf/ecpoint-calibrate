@@ -37,7 +37,7 @@ const SortableList = SortableContainer(({ items }) => (
 ))
 
 class PostProcessing extends Component {
-  state = { thrGridOut: null }
+  state = { tree: null }
 
   getThresholdSplitsGridSheet = () => (
     <Item>
@@ -164,73 +164,120 @@ class PostProcessing extends Component {
 
     client.post(
       {
+        url: '/postprocessing/create-wt-matrix',
+        body: { labels, records },
+        json: true,
+      },
+      (err, httpResponse, matrix) => {
+        const grid = matrix.map((row, idx) =>
+          _.concat([
+            '',
+            ...row.map(col => ({
+              value: col,
+              readOnly: idx === 0 ? true : false,
+            })),
+          ])
+        )
+        this.props.onWeatherTypeMatrixChange(grid)
+      }
+    )
+  }
+
+  postThrGridOut() {
+    const labels = this.props.thrGridOut[0].slice(1).map(cell => cell.value)
+
+    const records = this.props.thrGridOut
+      .slice(1)
+      .map(row => _.flatMap(row.slice(1), cell => cell.value))
+
+    client.post(
+      {
         url: '/postprocessing/create-decision-tree',
         body: { labels, records, path: this.props.path },
         json: true,
       },
-      (err, httpResponse, body) => this.setState({ thrGridOut: body })
+      (err, httpResponse, tree) => this.setState({ tree })
     )
   }
 
-  getDecisionTree = () => (
-    <Grid centered>
-      <Grid.Row centered>
-        <Grid.Column>
-          <Tree data={this.state.thrGridOut.tree} />
-        </Grid.Column>
-      </Grid.Row>
-    </Grid>
-  )
+  getDecisionTree = () =>
+    this.props.thrGridOut && (
+      <Item>
+        <Item.Content>
+          <br />
+          <Grid centered>
+            <Button
+              icon
+              labelPosition="left"
+              primary
+              size="medium"
+              onClick={() => this.postThrGridOut()}
+            >
+              <Icon name="refresh" /> Generate Decision Tree
+            </Button>
+          </Grid>
+          <br />
+          {this.state.tree && <Tree data={this.state.tree} />}
+        </Item.Content>
+      </Item>
+    )
 
   getDecisionTreeOutMatrix = () => (
-    <Grid centered>
-      <Grid.Row centered>
-        <Button
-          disabled={this.hasError()}
-          icon
-          labelPosition="left"
-          primary
-          size="medium"
-          onClick={() => this.postThrGridIn()}
-        >
-          <Icon name="refresh" /> Generate full Decision Tree
-        </Button>
-      </Grid.Row>
-
-      {this.state.thrGridOut && (
-        <Grid.Row centered>
-          <Grid.Column>
-            <Table definition>
-              <Table.Header>
-                <Table.Row>
-                  <Table.HeaderCell />
-                  {this.state.thrGridOut.labels.map(label => (
-                    <Table.HeaderCell>{label}</Table.HeaderCell>
-                  ))}
-                </Table.Row>
-              </Table.Header>
-
-              <Table.Body>
-                {this.state.thrGridOut.records.map((rows, idx) => (
-                  <Table.Row>
-                    <Table.Cell>WT {idx + 1}</Table.Cell>
-
-                    {rows.map(cell => (
-                      <Table.Cell>{cell}</Table.Cell>
-                    ))}
-                  </Table.Row>
-                ))}
-              </Table.Body>
-            </Table>
-          </Grid.Column>
-        </Grid.Row>
-      )}
-    </Grid>
+    <Item>
+      <Item.Content>
+        <br />
+        <Grid centered>
+          <Button
+            disabled={this.hasError()}
+            icon
+            labelPosition="left"
+            primary
+            size="medium"
+            onClick={() => this.postThrGridIn()}
+          >
+            <Icon name="refresh" /> Generate Weather Types matrix
+          </Button>
+        </Grid>
+        <br />
+        {this.props.thrGridOut && (
+          <ReactDataSheet
+            data={this.props.thrGridOut}
+            valueRenderer={cell => cell.value}
+            onContextMenu={(e, cell, i, j) =>
+              cell.readOnly ? e.preventDefault() : null
+            }
+            onCellsChanged={changes => {
+              const grid = this.props.thrGridOut.map(row => [...row])
+              changes.forEach(({ cell, row, col, value }) => {
+                grid[row][col] = { ...grid[row][col], value }
+              })
+              this.props.onWeatherTypeMatrixChange(grid)
+            }}
+            rowRenderer={props => (
+              <tr>
+                {props.children}
+                {props.row > 0 && (
+                  <Button
+                    icon
+                    circular
+                    onClick={() => {
+                      const grid = this.props.thrGridOut.map(row => [...row])
+                      grid.splice(props.row, 1)
+                      this.props.onWeatherTypeMatrixChange(grid)
+                    }}
+                    size="mini"
+                    disabled={props.row === 1 ? true : null}
+                  >
+                    <Icon name="delete" />
+                  </Button>
+                )}
+              </tr>
+            )}
+          />
+        )}
+      </Item.Content>
+    </Item>
   )
-
-  componentWillMount() {
-    this.props.setFields(this.props.fields)
-  }
 
   getSortableFields = () => (
     <Item>
@@ -272,12 +319,10 @@ class PostProcessing extends Component {
                 <Item.Group divided>
                   {this.getSortableFields()}
                   {this.getThresholdSplitsGridSheet()}
+                  {this.getDecisionTreeOutMatrix()}
+                  {this.getDecisionTree()}
                 </Item.Group>
               </Card.Description>
-            </Card.Content>
-            <Card.Content extra>
-              {this.getDecisionTreeOutMatrix()}
-              {this.state.thrGridOut && this.getDecisionTree()}
             </Card.Content>
           </Card>
         </Grid.Column>

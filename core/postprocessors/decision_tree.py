@@ -16,10 +16,6 @@ matplotlib.style.use("seaborn")
 class DecisionTree(object):
     thrL_in = attr.ib()
     thrH_in = attr.ib()
-
-    thrL_out = attr.ib(default=None)
-    thrH_out = attr.ib(default=None)
-
     num_wt = attr.ib(default=None)
 
     @property
@@ -94,37 +90,40 @@ class DecisionTree(object):
                         thrH_matrix[ind_i:ind_f, i] = tempH2
                         counter = ind_f
 
-        self.thrL_out = pandas.DataFrame(data=thrL_matrix, columns=self.thrL_in.columns)
-        self.thrH_out = pandas.DataFrame(data=thrH_matrix, columns=self.thrH_in.columns)
+        return (
+            pandas.DataFrame(data=thrL_matrix, columns=self.thrL_in.columns),
+            pandas.DataFrame(data=thrH_matrix, columns=self.thrH_in.columns),
+        )
 
-        print(self)
+    # def __str__(self):
+    #    if thrL_out is None:
+    #         return super(DecisionTree, self).__str__()
+    #
+    #     out = ""
+    #
+    #     for i in range(self.num_wt):
+    #         out += "Weather Type {}\n".format(i)
+    #         for j in range(self.num_predictors):
+    #             out += "    Level {num}: {low} <= PREDICTOR < {high}\n".format(
+    #                 num=j, low=thrL_out.ix[i, j], high=thrH_out.ix[i, j]
+    #             )
+    #         out += "\n"
+    #
+    #     return out
 
-    def __str__(self):
-        if self.thrL_out is None:
-            return super(DecisionTree, self).__str__()
-
-        out = ""
-
-        for i in range(self.num_wt):
-            out += "Weather Type {}\n".format(i)
-            for j in range(self.num_predictors):
-                out += "    Level {num}: {low} <= PREDICTOR < {high}\n".format(
-                    num=j, low=self.thrL_out.ix[i, j], high=self.thrH_out.ix[i, j]
-                )
-            out += "\n"
-
-        return out
-
-    def construct_tree(self, predictor_matrix):
+    @classmethod
+    def construct_tree(cls, predictor_matrix, thrL_out, thrH_out):
         root = Node("Root")
-        for i in range(self.num_wt):
-            thrL = self.thrL_out.ix[i, :]
-            thrH = self.thrH_out.ix[i, :]
+        num_wt = len(thrL_out)
+
+        for i in range(num_wt):
+            thrL = thrL_out.ix[i, :]
+            thrH = thrH_out.ix[i, :]
             wt = WeatherType(
                 thrL=thrL,
                 thrH=thrH,
-                thrL_labels=self.thrL_out.columns.tolist(),
-                thrH_labels=self.thrH_out.columns.tolist(),
+                thrL_labels=thrL_out.columns.tolist(),
+                thrH_labels=thrH_out.columns.tolist(),
             )
             plot = wt.evaluate(predictor_matrix)
 
