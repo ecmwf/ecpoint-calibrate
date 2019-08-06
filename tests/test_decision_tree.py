@@ -32,7 +32,7 @@ def test_decision_tree_with_predefined_threshold_splits():
 
     thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
     dt = DecisionTree(thrL_in=thrL, thrH_in=thrH)
-    dt.create()
+    thrL_out, thrH_out = dt.create()
 
     # root = dt.construct_tree()
 
@@ -44,7 +44,7 @@ def test_decision_tree_with_predefined_threshold_splits():
         [float("-inf"), float("-inf"), 20.0, float("-inf"), 70.0],
         [float("-inf"), float("-inf"), 20.0, float("-inf"), 275.0],
     ]
-    assert np.array_equal(dt.thrL_out, expected_thrL_matrix)
+    assert np.array_equal(thrL_out, expected_thrL_matrix)
 
     expected_thrH_matrix = [
         [0.25, 2.0, 20.0, float("inf"), 70.0],
@@ -54,4 +54,4 @@ def test_decision_tree_with_predefined_threshold_splits():
         [0.25, 2.0, float("inf"), float("inf"), 275.0],
         [0.25, 2.0, float("inf"), float("inf"), float("inf")],
     ]
-    assert np.array_equal(dt.thrH_out, expected_thrH_matrix)
+    assert np.array_equal(thrH_out, expected_thrH_matrix)
