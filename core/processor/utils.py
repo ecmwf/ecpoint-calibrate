@@ -34,8 +34,8 @@ def adjust_steps(date, hour, step, start_hour, limSU, interval):
             return timestamp.date(), timestamp.time().hour, step - each, msgs
 
 
-def generate_steps(accumulation):
-    return tuple(list(range(0, accumulation, 6)) + [accumulation])
+def generate_steps(accumulation, sampling_interval):
+    return tuple(list(range(0, accumulation, sampling_interval)) + [accumulation])
 
 
 def compute_local_solar_time(longitudes, hour):

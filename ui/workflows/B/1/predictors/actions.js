@@ -18,3 +18,8 @@ export const setPath = path => async dispatch => {
     )
   }
 }
+
+export const setSamplingInterval = value => ({
+  type: 'PREDICTORS.SET_SAMPLING_INTERVAL',
+  data: value,
+})

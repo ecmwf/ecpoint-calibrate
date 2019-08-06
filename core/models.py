@@ -58,6 +58,8 @@ class Predictors(object):
     # predictors
     path = attr.ib(converter=str)
 
+    sampling_interval = attr.ib(converter=int)
+
     codes = attr.ib(default=attr.Factory(list))
 
 

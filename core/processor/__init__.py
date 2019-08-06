@@ -159,7 +159,12 @@ def run(config):
         # One wants the 24h. The 24h mean is obtained by taking the difference between the beginning and the end of the 24 hourly period
         # and dividing by the number of seconds in that period (24h = 86400 sec). Thus, the unit will be W/m2
 
-        steps = [new_step_s + step for step in generate_steps(Acc)]
+        steps = [
+            new_step_s + step
+            for step in generate_steps(
+                Acc, sampling_interval=config.predictors.sampling_interval
+            )
+        ]
 
         # Defining the parameters for the rainfall observations
         validDateF = (
@@ -275,9 +280,18 @@ def run(config):
             if skip:
                 break
 
-            yield log.info(
-                f"  Computing {computer.computation.fullname} using {len(computation_steps)} inputs."
-            )
+            if computer.computation.field in (
+                "WEIGHTED_AVERAGE_FIELD",
+                "MAXIMUM_FIELD",
+                "MINIMUM_FIELD",
+                "AVERAGE_FIELD",
+            ):
+                yield log.info(
+                    f"  Computing {computer.computation.fullname} using "
+                    f"{len(computation_steps)} inputs."
+                )
+            else:
+                yield log.info(f"  Computing {computer.computation.fullname}.")
             computed_value = computer.run(*computation_steps)
 
             computations_cache[computation.shortname] = computed_value

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { remote } from 'electron'
 
-import { Grid, Card, Button, Radio, Item, Icon, Label } from 'semantic-ui-react'
+import { Grid, Card, Button, Radio, Item, Icon, Label, Input } from 'semantic-ui-react'
 
 const mainProcess = remote.require('./server')
 
@@ -42,7 +42,49 @@ class Predictors extends Component {
     </Item>
   )
 
-  isComplete = () => this.props.predictors.codes.length > 0
+  samplingIntervalFieldHasError = () => {
+    const isNumber = /^\d+$/.test(this.props.predictors.sampling_interval)
+
+    if (!isNumber) {
+      return false
+    }
+
+    const ratio =
+      parseInt(this.props.predictand.accumulation, 10) /
+      parseInt(this.props.predictors.sampling_interval, 10)
+    return ratio !== parseInt(ratio, 10) || parseInt(ratio, 10) === 0
+  }
+
+  getSamplingIntervalField = () => (
+    <Item>
+      <Item.Content>
+        <Item.Header>
+          <h5>Enter the forecast data sampling interval in computations:</h5>
+        </Item.Header>
+
+        <Item.Description>
+          <Input
+            error={this.samplingIntervalFieldHasError()}
+            onChange={e => this.props.onSamplingIntervalChange(e.target.value)}
+            value={this.props.predictors.sampling_interval || ''}
+            label={{ basic: true, content: 'hours' }}
+            labelPosition="right"
+          />
+        </Item.Description>
+        <Item.Extra>
+          Valid values should divide the accumulation value:{' '}
+          {this.props.predictand.accumulation && (
+            <code>{this.props.predictand.accumulation}</code>
+          )}
+        </Item.Extra>
+      </Item.Content>
+    </Item>
+  )
+
+  isComplete = () =>
+    this.props.predictors.codes.length > 0 &&
+    !!this.props.predictors.sampling_interval &&
+    !this.samplingIntervalFieldHasError()
 
   componentDidUpdate = prevProps => {
     this.isComplete() && this.props.completeSection()
@@ -63,7 +105,10 @@ class Predictors extends Component {
             </Card.Header>
             <Card.Content>
               <Card.Description />
-              <Item.Group divided>{this.getField()}</Item.Group>
+              <Item.Group divided>
+                {this.getField()}
+                {this.getSamplingIntervalField()}
+              </Item.Group>
             </Card.Content>
           </Card>
         </Grid.Column>
