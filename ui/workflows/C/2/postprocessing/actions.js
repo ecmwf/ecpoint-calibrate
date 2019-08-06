@@ -2,7 +2,10 @@ import { arrayMove } from 'react-sortable-hoc'
 
 export const setThresholdSplits = grid => ({
   type: 'POSTPROCESSING.SET_THRESHOLD_SPLITS',
-  grid,
+  grid: grid.map((row, idx) => {
+    const [_, ...rest] = row
+    return [{ readOnly: true, value: idx === 0 ? '' : idx }].concat(rest)
+  }),
 })
 
 export const setFields = fields => ({

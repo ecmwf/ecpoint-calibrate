@@ -59,6 +59,26 @@ class PostProcessing extends Component {
               })
               this.props.onThresholdSplitsChange(grid)
             }}
+            rowRenderer={props => (
+              <tr>
+                {props.children}
+                {props.row > 0 && (
+                  <Button
+                    icon
+                    circular
+                    onClick={() => {
+                      const grid = this.props.thrGridIn.map(row => [...row])
+                      grid.splice(props.row, 1)
+                      this.props.onThresholdSplitsChange(grid)
+                    }}
+                    size="mini"
+                    disabled={props.row === 1 ? true : null}
+                  >
+                    <Icon name="delete" />
+                  </Button>
+                )}
+              </tr>
+            )}
           />
         </Item.Description>
         <Item.Extra>
@@ -144,7 +164,7 @@ class PostProcessing extends Component {
 
     client.post(
       {
-        url: '/postprocessing/create-naive-decision-tree',
+        url: '/postprocessing/create-decision-tree',
         body: { labels, records, path: this.props.path },
         json: true,
       },
