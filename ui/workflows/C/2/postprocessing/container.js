@@ -21,16 +21,14 @@ const generateInitialGrid = fields => {
   return [header].concat(firstRow)
 }
 
-const mapStateToProps = state => {
-  return {
-    thrGridIn:
-      state.postprocessing.thrGridIn.length > 0
-        ? state.postprocessing.thrGridIn
-        : generateInitialGrid(state.preloader.fields),
-    path: state.preloader.path,
-    fields: state.postprocessing.fields,
-  }
-}
+const mapStateToProps = state => ({
+  thrGridIn:
+    state.postprocessing.thrGridIn.length > 0
+      ? state.postprocessing.thrGridIn
+      : generateInitialGrid(state.preloader.fields),
+  path: state.preloader.path,
+  fields: state.preloader.fields,
+})
 
 const mapDispatchToProps = dispatch => ({
   onThresholdSplitsChange: grid => dispatch(setThresholdSplits(grid)),

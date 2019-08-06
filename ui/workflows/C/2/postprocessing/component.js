@@ -28,15 +28,13 @@ const SortableItem = SortableElement(({ value }) => (
   </Segment>
 ))
 
-const SortableList = SortableContainer(({ items }) => {
-  return (
-    <Segment.Group raised size="mini">
-      {items.map((value, index) => (
-        <SortableItem key={`item-${index}`} index={index} value={value} />
-      ))}
-    </Segment.Group>
-  )
-})
+const SortableList = SortableContainer(({ items }) => (
+  <Segment.Group raised size="mini">
+    {items.map((value, index) => (
+      <SortableItem key={`item-${index}`} index={index} value={value} />
+    ))}
+  </Segment.Group>
+))
 
 class PostProcessing extends Component {
   state = { thrGridOut: null }
