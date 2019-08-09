@@ -186,6 +186,6 @@ def test_adjust_steps_4_model_runs_per_day():
 
 
 def test_generate_steps():
-    assert generate_steps(6) == (0, 6)
-    assert generate_steps(12) == (0, 6, 12)
-    assert generate_steps(24) == (0, 6, 12, 18, 24)
+    assert generate_steps(accumulation=6, sampling_interval=6) == (0, 6)
+    assert generate_steps(accumulation=12, sampling_interval=6) == (0, 6, 12)
+    assert generate_steps(accumulation=24, sampling_interval=6) == (0, 6, 12, 18, 24)
