@@ -46,3 +46,24 @@ class Computer(object):
             )
 
             return scaling_op(computed_value, scaling_factor)
+
+    @classmethod
+    def filter_paths_to_read(cls, paths, computation):
+        if computation == "ACCUMULATED_FIELD":
+            return paths[0], paths[-1]
+        if computation == "INSTANTANEOUS_FIELD":
+            return paths[0]
+        if computation == "24H_SOLAR_RADIATION":
+            return paths[0], paths[-1]
+
+        if computation == "RATIO_FIELD":
+            return paths
+
+        if computation in (
+            "WEIGHTED_AVERAGE_FIELD",
+            "MAXIMUM_FIELD",
+            "MINIMUM_FIELD",
+            "AVERAGE_FIELD",
+            "VECTOR_MODULE",
+        ):
+            return paths

@@ -256,22 +256,23 @@ def run(config):
             )
 
             computation_steps = []
-            for step in steps:
-                grib_path = get_grib_path(predictor_code, step)
-                yield log.info(
-                    f"  Reading forecast file: {os.path.basename(grib_path)}"
-                )
+
+            paths_to_read = Computer.filter_paths_to_read(
+                paths=[get_grib_path(predictor_code, step) for step in steps],
+                computation=computation.field,
+            )
+
+            for path in paths_to_read:
+                yield log.info(f"  Reading forecast file: {os.path.basename(path)}")
 
                 try:
-                    fieldset = Fieldset.from_path(
-                        path=get_grib_path(predictor_code, step)
-                    )
+                    fieldset = Fieldset.from_path(path=path)
                 except IOError:
-                    yield log.warn(f"  Forecast file not found: {grib_path}.")
+                    yield log.warn(f"  Forecast file not found: {path}.")
                     skip = True
                     break
                 except Exception:
-                    yield log.error(f"  Reading forecast file failed: {grib_path}.")
+                    yield log.error(f"  Reading forecast file failed: {path}.")
                     skip = True
                     break
                 else:
@@ -280,18 +281,11 @@ def run(config):
             if skip:
                 break
 
-            if computer.computation.field in (
-                "WEIGHTED_AVERAGE_FIELD",
-                "MAXIMUM_FIELD",
-                "MINIMUM_FIELD",
-                "AVERAGE_FIELD",
-            ):
-                yield log.info(
-                    f"  Computing {computer.computation.fullname} using "
-                    f"{len(computation_steps)} inputs."
-                )
-            else:
-                yield log.info(f"  Computing {computer.computation.fullname}.")
+            yield log.info(
+                f"  Computing {computer.computation.fullname} using "
+                f"{len(computation_steps)} input(s)."
+            )
+
             computed_value = computer.run(*computation_steps)
 
             computations_cache[computation.shortname] = computed_value
@@ -349,6 +343,12 @@ def run(config):
                 computations_cache[field_input["code"]]
                 for field_input in computation.inputs
             ]
+
+            input_codes = [field_input["code"] for field_input in computation.inputs]
+            yield log.info(
+                f"  Computing {computer.computation.fullname} using "
+                f"{len(computation.inputs)} input(s): {', '.join(input_codes)}."
+            )
 
             if computation.field == "RATIO_FIELD":
                 dividend = steps[0]
