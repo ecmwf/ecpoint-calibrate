@@ -213,7 +213,7 @@ class Computation extends Component {
             icon
             circular
             onClick={() => this.props.onRemove(this.props.index)}
-            //disabled={this.props.index === 0 ? true : null}
+            disabled={this.props.index === 0 ? true : null}
           >
             <Icon name="delete" />
           </Button>
