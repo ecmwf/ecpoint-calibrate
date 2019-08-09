@@ -59,7 +59,10 @@ class Predictors extends Component {
     <Item>
       <Item.Content>
         <Item.Header>
-          <h5>Enter the forecast data sampling interval in computations:</h5>
+          <h5>
+            Enter the "Forecast Data Sampling Interval" to be used in "Computations
+            (Define Predictors)":
+          </h5>
         </Item.Header>
 
         <Item.Description>
@@ -72,10 +75,14 @@ class Predictors extends Component {
           />
         </Item.Description>
         <Item.Extra>
-          Valid values should divide the accumulation value:{' '}
+          Valid values should be a divisor of the accumulation period
           {this.props.predictand.accumulation && (
-            <code>{this.props.predictand.accumulation}</code>
+            <span>
+              {' '}
+              (<code>{this.props.predictand.accumulation}</code> hours)
+            </span>
           )}
+          .
         </Item.Extra>
       </Item.Content>
     </Item>
