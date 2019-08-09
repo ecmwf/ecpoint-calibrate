@@ -1,7 +1,17 @@
 import React, { Component } from 'react'
 import { remote } from 'electron'
 
-import { Grid, Card, Button, Radio, Item, Icon, Label, Input } from 'semantic-ui-react'
+import {
+  Grid,
+  Card,
+  Button,
+  Radio,
+  Item,
+  Icon,
+  Label,
+  Input,
+  Popup,
+} from 'semantic-ui-react'
 
 const mainProcess = remote.require('./server')
 
@@ -61,7 +71,12 @@ class Predictors extends Component {
         <Item.Header>
           <h5>
             Enter the "Forecast Data Sampling Interval" to be used in "Computations
-            (Define Predictors)":
+            (Define Predictors)": &nbsp;&nbsp;&nbsp;
+            <Popup
+              trigger={<Icon name="info circle" />}
+              content="This interval is only needed for Maximum, Minimum, Average, Weighted Average fields."
+              size="tiny"
+            />
           </h5>
         </Item.Header>
 
