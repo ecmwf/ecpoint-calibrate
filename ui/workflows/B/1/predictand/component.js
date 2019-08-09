@@ -155,6 +155,7 @@ class Predictand extends Component {
                 value="INSTANTANEOUS"
                 checked={this.props.predictand.type === 'INSTANTANEOUS'}
                 onChange={() => this.props.onTypeChange('INSTANTANEOUS')}
+                disabled={true}
               />
               &nbsp;&nbsp;&nbsp;
               <Popup
