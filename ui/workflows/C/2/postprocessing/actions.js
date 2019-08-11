@@ -1,5 +1,7 @@
 import { arrayMove } from 'react-sortable-hoc'
 
+import client from '~/utils/client'
+
 export const setThresholdSplits = grid => ({
   type: 'POSTPROCESSING.SET_THRESHOLD_SPLITS',
   grid: grid.map((row, idx) => {
@@ -8,16 +10,34 @@ export const setThresholdSplits = grid => ({
   }),
 })
 
-export const setWeatherTypeMatrix = (grid, codes) => ({
-  type: 'POSTPROCESSING.SET_WT_MATRIX',
-  grid: grid.map((row, idx) => {
-    const [_, ...rest] = row
+export const setWeatherTypeMatrix = grid => async dispatch => {
+  const labels = grid[0].slice(1).map(cell => cell.value)
+  const records = grid.slice(1).map(row => _.flatMap(row.slice(1), cell => cell.value))
 
-    return [{ readOnly: true, value: idx === 0 ? '' : `WT ${codes[idx - 1]}` }].concat(
-      rest
-    )
-  }),
-})
+  client.post(
+    {
+      url: '/postprocessing/get-wt-codes',
+      body: { records, labels },
+      json: true,
+    },
+    (err, httpResponse, { codes }) => {
+      if (!!err) {
+        console.error(err)
+      } else {
+        dispatch({
+          type: 'POSTPROCESSING.SET_WT_MATRIX',
+          grid: grid.map((row, idx) => {
+            const [_, ...rest] = row
+
+            return [
+              { readOnly: true, value: idx === 0 ? '' : `WT ${codes[idx - 1]}` },
+            ].concat(rest)
+          }),
+        })
+      }
+    }
+  )
+}
 
 export const setFields = fields => ({
   type: 'PRELOADER.SET_FIELDS',
