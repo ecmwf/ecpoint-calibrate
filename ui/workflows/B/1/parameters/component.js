@@ -44,6 +44,7 @@ class Parameters extends Component {
                 value="netcdf"
                 checked={this.props.parameters.modelType === 'netcdf'}
                 onChange={() => this.props.onModelTypeChange('netcdf')}
+                disabled={true}
               />
               &nbsp;&nbsp;&nbsp;
               <Popup
