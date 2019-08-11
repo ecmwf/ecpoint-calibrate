@@ -8,11 +8,14 @@ export const setThresholdSplits = grid => ({
   }),
 })
 
-export const setWeatherTypeMatrix = grid => ({
+export const setWeatherTypeMatrix = (grid, codes) => ({
   type: 'POSTPROCESSING.SET_WT_MATRIX',
   grid: grid.map((row, idx) => {
     const [_, ...rest] = row
-    return [{ readOnly: true, value: idx === 0 ? '' : `WT ${idx}` }].concat(rest)
+
+    return [{ readOnly: true, value: idx === 0 ? '' : `WT ${codes[idx - 1]}` }].concat(
+      rest
+    )
   }),
 })
 

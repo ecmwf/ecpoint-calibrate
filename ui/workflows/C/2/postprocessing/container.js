@@ -45,7 +45,8 @@ const mapDispatchToProps = dispatch => ({
   onFieldsSortEnd: (fields, oldIndex, newIndex) =>
     dispatch(onFieldsSortEnd(fields, oldIndex, newIndex)),
 
-  onWeatherTypeMatrixChange: grid => dispatch(setWeatherTypeMatrix(grid)),
+  onWeatherTypeMatrixChange: (grid, codes) =>
+    dispatch(setWeatherTypeMatrix(grid, codes)),
 })
 
 export default connect(

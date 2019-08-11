@@ -7,6 +7,8 @@ import { saveSvgAsPng } from 'save-svg-as-png'
 
 import download from '~/utils/download'
 
+import _ from 'lodash'
+
 const containerStyles = {
   width: '100%',
   height: '100vh',
@@ -69,6 +71,10 @@ export default class DecisionTree extends Component {
           !node._children &&
           this.setState({ open: true, histogram: node.meta.histogram })
         }
+        allowForeignObjects
+        nodeLabelComponent={{
+          render: <NodeLabel />,
+        }}
       />
 
       <Graph
@@ -79,3 +85,12 @@ export default class DecisionTree extends Component {
     </div>
   )
 }
+
+const NodeLabel = ({ nodeData }) => (
+  <div
+    style={{ fontSize: '12px', paddingLeft: '15px', width: '200px', fontWeight: 700 }}
+  >
+    <p>{nodeData.name}</p>
+    {!_.isEmpty(nodeData.meta) && <p>WT {nodeData.meta.code}</p>}
+  </div>
+)

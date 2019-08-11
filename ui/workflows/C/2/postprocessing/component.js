@@ -169,7 +169,7 @@ class PostProcessing extends Component {
         body: { labels, records },
         json: true,
       },
-      (err, httpResponse, matrix) => {
+      (err, httpResponse, { matrix, codes }) => {
         const grid = matrix.map((row, idx) =>
           _.concat([
             '',
@@ -179,7 +179,7 @@ class PostProcessing extends Component {
             })),
           ])
         )
-        this.props.onWeatherTypeMatrixChange(grid)
+        this.props.onWeatherTypeMatrixChange(grid, codes)
       }
     )
   }

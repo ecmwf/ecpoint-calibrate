@@ -7,6 +7,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas
+from numpy import inf
 
 from .generics import Node
 
@@ -148,6 +149,8 @@ class DecisionTree(object):
 
             if not curr.children:
                 curr.meta["histogram"] = plot
+                code = cls.wt_code(thrL_out, thrH_out)[i]
+                curr.meta["code"] = code
 
         return root
 
@@ -190,6 +193,43 @@ class DecisionTree(object):
                 rep_error[i][k] = ((low_val * w_low) + (up_val * w_up)) / (w_low + w_up)
 
         return rep_error
+
+    @classmethod
+    def wt_code(cls, thrL_out, thrH_out):
+        num_wt = len(thrL_out)
+        num_pred = len(thrL_out.columns)
+        wt = np.zeros((num_wt, num_pred))
+        wt_arr = []
+        wt_temp = ""
+        for j in range(num_pred):
+            if thrL_out.ix[0, j] == -inf and thrH_out.ix[0, j] == inf:
+                wt[0][j] = 0
+            elif thrL_out.ix[0, j] == -inf and thrH_out.ix[0, j] != inf:
+                wt[0][j] = 1
+
+            wt_temp += str(int(wt[0][j]))
+
+        wt_arr.append(wt_temp)
+
+        for i in range(1, num_wt):
+            wt_temp = ""
+            for j in range(num_pred):
+                if thrL_out.ix[i, j] == -inf and thrH_out.ix[i, j] == inf:
+                    wt[i][j] = 0
+                elif thrL_out.ix[i, j] == -inf and thrH_out.ix[i, j] != inf:
+                    wt[i][j] = 1
+                else:
+                    if (
+                        thrL_out.ix[i][j] == thrL_out.ix[i - 1][j]
+                        and thrH_out.ix[i][j] == thrH_out.ix[i - 1][j]
+                    ):
+                        wt[i][j] = wt[i - 1][j]
+                    else:
+                        wt[i][j] = wt[i - 1][j] + 1
+                wt_temp += str(int(wt[i][j]))
+            wt_arr.append(wt_temp)
+
+        return wt_arr
 
 
 @attr.s(slots=True)

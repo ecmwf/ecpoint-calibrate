@@ -77,6 +77,8 @@ def create_weather_types_matrix():
     dt = DecisionTree(thrL_in=thrL, thrH_in=thrH)
     thrL, thrH = dt.create()
 
+    codes = DecisionTree.wt_code(thrL, thrH)
+
     df_out = pandas.concat([thrL, thrH], axis=1)
     df_out = df_out[labels]
 
@@ -84,7 +86,7 @@ def create_weather_types_matrix():
         [str(cell) for cell in row] for row in df_out.values
     ]
 
-    return jsonify(matrix)
+    return jsonify({"matrix": matrix, "codes": codes})
 
 
 @app.route("/postprocessing/create-decision-tree", methods=("POST",))
