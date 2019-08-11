@@ -22,6 +22,8 @@ const download = (name, data, options) => {
   try {
     if (data instanceof Blob) {
       blob = data
+    } else if (Array.isArray(data)) {
+      blob = new Blob(data, { type: 'application/json' })
     } else if (data.startsWith('data:')) {
       blob = uriToBlob(data)
     } else {

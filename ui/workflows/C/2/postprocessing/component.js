@@ -21,6 +21,7 @@ import { SortableContainer, SortableElement } from 'react-sortable-hoc'
 import Tree from './tree'
 
 import client from '~/utils/client'
+import download from '~/utils/download'
 
 const SortableItem = SortableElement(({ value }) => (
   <Segment secondary textAlign="center">
@@ -200,6 +201,23 @@ class PostProcessing extends Component {
     )
   }
 
+  saveError() {
+    const labels = this.props.thrGridOut[0].slice(1).map(cell => cell.value)
+
+    const records = this.props.thrGridOut
+      .slice(1)
+      .map(row => _.flatMap(row.slice(1), cell => cell.value))
+
+    client.post(
+      {
+        url: '/postprocessing/create-error-rep',
+        body: { labels, records, path: this.props.path },
+        json: true,
+      },
+      (err, httpResponse, body) => download('error.csv', body)
+    )
+  }
+
   getDecisionTree = () =>
     this.props.thrGridOut && (
       <Item>
@@ -215,6 +233,13 @@ class PostProcessing extends Component {
             >
               <Icon name="refresh" /> Generate Decision Tree
             </Button>
+            <Button
+              content="Save error"
+              icon="download"
+              labelPosition="left"
+              floated="right"
+              onClick={() => this.saveError()}
+            />
           </Grid>
           <br />
           {this.state.tree && <Tree data={this.state.tree} />}

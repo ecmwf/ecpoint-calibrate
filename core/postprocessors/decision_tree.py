@@ -1,3 +1,4 @@
+import math
 from base64 import b64encode
 from io import BytesIO
 
@@ -125,7 +126,8 @@ class DecisionTree(object):
                 thrL_labels=thrL_out.columns.tolist(),
                 thrH_labels=thrH_out.columns.tolist(),
             )
-            plot = wt.evaluate(predictor_matrix)
+            error, title = wt.evaluate(predictor_matrix)
+            plot = wt.plot(error, title)
 
             predictors = [predictor.replace("_thrL", "") for predictor in thrL.keys()]
 
@@ -148,6 +150,46 @@ class DecisionTree(object):
                 curr.meta["histogram"] = plot
 
         return root
+
+    @classmethod
+    def cal_rep_error(cls, predictors_matrix, thrL_out, thrH_out, nBin):
+        num_wt = len(thrL_out)
+        rep_error = np.zeros((num_wt, nBin))
+        a = np.arange(nBin)
+
+        for i in range(num_wt):
+            wt = WeatherType(
+                thrL=thrL_out.ix[i, :],
+                thrH=thrH_out.ix[i, :],
+                thrL_labels=thrL_out.columns.tolist(),
+                thrH_labels=thrH_out.columns.tolist(),
+            )
+
+            error, _ = wt.evaluate(predictors_matrix)
+            error = sorted(error)
+
+            centre_bin = (((2.0 * a) + 1) / (2.0 * nBin)) * len(error)
+
+            for k in range(nBin):
+                val = centre_bin[k]
+                low, up = math.floor(val), math.ceil(val)
+
+                if len(error) == 0:
+                    rep_error[i][k] = -1
+                    continue
+                elif len(error) == 1:
+                    low = up = 0
+                elif up >= len(error):
+                    up = len(error) - 1
+                    low = up - 1
+
+                low_val = error[low]
+                up_val = error[up]
+                w_low, w_up = 1 - abs(val - low), 1 - abs(val - up)
+
+                rep_error[i][k] = ((low_val * w_low) + (up_val * w_up)) / (w_low + w_up)
+
+        return rep_error
 
 
 @attr.s(slots=True)
@@ -179,7 +221,7 @@ class WeatherType(object):
                 low=thrL_temp, pred=predictor_shortname, high=thrH_temp
             )
 
-        return self.plot(error.to_list(), title_pred)
+        return error.to_list(), title_pred
 
     @staticmethod
     def plot(data, title):

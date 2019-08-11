@@ -1,8 +1,10 @@
 import json
 import os
 from functools import lru_cache
+from io import StringIO
 from pathlib import Path
 
+import numpy as np
 import pandas
 from flask import Flask, Response, jsonify, request
 from healthcheck import EnvironmentDump, HealthCheck
@@ -100,6 +102,28 @@ def get_decision_tree():
     tree = DecisionTree.construct_tree(predictor_matrix, thrL_out=thrL, thrH_out=thrH)
 
     return jsonify([tree.json])
+
+
+@app.route("/postprocessing/create-error-rep", methods=("POST",))
+def get_error_rep():
+    payload = request.get_json()
+    labels, records, path = payload["labels"], payload["records"], payload["path"]
+
+    records = [[float(cell) for cell in row] for row in records]
+
+    df = pandas.DataFrame.from_records(records, columns=labels)
+
+    thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
+
+    predictor_matrix = ASCIIDecoder(path=path).dataframe
+    rep = DecisionTree.cal_rep_error(
+        predictor_matrix, thrL_out=thrL, thrH_out=thrH, nBin=100
+    )
+
+    s = StringIO()
+    np.savetxt(s, rep, delimiter=",")
+
+    return jsonify(s.getvalue())
 
 
 @app.route("/get-predictor-units", methods=("POST",))
