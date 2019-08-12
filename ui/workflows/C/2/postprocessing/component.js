@@ -218,6 +218,13 @@ class PostProcessing extends Component {
     )
   }
 
+  saveBreakPoints() {
+    const csv = this.props.thrGridOut.map(
+      row => row.map(col => col.value).join(',') + '\n'
+    )
+    download('BreakPointsWT.csv', csv)
+  }
+
   getDecisionTree = () =>
     this.props.thrGridOut && (
       <Item>
@@ -239,6 +246,13 @@ class PostProcessing extends Component {
               labelPosition="left"
               floated="right"
               onClick={() => this.saveError()}
+            />
+            <Button
+              content="Save breakpoints"
+              icon="download"
+              labelPosition="left"
+              floated="right"
+              onClick={() => this.saveBreakPoints()}
             />
           </Grid>
           <br />

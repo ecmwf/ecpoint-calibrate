@@ -30,7 +30,7 @@ export const setWeatherTypeMatrix = grid => async dispatch => {
             const [_, ...rest] = row
 
             return [
-              { readOnly: true, value: idx === 0 ? '' : `WT ${codes[idx - 1]}` },
+              { readOnly: true, value: idx === 0 ? 'WT Code' : `${codes[idx - 1]}` },
             ].concat(rest)
           }),
         })
