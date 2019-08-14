@@ -139,13 +139,22 @@ class DecisionTree(object):
                 )
                 parent = curr
 
-                matches = [child for child in parent.children if child.name == text]
-                if any(matches):
-                    curr = matches[0]
+                matched_node = next(
+                    (child for child in parent.children if child.name == text), None
+                )
+                if matched_node:
+                    curr = matched_node
                     continue
                 else:
-                    curr = Node(text)
-                    parent.children.append(curr)
+                    maybe_child = Node(text)
+                    # For a path in the decision tree that has been resolved, we want
+                    # to add only those nodes to the tree that have a decision, i.e.
+                    # a bounded range.
+                    #
+                    # An exception is when we're adding a node to the Root.
+                    if parent.is_root or not maybe_child.is_unbounded:
+                        curr = maybe_child
+                        parent.add_child(curr)
 
             if not curr.children:
                 curr.meta["histogram"] = plot

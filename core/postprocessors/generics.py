@@ -1,3 +1,5 @@
+import re
+
 import attr
 
 
@@ -5,8 +7,25 @@ import attr
 class Node(object):
     name = attr.ib()
     children = attr.ib(default=attr.Factory(list))
+    parent = attr.ib(default=None)
     meta = attr.ib(default=attr.Factory(dict))
 
     @property
-    def json(self):
+    def json(self) -> dict:
         return attr.asdict(self)
+
+    @property
+    def is_root(self) -> bool:
+        return self.name == "Root"
+
+    @property
+    def is_unbounded(self) -> bool:
+        if self.is_root:
+            return True
+
+        m = re.match(r"-inf < .* < inf", self.name)
+        return bool(m)
+
+    def add_child(self, node: "Node"):
+        # [TODO] - Do NOT add duplicate nodes to the parent.
+        self.children.append(node)
