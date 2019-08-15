@@ -80,9 +80,7 @@ def create_weather_types_matrix():
     df_out = pandas.concat([thrL, thrH], axis=1)
     df_out = df_out[labels]
 
-    matrix = [list(df_out.columns)] + [
-        [str(cell) for cell in row] for row in df_out.values
-    ]
+    matrix = [[str(cell) for cell in row] for row in df_out.values]
 
     return jsonify({"matrix": matrix})
 
@@ -90,7 +88,8 @@ def create_weather_types_matrix():
 @app.route("/postprocessing/get-wt-codes", methods=("POST",))
 def get_wt_codes():
     payload = request.get_json()
-    labels, records = payload["labels"], payload["records"]
+
+    labels, records = payload["labels"], payload["matrix"]
 
     records = [[float(cell) for cell in row] for row in records]
 

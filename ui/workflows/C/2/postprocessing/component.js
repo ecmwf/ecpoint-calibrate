@@ -170,26 +170,14 @@ class PostProcessing extends Component {
         json: true,
       },
       (err, httpResponse, { matrix }) => {
-        const grid = matrix.map((row, idx) =>
-          _.concat([
-            '',
-            ...row.map(col => ({
-              value: col,
-              readOnly: idx === 0 ? true : false,
-            })),
-          ])
-        )
-        this.props.onWeatherTypeMatrixChange(grid)
+        this.props.onWeatherTypeMatrixChange(labels, matrix)
       }
     )
   }
 
   postThrGridOut() {
-    const labels = this.props.thrGridOut[0].slice(1).map(cell => cell.value)
-
-    const records = this.props.thrGridOut
-      .slice(1)
-      .map(row => _.flatMap(row.slice(1), cell => cell.value))
+    const labels = this.props.thrGridIn[0].slice(1).map(cell => cell.value)
+    const records = this.props.thrGridOut.map(row => _.flatMap(row.slice(1)))
 
     client.post(
       {
@@ -202,11 +190,8 @@ class PostProcessing extends Component {
   }
 
   saveError() {
-    const labels = this.props.thrGridOut[0].slice(1).map(cell => cell.value)
-
-    const records = this.props.thrGridOut
-      .slice(1)
-      .map(row => _.flatMap(row.slice(1), cell => cell.value))
+    const labels = this.props.thrGridIn[0].slice(1).map(cell => cell.value)
+    const records = this.props.thrGridOut.map(row => _.flatMap(row.slice(1)))
 
     client.post(
       {
@@ -279,65 +264,73 @@ class PostProcessing extends Component {
         </Grid>
         <br />
         {this.props.thrGridOut && (
-          <ReactDataSheet
-            data={this.props.thrGridOut}
-            valueRenderer={cell => cell.value}
-            onContextMenu={(e, cell, i, j) =>
-              cell.readOnly ? e.preventDefault() : null
-            }
-            onCellsChanged={changes => {
-              const grid = this.props.thrGridOut.map(row => [...row])
-              changes.forEach(({ cell, row, col, value }) => {
-                grid[row][col] = { ...grid[row][col], value }
-              })
-              this.props.onWeatherTypeMatrixChange(grid)
-            }}
-            rowRenderer={props => (
-              <tr>
-                {props.children}
-                {this.isMergeableToPreviousRow(props.row) && (
-                  <Button
-                    icon
-                    circular
-                    onClick={() => {
-                      const grid = this.mergeToPreviousRow(props.row)
-                      this.props.onWeatherTypeMatrixChange(grid)
-                    }}
-                    size="mini"
-                    disabled={props.row === 1 ? true : null}
-                  >
-                    <Icon name="arrow up" />
-                  </Button>
-                )}
-              </tr>
-            )}
-          />
+          <Grid.Row centered>
+            <Grid.Column>
+              <Table definition>
+                <Table.Header>
+                  <Table.Row>
+                    <Table.HeaderCell>WT code</Table.HeaderCell>
+                    {this.props.thrGridIn[0].slice(1).map(cell => (
+                      <Table.HeaderCell>{cell.value}</Table.HeaderCell>
+                    ))}
+                    <Table.HeaderCell />
+                  </Table.Row>
+                </Table.Header>
+
+                <Table.Body>
+                  {this.props.thrGridOut.map((rows, idx) => (
+                    <Table.Row>
+                      {rows.map(cell => (
+                        <Table.Cell>{cell}</Table.Cell>
+                      ))}
+
+                      <Table.Cell>
+                        {this.isMergeableToPreviousRow(idx) && (
+                          <Button
+                            icon
+                            circular
+                            onClick={() => {
+                              const matrix = this.mergeToPreviousRow(idx)
+                              this.props.onWeatherTypeMatrixChange(
+                                this.props.thrGridIn[0]
+                                  .slice(1)
+                                  .map(cell => cell.value),
+                                matrix
+                              )
+                            }}
+                            size="mini"
+                          >
+                            <Icon name="arrow up" />
+                          </Button>
+                        )}
+                      </Table.Cell>
+                    </Table.Row>
+                  ))}
+                </Table.Body>
+              </Table>
+            </Grid.Column>
+          </Grid.Row>
         )}
       </Item.Content>
     </Item>
   )
 
   isMergeableToPreviousRow = row => {
-    if (row === 0 || row === 1) {
+    if (row === 0) {
       return false
     }
 
-    const grid = this.props.thrGridOut
+    const matrix = this.props.thrGridOut.map(row => _.flatMap(row.slice(1)))
 
     /* B is being merged to A */
     const [A, B] = [
-      _.slice(grid[row - 1], 1)
-        .map(x => x.value)
-        .reverse(),
-      _.slice(grid[row], 1)
-        .map(x => x.value)
-        .reverse(),
+      _.slice(matrix[row - 1], 1).reverse(),
+      _.slice(matrix[row], 1).reverse(),
     ]
 
     const zipped_columns = _.zip(_.chunk(A, 2), _.chunk(B, 2))
 
-    let index = 0,
-      ctr = 0
+    let index = 0
 
     while (index !== zipped_columns.length) {
       const [[aHigh, aLow], [bHigh, bLow]] = zipped_columns[index]
@@ -356,17 +349,10 @@ class PostProcessing extends Component {
   }
 
   mergeToPreviousRow = row => {
-    const grid = this.props.thrGridOut
+    const matrix = this.props.thrGridOut.map(row => _.flatMap(row.slice(1)))
 
     /* B is being merged to A */
-    const [A, B] = [
-      _.slice(grid[row - 1], 1)
-        .map(x => x.value)
-        .reverse(),
-      _.slice(grid[row], 1)
-        .map(x => x.value)
-        .reverse(),
-    ]
+    const [A, B] = [[...matrix[row - 1]].reverse(), [...matrix[row]].reverse()]
 
     const zipped_columns = _.zip(_.chunk(A, 2), _.chunk(B, 2))
 
@@ -392,9 +378,9 @@ class PostProcessing extends Component {
       ...rest.flatMap(([[aHigh, aLow], [bHigh, bLow]]) => [aLow, aHigh]),
       ...[aLowFirst, bHighFirst],
       ...unbounded_leaves,
-    ].map(x => ({ value: x, readOnly: false }))
+    ]
 
-    return [..._.slice(grid, 0, row - 1), [{}, ...newRow], ..._.slice(grid, row + 1)]
+    return [..._.slice(matrix, 0, row - 1), newRow, ..._.slice(matrix, row + 1)]
   }
 
   getSortableFields = () => (
