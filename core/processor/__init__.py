@@ -59,7 +59,7 @@ def run(config):
     header += "\n# ".join(observations_logs(config, raw=True)) + "\n# "
     header += "\n# ".join(output_file_logs(config, raw=True))
 
-    serializer.header = header.strip()
+    serializer.add_header(header.strip())
 
     #############################################################################################
 
@@ -427,5 +427,4 @@ def run(config):
         # Number of observations actually used in the calibration period (corresponding to {predictand} => {predictand_min_value} {predictand_scaled_units}/{Acc}h) = {obsUSED}
         """
     ).strip()
-    serializer.footer = footer
-    serializer.write()
+    serializer.add_footer(footer)
