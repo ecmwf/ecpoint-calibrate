@@ -295,19 +295,18 @@ class PostProcessing extends Component {
             rowRenderer={props => (
               <tr>
                 {props.children}
-                {props.row > 0 && (
+                {this.isMergeableToPreviousRow(props.row) && (
                   <Button
                     icon
                     circular
                     onClick={() => {
-                      const grid = this.props.thrGridOut.map(row => [...row])
-                      grid.splice(props.row, 1)
+                      const grid = this.mergeToPreviousRow(props.row)
                       this.props.onWeatherTypeMatrixChange(grid)
                     }}
                     size="mini"
                     disabled={props.row === 1 ? true : null}
                   >
-                    <Icon name="delete" />
+                    <Icon name="arrow up" />
                   </Button>
                 )}
               </tr>
@@ -317,6 +316,86 @@ class PostProcessing extends Component {
       </Item.Content>
     </Item>
   )
+
+  isMergeableToPreviousRow = row => {
+    if (row === 0 || row === 1) {
+      return false
+    }
+
+    const grid = this.props.thrGridOut
+
+    /* B is being merged to A */
+    const [A, B] = [
+      _.slice(grid[row - 1], 1)
+        .map(x => x.value)
+        .reverse(),
+      _.slice(grid[row], 1)
+        .map(x => x.value)
+        .reverse(),
+    ]
+
+    const zipped_columns = _.zip(_.chunk(A, 2), _.chunk(B, 2))
+
+    let index = 0,
+      ctr = 0
+
+    while (index !== zipped_columns.length) {
+      const [[aHigh, aLow], [bHigh, bLow]] = zipped_columns[index]
+      if (aLow !== '-inf' || bLow !== '-inf' || aHigh !== 'inf' || bHigh !== 'inf') {
+        break
+      }
+      index += 1
+    }
+
+    const [
+      [[aHighFirst, aLowFirst], [bHighFirst, bLowFirst]],
+      ...rest
+    ] = zipped_columns.slice(index)
+
+    return aHighFirst === bLowFirst
+  }
+
+  mergeToPreviousRow = row => {
+    const grid = this.props.thrGridOut
+
+    /* B is being merged to A */
+    const [A, B] = [
+      _.slice(grid[row - 1], 1)
+        .map(x => x.value)
+        .reverse(),
+      _.slice(grid[row], 1)
+        .map(x => x.value)
+        .reverse(),
+    ]
+
+    const zipped_columns = _.zip(_.chunk(A, 2), _.chunk(B, 2))
+
+    let index = 0
+
+    while (index !== zipped_columns.length) {
+      const [[aHigh, aLow], [bHigh, bLow]] = zipped_columns[index]
+      if (aLow !== '-inf' || bLow !== '-inf' || aHigh !== 'inf' || bHigh !== 'inf') {
+        break
+      }
+      index += 1
+    }
+
+    const unbounded_leaves = _.flatten(_.times(index, _.constant(['-inf', 'inf'])))
+    const [
+      [[aHighFirst, aLowFirst], [bHighFirst, bLowFirst]],
+      ...rest
+    ] = zipped_columns.slice(index)
+
+    rest.reverse()
+
+    const newRow = [
+      ...rest.flatMap(([[aHigh, aLow], [bHigh, bLow]]) => [aLow, aHigh]),
+      ...[aLowFirst, bHighFirst],
+      ...unbounded_leaves,
+    ].map(x => ({ value: x, readOnly: false }))
+
+    return [..._.slice(grid, 0, row - 1), [{}, ...newRow], ..._.slice(grid, row + 1)]
+  }
 
   getSortableFields = () => (
     <Item>
