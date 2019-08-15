@@ -63,7 +63,12 @@ export default (state = defaultState, action) => {
             return {
               ...item,
               field: action.field,
-              units: action.field === 'RATIO_FIELD' ? 'NoUnit' : item.units,
+              units:
+                action.field === 'RATIO_FIELD'
+                  ? 'NoUnit'
+                  : action.field === '24H_SOLAR_RADIATION'
+                    ? 'W m**-2'
+                    : item.units,
             }
           }
           return item
@@ -78,12 +83,11 @@ export default (state = defaultState, action) => {
             return {
               ...item,
               inputs: action.inputs,
-              units:
-                item.field !== 'RATIO_FIELD'
-                  ? action.inputs.length > 0
-                    ? action.inputs[0].units
-                    : item.units
-                  : item.units,
+              units: !['RATIO_FIELD', '24H_SOLAR_RADIATION'].includes(item.field)
+                ? action.inputs.length > 0
+                  ? action.inputs[0].units
+                  : item.units
+                : item.units,
             }
           }
           return item
@@ -101,14 +105,13 @@ export default (state = defaultState, action) => {
                 ...input,
                 units: input.code === action.code ? action.units : input.units,
               })),
-              units:
-                item.field !== 'RATIO_FIELD'
-                  ? item.scale.value === '1'
-                    ? item.inputs.length > 0
-                      ? action.units
-                      : '-'
-                    : item.units
-                  : item.units,
+              units: !['RATIO_FIELD', '24H_SOLAR_RADIATION'].includes(item.field)
+                ? item.scale.value === '1'
+                  ? item.inputs.length > 0
+                    ? action.units
+                    : '-'
+                  : item.units
+                : item.units,
             }
           }
           return item

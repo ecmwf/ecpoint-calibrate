@@ -12,6 +12,7 @@ import {
   Radio,
   Checkbox,
   Message,
+  Popup,
 } from 'semantic-ui-react'
 
 import { isNotEmpty, isValid } from './index'
@@ -173,6 +174,7 @@ class Computation extends Component {
               value="MULTIPLY"
               checked={this.props.scale.op === 'MULTIPLY'}
               onChange={() => this.props.setScaleOp(this.props.index, 'MULTIPLY')}
+              disabled={this.props.field === '24H_SOLAR_RADIATION'}
             />
           </Grid.Row>
           <Grid.Row>
@@ -181,6 +183,7 @@ class Computation extends Component {
               value="DIVIDE"
               checked={this.props.scale.op === 'DIVIDE'}
               onChange={() => this.props.setScaleOp(this.props.index, 'DIVIDE')}
+              disabled={this.props.field === '24H_SOLAR_RADIATION'}
             />
           </Grid.Row>
           <br />
@@ -188,10 +191,27 @@ class Computation extends Component {
             fluid
             value={this.props.scale.value}
             onChange={e => this.props.setScaleValue(this.props.index, e.target.value)}
+            disabled={this.props.field === '24H_SOLAR_RADIATION'}
           />
 
           <br />
-          <b>Units:</b>
+          <b>
+            Units:
+            {this.props.field === '24H_SOLAR_RADIATION' && (
+              <Popup trigger={<Icon name="info circle" />} size="tiny">
+                The raw solar radiation has a unit of <code>J m**-2</code>, which means{' '}
+                <code>W s m**-2</code>.<br />
+                <br />
+                When the solar radiation gets accumulated in 24h, it is necessary to
+                divide by <code>24h</code>
+                (or <code>86400s</code>
+                ).
+                <br />
+                <br />
+                Thus, the units of this field becomes <code>W m**-2</code>.
+              </Popup>
+            )}
+          </b>
 
           <Input
             fluid
