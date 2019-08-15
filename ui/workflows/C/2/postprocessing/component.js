@@ -214,7 +214,7 @@ class PostProcessing extends Component {
   }
 
   getDecisionTree = () =>
-    this.props.thrGridOut && (
+    this.props.thrGridOut.length > 0 && (
       <Item>
         <Item.Content>
           <br />
@@ -257,7 +257,7 @@ class PostProcessing extends Component {
           </Button>
         </Grid>
         <br />
-        {this.props.thrGridOut && (
+        {this.props.thrGridOut.length > 0 && (
           <Grid.Row centered>
             <Grid.Column>
               <Table definition>
