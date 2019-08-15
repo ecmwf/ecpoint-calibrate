@@ -7,8 +7,6 @@ from typing import Union
 import metview
 import numpy as np
 
-from .geopoints import Geopoints
-
 logger = logging.getLogger(__name__)
 
 
@@ -54,9 +52,7 @@ class Fieldset(metview.Fieldset):
             the forecast data.
         :rtype: Geopoints
         """
-        geopoints_out = metview.nearest_gridpoint(self, geopoints)
-        geopoints_out.__class__ = Geopoints
-        return geopoints_out
+        return metview.nearest_gridpoint(self, geopoints)
 
     @property
     def values(self):

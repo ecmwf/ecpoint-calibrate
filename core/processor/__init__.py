@@ -4,7 +4,7 @@ from textwrap import dedent
 
 from core.loaders.ascii import ASCIIEncoder
 from core.loaders.fieldset import Fieldset
-from core.loaders.geopoints import Geopoints
+from core.loaders.geopoints import read_geopoints
 
 from ..computations.models import Computer
 from .log_factory import (
@@ -186,7 +186,7 @@ def run(config):
         # Reading Rainfall Observations
         yield log.info(f"  Read observation file: {os.path.basename(obs_path)}")
         try:
-            obs = Geopoints.from_path(path=obs_path)
+            obs = read_geopoints(path=obs_path)
         except IOError:
             yield log.warn(f"  Observation file not found in DB: {obs_path}.")
             continue
@@ -196,7 +196,7 @@ def run(config):
             )
             continue
 
-        nOBS = len(obs.dataframe)
+        nOBS = len(obs)
 
         if nOBS == 0:
             yield log.warn(
@@ -298,18 +298,17 @@ def run(config):
 
             # Select only the values that correspond to a minimum value of the predictand.
             if computation.is_reference:
-                reference_predictor = computation.shortname
-                ref_geopoints = geopoints
-                mask = ref_geopoints.values >= predictand_min_value
+                predictand = computation.shortname
+                mask = geopoints >= predictand_min_value
 
                 yield log.info(
                     f"  Selecting values that correspond to {computation.shortname}"
                     f" >= {predictand_min_value} {predictand_scaled_units}/{Acc}h."
                 )
 
-                ref_geopoints_filtered_df = ref_geopoints.dataframe[mask]
+                ref_geopoints_filtered_df = geopoints.filter(mask)
 
-                if ref_geopoints_filtered_df.empty:
+                if not ref_geopoints_filtered_df:
                     yield log.warn(
                         f"  No values of {computation.shortname} >= 1 mm/{Acc}h."
                     )
@@ -317,13 +316,13 @@ def run(config):
                     break
                 elif computation.isPostProcessed:
                     computations_result.append(
-                        (computation.shortname, ref_geopoints_filtered_df["value"])
+                        (computation.shortname, ref_geopoints_filtered_df.values())
                     )
             else:
-                geopoints_filtered_df = geopoints.dataframe[mask]
+                geopoints_filtered_df = geopoints.filter(mask)
 
                 computations_result.append(
-                    (computation.shortname, geopoints_filtered_df["value"])
+                    (computation.shortname, geopoints_filtered_df.values())
                 )
 
             yield log.info("")
@@ -354,25 +353,25 @@ def run(config):
                 dividend = steps[0]
                 # [TODO] Cache the following in the computations_cache
                 geopoints = dividend.nearest_gridpoint(obs)
-                geopoints_filtered_df = geopoints.dataframe[mask]
+                geopoints_filtered_df = geopoints.filter(mask)
 
                 computed_value = computer.run(
-                    geopoints_filtered_df["value"], ref_geopoints_filtered_df["value"]
+                    geopoints_filtered_df.values(), ref_geopoints_filtered_df.values()
                 )
                 computations_result.append((computation.shortname, computed_value))
             else:
                 computed_value = computer.run(*steps)
                 geopoints = computed_value.nearest_gridpoint(obs)
-                geopoints_filtered_df = geopoints.dataframe[mask]
+                geopoints_filtered_df = geopoints.filter(mask)
                 computations_result.append(
-                    (computation.shortname, geopoints_filtered_df["value"])
+                    (computation.shortname, geopoints_filtered_df.values())
                 )
 
         # Compute other parameters
-        obs1 = obs.dataframe[mask]
+        obs1 = obs.filter(mask)
 
-        latObs_1 = obs1["latitude"]
-        lonObs_1 = obs1["longitude"]
+        latObs_1 = obs1.latitudes()
+        lonObs_1 = obs1.longitudes()
         # [XXX] CPr = CP_Ob1 / TP_Ob1
 
         vals_errors = []
@@ -380,21 +379,21 @@ def run(config):
         yield log.info(f"  Computing the {config.predictand.error}.")
         if config.predictand.error == "FER":
             FER = (
-                obs1["value"] - ref_geopoints_filtered_df["value"]
-            ) / ref_geopoints_filtered_df["value"]
+                obs1.values() - ref_geopoints_filtered_df.values()
+            ) / ref_geopoints_filtered_df.values()
             vals_errors.append(("FER", FER))
 
         if config.predictand.error == "FE":
-            FE = obs1["value"] - ref_geopoints_filtered_df["value"]
+            FE = obs1.values() - ref_geopoints_filtered_df.values()
             vals_errors.append(("FE", FE))
 
         vals_LST = compute_local_solar_time(longitudes=lonObs_1, hour=HourVF_num)
 
         # Saving the output file in ascii format
-        vals_OB = obs1["value"]
+        vals_OB = obs1.values()
 
         n = len(vals_OB)
-        obsUSED = obsUSED + n
+        obsUSED += n
         yield log.info("")
         yield log.bold("POINT DATA TABLE:")
         yield log.info(f"  Saving the point data table to output file: {PathOUT}")
@@ -419,13 +418,13 @@ def run(config):
     )
     yield log.success(
         f"Number of observations actually used in the calibration period "
-        f"({reference_predictor} >= {predictand_min_value} {predictand_scaled_units}/{Acc}h): {obsUSED}"
+        f"({predictand} >= {predictand_min_value} {predictand_scaled_units}/{Acc}h): {obsUSED}"
     )
 
     footer = dedent(
         f"""
         # Number of observations in the whole calibration period = {obsTOT}
-        # Number of observations actually used in the calibration period (corresponding to {reference_predictor} => {predictand_min_value} {predictand_scaled_units}/{Acc}h) = {obsUSED}
+        # Number of observations actually used in the calibration period (corresponding to {predictand} => {predictand_min_value} {predictand_scaled_units}/{Acc}h) = {obsUSED}
         """
     ).strip()
     serializer.footer = footer
