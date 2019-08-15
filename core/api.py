@@ -105,11 +105,11 @@ def get_wt_codes():
 @app.route("/postprocessing/create-decision-tree", methods=("POST",))
 def get_decision_tree():
     payload = request.get_json()
-    labels, records, path = (payload["labels"], payload["records"], payload["path"])
+    labels, matrix, path = (payload["labels"], payload["matrix"], payload["path"])
 
-    records = [[float(cell) for cell in row] for row in records]
+    matrix = [[float(cell) for cell in row] for row in matrix]
 
-    df = pandas.DataFrame.from_records(records, columns=labels)
+    df = pandas.DataFrame.from_records(matrix, columns=labels)
 
     thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
 
@@ -122,11 +122,11 @@ def get_decision_tree():
 @app.route("/postprocessing/create-error-rep", methods=("POST",))
 def get_error_rep():
     payload = request.get_json()
-    labels, records, path = payload["labels"], payload["records"], payload["path"]
+    labels, matrix, path = payload["labels"], payload["matrix"], payload["path"]
 
-    records = [[float(cell) for cell in row] for row in records]
+    matrix = [[float(cell) for cell in row] for row in matrix]
 
-    df = pandas.DataFrame.from_records(records, columns=labels)
+    df = pandas.DataFrame.from_records(matrix, columns=labels)
 
     thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
 

@@ -11,17 +11,17 @@ export const setThresholdSplits = grid => ({
 })
 
 export const setWeatherTypeMatrix = (labels, matrix) => async dispatch => {
-  client.post(
+  await client.post(
     {
       url: '/postprocessing/get-wt-codes',
       body: { labels, matrix },
       json: true,
     },
-    (err, httpResponse, { codes }) => {
+    async (err, httpResponse, { codes }) => {
       if (!!err) {
         console.error(err)
       } else {
-        dispatch({
+        await dispatch({
           type: 'POSTPROCESSING.SET_WT_MATRIX',
           grid: matrix.map((row, idx) => [`${codes[idx]}`].concat(row)),
         })

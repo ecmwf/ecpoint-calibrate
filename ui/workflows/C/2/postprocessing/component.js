@@ -157,7 +157,7 @@ class PostProcessing extends Component {
   isComplete = () => !this.hasError()
 
   postThrGridIn() {
-    const labels = this.props.thrGridIn[0].slice(1).map(cell => cell.value)
+    const labels = this.getLabels()
 
     const records = this.props.thrGridIn
       .slice(1)
@@ -171,18 +171,21 @@ class PostProcessing extends Component {
       },
       (err, httpResponse, { matrix }) => {
         this.props.onWeatherTypeMatrixChange(labels, matrix)
+        this.postThrGridOut(matrix)
       }
     )
   }
 
-  postThrGridOut() {
-    const labels = this.props.thrGridIn[0].slice(1).map(cell => cell.value)
-    const records = this.props.thrGridOut.map(row => _.flatMap(row.slice(1)))
+  getLabels = () => this.props.thrGridIn[0].slice(1).map(cell => cell.value)
 
+  postThrGridOut = matrix => {
+    /* We pass the matrix instead of using it from this.props.thrGridOut to avoid
+      * concurrency issues. */
+    const labels = this.getLabels()
     client.post(
       {
         url: '/postprocessing/create-decision-tree',
-        body: { labels, records, path: this.props.path },
+        body: { labels, matrix, path: this.props.path },
         json: true,
       },
       (err, httpResponse, tree) => this.setState({ tree })
@@ -190,13 +193,13 @@ class PostProcessing extends Component {
   }
 
   saveError() {
-    const labels = this.props.thrGridIn[0].slice(1).map(cell => cell.value)
-    const records = this.props.thrGridOut.map(row => _.flatMap(row.slice(1)))
+    const labels = this.getLabels()
+    const matrix = this.props.thrGridOut.map(row => _.flatMap(row.slice(1)))
 
     client.post(
       {
         url: '/postprocessing/create-error-rep',
-        body: { labels, records, path: this.props.path },
+        body: { labels, matrix, path: this.props.path },
         json: true,
       },
       (err, httpResponse, body) => download('error.csv', body)
@@ -204,9 +207,9 @@ class PostProcessing extends Component {
   }
 
   saveBreakPoints() {
-    const csv = this.props.thrGridOut.map(
-      row => row.map(col => col.value).join(',') + '\n'
-    )
+    const labels = this.getLabels()
+    const csv = this.props.thrGridOut.map(row => row.join(',')).join('\n')
+
     download('BreakPointsWT.csv', csv)
   }
 
@@ -216,15 +219,6 @@ class PostProcessing extends Component {
         <Item.Content>
           <br />
           <Grid centered>
-            <Button
-              icon
-              labelPosition="left"
-              primary
-              size="medium"
-              onClick={() => this.postThrGridOut()}
-            >
-              <Icon name="refresh" /> Generate Decision Tree
-            </Button>
             <Button
               content="Save error"
               icon="download"
@@ -297,6 +291,8 @@ class PostProcessing extends Component {
                                   .map(cell => cell.value),
                                 matrix
                               )
+
+                              this.postThrGridOut(matrix)
                             }}
                             size="mini"
                           >
