@@ -1,6 +1,6 @@
 {
   "name": "ecPoint-Calibrate",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "GUI for ecPoint-Calibrate powered by Electron and React",
   "engines": {
     "node": "==12.1.0"
@@ -46,6 +46,7 @@
     "eslint-plugin-standard": "3.1.0",
     "extract-text-webpack-plugin": "3.0.2",
     "file-loader": "1.1.10",
+    "frontail": "^4.6.0",
     "fs-jetpack": "^2.2.2",
     "immutable": "3.8.2",
     "lodash": "4.17.13",
@@ -58,6 +59,7 @@
     "react-datepicker": "1.6.0",
     "react-dom": "16.3.3",
     "react-faux-dom": "^4.5.0",
+    "react-iframe": "^1.8.0",
     "react-redux": "5.0.7",
     "react-router-dom": "4.2.2",
     "react-sortable-hoc": "1.9.1",

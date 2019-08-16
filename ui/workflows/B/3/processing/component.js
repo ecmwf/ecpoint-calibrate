@@ -1,20 +1,14 @@
 import React, { Component } from 'react'
 
 import { Grid, Segment, Button, Modal } from 'semantic-ui-react'
+import Iframe from 'react-iframe'
 
 import client from '~/utils/client'
 import download from '~/utils/download'
 import * as jetpack from 'fs-jetpack'
 
 class Processing extends Component {
-  state = { status: 'initial', logs: [] }
-
-  appendLog(log) {
-    const chunk = log.split('[END]').filter(e => e !== '')
-    this.setState(prevState => ({
-      logs: [...prevState.logs, ...chunk],
-    }))
-  }
+  state = { status: 'initial' }
 
   runComputation() {
     this.setState({ status: 'running' })
@@ -38,8 +32,8 @@ class Processing extends Component {
       units: this.props.predictand.units,
     }
 
-    client
-      .post({
+    client.post(
+      {
         url: '/computation-logs',
         body: {
           parameters,
@@ -49,74 +43,42 @@ class Processing extends Component {
           computations: this.props.computations.fields,
         },
         json: true,
-      })
-      .on('data', chunk => this.appendLog(chunk.toString()))
-      .on('end', () => {
+      },
+      (err, httpResponse, body) => {
         this.setState({ status: 'completed' })
         this.props.completeSection()
-      })
-  }
-
-  colorizeLog = (log, key) => {
-    if (log.includes('[WARNING]')) {
-      return (
-        <pre key={key} className="log" style={{ color: '#d6cc75' }}>
-          {log.replace('[WARNING]', '')}
-        </pre>
-      )
-    } else if (log.includes('[SUCCESS]')) {
-      return (
-        <pre key={key} className="log" style={{ color: '#42c88a' }}>
-          {log.replace('[SUCCESS]', '')}
-        </pre>
-      )
-    } else if (log.includes('[ERROR]')) {
-      return (
-        <pre key={key} className="log" style={{ color: '#f65353' }}>
-          {log.replace('[ERROR]', '')}
-        </pre>
-      )
-    } else if (log.includes('[TITLE]')) {
-      return (
-        <b>
-          <pre key={key} className="log" style={{ color: '#89c4f4' }}>
-            {log.replace('[TITLE]', '')}
-          </pre>
-        </b>
-      )
-    }
-
-    return (
-      <pre key={key} className="log">
-        {log.replace('[INFO]', '')}
-      </pre>
+      }
     )
   }
 
-  render() {
-    return (
-      <Grid columns={2} centered>
-        <Grid.Row>
-          <Button
-            content="Launch computation"
-            onClick={() => this.runComputation()}
-            disabled={this.state.status == 'running' ? true : null}
-            icon="cog"
-            labelPosition="left"
+  render = () => (
+    <Grid centered container>
+      <Grid.Row>
+        <Button
+          content="Launch computation"
+          onClick={() => this.runComputation()}
+          disabled={this.state.status == 'running' ? true : null}
+          icon="cog"
+          labelPosition="left"
+        />
+      </Grid.Row>
+      <Grid.Row>
+        <Grid.Column>
+          <Iframe
+            url={
+              process.env.RUNNING_IN_DOCKER === 'true'
+                ? 'http://logger:9001'
+                : 'http://0.0.0.0:9001'
+            }
+            width="100%"
+            height="750px"
+            display="initial"
+            position="relative"
           />
-        </Grid.Row>
-        <Grid.Row>
-          <Grid.Column>
-            {this.state.logs.length > 0 && (
-              <Segment inverted>
-                {this.state.logs.map((log, idx) => this.colorizeLog(log, idx))}
-              </Segment>
-            )}
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
-    )
-  }
+        </Grid.Column>
+      </Grid.Row>
+    </Grid>
+  )
 }
 
 export default Processing

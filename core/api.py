@@ -25,10 +25,9 @@ envdump = EnvironmentDump(app, "/environment")
 @app.route("/computation-logs", methods=("POST",))
 def stream_computation_logs():
     payload = request.get_json()
-
     config = Config.from_dict(payload)
-
-    return Response(run(config), mimetype="text/plain")
+    run(config)
+    return Response()
 
 
 @app.route("/predictors", methods=("POST",))

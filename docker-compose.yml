@@ -47,8 +47,25 @@ services:
 
     environment:
       - DISPLAY=$DISPLAY
+      - DOCKER=1
 
     devices:
       - /dev/dri:/dev/dri
 
     command: wait-for-it core:8888/healthcheck --timeout=5 -- npm start
+
+  logger:
+    build:
+      context: .
+      dockerfile: Dockerfile.logger
+
+
+    volumes:
+      # Mount externally plugged devices
+      - /media:/media
+
+      # Mount home directory of host as /root
+      - $HOME:/root
+
+    ports:
+      - 9001:9001

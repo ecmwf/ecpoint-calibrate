@@ -1,3 +1,4 @@
+import logging
 import os
 from datetime import datetime, timedelta
 from textwrap import dedent
@@ -19,7 +20,10 @@ from .utils import (
     compute_local_solar_time,
     generate_steps,
     iter_daterange,
-    log,
+)
+
+logging.basicConfig(
+    filename=f'{os.environ["HOME"]}/ecpoint.logs', filemode="a", level=logging.DEBUG
 )
 
 
@@ -53,11 +57,11 @@ def run(config):
         # """  # Do NOT strip
     )
 
-    header += "\n# ".join(general_parameters_logs(config, raw=True)) + "\n# "
-    header += "\n# ".join(predictand_logs(config, raw=True)) + "\n# "
-    header += "\n# ".join(predictors_logs(config, raw=True)) + "\n# "
-    header += "\n# ".join(observations_logs(config, raw=True)) + "\n# "
-    header += "\n# ".join(output_file_logs(config, raw=True))
+    header += "\n# ".join(general_parameters_logs(config).split("\n"))
+    header += "\n# ".join(predictand_logs(config).split("\n"))
+    header += "\n# ".join(predictors_logs(config).split("\n"))
+    header += "\n# ".join(observations_logs(config).split("\n"))
+    header += "\n# ".join(output_file_logs(config).split("\n"))
 
     serializer.add_header(header.strip())
 
@@ -65,18 +69,23 @@ def run(config):
 
     # PROCESSING MODEL DATA
 
-    yield log.bold("************************************")
-    yield log.bold("ecPoint-Calibrate - POINT DATA TABLE")
-    yield log.bold("************************************")
+    logging.info(
+        dedent(
+            """
+        ************************************
+        ecPoint-Calibrate - POINT DATA TABLE
+        ************************************
+    """
+        )
+    )
 
-    yield from general_parameters_logs(config)
-    yield from predictand_logs(config)
-    yield from predictors_logs(config)
-    yield from observations_logs(config)
-    yield from output_file_logs(config)
+    logging.info(general_parameters_logs(config))
+    logging.info(predictand_logs(config))
+    logging.info(predictors_logs(config))
+    logging.info(observations_logs(config))
+    logging.info(output_file_logs(config))
 
-    yield log.info("")
-    yield log.bold("*** START COMPUTATIONS ***")
+    logging.info("*** START COMPUTATIONS ***")
 
     # Counter for the BaseDate and BaseTime to avoid repeating the same forecasts in different cases
     counter_used_FC = {}
@@ -92,15 +101,15 @@ def run(config):
     for curr_date, curr_time, step_s, case in iter_daterange(
         start=BaseDateS, end=BaseDateF, start_hour=BaseTimeS, interval=DiscBT
     ):
-        yield log.info("")
+        logging.info("")
         if case != 1:
-            yield log.bold("**********")
-        yield log.bold(f"Case {case}")
-        yield log.bold("FORECAST PARAMETERS:")
+            logging.info("**********")
+        logging.info(f"Case {case}")
+        logging.info("FORECAST PARAMETERS:")
 
         step_f = step_s + Acc
         original_forecast = f'{curr_date.strftime("%Y%m%d")}, {curr_time:02d} UTC, (t+{step_s}, t+{step_f})'
-        yield log.info(f"  {original_forecast}")
+        logging.info(f"  {original_forecast}")
 
         new_curr_date, new_curr_time, new_step_s, msgs = adjust_steps(
             date=curr_date,
@@ -118,25 +127,25 @@ def run(config):
         used_forecast = f"{new_curr_date_str}, {new_curr_time_str} UTC, (t+{new_step_s}, t+{new_step_f})"
 
         for msg in msgs:
-            yield log.info(msg)
+            logging.info(msg)
         if used_forecast != original_forecast:
-            yield log.info(f"  {used_forecast}")
+            logging.info(f"  {used_forecast}")
 
         if used_forecast in counter_used_FC:
-            yield log.warn(
+            logging.warn(
                 f"  The above forecast was already considered for computation in Case {counter_used_FC[used_forecast]}"
             )
             continue
 
         # Reading the forecasts
         if new_curr_date < BaseDateS or new_curr_date > BaseDateF:
-            yield log.warn(
+            logging.warn(
                 f"  Forecast out of the calibration period {BaseDateSSTR} - {BaseDateFSTR}. Forecast not considered."
             )
             continue
 
         counter_used_FC[used_forecast] = case
-        yield log.info("")
+        logging.info("")
 
         def get_grib_path(predictor_code, step):
             return os.path.join(
@@ -175,8 +184,8 @@ def run(config):
         DateVF = validDateF.strftime("%Y%m%d")
         HourVF = validDateF.strftime("%H")
         HourVF_num = validDateF.hour
-        yield log.bold("OBSERVATIONS PARAMETERS:")
-        yield log.info(f"  Validity date/time (end of {Acc}h period) = {validDateF}")
+        logging.info("OBSERVATIONS PARAMETERS:")
+        logging.info(f"  Validity date/time (end of {Acc}h period) = {validDateF}")
 
         dirOBS = os.path.join(PathOBS, AccSTR, DateVF)
         fileOBS = f"tp_{Acc:02d}_{DateVF}_{HourVF}.geo"
@@ -184,14 +193,14 @@ def run(config):
         obs_path = os.path.join(dirOBS, fileOBS)
 
         # Reading Rainfall Observations
-        yield log.info(f"  Read observation file: {os.path.basename(obs_path)}")
+        logging.info(f"  Read observation file: {os.path.basename(obs_path)}")
         try:
             obs = read_geopoints(path=obs_path)
         except IOError:
-            yield log.warn(f"  Observation file not found in DB: {obs_path}.")
+            logging.warn(f"  Observation file not found in DB: {obs_path}.")
             continue
         except Exception:
-            yield log.error(
+            logging.error(
                 f"  Error reading observation file: {os.path.basename(obs_path)}"
             )
             continue
@@ -199,7 +208,7 @@ def run(config):
         nOBS = len(obs)
 
         if nOBS == 0:
-            yield log.warn(
+            logging.warn(
                 f"  No observation in the file: {os.path.basename(obs_path)}. Forecast not considered."
             )
             continue
@@ -214,8 +223,8 @@ def run(config):
             else:
                 step_start_sr, step_end_sr = steps[-1] - 24, steps[-1]
 
-        yield log.info("")
-        yield log.bold("PREDICTORS COMPUTATIONS:")
+        logging.info("")
+        logging.info("PREDICTORS COMPUTATIONS:")
 
         for computation in computations:
             computation.is_reference = (
@@ -263,16 +272,16 @@ def run(config):
             )
 
             for path in paths_to_read:
-                yield log.info(f"  Reading forecast file: {os.path.basename(path)}")
+                logging.info(f"  Reading forecast file: {os.path.basename(path)}")
 
                 try:
                     fieldset = Fieldset.from_path(path=path)
                 except IOError:
-                    yield log.warn(f"  Forecast file not found: {path}.")
+                    logging.warn(f"  Forecast file not found: {path}.")
                     skip = True
                     break
                 except Exception:
-                    yield log.error(f"  Reading forecast file failed: {path}.")
+                    logging.error(f"  Reading forecast file failed: {path}.")
                     skip = True
                     break
                 else:
@@ -281,7 +290,7 @@ def run(config):
             if skip:
                 break
 
-            yield log.info(
+            logging.info(
                 f"  Computing {computer.computation.fullname} using "
                 f"{len(computation_steps)} input(s)."
             )
@@ -293,7 +302,7 @@ def run(config):
             if not computation.is_reference and not computation.isPostProcessed:
                 continue
 
-            yield log.info("  Selecting the nearest grid point to observations.")
+            logging.info("  Selecting the nearest grid point to observations.")
             geopoints = computed_value.nearest_gridpoint(obs)
 
             # Select only the values that correspond to a minimum value of the predictand.
@@ -301,7 +310,7 @@ def run(config):
                 predictand = computation.shortname
                 mask = geopoints >= predictand_min_value
 
-                yield log.info(
+                logging.info(
                     f"  Selecting values that correspond to {computation.shortname}"
                     f" >= {predictand_min_value} {predictand_scaled_units}/{Acc}h."
                 )
@@ -309,7 +318,7 @@ def run(config):
                 ref_geopoints_filtered_df = geopoints.filter(mask)
 
                 if not ref_geopoints_filtered_df:
-                    yield log.warn(
+                    logging.warn(
                         f"  No values of {computation.shortname} >= 1 mm/{Acc}h."
                     )
                     skip = True
@@ -325,7 +334,7 @@ def run(config):
                     (computation.shortname, geopoints_filtered_df.values())
                 )
 
-            yield log.info("")
+            logging.info("")
 
         if skip:
             continue
@@ -344,7 +353,7 @@ def run(config):
             ]
 
             input_codes = [field_input["code"] for field_input in computation.inputs]
-            yield log.info(
+            logging.info(
                 f"  Computing {computer.computation.fullname} using "
                 f"{len(computation.inputs)} input(s): {', '.join(input_codes)}."
             )
@@ -376,7 +385,7 @@ def run(config):
 
         vals_errors = []
 
-        yield log.info(f"  Computing the {config.predictand.error}.")
+        logging.info(f"  Computing the {config.predictand.error}.")
         if config.predictand.error == "FER":
             FER = (
                 obs1.values() - ref_geopoints_filtered_df.values()
@@ -394,9 +403,9 @@ def run(config):
 
         n = len(vals_OB)
         obsUSED += n
-        yield log.info("")
-        yield log.bold("POINT DATA TABLE:")
-        yield log.info(f"  Saving the point data table to output file: {PathOUT}")
+        logging.info("")
+        logging.info("POINT DATA TABLE:")
+        logging.info(f"  Saving the point data table to output file: {PathOUT}")
 
         columns = (
             [
@@ -413,14 +422,14 @@ def run(config):
 
         serializer.add_columns_chunk(columns)
 
-    yield log.success(
-        f"Number of observations in the whole calibration period: {obsTOT}"
+    logging.info(
+        dedent(
+            f"""
+    Number of observations in the whole calibration period: {obsTOT}
+    Number of observations actually used in the calibration period ({predictand} >= {predictand_min_value} {predictand_scaled_units}/{Acc}h): {obsUSED}
+    """
+        )
     )
-    yield log.success(
-        f"Number of observations actually used in the calibration period "
-        f"({predictand} >= {predictand_min_value} {predictand_scaled_units}/{Acc}h): {obsUSED}"
-    )
-
     footer = dedent(
         f"""
         # Number of observations in the whole calibration period = {obsTOT}

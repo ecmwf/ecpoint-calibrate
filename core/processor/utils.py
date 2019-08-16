@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, time, timedelta
 
 
@@ -66,27 +67,3 @@ def compute_local_solar_time(longitudes, hour):
     tempNeg = lstNeg * (lstNeg > 0) + temp_lstNegLess0
     # Combine both subsets
     return tempPos + tempNeg  # [XXX] Review this line
-
-
-class log:
-    raw = False
-
-    @classmethod
-    def info(cls, message):
-        return message if cls.raw else "[INFO] " + message + "[END]"
-
-    @classmethod
-    def warn(cls, message):
-        return message if cls.raw else "[WARNING] " + message + "[END]"
-
-    @classmethod
-    def error(cls, message):
-        return message if cls.raw else "[ERROR] " + message + "[END]"
-
-    @classmethod
-    def success(cls, message):
-        return message if cls.raw else "[SUCCESS] " + message + "[END]"
-
-    @classmethod
-    def bold(cls, message):
-        return message if cls.raw else "[TITLE] " + message + "[END]"
