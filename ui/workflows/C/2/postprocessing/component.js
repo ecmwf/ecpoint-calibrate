@@ -220,14 +220,14 @@ class PostProcessing extends Component {
           <br />
           <Grid centered>
             <Button
-              content="Save error"
+              content="Save mapping functions as CSV"
               icon="download"
               labelPosition="left"
               floated="right"
               onClick={() => this.saveError()}
             />
             <Button
-              content="Save breakpoints"
+              content="Save breakpoints as CSV"
               icon="download"
               labelPosition="left"
               floated="right"
