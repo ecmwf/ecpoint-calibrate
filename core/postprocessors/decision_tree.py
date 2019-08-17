@@ -290,20 +290,25 @@ class WeatherType(object):
             1000,
         ]
 
-        fig, ax = plt.subplots()
+        data = pandas.Series(data)
 
-        ax.set_xlabel("FER Bins", fontsize=8)
-        ax.set_ylabel("Frequencies", fontsize=8)
+        fig, ax = plt.subplots()
+        plt.tight_layout(pad=5)
+
+        ax.set_xlabel("FER Bins [-]", fontsize=8)
+        ax.set_ylabel("Frequencies [-]", fontsize=8)
         ax.set_title(title, fontsize=8)
 
         ax.xaxis.set_tick_params(labelsize=7)
         ax.yaxis.set_tick_params(labelsize=7)
 
         out = pandas.cut(data, bins=bins, include_lowest=True)
-        subplot = out.value_counts().plot.bar(ax=ax, rot=45)
+        series = out.value_counts(normalize=True)
+
+        subplot = series.plot.bar(ax=ax, rot=45, ylim=(0, 1))
         patches = subplot.patches
 
-        label_bars(ax, patches)
+        autolabel(ax, patches, y_cum=len(out))
 
         green_patches, white_patches, yellow_patches, red_patches = (
             patches[:4],
@@ -331,18 +336,18 @@ class WeatherType(object):
         return b64encode(img.read()).decode()
 
 
-def label_bars(ax, bars):
+def autolabel(ax, patches, y_cum):
     max_y_value = ax.get_ylim()[1]
     padding = max_y_value * 0.01
 
-    for bar in bars:
-        value = bar.get_height()
+    for patch in patches:
+        value = int(patch.get_height() * y_cum)
         if value == 0:
             continue
 
         text = value
-        text_x = bar.get_x() + bar.get_width() / 2
-        text_y = bar.get_height() + padding
+        text_x = patch.get_x() + patch.get_width() / 2
+        text_y = patch.get_height() + padding
 
         ax.text(
             text_x, text_y, text, ha="center", va="bottom", color="black", fontsize=7
