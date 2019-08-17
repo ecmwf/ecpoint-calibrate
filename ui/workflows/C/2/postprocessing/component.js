@@ -9,6 +9,7 @@ import {
   Table,
   Segment,
   Item,
+  Popup,
 } from 'semantic-ui-react'
 
 import _ from 'lodash'
@@ -287,24 +288,27 @@ class PostProcessing extends Component {
 
                       <Table.Cell>
                         {this.isMergeableToPreviousRow(rowIdx) && (
-                          <Button
-                            icon
-                            circular
-                            onClick={() => {
-                              const matrix = this.mergeToPreviousRow(rowIdx)
-                              this.props.onWeatherTypeMatrixChange(
-                                this.props.thrGridIn[0]
-                                  .slice(1)
-                                  .map(cell => cell.value),
-                                matrix
-                              )
+                          <Popup
+                            content="Merge with the Weather Type above"
+                            trigger={
+                              <Button
+                                icon="arrow up"
+                                circular
+                                onClick={() => {
+                                  const matrix = this.mergeToPreviousRow(rowIdx)
+                                  this.props.onWeatherTypeMatrixChange(
+                                    this.props.thrGridIn[0]
+                                      .slice(1)
+                                      .map(cell => cell.value),
+                                    matrix
+                                  )
 
-                              this.postThrGridOut(matrix)
-                            }}
-                            size="mini"
-                          >
-                            <Icon name="arrow up" />
-                          </Button>
+                                  this.postThrGridOut(matrix)
+                                }}
+                                size="mini"
+                              />
+                            }
+                          />
                         )}
                       </Table.Cell>
                     </Table.Row>
