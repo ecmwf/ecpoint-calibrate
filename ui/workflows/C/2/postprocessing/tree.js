@@ -20,7 +20,7 @@ const Graph = props => {
   return (
     <Modal size={'large'} open={props.open} onClose={props.onClose}>
       <Modal.Header>
-        Weather Type
+        Weather Type {props.code}
         {props.image !== null && (
           <Button
             content="Save image"
@@ -28,7 +28,7 @@ const Graph = props => {
             labelPosition="left"
             floated="right"
             onClick={() => {
-              download('WT.png', histURI) // [TODO] - Add WT code in the filename
+              download(`WT_${props.code}.png`, histURI)
             }}
           />
         )}
@@ -45,7 +45,7 @@ const Graph = props => {
 }
 
 export default class DecisionTree extends Component {
-  state = { open: false, histogram: null }
+  state = { open: false, histogram: null, code: null }
 
   componentDidMount() {
     const dimensions = this.treeContainer.getBoundingClientRect()
@@ -58,7 +58,7 @@ export default class DecisionTree extends Component {
   }
 
   onNodeClick = node => {
-    !node._children && this.setState({ open: true })
+    !node._children && this.setState({ open: true, code: node.meta.code })
     client.post(
       {
         url: '/postprocessing/generate-wt-histogram',
@@ -98,9 +98,10 @@ export default class DecisionTree extends Component {
       />
 
       <Graph
-        onClose={() => this.setState({ open: false, histogram: null })}
+        onClose={() => this.setState({ open: false, histogram: null, code: null })}
         open={this.state.open}
         image={this.state.histogram}
+        code={this.state.code}
       />
     </div>
   )
