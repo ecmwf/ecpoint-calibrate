@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 
 import {
   Grid,
@@ -219,22 +219,7 @@ class PostProcessing extends Component {
       <Item>
         <Item.Content>
           <br />
-          <Grid centered>
-            <Button
-              content="Save mapping functions as CSV"
-              icon="download"
-              labelPosition="left"
-              floated="right"
-              onClick={() => this.saveError()}
-            />
-            <Button
-              content="Save breakpoints as CSV"
-              icon="download"
-              labelPosition="left"
-              floated="right"
-              onClick={() => this.saveBreakPoints()}
-            />
-          </Grid>
+          <Grid centered />
           <br />
           {this.state.tree && (
             <Tree
@@ -254,15 +239,32 @@ class PostProcessing extends Component {
         <br />
         <Grid centered>
           <Button
+            content="Generate Weather Types matrix"
             disabled={this.hasError()}
-            icon
+            icon="refresh"
             labelPosition="left"
             primary
             size="medium"
             onClick={() => this.postThrGridIn()}
-          >
-            <Icon name="refresh" /> Generate Weather Types matrix
-          </Button>
+          />
+          {this.props.thrGridOut.length > 0 && (
+            <Fragment>
+              <Button
+                content="Save mapping functions as CSV"
+                icon="download"
+                labelPosition="left"
+                floated="right"
+                onClick={() => this.saveError()}
+              />
+              <Button
+                content="Save breakpoints as CSV"
+                icon="download"
+                labelPosition="left"
+                floated="right"
+                onClick={() => this.saveBreakPoints()}
+              />
+            </Fragment>
+          )}
         </Grid>
         <br />
         {this.props.thrGridOut.length > 0 && (
@@ -416,7 +418,7 @@ class PostProcessing extends Component {
 
   render = () =>
     this.props.fields.length > 0 && (
-      <Grid container centered>
+      <Grid padded>
         <Grid.Column>
           <Card fluid color="black">
             <Card.Header>
