@@ -12,7 +12,7 @@ from healthcheck import EnvironmentDump, HealthCheck
 from core.loaders.ascii import ASCIIDecoder
 from core.loaders.fieldset import Fieldset
 from core.models import Config
-from core.postprocessors.decision_tree import DecisionTree
+from core.postprocessors.decision_tree import DecisionTree, WeatherType
 from core.processor import run
 
 app = Flask(__name__)
@@ -104,7 +104,7 @@ def get_wt_codes():
 @app.route("/postprocessing/create-decision-tree", methods=("POST",))
 def get_decision_tree():
     payload = request.get_json()
-    labels, matrix, path = (payload["labels"], payload["matrix"], payload["path"])
+    labels, matrix = payload["labels"], payload["matrix"]
 
     matrix = [[float(cell) for cell in row] for row in matrix]
 
@@ -112,10 +112,27 @@ def get_decision_tree():
 
     thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
 
-    predictor_matrix = ASCIIDecoder(path=path).dataframe
-    tree = DecisionTree.construct_tree(predictor_matrix, thrL_out=thrL, thrH_out=thrH)
+    tree = DecisionTree.construct_tree(thrL_out=thrL, thrH_out=thrH)
 
     return jsonify([tree.json])
+
+
+@app.route("/postprocessing/generate-wt-histogram", methods=("POST",))
+def get_wt_histogram():
+    payload = request.get_json()
+    labels, thrWT, path = (payload["labels"], payload["thrWT"], payload["path"])
+
+    predictor_matrix = ASCIIDecoder(path=path).dataframe
+
+    thrWT = [float(cell) for cell in thrWT]
+    series = pandas.Series(dict(zip(labels, thrWT)))
+    thrL, thrH = series.iloc[::2], series.iloc[1::2]
+
+    wt = WeatherType(
+        thrL=thrL, thrH=thrH, thrL_labels=labels[::2], thrH_labels=labels[1::2]
+    )
+    plot = wt.evaluate_dt_and_generate_hist(predictor_matrix)
+    return jsonify({"histogram": plot})
 
 
 @app.route("/postprocessing/create-error-rep", methods=("POST",))

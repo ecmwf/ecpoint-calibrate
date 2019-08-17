@@ -114,21 +114,13 @@ class DecisionTree(object):
     #     return out
 
     @classmethod
-    def construct_tree(cls, predictor_matrix, thrL_out, thrH_out):
+    def construct_tree(cls, thrL_out, thrH_out):
         root = Node("Root")
         num_wt = len(thrL_out)
 
         for i in range(num_wt):
             thrL = thrL_out.ix[i, :]
             thrH = thrH_out.ix[i, :]
-            wt = WeatherType(
-                thrL=thrL,
-                thrH=thrH,
-                thrL_labels=thrL_out.columns.tolist(),
-                thrH_labels=thrH_out.columns.tolist(),
-            )
-            error, title = wt.evaluate(predictor_matrix)
-            plot = wt.plot(error, title)
 
             predictors = [predictor.replace("_thrL", "") for predictor in thrL.keys()]
 
@@ -157,7 +149,7 @@ class DecisionTree(object):
                         parent.add_child(curr)
 
             if not curr.children:
-                curr.meta["histogram"] = plot
+                curr.meta["idxWT"] = i
                 code = cls.wt_code(thrL_out, thrH_out)[i]
                 curr.meta["code"] = code
 
@@ -248,6 +240,10 @@ class WeatherType(object):
 
     thrL_labels = attr.ib()
     thrH_labels = attr.ib()
+
+    def evaluate_dt_and_generate_hist(self, predictors_matrix):
+        error, title = self.evaluate(predictors_matrix)
+        return self.plot(error, title)
 
     def evaluate(self, predictors_matrix):
         error = predictors_matrix["FER"]

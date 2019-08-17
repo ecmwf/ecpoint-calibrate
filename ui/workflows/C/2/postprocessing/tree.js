@@ -1,13 +1,14 @@
 import React, { Component } from 'react'
 import Tree from 'react-d3-tree'
 
-import { Modal, Image, Button } from 'semantic-ui-react'
+import { Modal, Image, Button, Dimmer, Loader } from 'semantic-ui-react'
 
 import { saveSvgAsPng } from 'save-svg-as-png'
 
 import download from '~/utils/download'
 
 import _ from 'lodash'
+import client from '~/utils/client'
 
 const containerStyles = {
   width: '100%',
@@ -16,23 +17,29 @@ const containerStyles = {
 
 const Graph = props => {
   const histURI = `data:image/jpeg;base64,${props.image}`
-  const Hist = <Image src={histURI} fluid />
-
   return (
     <Modal size={'large'} open={props.open} onClose={props.onClose}>
       <Modal.Header>
         Weather Type
-        <Button
-          content="Save image"
-          icon="download"
-          labelPosition="left"
-          floated="right"
-          onClick={() => {
-            download('WT.png', histURI) // [TODO] - Add WT code in the filename
-          }}
-        />
+        {props.image !== null && (
+          <Button
+            content="Save image"
+            icon="download"
+            labelPosition="left"
+            floated="right"
+            onClick={() => {
+              download('WT.png', histURI) // [TODO] - Add WT code in the filename
+            }}
+          />
+        )}
       </Modal.Header>
-      <Modal.Content>{Hist}</Modal.Content>
+      <Modal.Content>
+        <Dimmer active={props.image === null}>
+          <Loader indeterminate>Loading</Loader>
+        </Dimmer>
+
+        {props.image !== null && <Image src={histURI} fluid />}
+      </Modal.Content>
     </Modal>
   )
 }
@@ -48,6 +55,22 @@ export default class DecisionTree extends Component {
         y: 14,
       },
     })
+  }
+
+  onNodeClick = node => {
+    !node._children && this.setState({ open: true })
+    client.post(
+      {
+        url: '/postprocessing/generate-wt-histogram',
+        body: {
+          labels: this.props.labels,
+          thrWT: this.props.thrGrid[node.meta.idxWT],
+          path: this.props.path,
+        },
+        json: true,
+      },
+      (err, httpResponse, body) => this.setState({ histogram: body.histogram })
+    )
   }
 
   render = () => (
@@ -67,10 +90,7 @@ export default class DecisionTree extends Component {
         data={this.props.data}
         translate={this.state.translate}
         orientation={'vertical'}
-        onClick={(node, event) =>
-          !node._children &&
-          this.setState({ open: true, histogram: node.meta.histogram })
-        }
+        onClick={(node, event) => this.onNodeClick(node)}
         allowForeignObjects
         nodeLabelComponent={{
           render: <NodeLabel />,

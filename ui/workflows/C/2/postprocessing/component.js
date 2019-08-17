@@ -185,7 +185,7 @@ class PostProcessing extends Component {
     client.post(
       {
         url: '/postprocessing/create-decision-tree',
-        body: { labels, matrix, path: this.props.path },
+        body: { labels, matrix },
         json: true,
       },
       (err, httpResponse, tree) => this.setState({ tree })
@@ -235,7 +235,14 @@ class PostProcessing extends Component {
             />
           </Grid>
           <br />
-          {this.state.tree && <Tree data={this.state.tree} />}
+          {this.state.tree && (
+            <Tree
+              data={this.state.tree}
+              thrGrid={this.props.thrGridOut.map(row => _.flatMap(row.slice(1)))}
+              labels={this.getLabels()}
+              path={this.props.path}
+            />
+          )}
         </Item.Content>
       </Item>
     )
