@@ -97,22 +97,6 @@ class DecisionTree(object):
             pandas.DataFrame(data=thrH_matrix, columns=self.thrH_in.columns),
         )
 
-    # def __str__(self):
-    #    if thrL_out is None:
-    #         return super(DecisionTree, self).__str__()
-    #
-    #     out = ""
-    #
-    #     for i in range(self.num_wt):
-    #         out += "Weather Type {}\n".format(i)
-    #         for j in range(self.num_predictors):
-    #             out += "    Level {num}: {low} <= PREDICTOR < {high}\n".format(
-    #                 num=j, low=thrL_out.ix[i, j], high=thrH_out.ix[i, j]
-    #             )
-    #         out += "\n"
-    #
-    #     return out
-
     @classmethod
     def construct_tree(cls, thrL_out, thrH_out):
         root = Node("Root")
