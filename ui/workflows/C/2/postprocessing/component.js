@@ -271,27 +271,27 @@ class PostProcessing extends Component {
                 <Table.Header>
                   <Table.Row>
                     <Table.HeaderCell>WT code</Table.HeaderCell>
-                    {this.props.thrGridIn[0].slice(1).map(cell => (
-                      <Table.HeaderCell>{cell.value}</Table.HeaderCell>
+                    {this.props.thrGridIn[0].slice(1).map((cell, idx) => (
+                      <Table.HeaderCell key={idx}>{cell.value}</Table.HeaderCell>
                     ))}
                     <Table.HeaderCell />
                   </Table.Row>
                 </Table.Header>
 
                 <Table.Body>
-                  {this.props.thrGridOut.map((rows, idx) => (
-                    <Table.Row>
-                      {rows.map(cell => (
-                        <Table.Cell>{cell}</Table.Cell>
+                  {this.props.thrGridOut.map((rows, rowIdx) => (
+                    <Table.Row key={rowIdx}>
+                      {rows.map((cell, colIdx) => (
+                        <Table.Cell key={colIdx}>{cell}</Table.Cell>
                       ))}
 
                       <Table.Cell>
-                        {this.isMergeableToPreviousRow(idx) && (
+                        {this.isMergeableToPreviousRow(rowIdx) && (
                           <Button
                             icon
                             circular
                             onClick={() => {
-                              const matrix = this.mergeToPreviousRow(idx)
+                              const matrix = this.mergeToPreviousRow(rowIdx)
                               this.props.onWeatherTypeMatrixChange(
                                 this.props.thrGridIn[0]
                                   .slice(1)
