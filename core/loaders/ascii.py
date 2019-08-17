@@ -36,6 +36,6 @@ class ASCIIDecoder(object):
 
     @property
     def dataframe(self):
-        return pandas.read_table(
+        return pandas.read_csv(
             self.path, comment="#", skip_blank_lines=True, sep=r"\s+"
         )
