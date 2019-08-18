@@ -54,6 +54,10 @@ const operations = [
     text: '24h Solar Radiaton',
     value: '24H_SOLAR_RADIATION',
   },
+  {
+    text: 'Local Solar Time',
+    value: 'LOCAL_SOLAR_TIME',
+  },
 ]
 
 class Computation extends Component {
@@ -138,7 +142,11 @@ class Computation extends Component {
                 }))
               )
             }
-            disabled={this.props.index === 0 ? true : null}
+            disabled={
+              this.props.index === 0 || this.props.field === 'LOCAL_SOLAR_TIME'
+                ? true
+                : null
+            }
           />
 
           {this.props.inputs.length > 0 && (
@@ -174,7 +182,9 @@ class Computation extends Component {
               value="MULTIPLY"
               checked={this.props.scale.op === 'MULTIPLY'}
               onChange={() => this.props.setScaleOp(this.props.index, 'MULTIPLY')}
-              disabled={this.props.field === '24H_SOLAR_RADIATION'}
+              disabled={['24H_SOLAR_RADIATION', 'LOCAL_SOLAR_TIME'].includes(
+                this.props.field
+              )}
             />
           </Grid.Row>
           <Grid.Row>
@@ -183,7 +193,9 @@ class Computation extends Component {
               value="DIVIDE"
               checked={this.props.scale.op === 'DIVIDE'}
               onChange={() => this.props.setScaleOp(this.props.index, 'DIVIDE')}
-              disabled={this.props.field === '24H_SOLAR_RADIATION'}
+              disabled={['24H_SOLAR_RADIATION', 'LOCAL_SOLAR_TIME'].includes(
+                this.props.field
+              )}
             />
           </Grid.Row>
           <br />
@@ -191,7 +203,9 @@ class Computation extends Component {
             fluid
             value={this.props.scale.value}
             onChange={e => this.props.setScaleValue(this.props.index, e.target.value)}
-            disabled={this.props.field === '24H_SOLAR_RADIATION'}
+            disabled={['24H_SOLAR_RADIATION', 'LOCAL_SOLAR_TIME'].includes(
+              this.props.field
+            )}
           />
 
           <br />

@@ -66,6 +66,8 @@ export default (state = defaultState, action) => {
               units:
                 action.field === 'RATIO_FIELD'
                   ? 'NoUnit'
+                  : action.field === 'LOCAL_SOLAR_TIME'
+                  ? 'UTC'
                   : action.field === '24H_SOLAR_RADIATION'
                   ? 'W m**-2'
                   : item.units,

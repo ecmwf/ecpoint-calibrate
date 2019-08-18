@@ -15,12 +15,7 @@ from .log_factory import (
     predictand_logs,
     predictors_logs,
 )
-from .utils import (
-    adjust_steps,
-    compute_local_solar_time,
-    generate_steps,
-    iter_daterange,
-)
+from .utils import adjust_steps, generate_steps, iter_daterange
 
 logging.basicConfig(
     filename=f'{os.environ["HOME"]}/ecpoint.logs', filemode="a", level=logging.DEBUG
@@ -226,6 +221,15 @@ def run(config):
         logging.info("")
         logging.info("PREDICTORS COMPUTATIONS:")
 
+        LST_computation = next(
+            (
+                computation
+                for computation in computations
+                if computation.field == "LOCAL_SOLAR_TIME"
+            ),
+            None,
+        )
+
         for computation in computations:
             computation.is_reference = (
                 len(computation.inputs) == 1
@@ -233,6 +237,14 @@ def run(config):
             )
 
         base_fields = set(config.predictors.codes)
+
+        # Do not compute the Local Solar Time the regular way
+        if LST_computation:
+            computations = [
+                computation
+                for computation in computations
+                if computation != LST_computation
+            ]
 
         derived_computations = [
             computation
@@ -396,7 +408,10 @@ def run(config):
             FE = obs1.values() - ref_geopoints_filtered_df.values()
             vals_errors.append(("FE", FE))
 
-        vals_LST = compute_local_solar_time(longitudes=lonObs_1, hour=HourVF_num)
+        if LST_computation and LST_computation.isPostProcessed:
+            vals_LST = [("LST", Computer(LST_computation).run(lonObs_1, HourVF_num))]
+        else:
+            vals_LST = []
 
         # Saving the output file in ascii format
         vals_OB = obs1.values()
@@ -411,11 +426,11 @@ def run(config):
             [
                 ("Date", [DateVF] * n),
                 ("TimeUTC", [HourVF] * n),
-                ("OBS", vals_OB),
                 ("latOBS", latObs_1),
                 ("lonOBS", lonObs_1),
-                ("LST", vals_LST),
+                ("OBS", vals_OB),
             ]
+            + vals_LST
             + vals_errors
             + computations_result
         )

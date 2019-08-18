@@ -7,6 +7,7 @@ from .utils import (
     compute_accumulated_field,
     compute_average_field,
     compute_instantaneous_field,
+    compute_local_solar_time,
     compute_maximum,
     compute_minimum,
     compute_ratio_field,
@@ -27,6 +28,7 @@ class Computer(object):
         "MAXIMUM_FIELD": compute_maximum,
         "MINIMUM_FIELD": compute_minimum,
         "AVERAGE_FIELD": compute_average_field,
+        "LOCAL_SOLAR_TIME": compute_local_solar_time,
     }
 
     computation = attr.ib()

@@ -10,7 +10,7 @@ export const isNotEmpty = state =>
       field.shortname &&
       field.fullname &&
       field.field &&
-      field.inputs.length > 0 &&
+      (field.field !== 'LOCAL_SOLAR_TIME' ? field.inputs.length > 0 : true) &&
       field.scale.value &&
       field.units
   )
