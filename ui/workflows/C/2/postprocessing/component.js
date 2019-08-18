@@ -209,8 +209,8 @@ class PostProcessing extends Component {
 
   saveBreakPoints() {
     const labels = this.getLabels()
-    const csv = this.props.thrGridOut.map(row => row.join(',')).join('\n')
-
+    const rows = this.props.thrGridOut.map(row => row.join(',')).join('\n')
+    const csv = [['WT code', ...labels], rows].join('\n')
     download('BreakPointsWT.csv', csv)
   }
 
