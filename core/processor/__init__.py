@@ -18,8 +18,12 @@ from .log_factory import (
 from .utils import adjust_steps, generate_steps, iter_daterange
 
 logging.basicConfig(
-    filename=f'{os.environ["HOME"]}/ecpoint.logs', filemode="a", level=logging.DEBUG
+    filename=f'{os.environ["HOME"]}/ecpoint.logs', filemode="w", level=logging.INFO
 )
+
+console = logging.StreamHandler()
+console.setLevel(logging.DEBUG)
+logging.getLogger("").addHandler(console)
 
 
 def run(config):
