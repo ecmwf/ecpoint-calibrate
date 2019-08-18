@@ -3,9 +3,7 @@ const { resolve, join } = require('path')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const config = {
-  mode: 'production',
-
-  devtool: 'cheap-module-eval-source-map',
+  mode: 'development',
 
   entry: ['@babel/polyfill', './main.js'],
 
