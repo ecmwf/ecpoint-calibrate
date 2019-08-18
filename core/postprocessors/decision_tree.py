@@ -249,7 +249,7 @@ class WeatherType(object):
         return error.to_list(), title_pred
 
     @staticmethod
-    def plot(data, title, y_lim):
+    def plot(data, title, y_lim, out_path=None):
         bins = [
             -1.1,
             -0.99,
@@ -310,10 +310,13 @@ class WeatherType(object):
         for patch in red_patches:
             patch.set_facecolor("#d64541")
 
-        img = BytesIO()
-        fig.savefig(img, format="png")
-        img.seek(0)
-        return b64encode(img.read()).decode()
+        if out_path:
+            return fig.savefig(out_path, format="png")
+        else:
+            img = BytesIO()
+            fig.savefig(img, format="png")
+            img.seek(0)
+            return b64encode(img.read()).decode()
 
 
 def autolabel(ax, patches, y_cum):

@@ -250,7 +250,7 @@ class PostProcessing extends Component {
           {!this.yLimHasError() && this.state.tree && (
             <Tree
               data={this.state.tree}
-              thrGrid={this.props.thrGridOut.map(row => _.flatMap(row.slice(1)))}
+              thrGridOut={this.props.thrGridOut}
               labels={this.getLabels()}
               path={this.props.path}
               yLim={this.props.yLim}

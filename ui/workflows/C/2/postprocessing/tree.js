@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import Tree from 'react-d3-tree'
 
+import { remote } from 'electron'
+
 import { Modal, Image, Button, Dimmer, Loader } from 'semantic-ui-react'
 
 import { saveSvgAsPng } from 'save-svg-as-png'
@@ -9,6 +11,8 @@ import download from '~/utils/download'
 
 import _ from 'lodash'
 import client from '~/utils/client'
+
+const mainProcess = remote.require('./server')
 
 const containerStyles = {
   width: '100%',
@@ -45,7 +49,7 @@ const Graph = props => {
 }
 
 export default class DecisionTree extends Component {
-  state = { open: false, histogram: null, code: null }
+  state = { open: false, histogram: null, code: null, saveInProgress: false }
 
   componentDidMount() {
     const dimensions = this.treeContainer.getBoundingClientRect()
@@ -64,7 +68,9 @@ export default class DecisionTree extends Component {
         url: '/postprocessing/generate-wt-histogram',
         body: {
           labels: this.props.labels,
-          thrWT: this.props.thrGrid[node.meta.idxWT],
+          thrWT: this.props.thrGridOut.map(row => _.flatMap(row.slice(1)))[
+            node.meta.idxWT
+          ],
           path: this.props.path,
           yLim: this.props.yLim,
         },
@@ -77,7 +83,44 @@ export default class DecisionTree extends Component {
   render = () => (
     <div style={containerStyles} ref={tc => (this.treeContainer = tc)}>
       <Button
-        content="Save as image"
+        content="Save all WTs as PNG"
+        icon="download"
+        labelPosition="left"
+        floated="right"
+        onClick={() => {
+          const path = mainProcess.selectDirectory()
+          const destinationDir = path && path.length !== 0 ? path.pop() : null
+
+          if (destinationDir === null) {
+            return
+          }
+
+          this.setState({ saveInProgress: true })
+          client.post(
+            {
+              url: '/postprocessing/save-wt-histograms',
+              body: {
+                labels: this.props.labels,
+                thrGridOut: this.props.thrGridOut,
+                path: this.props.path,
+                yLim: this.props.yLim,
+                destinationDir,
+              },
+              json: true,
+            },
+            (err, httpResponse, body) => this.setState({ saveInProgress: false })
+          )
+        }}
+      />
+
+      <Dimmer active={this.state.saveInProgress === true}>
+        <Loader indeterminate>
+          Saving all Mapping Functions as PNGs. Please wait.
+        </Loader>
+      </Dimmer>
+
+      <Button
+        content="Save decision tree as PNG"
         icon="download"
         labelPosition="left"
         floated="right"

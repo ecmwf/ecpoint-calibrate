@@ -142,6 +142,44 @@ def get_wt_histogram():
     return jsonify({"histogram": plot})
 
 
+@app.route("/postprocessing/save-wt-histograms", methods=("POST",))
+def save_wt_histograms():
+    payload = request.get_json()
+    labels, thrGridOut, path, y_lim, destination = (
+        payload["labels"],
+        payload["thrGridOut"],
+        payload["path"],
+        payload["yLim"],
+        payload["destinationDir"],
+    )
+
+    predictor_matrix = ASCIIDecoder(path=path).dataframe
+
+    matrix = [[float(cell) for cell in row[1:]] for row in thrGridOut]
+    df = pandas.DataFrame.from_records(matrix, columns=labels)
+
+    thrL_out, thrH_out = df.iloc[:, ::2], df.iloc[:, 1::2]
+
+    for idx in range(len(thrL_out)):
+        thrL = thrL_out.iloc[idx]
+        thrH = thrH_out.iloc[idx]
+        wt = WeatherType(
+            thrL=thrL, thrH=thrH, thrL_labels=labels[::2], thrH_labels=labels[1::2]
+        )
+
+        error, title = wt.evaluate(predictor_matrix)
+
+        wt_code = thrGridOut[idx][0]
+        wt.plot(
+            error,
+            title,
+            y_lim=float(y_lim),
+            out_path=os.path.join(destination, f"WT_{wt_code}"),
+        )
+
+    return jsonify({"status": "success"})
+
+
 @app.route("/postprocessing/create-error-rep", methods=("POST",))
 def get_error_rep():
     payload = request.get_json()
