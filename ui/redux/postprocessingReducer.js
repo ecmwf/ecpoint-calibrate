@@ -2,6 +2,7 @@ const defaultState = {
   thrGridIn: [],
   thrGridOut: [],
   fields: [],
+  yLim: 1,
 }
 
 export default (state = defaultState, action) => {
@@ -16,6 +17,10 @@ export default (state = defaultState, action) => {
 
     case 'POSTPROCESSING.SET_FIELDS': {
       return { ...state, fields: action.data }
+    }
+
+    case 'POSTPROCESSING.SET_Y_LIM': {
+      return { ...state, yLim: action.value }
     }
 
     default: {

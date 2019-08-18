@@ -225,10 +225,6 @@ class WeatherType(object):
     thrL_labels = attr.ib()
     thrH_labels = attr.ib()
 
-    def evaluate_dt_and_generate_hist(self, predictors_matrix):
-        error, title = self.evaluate(predictors_matrix)
-        return self.plot(error, title)
-
     def evaluate(self, predictors_matrix):
         error = predictors_matrix["FER"]
         title_pred = ""
@@ -253,7 +249,7 @@ class WeatherType(object):
         return error.to_list(), title_pred
 
     @staticmethod
-    def plot(data, title):
+    def plot(data, title, y_lim):
         bins = [
             -1.1,
             -0.99,
@@ -289,7 +285,7 @@ class WeatherType(object):
         out = pandas.cut(data, bins=bins, include_lowest=True)
         series = out.value_counts(normalize=True)
 
-        subplot = series.plot.bar(ax=ax, rot=45, ylim=(0, 1))
+        subplot = series.plot.bar(ax=ax, rot=45, ylim=(0, y_lim))
         patches = subplot.patches
 
         autolabel(ax, patches, y_cum=len(out))

@@ -120,7 +120,12 @@ def get_decision_tree():
 @app.route("/postprocessing/generate-wt-histogram", methods=("POST",))
 def get_wt_histogram():
     payload = request.get_json()
-    labels, thrWT, path = (payload["labels"], payload["thrWT"], payload["path"])
+    labels, thrWT, path, y_lim = (
+        payload["labels"],
+        payload["thrWT"],
+        payload["path"],
+        payload["yLim"],
+    )
 
     predictor_matrix = ASCIIDecoder(path=path).dataframe
 
@@ -131,7 +136,9 @@ def get_wt_histogram():
     wt = WeatherType(
         thrL=thrL, thrH=thrH, thrL_labels=labels[::2], thrH_labels=labels[1::2]
     )
-    plot = wt.evaluate_dt_and_generate_hist(predictor_matrix)
+    error, title = wt.evaluate(predictor_matrix)
+    plot = wt.plot(error, title, float(y_lim))
+
     return jsonify({"histogram": plot})
 
 

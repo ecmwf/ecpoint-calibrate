@@ -66,6 +66,7 @@ export default class DecisionTree extends Component {
           labels: this.props.labels,
           thrWT: this.props.thrGrid[node.meta.idxWT],
           path: this.props.path,
+          yLim: this.props.yLim,
         },
         json: true,
       },

@@ -35,6 +35,7 @@ const mapStateToProps = state => ({
   thrGridOut: state.postprocessing.thrGridOut,
   path: state.preloader.path,
   fields: state.preloader.fields,
+  yLim: state.postprocessing.yLim,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -47,6 +48,8 @@ const mapDispatchToProps = dispatch => ({
 
   onWeatherTypeMatrixChange: (labels, matrix) =>
     dispatch(setWeatherTypeMatrix(labels, matrix)),
+
+  onYLimChange: value => dispatch({ type: 'POSTPROCESSING.SET_Y_LIM', value }),
 })
 
 export default connect(

@@ -10,6 +10,7 @@ import {
   Segment,
   Item,
   Popup,
+  Input,
 } from 'semantic-ui-react'
 
 import _ from 'lodash'
@@ -214,19 +215,45 @@ class PostProcessing extends Component {
     download('BreakPointsWT.csv', csv)
   }
 
+  yLimHasError = () =>
+    this.props.yLim === '' || /^(\d+\.?\d*|\.\d+)$/.test(this.props.yLim)
+      ? parseFloat(this.props.yLim) > 0 && parseFloat(this.props.yLim) <= 1.0
+        ? null
+        : true
+      : true
+
+  getYLimitField = () => (
+    <Item>
+      <Item.Content>
+        <Item.Header>
+          <h5>Enter maximum value of Y-axis in the histograms:</h5>
+        </Item.Header>
+        <Item.Description>
+          <Input
+            value={this.props.yLim || ''}
+            error={this.yLimHasError()}
+            onChange={e => this.props.onYLimChange(e.target.value)}
+          />
+        </Item.Description>
+        <Item.Extra>
+          Valid values are all floating-point numbers in the set <code>(0, 1]</code>.
+        </Item.Extra>
+      </Item.Content>
+    </Item>
+  )
+
   getDecisionTree = () =>
     this.props.thrGridOut.length > 0 && (
       <Item>
         <Item.Content>
           <br />
-          <Grid centered />
-          <br />
-          {this.state.tree && (
+          {!this.yLimHasError() && this.state.tree && (
             <Tree
               data={this.state.tree}
               thrGrid={this.props.thrGridOut.map(row => _.flatMap(row.slice(1)))}
               labels={this.getLabels()}
               path={this.props.path}
+              yLim={this.props.yLim}
             />
           )}
         </Item.Content>
@@ -433,6 +460,7 @@ class PostProcessing extends Component {
                   {this.getSortableFields()}
                   {this.getThresholdSplitsGridSheet()}
                   {this.getDecisionTreeOutMatrix()}
+                  {this.getYLimitField()}
                   {this.getDecisionTree()}
                 </Item.Group>
               </Card.Description>
