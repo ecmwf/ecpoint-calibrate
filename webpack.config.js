@@ -1,9 +1,10 @@
 const { resolve, join } = require('path')
 
-const webpack = require('webpack')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const config = {
+  mode: 'production',
+
   devtool: 'cheap-module-eval-source-map',
 
   entry: ['@babel/polyfill', './main.js'],
@@ -26,10 +27,6 @@ const config = {
   target: 'electron-main',
   module: {
     rules: [
-      {
-        test: /\.node$/,
-        use: 'node-loader',
-      },
       {
         test: /\.jsx?$/,
         loaders: ['babel-loader'],
@@ -110,10 +107,7 @@ const config = {
     ],
   },
 
-  plugins: [
-    new webpack.optimize.ModuleConcatenationPlugin(),
-    new CopyWebpackPlugin([{ from: 'assets', to: './' }]),
-  ],
+  plugins: [new CopyWebpackPlugin([{ from: 'assets', to: './' }])],
 }
 
 module.exports = config

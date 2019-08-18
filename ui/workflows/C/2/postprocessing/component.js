@@ -181,7 +181,7 @@ class PostProcessing extends Component {
 
   postThrGridOut = matrix => {
     /* We pass the matrix instead of using it from this.props.thrGridOut to avoid
-      * concurrency issues. */
+     * concurrency issues. */
     const labels = this.getLabels()
     client.post(
       {
