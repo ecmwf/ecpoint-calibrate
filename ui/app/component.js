@@ -1,4 +1,4 @@
-import React, { Fragment, Component } from 'react'
+import React, { Component } from 'react'
 
 import {
   Modal,
@@ -22,10 +22,10 @@ const { shell } = require('electron')
 
 class App extends Component {
   getApp = () => (
-    <Fragment>
+    <>
       <Header />
       <Page />
-    </Fragment>
+    </>
   )
 
   getSpashIntro = () => <Image src={ring} size="big" verticalAlign="middle" />
@@ -166,7 +166,7 @@ class App extends Component {
   )
 
   getSplashScreen = () => (
-    <Fragment>
+    <>
       <Header />
       <Grid columns={2} padded="vertically" className="background">
         <Grid.Row>
@@ -182,7 +182,7 @@ class App extends Component {
           </Grid.Column>
         </Grid.Row>
       </Grid>
-    </Fragment>
+    </>
   )
 
   render = () => (this.props.workflow === null ? this.getSplashScreen() : this.getApp())

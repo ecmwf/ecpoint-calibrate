@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import { remote } from 'electron'
 
 import {
@@ -59,65 +59,59 @@ class Predictand extends Component {
       : true
 
   getAccField = () => (
-    <Fragment>
-      <Item>
-        <Item.Content>
-          <Item.Header>
-            <h5>Enter an accumulation period, in hours, for the predictand:</h5>
-          </Item.Header>
-          <Item.Extra>
-            For example, insert the value <code>24</code> for a 24-hour accumulation
-            period.
-          </Item.Extra>
+    <Item>
+      <Item.Content>
+        <Item.Header>
+          <h5>Enter an accumulation period, in hours, for the predictand:</h5>
+        </Item.Header>
+        <Item.Extra>
+          For example, insert the value <code>24</code> for a 24-hour accumulation
+          period.
+        </Item.Extra>
 
-          <Item.Description>
-            <Input
-              error={this.accHasError()}
-              onChange={e => this.props.onAccumulationChange(e.target.value)}
-              value={this.props.predictand.accumulation || ''}
-              label={{ basic: true, content: 'hours' }}
-              labelPosition="right"
-            />
-          </Item.Description>
-          <Item.Extra>
-            Valid values are: <code>6</code>, <code>12</code>, <code>24</code>
-          </Item.Extra>
-        </Item.Content>
-      </Item>
-    </Fragment>
+        <Item.Description>
+          <Input
+            error={this.accHasError()}
+            onChange={e => this.props.onAccumulationChange(e.target.value)}
+            value={this.props.predictand.accumulation || ''}
+            label={{ basic: true, content: 'hours' }}
+            labelPosition="right"
+          />
+        </Item.Description>
+        <Item.Extra>
+          Valid values are: <code>6</code>, <code>12</code>, <code>24</code>
+        </Item.Extra>
+      </Item.Content>
+    </Item>
   )
 
   minValueAccField = () => (
-    <Fragment>
-      <Item>
-        <Item.Content>
-          <Item.Header>
-            <h5>
-              Enter a minimum value for the predictand to prevent dividing by zero:
-            </h5>
-          </Item.Header>
-          <Item.Extra>
-            For example, enter the value <code>1</code> for <code>1 mm</code> over the
-            accumulation period.
-            <br />
-            The entered value must be consistent with the units in which the predictand
-            is represented.
-          </Item.Extra>
+    <Item>
+      <Item.Content>
+        <Item.Header>
+          <h5>Enter a minimum value for the predictand to prevent dividing by zero:</h5>
+        </Item.Header>
+        <Item.Extra>
+          For example, enter the value <code>1</code> for <code>1 mm</code> over the
+          accumulation period.
+          <br />
+          The entered value must be consistent with the units in which the predictand is
+          represented.
+        </Item.Extra>
 
-          <Item.Description>
-            <Input
-              error={this.minValueAcc_hasError()}
-              placeholder="Enter a number"
-              value={this.props.predictand.minValueAcc}
-              onChange={e => this.props.change_minValueAcc(e.target.value)}
-              label={{ basic: true, content: this.props.predictand.units || '' }}
-              labelPosition="right"
-            />
-          </Item.Description>
-          <Item.Extra />
-        </Item.Content>
-      </Item>
-    </Fragment>
+        <Item.Description>
+          <Input
+            error={this.minValueAcc_hasError()}
+            placeholder="Enter a number"
+            value={this.props.predictand.minValueAcc}
+            onChange={e => this.props.change_minValueAcc(e.target.value)}
+            label={{ basic: true, content: this.props.predictand.units || '' }}
+            labelPosition="right"
+          />
+        </Item.Description>
+        <Item.Extra />
+      </Item.Content>
+    </Item>
   )
 
   minValueAcc_hasError = () =>

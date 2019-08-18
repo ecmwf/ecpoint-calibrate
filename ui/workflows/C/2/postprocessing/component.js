@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 
 import {
   Grid,
@@ -248,7 +248,7 @@ class PostProcessing extends Component {
             onClick={() => this.postThrGridIn()}
           />
           {this.props.thrGridOut.length > 0 && (
-            <Fragment>
+            <>
               <Button
                 content="Save mapping functions as CSV"
                 icon="download"
@@ -263,7 +263,7 @@ class PostProcessing extends Component {
                 floated="right"
                 onClick={() => this.saveBreakPoints()}
               />
-            </Fragment>
+            </>
           )}
         </Grid>
         <br />

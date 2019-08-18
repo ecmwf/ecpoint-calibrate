@@ -6,7 +6,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const config = {
   devtool: 'cheap-module-eval-source-map',
 
-  entry: ['babel-polyfill', './main.js'],
+  entry: ['@babel/polyfill', './main.js'],
 
   output: {
     filename: join('js', 'bundle.js'),

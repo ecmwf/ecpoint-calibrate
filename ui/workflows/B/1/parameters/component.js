@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 
 import { Grid, Card, Button, Input, Item, Icon, Radio, Popup } from 'semantic-ui-react'
 
@@ -156,7 +156,7 @@ class Parameters extends Component {
       : true
 
   getIntervalField = () => (
-    <Fragment>
+    <>
       <h5>Interval between model runs:</h5>
       <Input
         error={this.intervalHasError()}
@@ -165,7 +165,7 @@ class Parameters extends Component {
         label={{ basic: true, content: 'hours' }}
         labelPosition="right"
       />
-    </Fragment>
+    </>
   )
 
   startTimeHasError = () =>
@@ -177,7 +177,7 @@ class Parameters extends Component {
       : true
 
   getStartTimeField = () => (
-    <Fragment>
+    <>
       <h5>First model run on a day:</h5>
       <Input
         error={this.startTimeHasError()}
@@ -186,7 +186,7 @@ class Parameters extends Component {
         label={{ basic: true, content: 'UTC' }}
         labelPosition="right"
       />
-    </Fragment>
+    </>
   )
 
   hasError = () =>

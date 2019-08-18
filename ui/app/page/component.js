@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 
 import WorkflowB_Page1 from '~/workflows/B/1'
 import WorkflowB_Page2 from '~/workflows/B/2'
@@ -36,43 +36,43 @@ const WorkflowC_Menu = MenuFactory([
 const Page = props => {
   if (props.workflow === 'B' && props.page.activePageNumber === 1) {
     return (
-      <Fragment>
+      <>
         <WorkflowB_Menu {...props} />
         <WorkflowB_Page1 />
-      </Fragment>
+      </>
     )
   }
   if (props.workflow === 'B' && props.page.activePageNumber === 2) {
     return (
-      <Fragment>
+      <>
         <WorkflowB_Menu {...props} />
         <WorkflowB_Page2 />
-      </Fragment>
+      </>
     )
   }
   if (props.workflow === 'B' && props.page.activePageNumber === 3) {
     return (
-      <Fragment>
+      <>
         <WorkflowB_Menu {...props} />
         <WorkflowB_Page3 />
-      </Fragment>
+      </>
     )
   }
   if (props.workflow === 'C' && props.page.activePageNumber === 1) {
     return (
-      <Fragment>
+      <>
         <WorkflowC_Menu {...props} />
         <WorkflowC_Page1 />
-      </Fragment>
+      </>
     )
   }
 
   if (props.workflow === 'C' && props.page.activePageNumber === 2) {
     return (
-      <Fragment>
+      <>
         <WorkflowC_Menu {...props} />
         <WorkflowC_Page2 />
-      </Fragment>
+      </>
     )
   }
 }
