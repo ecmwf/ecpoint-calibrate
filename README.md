@@ -16,12 +16,11 @@ Meteorological software for calibration of model outputs, and conditional verifi
 ```sh
 $ git clone git@github.com:esowc/ecPoint-Calibrate.git
 $ cd ecPoint-Calibrate
-$ docker-compose pull
 ```
 
 At this point, you must configure the source of your dataset on the filesystem, and make it available to the Docker services using [volumes](https://docs.docker.com/storage/volumes). Normally, if the data lives on a removable media, such as an external HDD, you shouldn't need to do anything.
 
-To configure a volume, simply add it to the two services (`core`, and `electron`) in the [`docker_compose.yml`](/docker-compose.yml) file.
+To configure a volume, simply add it to the two services (`core`, `electron`, and `logger`) in the [`docker_compose.yml`](/docker-compose.yml) file.
 
 ```sh
 $ ./go.sh

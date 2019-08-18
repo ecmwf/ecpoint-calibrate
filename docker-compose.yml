@@ -59,6 +59,7 @@ services:
       context: .
       dockerfile: Dockerfile.logger
 
+    image: onyb/ecpoint-calibrate-logger
 
     volumes:
       # Mount externally plugged devices
