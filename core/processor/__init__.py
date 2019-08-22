@@ -124,8 +124,13 @@ def run(config):
         logging.info(f"Case {case}")
         logging.info("FORECAST PARAMETERS:")
 
-        step_f = step_s + acc
-        forecast = f'{curr_date.strftime("%Y%m%d")}, {curr_time:02d} UTC, (t+{step_s}, t+{step_f})'
+        if config.predictand.is_accumulated:
+            forecast = f'{curr_date.strftime("%Y%m%d")}, {curr_time:02d} UTC, (t+{step_s}, t+{step_s + acc})'
+        else:
+            forecast = (
+                f'{curr_date.strftime("%Y%m%d")}, {curr_time:02d} UTC, (t+{step_s})'
+            )
+
         logging.info(f"  {forecast}")
 
         if forecast in counter_used_FC:
@@ -170,17 +175,27 @@ def run(config):
         validDateF = (
             datetime.combine(curr_date, datetime.min.time())
             + timedelta(hours=curr_time)
-            + timedelta(hours=step_f)
+            + timedelta(hours=step_s + acc)  # step_s + 0 for instantaneous predictand
         )
         DateVF = validDateF.strftime("%Y%m%d")
         HourVF = validDateF.strftime("%H")
         HourVF_num = validDateF.hour
         logging.info("OBSERVATIONS PARAMETERS:")
-        logging.info(f"  Validity date/time (end of {acc}h period) = {validDateF}")
 
-        obs_path = (
-            PathOBS / f"acc{acc:02}h" / DateVF / f"tp_{acc:02d}_{DateVF}_{HourVF}.geo"
-        )
+        if config.predictand.is_accumulated:
+            logging.info(f"  Validity date/time (end of {acc} h period) = {validDateF}")
+        else:
+            logging.info(f"  Validity date/time = {validDateF}")
+
+        if config.predictand.is_accumulated:
+            obs_path = (
+                PathOBS
+                / f"acc{acc:02}h"
+                / DateVF
+                / f"tp_{acc:02d}_{DateVF}_{HourVF}.geo"
+            )
+        else:
+            obs_path = PathOBS / DateVF / f"tp_{DateVF}_{HourVF}.geo"
 
         # Reading Rainfall Observations
         logging.info(f"  Read observation file: {os.path.basename(obs_path)}")
@@ -213,15 +228,21 @@ def run(config):
             )
 
         # Step generation and adjustment
-        steps = list(range(step_s, step_f, config.predictors.sampling_interval))
+        if config.predictand.is_accumulated:
+            steps = list(
+                range(step_s, step_s + acc, config.predictors.sampling_interval)
+            )
 
-        if acc == 24:
-            step_start_sr, step_end_sr = steps[0], steps[-1]
-        else:
-            if steps[-1] <= 24:
-                step_start_sr, step_end_sr = 0, 24
+            # Make senses to compute (accumulated) Solar Radiation for only accumulated predictand.
+            if acc == 24:
+                step_start_sr, step_end_sr = steps[0], steps[-1]
             else:
-                step_start_sr, step_end_sr = steps[-1] - 24, steps[-1]
+                if steps[-1] <= 24:
+                    step_start_sr, step_end_sr = 0, 24
+                else:
+                    step_start_sr, step_end_sr = steps[-1] - 24, steps[-1]
+        else:
+            steps = [step_s]
 
         logging.info("")
         logging.info("PREDICTORS COMPUTATIONS:")
@@ -311,20 +332,27 @@ def run(config):
 
             if computation.is_reference:
                 ref_code = computation.shortname
-                mask = geopoints >= predictand_min_value
-                logging.info(
-                    f"  Selecting values that correspond to {computation.shortname}"
-                    f" >= {predictand_min_value} {predictand_scaled_units}/{acc}h."
-                )
-                ref_geopoints = geopoints.filter(mask)
-
-                # obs = obs.filter(mask)
-                if not ref_geopoints:
-                    logging.warn(
-                        f"  The observation file does not contain observations that correspond to "
-                        f" {computation.shortname} >= "
-                        f"{predictand_min_value} {predictand_scaled_units}/{acc}h."
+                if config.predictand.is_accumulated:
+                    mask = geopoints >= predictand_min_value
+                    logging.info(
+                        f"  Selecting values that correspond to {computation.shortname}"
+                        f" >= {predictand_min_value} {predictand_scaled_units}/{acc}h."
                     )
+                    ref_geopoints = geopoints.filter(mask)
+                else:
+                    ref_geopoints = geopoints
+
+                if not ref_geopoints:
+                    if config.predictand.is_accumulated:
+                        logging.warn(
+                            f"  The observation file does not contain observations that correspond to "
+                            f" {computation.shortname} >= "
+                            f"{predictand_min_value} {predictand_scaled_units}/{acc}h."
+                        )
+                    else:
+                        # [TODO] - Add a specific logger message
+                        pass
+
                     skip = True
                     break
 
@@ -335,7 +363,9 @@ def run(config):
                     )
                 )
             else:
-                geopoints = geopoints.filter(mask)
+                if config.predictand.is_accumulated:
+                    geopoints = geopoints.filter(mask)
+
                 computations_result.append(
                     (computation.shortname, np.around(geopoints.values(), decimals=3))
                 )
@@ -360,10 +390,17 @@ def run(config):
 
             if computation.field == "RATIO_FIELD":
                 dividend, divisor = steps
-                computed_value = computer.run(
-                    dividend.nearest_gridpoint(obs).filter(mask).values(),
-                    divisor.nearest_gridpoint(obs).filter(mask).values(),
-                )
+                if config.predictand.is_accumulated:
+                    computed_value = computer.run(
+                        dividend.nearest_gridpoint(obs).filter(mask).values(),
+                        divisor.nearest_gridpoint(obs).filter(mask).values(),
+                    )
+                else:
+                    computed_value = (
+                        computer.run(dividend.values, divisor.values)
+                        .nearest_gridpoint(obs)
+                        .values()
+                    )
                 computations_result.append(
                     (computation.shortname, np.around(computed_value, decimals=3))
                 )
@@ -373,14 +410,17 @@ def run(config):
                     (
                         computation.shortname,
                         np.around(
-                            computed_value.nearest_gridpoint(obs).filter(mask).values(),
+                            computed_value.nearest_gridpoint(obs).filter(mask).values()
+                            if config.predictand.is_accumulated
+                            else computed_value.nearest_gridpoint(obs).values(),
                             decimals=3,
                         ),
                     )
                 )
 
         # Compute other parameters
-        obs = obs.filter(mask)
+        if config.predictand.is_accumulated:
+            obs = obs.filter(mask)
 
         latObs = obs.latitudes()
         lonObs = obs.longitudes()
@@ -427,7 +467,10 @@ def run(config):
             [
                 ("BaseDate", [curr_date] * n),
                 ("BaseTime", [curr_time] * n),
-                ("StepF", [step_f] * n),
+                (
+                    "StepF" if config.predictand.is_accumulated else "Step",
+                    [step_s + acc] * n,
+                ),
                 ("DateOBS", [DateVF] * n),
                 ("TimeOBS", [HourVF] * n),
             ]
@@ -444,18 +487,20 @@ def run(config):
 
         serializer.add_columns_chunk(columns)
 
-    logging.info(
-        dedent(
-            f"""
-    No of observations considered in the calibration period: {obsTOT}
-    No of observations that correspond to {ref_code} >= {predictand_min_value} {predictand_scaled_units}/{acc}h: {obsUSED}
-    """
+    logging.info(f"No of observations considered in the calibration period: {obsTOT}")
+    if config.predictand.is_accumulated:
+        logging.info(
+            f"No of observations that correspond to {ref_code} >= {predictand_min_value} {predictand_scaled_units}/{acc}h: {obsUSED}"
         )
-    )
-    footer = dedent(
-        f"""
-        # No of observations considered in the calibration period: {obsTOT}
-        # No of observations that correspond to {ref_code} >= {predictand_min_value} {predictand_scaled_units}/{acc}h: {obsUSED}
-        """
-    ).strip()
+
+    if config.predictand.is_accumulated:
+        footer = dedent(
+            f"""
+            # No of observations considered in the calibration period: {obsTOT}
+            # No of observations that correspond to {ref_code} >= {predictand_min_value} {predictand_scaled_units}/{acc}h: {obsUSED}
+            """
+        ).strip()
+    else:
+        footer = f"# No of observations considered in the calibration period: {obsTOT}"
+
     serializer.add_footer(footer)

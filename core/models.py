@@ -47,6 +47,10 @@ class Predictand(object):
 
     units = attr.ib(converter=str)
 
+    @property
+    def is_accumulated(self):
+        return self.type_ == "ACCUMULATED"
+
 
 @attr.s
 class Observations(object):
