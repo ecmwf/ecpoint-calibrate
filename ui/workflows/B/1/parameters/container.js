@@ -7,7 +7,8 @@ import {
   setDateEndField,
   setLimSUField,
   setModelType,
-  setIntervalField,
+  setModelIntervalField,
+  setStepIntervalField,
   setStartTimeField,
 } from './actions'
 import { completeSection } from '~/commonActions'
@@ -25,7 +26,9 @@ const mapDispatchToProps = dispatch => ({
 
   onModelTypeChange: type => dispatch(setModelType(type)),
 
-  onIntervalFieldChange: value => dispatch(setIntervalField(value)),
+  onModelIntervalChange: value => dispatch(setModelIntervalField(value)),
+
+  onStepIntervalChange: value => dispatch(setStepIntervalField(value)),
 
   onStartTimeFieldChange: value => dispatch(setStartTimeField(value)),
 

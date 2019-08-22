@@ -72,11 +72,12 @@ class Predictors extends Component {
           <h5>
             Enter the "Forecast Data Sampling Interval" to be used in "Computations
             (Define Predictors)": &nbsp;&nbsp;&nbsp;
-            <Popup
-              trigger={<Icon name="info circle" />}
-              content="This interval is only needed for Maximum, Minimum, Average, Weighted Average fields."
-              size="tiny"
-            />
+            <Popup trigger={<Icon name="info circle" />} size="tiny">
+              This interval is only needed for Maximum, Minimum, Average, Weighted
+              Average fields. <br />
+              <br />
+              See documentation at https://confluence.ecmwf.int/display/EVAL/ecPoint
+            </Popup>
           </h5>
         </Item.Header>
 

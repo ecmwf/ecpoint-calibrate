@@ -149,19 +149,38 @@ class Parameters extends Component {
     </Item>
   )
 
-  intervalHasError = () =>
-    this.props.parameters.interval === '' ||
-    /^(1|2|3|4|6|12|24)$/.test(this.props.parameters.interval)
+  modelIntervalHasError = () =>
+    this.props.parameters.model_interval === '' ||
+    /^(1|2|3|4|6|12|24)$/.test(this.props.parameters.model_interval)
       ? null
       : true
 
-  getIntervalField = () => (
+  getModelIntervalField = () => (
     <>
       <h5>Interval between model runs:</h5>
       <Input
-        error={this.intervalHasError()}
-        onChange={e => this.props.onIntervalFieldChange(e.target.value)}
-        value={this.props.parameters.interval || ''}
+        error={this.modelIntervalHasError()}
+        onChange={e => this.props.onModelIntervalChange(e.target.value)}
+        value={this.props.parameters.model_interval || ''}
+        label={{ basic: true, content: 'hours' }}
+        labelPosition="right"
+      />
+    </>
+  )
+
+  stepIntervalHasError = () =>
+    this.props.parameters.step_interval === '' ||
+    /^(1|2|3|4|6|12|24)$/.test(this.props.parameters.step_interval)
+      ? null
+      : true
+
+  getStepIntervalField = () => (
+    <>
+      <h5>Interval between forecast's validity times:</h5>
+      <Input
+        error={this.stepIntervalHasError()}
+        onChange={e => this.props.onStepIntervalChange(e.target.value)}
+        value={this.props.parameters.step_interval || ''}
         label={{ basic: true, content: 'hours' }}
         labelPosition="right"
       />
@@ -190,7 +209,7 @@ class Parameters extends Component {
   )
 
   hasError = () =>
-    this.limSUHasError() || this.startTimeHasError() || this.intervalHasError()
+    this.limSUHasError() || this.startTimeHasError() || this.modelIntervalHasError()
 
   isComplete = () => !this.hasError() && !isEmpty(this.props.parameters)
 
@@ -232,8 +251,9 @@ class Parameters extends Component {
                       <br />
                       <Grid divided columns={2}>
                         <Grid.Column>{this.getStartTimeField()}</Grid.Column>
-                        <Grid.Column>{this.getIntervalField()}</Grid.Column>
+                        <Grid.Column>{this.getModelIntervalField()}</Grid.Column>
                       </Grid>
+                      {this.getStepIntervalField()}
                     </Item.Content>
                   </Item>
                   {this.getLimSUField()}

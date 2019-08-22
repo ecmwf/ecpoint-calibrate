@@ -23,10 +23,10 @@ class ASCIIEncoder(object):
 
         with open(self.path, "a") as f:
             if not self.first_chunk_address_added:
-                f.write(df.to_string(index=False, col_space=12))
+                f.write(df.to_string(index=False, col_space=10))
                 self.first_chunk_address_added = True
             else:
-                f.write(df.to_string(index=False, header=False, col_space=12))
+                f.write(df.to_string(index=False, header=False, col_space=10))
             f.write("\n")
 
 

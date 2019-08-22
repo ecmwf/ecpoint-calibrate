@@ -15,10 +15,11 @@ class Processing extends Component {
     const parameters = {
       date_start: this.props.parameters.date_start,
       date_end: this.props.parameters.date_end,
-      limit_spin_up: this.props.parameters.limSU,
+      spinup_limit: this.props.parameters.limSU,
       out_path: this.props.parameters.outPath,
       model_type: this.props.parameters.modelType,
-      interval: this.props.parameters.interval,
+      model_interval: this.props.parameters.model_interval,
+      step_interval: this.props.parameters.step_interval,
       start_time: this.props.parameters.startTime,
     }
 

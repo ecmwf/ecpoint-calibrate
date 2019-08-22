@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import attr
 
 
@@ -10,7 +12,7 @@ class Parameters(object):
     date_end = attr.ib(converter=str)
 
     # upper limit (in hours) of the window in forecast with spin-up problems
-    limit_spin_up = attr.ib(converter=int)
+    spinup_limit = attr.ib(converter=int)
 
     # output file path
     out_path = attr.ib(converter=str)
@@ -18,8 +20,11 @@ class Parameters(object):
     # Model type: {grib, netcdf}
     model_type = attr.ib(converter=str)
 
-    # interval (in hours)
-    interval = attr.ib(converter=int)
+    # interval between model runs (in hours)
+    model_interval = attr.ib(converter=int)
+
+    # interval between forecast's validity times (in hours)
+    step_interval = attr.ib(converter=int)
 
     # observation start time
     start_time = attr.ib(converter=int)
@@ -30,7 +35,7 @@ class Predictand(object):
     # accumulation (in hours) of the parameter to post-process
     accumulation = attr.ib(converter=int)
 
-    path = attr.ib(converter=str)
+    path = attr.ib(converter=Path)
 
     code = attr.ib(converter=str)
 
@@ -47,7 +52,7 @@ class Predictand(object):
 class Observations(object):
     # path of the database that contains the observations for the parameter
     # to post-process
-    path = attr.ib(converter=str)
+    path = attr.ib(converter=Path)
 
     units = attr.ib(converter=str)
 
@@ -56,7 +61,7 @@ class Observations(object):
 class Predictors(object):
     # path of the database that contains the parameter to post-process and the
     # predictors
-    path = attr.ib(converter=str)
+    path = attr.ib(converter=Path)
 
     sampling_interval = attr.ib(converter=int)
 

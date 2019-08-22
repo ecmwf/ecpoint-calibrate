@@ -2,7 +2,8 @@ const defaultState = {
   limSU: '',
   outPath: '',
   modelType: 'grib',
-  interval: '',
+  model_interval: '',
+  step_interval: '',
   startTime: '',
 }
 
@@ -28,8 +29,12 @@ export default (state = defaultState, action) => {
       return { ...state, modelType: action.data }
     }
 
-    case 'PARAMETERS.SET_INTERVAL_FIELD': {
-      return { ...state, interval: action.value }
+    case 'PARAMETERS.SET_MODEL_INTERVAL_FIELD': {
+      return { ...state, model_interval: action.value }
+    }
+
+    case 'PARAMETERS.SET_STEP_INTERVAL_FIELD': {
+      return { ...state, step_interval: action.value }
     }
 
     case 'PARAMETERS.SET_START_TIME_FIELD': {

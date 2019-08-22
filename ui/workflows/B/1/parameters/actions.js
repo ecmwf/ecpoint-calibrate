@@ -18,8 +18,13 @@ export const setModelType = type => ({
   data: type,
 })
 
-export const setIntervalField = value => ({
-  type: 'PARAMETERS.SET_INTERVAL_FIELD',
+export const setModelIntervalField = value => ({
+  type: 'PARAMETERS.SET_MODEL_INTERVAL_FIELD',
+  value,
+})
+
+export const setStepIntervalField = value => ({
+  type: 'PARAMETERS.SET_STEP_INTERVAL_FIELD',
   value,
 })
 

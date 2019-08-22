@@ -5,5 +5,6 @@ export const isEmpty = state =>
   !state.date_end ||
   state.limSU === '' ||
   state.modelType === '' ||
-  state.interval === '' ||
+  state.model_interval === '' ||
+  state.step_interval === '' ||
   state.startTime === ''
