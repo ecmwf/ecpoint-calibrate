@@ -10,7 +10,8 @@ import {
   updateComputationInputs,
   removeComputation,
   setScaleOp,
-  setScaleValue,
+  setMulScaleValue,
+  setAddScaleValue,
   toggleComputationPostProcess,
   fetchAndUpdateInputUnits,
 } from './actions'
@@ -54,7 +55,9 @@ const mapDispatchToProps = dispatch => ({
 
   setScaleOp: (index, op) => dispatch(setScaleOp(index, op)),
 
-  setScaleValue: (index, value) => dispatch(setScaleValue(index, value)),
+  setMulScaleValue: (index, value) => dispatch(setMulScaleValue(index, value)),
+
+  setAddScaleValue: (index, value) => dispatch(setAddScaleValue(index, value)),
 
   toggleComputationPostProcess: index => dispatch(toggleComputationPostProcess(index)),
 

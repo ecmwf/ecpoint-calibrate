@@ -34,20 +34,15 @@ class Computer(object):
     computation = attr.ib()
 
     def run(self, *args):
-        scaling_factor = float(self.computation.scale["value"])
-
         computed_value = self.meta[self.computation.field](*args)
 
-        if scaling_factor == 1:
+        if self.computation.mulScale == 1 and self.computation.addScale == 0:
             return computed_value
         else:
-            scaling_op = (
-                operator.mul
-                if self.computation.scale["op"] == "MULTIPLY"
-                else operator.truediv
+            return operator.mul(
+                operator.add(computed_value, self.computation.addScale),
+                self.computation.mulScale,
             )
-
-            return scaling_op(computed_value, scaling_factor)
 
     @classmethod
     def filter_paths_to_read(cls, paths, computation):

@@ -97,9 +97,9 @@ def run(config):
     model_interval = config.parameters.model_interval
     step_interval = config.parameters.step_interval
     BaseTimeS = config.parameters.start_time
-    predictand_min_value = config.predictand.min_value * float(
-        config.computations[0].scale["value"]
-    )
+    predictand_min_value = (
+        config.predictand.min_value + config.computations[0].addScale
+    ) * config.computations[0].mulScale
     predictand_scaled_units = config.observations.units
 
     logging.info(

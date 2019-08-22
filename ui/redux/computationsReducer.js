@@ -16,9 +16,8 @@ export default (state = defaultState, action) => {
             fullname: isFirstComputation ? action.data.fullname : '',
             field: isFirstComputation ? action.data.field : '',
             inputs: isFirstComputation ? action.data.inputs : [],
-            scale: isFirstComputation
-              ? action.data.scale
-              : { op: 'MULTIPLY', value: '1' },
+            addScale: isFirstComputation ? action.data.addScale : '0',
+            mulScale: isFirstComputation ? action.data.mulScale : '1',
             isPostProcessed: true,
             units: '',
           },
@@ -108,7 +107,7 @@ export default (state = defaultState, action) => {
                 units: input.code === action.code ? action.units : input.units,
               })),
               units: !['RATIO_FIELD', '24H_SOLAR_RADIATION'].includes(item.field)
-                ? item.scale.value === '1'
+                ? item.mulScale === '1' && item.addScale === '0'
                   ? item.inputs.length > 0
                     ? action.units
                     : '-'
@@ -120,28 +119,39 @@ export default (state = defaultState, action) => {
         }),
       }
 
-    case 'COMPUTATIONS.SET_SCALE_OP':
-      return {
-        ...state,
-        fields: state.fields.map(item => {
-          if (item.index === action.index) {
-            return { ...item, scale: { ...item.scale, op: action.op } }
-          }
-          return item
-        }),
-      }
-
-    case 'COMPUTATIONS.SET_SCALE_VALUE':
+    case 'COMPUTATIONS.SET_MUL_SCALE_VALUE':
       return {
         ...state,
         fields: state.fields.map(item => {
           if (item.index === action.index) {
             return {
               ...item,
-              scale: { ...item.scale, value: action.value },
+              mulScale: action.value,
               units:
                 item.field !== 'RATIO_FIELD'
                   ? action.value === '1'
+                    ? item.inputs.length > 0
+                      ? item.inputs[0].units
+                      : '-'
+                    : item.units
+                  : item.units,
+            }
+          }
+          return item
+        }),
+      }
+
+    case 'COMPUTATIONS.SET_ADD_SCALE_VALUE':
+      return {
+        ...state,
+        fields: state.fields.map(item => {
+          if (item.index === action.index) {
+            return {
+              ...item,
+              addScale: action.value,
+              units:
+                item.field !== 'RATIO_FIELD'
+                  ? action.value === '0'
                     ? item.inputs.length > 0
                       ? item.inputs[0].units
                       : '-'

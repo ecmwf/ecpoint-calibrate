@@ -11,11 +11,17 @@ export const isNotEmpty = state =>
       field.fullname &&
       field.field &&
       (field.field !== 'LOCAL_SOLAR_TIME' ? field.inputs.length > 0 : true) &&
-      field.scale.value &&
+      field.mulScale &&
+      field.addScale &&
       field.units
   )
 
 export const isValid = state =>
   isNotEmpty(state) &&
-  _.every(state, field => /^\d+$/.test(field.scale.value)) &&
+  _.every(
+    state,
+    field =>
+      /^(\d+\.?\d*|\.\d+)$/.test(field.mulScale) &&
+      /^(\d+\.?\d*|\.\d+)$/.test(field.addScale)
+  ) &&
   _.some(state, field => field.isPostProcessed === true)

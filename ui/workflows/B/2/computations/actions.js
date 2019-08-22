@@ -58,8 +58,14 @@ export const setScaleOp = (index, op) => ({
   op,
 })
 
-export const setScaleValue = (index, value) => ({
-  type: 'COMPUTATIONS.SET_SCALE_VALUE',
+export const setMulScaleValue = (index, value) => ({
+  type: 'COMPUTATIONS.SET_MUL_SCALE_VALUE',
+  index,
+  value,
+})
+
+export const setAddScaleValue = (index, value) => ({
+  type: 'COMPUTATIONS.SET_ADD_SCALE_VALUE',
   index,
   value,
 })

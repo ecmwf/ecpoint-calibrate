@@ -76,9 +76,10 @@ class Computation:
     field = attr.ib(converter=str)
     units = attr.ib(converter=str)
     isPostProcessed = attr.ib(converter=bool)
-    inputs = attr.ib(default=attr.Factory(list))
-    scale = attr.ib(default=attr.Factory(dict))
+    mulScale = attr.ib(converter=float)
+    addScale = attr.ib(converter=float)
 
+    inputs = attr.ib(default=attr.Factory(list))
     is_reference = attr.ib(default=False)
 
 

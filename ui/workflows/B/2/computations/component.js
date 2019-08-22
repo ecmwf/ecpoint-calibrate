@@ -177,37 +177,37 @@ class Computation extends Component {
 
         <Table.Cell collapsing>
           <Grid.Row>
-            <Radio
-              label="Multiply"
-              value="MULTIPLY"
-              checked={this.props.scale.op === 'MULTIPLY'}
-              onChange={() => this.props.setScaleOp(this.props.index, 'MULTIPLY')}
+            <p>
+              <b>Multiplication factor:</b>
+            </p>
+            <Input
+              fluid
+              value={this.props.mulScale}
+              error={!/^(\d+\.?\d*|\.\d+)$/.test(this.props.mulScale)}
+              onChange={e =>
+                this.props.setMulScaleValue(this.props.index, e.target.value)
+              }
               disabled={['24H_SOLAR_RADIATION', 'LOCAL_SOLAR_TIME'].includes(
                 this.props.field
               )}
             />
           </Grid.Row>
           <Grid.Row>
-            <Radio
-              label="Divide"
-              value="DIVIDE"
-              checked={this.props.scale.op === 'DIVIDE'}
-              onChange={() => this.props.setScaleOp(this.props.index, 'DIVIDE')}
+            <p>
+              <b>Addition factor:</b>
+            </p>
+            <Input
+              fluid
+              value={this.props.addScale}
+              error={!/^(\d+\.?\d*|\.\d+)$/.test(this.props.addScale)}
+              onChange={e =>
+                this.props.setAddScaleValue(this.props.index, e.target.value)
+              }
               disabled={['24H_SOLAR_RADIATION', 'LOCAL_SOLAR_TIME'].includes(
                 this.props.field
               )}
             />
           </Grid.Row>
-          <br />
-          <Input
-            fluid
-            value={this.props.scale.value}
-            onChange={e => this.props.setScaleValue(this.props.index, e.target.value)}
-            disabled={['24H_SOLAR_RADIATION', 'LOCAL_SOLAR_TIME'].includes(
-              this.props.field
-            )}
-          />
-
           <br />
           <b>
             Units:
@@ -232,7 +232,7 @@ class Computation extends Component {
             error={this.unitsHasError() !== null}
             value={this.props.units}
             onChange={e => this.props.updateUnits(this.props.index, e.target.value)}
-            disabled={this.props.scale.value === '1'}
+            disabled={this.props.mulScale === '1' && this.props.addScale === '0'}
           />
         </Table.Cell>
         <Table.Cell collapsing textAlign="center">
@@ -285,7 +285,8 @@ class Computations extends Component {
               onInputsChange={this.props.onComputationInputsChange}
               onRemove={this.props.onComputationRemove}
               setScaleOp={this.props.setScaleOp}
-              setScaleValue={this.props.setScaleValue}
+              setMulScaleValue={this.props.setMulScaleValue}
+              setAddScaleValue={this.props.setAddScaleValue}
               predictors={this.props.predictors}
               observations={this.props.observations}
               togglePostProcess={this.props.toggleComputationPostProcess}
@@ -341,10 +342,8 @@ class Computations extends Component {
           ? 'ACCUMULATED_FIELD'
           : 'INSTANTANEOUS_FIELD',
       inputs: [input],
-      scale: {
-        op: 'MULTIPLY',
-        value: '1',
-      } /* [FIXME] - read the predictand GRIB file to determine this */,
+      mulScale: '1',
+      addScale: '0',
     })
 
     this.props.fetchAndUpdateInputUnits(this.props.fields.length, input)
