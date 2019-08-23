@@ -33,8 +33,8 @@ def predictand_logs(config):
           Type                      = {config.predictand.type_.title()}   
           Accumulation              = {config.predictand.accumulation} h
           Minimum Value             = {config.predictand.min_value} {config.predictand.units}
-          Scaling Factor (Multiply) = {config.computations[0].field.mulScale}
-          Scaling Factor (Add)      = {config.computations[0].field.addScale}
+          Scaling Factor (Multiply) = {config.computations[0].mulScale}
+          Scaling Factor (Add)      = {config.computations[0].addScale}
           Forecast Database         = {config.predictand.path}
           Forecase Error            = {error}
     """
