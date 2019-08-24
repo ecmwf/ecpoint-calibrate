@@ -1,54 +1,18 @@
 import React, { Component } from 'react'
-import Tree from 'react-d3-tree'
 
 import { remote } from 'electron'
-
-import { Modal, Image, Button, Dimmer, Loader } from 'semantic-ui-react'
-
+import _ from 'lodash'
+import Tree from 'react-d3-tree'
 import { saveSvgAsPng } from 'save-svg-as-png'
 
+import { Button, Dimmer, Loader } from 'semantic-ui-react'
 import download from '~/utils/download'
-
-import _ from 'lodash'
 import client from '~/utils/client'
+import MappingFunction from './mappingFunction'
 
 const mainProcess = remote.require('./server')
 
-const containerStyles = {
-  width: '100%',
-  height: '100vh',
-}
-
-const Graph = props => {
-  const histURI = `data:image/jpeg;base64,${props.image}`
-  return (
-    <Modal size={'large'} open={props.open} onClose={props.onClose}>
-      <Modal.Header>
-        Weather Type {props.code}
-        {props.image !== null && (
-          <Button
-            content="Save image"
-            icon="download"
-            labelPosition="left"
-            floated="right"
-            onClick={() => {
-              download(`WT_${props.code}.png`, histURI)
-            }}
-          />
-        )}
-      </Modal.Header>
-      <Modal.Content>
-        <Dimmer active={props.image === null}>
-          <Loader indeterminate>Loading</Loader>
-        </Dimmer>
-
-        {props.image !== null && <Image src={histURI} fluid />}
-      </Modal.Content>
-    </Modal>
-  )
-}
-
-export default class DecisionTree extends Component {
+export default class TreeContainer extends Component {
   state = { open: false, histogram: null, code: null, saveInProgress: false }
 
   componentDidMount() {
@@ -81,7 +45,13 @@ export default class DecisionTree extends Component {
   }
 
   render = () => (
-    <div style={containerStyles} ref={tc => (this.treeContainer = tc)}>
+    <div
+      style={{
+        width: '100%',
+        height: '100vh',
+      }}
+      ref={tc => (this.treeContainer = tc)}
+    >
       <Button
         content="Save all WTs as PNG"
         icon="download"
@@ -141,7 +111,7 @@ export default class DecisionTree extends Component {
         }}
       />
 
-      <Graph
+      <MappingFunction
         onClose={() => this.setState({ open: false, histogram: null, code: null })}
         open={this.state.open}
         image={this.state.histogram}
