@@ -128,10 +128,10 @@ class Parameters extends Component {
         <Item.Header>
           <h3>Spin-up Window</h3>
           <h5>
-            Enter upper limit, for the spin-up window: &nbsp;&nbsp;&nbsp;
+            Enter length of the spin-up window: &nbsp;&nbsp;&nbsp;
             <Popup trigger={<Icon name="info circle" />} size="tiny">
-              Model data for forecast lead time less than or equal to the value entered
-              will not be used for the point data table
+              Only forecast leadtimes greater thab or equal to this value will be
+              considered.
             </Popup>
           </h5>
         </Item.Header>
