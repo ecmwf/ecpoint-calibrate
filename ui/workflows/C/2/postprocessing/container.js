@@ -2,12 +2,7 @@ import { connect } from 'react-redux'
 
 import PostProcessing from './component'
 
-import {
-  setThresholdSplits,
-  setFields,
-  onFieldsSortEnd,
-  setWeatherTypeMatrix,
-} from './actions'
+import { setThresholdSplits, setFields, onFieldsSortEnd } from './actions'
 
 const getFirstRow = fields =>
   [{ readOnly: true, value: 1 }].concat(
@@ -45,9 +40,6 @@ const mapDispatchToProps = dispatch => ({
 
   onFieldsSortEnd: (fields, oldIndex, newIndex) =>
     dispatch(onFieldsSortEnd(fields, oldIndex, newIndex)),
-
-  onWeatherTypeMatrixChange: (labels, matrix) =>
-    dispatch(setWeatherTypeMatrix(labels, matrix)),
 
   onYLimChange: value => dispatch({ type: 'POSTPROCESSING.SET_Y_LIM', value }),
 })

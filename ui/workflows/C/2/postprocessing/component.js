@@ -24,6 +24,7 @@ import Tree from './tree'
 
 import client from '~/utils/client'
 import download from '~/utils/download'
+import BreakPoints from '../breakpoints'
 
 const SortableItem = SortableElement(({ value }) => (
   <Segment secondary textAlign="center">
@@ -260,164 +261,37 @@ class PostProcessing extends Component {
       </Item>
     )
 
-  getDecisionTreeOutMatrix = () => (
-    <Item>
-      <Item.Content>
-        <br />
-        <Grid centered>
+  getCTAs = () => (
+    <Grid centered>
+      <Button
+        content="Generate Weather Types matrix"
+        disabled={this.hasError()}
+        icon="refresh"
+        labelPosition="left"
+        primary
+        size="medium"
+        onClick={() => this.postThrGridIn()}
+      />
+      {this.props.thrGridOut.length > 0 && (
+        <>
           <Button
-            content="Generate Weather Types matrix"
-            disabled={this.hasError()}
-            icon="refresh"
+            content="Save mapping functions as CSV"
+            icon="download"
             labelPosition="left"
-            primary
-            size="medium"
-            onClick={() => this.postThrGridIn()}
+            floated="right"
+            onClick={() => this.saveError()}
           />
-          {this.props.thrGridOut.length > 0 && (
-            <>
-              <Button
-                content="Save mapping functions as CSV"
-                icon="download"
-                labelPosition="left"
-                floated="right"
-                onClick={() => this.saveError()}
-              />
-              <Button
-                content="Save breakpoints as CSV"
-                icon="download"
-                labelPosition="left"
-                floated="right"
-                onClick={() => this.saveBreakPoints()}
-              />
-            </>
-          )}
-        </Grid>
-        <br />
-        {this.props.thrGridOut.length > 0 && (
-          <Grid.Row centered>
-            <Grid.Column>
-              <Table definition>
-                <Table.Header>
-                  <Table.Row>
-                    <Table.HeaderCell>WT code</Table.HeaderCell>
-                    {this.props.thrGridIn[0].slice(1).map((cell, idx) => (
-                      <Table.HeaderCell key={idx}>{cell.value}</Table.HeaderCell>
-                    ))}
-                    <Table.HeaderCell />
-                  </Table.Row>
-                </Table.Header>
-
-                <Table.Body>
-                  {this.props.thrGridOut.map((rows, rowIdx) => (
-                    <Table.Row key={rowIdx}>
-                      {rows.map((cell, colIdx) => (
-                        <Table.Cell key={colIdx}>{cell}</Table.Cell>
-                      ))}
-
-                      <Table.Cell>
-                        {this.isMergeableToPreviousRow(rowIdx) && (
-                          <Popup
-                            content="Merge with the Weather Type above"
-                            trigger={
-                              <Button
-                                icon="arrow up"
-                                circular
-                                onClick={() => {
-                                  const matrix = this.mergeToPreviousRow(rowIdx)
-                                  this.props.onWeatherTypeMatrixChange(
-                                    this.props.thrGridIn[0]
-                                      .slice(1)
-                                      .map(cell => cell.value),
-                                    matrix
-                                  )
-
-                                  this.postThrGridOut(matrix)
-                                }}
-                                size="mini"
-                              />
-                            }
-                          />
-                        )}
-                      </Table.Cell>
-                    </Table.Row>
-                  ))}
-                </Table.Body>
-              </Table>
-            </Grid.Column>
-          </Grid.Row>
-        )}
-      </Item.Content>
-    </Item>
+          <Button
+            content="Save breakpoints as CSV"
+            icon="download"
+            labelPosition="left"
+            floated="right"
+            onClick={() => this.saveBreakPoints()}
+          />
+        </>
+      )}
+    </Grid>
   )
-
-  isMergeableToPreviousRow = row => {
-    if (row === 0) {
-      return false
-    }
-
-    const matrix = this.props.thrGridOut.map(row => _.flatMap(row.slice(1)))
-
-    /* B is being merged to A */
-    const [A, B] = [
-      _.slice(matrix[row - 1], 1).reverse(),
-      _.slice(matrix[row], 1).reverse(),
-    ]
-
-    const zipped_columns = _.zip(_.chunk(A, 2), _.chunk(B, 2))
-
-    let index = 0
-
-    while (index !== zipped_columns.length) {
-      const [[aHigh, aLow], [bHigh, bLow]] = zipped_columns[index]
-      if (aLow !== '-inf' || bLow !== '-inf' || aHigh !== 'inf' || bHigh !== 'inf') {
-        break
-      }
-      index += 1
-    }
-
-    const [
-      [[aHighFirst, aLowFirst], [bHighFirst, bLowFirst]],
-      ...rest
-    ] = zipped_columns.slice(index)
-
-    return aHighFirst === bLowFirst
-  }
-
-  mergeToPreviousRow = row => {
-    const matrix = this.props.thrGridOut.map(row => _.flatMap(row.slice(1)))
-
-    /* B is being merged to A */
-    const [A, B] = [[...matrix[row - 1]].reverse(), [...matrix[row]].reverse()]
-
-    const zipped_columns = _.zip(_.chunk(A, 2), _.chunk(B, 2))
-
-    let index = 0
-
-    while (index !== zipped_columns.length) {
-      const [[aHigh, aLow], [bHigh, bLow]] = zipped_columns[index]
-      if (aLow !== '-inf' || bLow !== '-inf' || aHigh !== 'inf' || bHigh !== 'inf') {
-        break
-      }
-      index += 1
-    }
-
-    const unbounded_leaves = _.flatten(_.times(index, _.constant(['-inf', 'inf'])))
-    const [
-      [[aHighFirst, aLowFirst], [bHighFirst, bLowFirst]],
-      ...rest
-    ] = zipped_columns.slice(index)
-
-    rest.reverse()
-
-    const newRow = [
-      ...rest.flatMap(([[aHigh, aLow], [bHigh, bLow]]) => [aLow, aHigh]),
-      ...[aLowFirst, bHighFirst],
-      ...unbounded_leaves,
-    ]
-
-    return [..._.slice(matrix, 0, row - 1), newRow, ..._.slice(matrix, row + 1)]
-  }
 
   getSortableFields = () => (
     <Item>
@@ -459,7 +333,17 @@ class PostProcessing extends Component {
                 <Item.Group divided>
                   {this.getSortableFields()}
                   {this.getThresholdSplitsGridSheet()}
-                  {this.getDecisionTreeOutMatrix()}
+                  <Item>
+                    <Item.Content>
+                      {this.getCTAs()}
+                      {this.props.thrGridOut.length > 0 && (
+                        <BreakPoints
+                          setBreakpoints={matrix => this.postThrGridOut(matrix)}
+                          labels={this.getLabels()}
+                        />
+                      )}
+                    </Item.Content>
+                  </Item>
                   {this.getYLimitField()}
                   {this.getDecisionTree()}
                 </Item.Group>
