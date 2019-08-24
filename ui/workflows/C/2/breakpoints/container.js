@@ -9,8 +9,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  onWeatherTypeMatrixChange: (labels, matrix) =>
-    dispatch(setWeatherTypeMatrix(labels, matrix)),
+  setBreakpoints: (labels, matrix) => dispatch(setBreakpoints(labels, matrix)),
 })
 
 export default connect(

@@ -15,9 +15,6 @@ import {
 
 import _ from 'lodash'
 
-import ReactDataSheet from 'react-datasheet'
-import 'react-datasheet/lib/react-datasheet.css'
-
 import { SortableContainer, SortableElement } from 'react-sortable-hoc'
 
 import Tree from './tree'
@@ -25,6 +22,7 @@ import Tree from './tree'
 import client from '~/utils/client'
 import download from '~/utils/download'
 import BreakPoints from '../breakpoints'
+import SparseBreakPoints from '../sparseBreakpoints'
 
 const SortableItem = SortableElement(({ value }) => (
   <Segment secondary textAlign="center">
@@ -42,79 +40,6 @@ const SortableList = SortableContainer(({ items }) => (
 
 class PostProcessing extends Component {
   state = { tree: null }
-
-  getThresholdSplitsGridSheet = () => (
-    <Item>
-      <Item.Content>
-        <Item.Header>
-          <h5>Input the threshold breakpoints in the following spreadsheet:</h5>
-        </Item.Header>
-        <Item.Description>
-          <ReactDataSheet
-            data={this.props.thrGridIn}
-            valueRenderer={cell => cell.value}
-            onContextMenu={(e, cell, i, j) =>
-              cell.readOnly ? e.preventDefault() : null
-            }
-            onCellsChanged={changes => {
-              const grid = this.props.thrGridIn.map(row => [...row])
-              changes.forEach(({ cell, row, col, value }) => {
-                grid[row][col] = { ...grid[row][col], value }
-              })
-              this.props.onThresholdSplitsChange(grid)
-            }}
-            rowRenderer={props => (
-              <tr>
-                {props.children}
-                {props.row > 0 && (
-                  <Button
-                    icon
-                    circular
-                    onClick={() => {
-                      const grid = this.props.thrGridIn.map(row => [...row])
-                      grid.splice(props.row, 1)
-                      this.props.onThresholdSplitsChange(grid)
-                    }}
-                    size="mini"
-                    disabled={props.row === 1 ? true : null}
-                  >
-                    <Icon name="delete" />
-                  </Button>
-                )}
-              </tr>
-            )}
-          />
-        </Item.Description>
-        <Item.Extra>
-          <Button
-            floated="right"
-            icon
-            labelPosition="left"
-            primary
-            size="mini"
-            onClick={() => this.appendBlankRow()}
-          >
-            <Icon name="add circle" /> Add row
-          </Button>
-          <br />
-          Valid values are <Label>-inf</Label>, <Label>inf</Label>, and all integers.
-        </Item.Extra>
-      </Item.Content>
-    </Item>
-  )
-
-  getBlankRow = index =>
-    [{ readOnly: true, value: index }].concat(
-      _.flatMap(this.props.fields, _ => [{ value: '' }, { value: '' }])
-    )
-
-  appendBlankRow = () => {
-    const newGrid = this.props.thrGridIn.concat([
-      this.getBlankRow(this.props.thrGridIn.length),
-    ])
-
-    this.props.onThresholdSplitsChange(newGrid)
-  }
 
   hasError() {
     // Get the grid without the header
@@ -173,7 +98,7 @@ class PostProcessing extends Component {
         json: true,
       },
       (err, httpResponse, { matrix }) => {
-        this.props.onWeatherTypeMatrixChange(labels, matrix)
+        this.props.setBreakpoints(labels, matrix)
         this.postThrGridOut(matrix)
       }
     )
@@ -332,13 +257,13 @@ class PostProcessing extends Component {
               <Card.Description>
                 <Item.Group divided>
                   {this.getSortableFields()}
-                  {this.getThresholdSplitsGridSheet()}
+                  <SparseBreakPoints />
                   <Item>
                     <Item.Content>
                       {this.getCTAs()}
                       {this.props.thrGridOut.length > 0 && (
                         <BreakPoints
-                          setBreakpoints={matrix => this.postThrGridOut(matrix)}
+                          postBreakpoints={matrix => this.postThrGridOut(matrix)}
                           labels={this.getLabels()}
                         />
                       )}

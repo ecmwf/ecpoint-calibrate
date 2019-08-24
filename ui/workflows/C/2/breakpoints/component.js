@@ -103,8 +103,8 @@ class Breakpoints extends Component {
                       circular
                       onClick={() => {
                         const matrix = this.mergeToPreviousRow(rowIdx)
-                        this.props.onWeatherTypeMatrixChange(this.props.labels, matrix)
-                        this.props.setBreakpoints(matrix)
+                        this.props.setBreakpoints(this.props.labels, matrix)
+                        this.props.postBreakpoints(matrix)
                       }}
                       size="mini"
                     />

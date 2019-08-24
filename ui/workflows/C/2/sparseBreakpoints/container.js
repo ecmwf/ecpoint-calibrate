@@ -1,9 +1,8 @@
 import { connect } from 'react-redux'
 
-import PostProcessing from './component'
+import SparseBreakpoints from './component'
 
-import { setFields, onFieldsSortEnd } from './actions'
-import { setBreakpoints } from '../breakpoints/actions'
+import { setBreakpoints } from './actions'
 
 const getFirstRow = fields =>
   [{ readOnly: true, value: 1 }].concat(
@@ -23,29 +22,19 @@ const generateInitialGrid = fields => {
 }
 
 const mapStateToProps = state => ({
-  thrGridIn:
+  breakpoints:
     state.postprocessing.thrGridIn.length > 0
       ? state.postprocessing.thrGridIn
       : generateInitialGrid(state.preloader.fields),
 
-  thrGridOut: state.postprocessing.thrGridOut,
-  path: state.preloader.path,
   fields: state.preloader.fields,
-  yLim: state.postprocessing.yLim,
 })
 
 const mapDispatchToProps = dispatch => ({
-  setFields: fields => dispatch(setFields(fields)),
-
-  onFieldsSortEnd: (fields, oldIndex, newIndex) =>
-    dispatch(onFieldsSortEnd(fields, oldIndex, newIndex)),
-
-  onYLimChange: value => dispatch({ type: 'POSTPROCESSING.SET_Y_LIM', value }),
-
-  setBreakpoints: (labels, matrix) => dispatch(setBreakpoints(labels, matrix)),
+  setBreakpoints: grid => dispatch(setBreakpoints(grid)),
 })
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(PostProcessing)
+)(SparseBreakpoints)

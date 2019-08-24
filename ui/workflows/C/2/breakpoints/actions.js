@@ -1,6 +1,6 @@
 import client from '~/utils/client'
 
-export const setWeatherTypeMatrix = (labels, matrix) => async dispatch => {
+export const setBreakpoints = (labels, matrix) => async dispatch => {
   await client.post(
     {
       url: '/postprocessing/get-wt-codes',
