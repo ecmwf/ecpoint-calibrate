@@ -5,7 +5,7 @@ import _ from 'lodash'
 import Tree from 'react-d3-tree'
 import { saveSvgAsPng } from 'save-svg-as-png'
 
-import { Button, Dimmer, Loader } from 'semantic-ui-react'
+import { Button, Dimmer, Loader, Radio } from 'semantic-ui-react'
 import download from '~/utils/download'
 import client from '~/utils/client'
 import MappingFunction from './mappingFunction'
@@ -13,7 +13,13 @@ import MappingFunction from './mappingFunction'
 const mainProcess = remote.require('./server')
 
 export default class TreeContainer extends Component {
-  state = { open: false, histogram: null, code: null, saveInProgress: false }
+  state = {
+    open: false,
+    histogram: null,
+    code: null,
+    saveInProgress: false,
+    treeEditMode: false,
+  }
 
   componentDidMount() {
     const dimensions = this.treeContainer.getBoundingClientRect()
@@ -25,7 +31,7 @@ export default class TreeContainer extends Component {
     })
   }
 
-  onNodeClick = node => {
+  onNodeClickExploreMode = node => {
     !node._children && this.setState({ open: true, code: node.meta.code })
     client.post(
       {
@@ -42,6 +48,14 @@ export default class TreeContainer extends Component {
       },
       (err, httpResponse, body) => this.setState({ histogram: body.histogram })
     )
+  }
+
+  onNodeClickEditMode = node => alert('hmmm')
+
+  onNodeClick = (node, event) => {
+    this.state.treeEditMode
+      ? this.onNodeClickEditMode(node)
+      : this.onNodeClickExploreMode(node)
   }
 
   render = () => (
@@ -100,11 +114,19 @@ export default class TreeContainer extends Component {
           saveSvgAsPng(node, 'decision-tree.png', { backgroundColor: '#ffffff' })
         }}
       />
+
+      <Radio
+        toggle
+        label="Edit mode"
+        onChange={() => this.setState({ treeEditMode: !this.state.treeEditMode })}
+        defaultChecked={this.state.treeEditMode}
+      />
+
       <Tree
         data={this.props.data}
         translate={this.state.translate}
         orientation={'vertical'}
-        onClick={(node, event) => this.onNodeClick(node)}
+        onClick={(node, event) => this.onNodeClick(node, event)}
         allowForeignObjects
         nodeLabelComponent={{
           render: <NodeLabel />,
