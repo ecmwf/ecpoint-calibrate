@@ -208,17 +208,15 @@ class PostProcessing extends Component {
                 <Item.Group divided>
                   <Levels />
                   <SparseBreakPoints />
-                  <Item>
-                    <Item.Content>
-                      {this.getCTAs()}
-                      {this.props.thrGridOut.length > 0 && (
-                        <BreakPoints
-                          postBreakpoints={matrix => this.postThrGridOut(matrix)}
-                          labels={this.getLabels()}
-                        />
-                      )}
-                    </Item.Content>
-                  </Item>
+
+                  {this.getCTAs()}
+                  {this.props.thrGridOut.length > 0 && (
+                    <BreakPoints
+                      postBreakpoints={matrix => this.postThrGridOut(matrix)}
+                      labels={this.getLabels()}
+                    />
+                  )}
+
                   {this.getYLimitField()}
                   {this.getDecisionTree()}
                 </Item.Group>

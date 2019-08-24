@@ -19,27 +19,20 @@ const SortableList = SortableContainer(({ items }) => (
 ))
 
 const Levels = props => (
-  <Item>
-    <Item.Content>
-      <Item.Header>
-        <h5>Rearrange the levels of the decision tree below:</h5>
-      </Item.Header>
-      <Item.Description>
-        <SortableList
-          items={props.fields}
-          onSortEnd={({ oldIndex, newIndex }) =>
-            props.onFieldsSortEnd(props.fields, oldIndex, newIndex)
-          }
-        />
-      </Item.Description>
-      <Item.Extra>
-        <small>
-          <b>Note:</b> Modifying the current arrangement will clear the threshold
-          breakpoints in the sheet below.
-        </small>
-      </Item.Extra>
-    </Item.Content>
-  </Item>
+  <>
+    <h5>Rearrange the levels of the decision tree below:</h5>
+
+    <SortableList
+      items={props.fields}
+      onSortEnd={({ oldIndex, newIndex }) =>
+        props.onFieldsSortEnd(props.fields, oldIndex, newIndex)
+      }
+    />
+    <small>
+      <b>Note:</b> Modifying the current arrangement will clear the threshold
+      breakpoints in the sheet below.
+    </small>
+  </>
 )
 
 export default Levels
