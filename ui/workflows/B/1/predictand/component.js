@@ -174,8 +174,9 @@ class Predictand extends Component {
   )
 
   hasError = () =>
-    this.accHasError() ||
-    (this.props.predictand.type === 'ACCUMULATED' ? this.minValueAcc_hasError() : false)
+    this.props.predictand.type === 'ACCUMULATED'
+      ? this.accHasError() || this.minValueAcc_hasError()
+      : false
 
   isComplete = () => !this.isEmpty(this.props.predictand) && !this.hasError()
 

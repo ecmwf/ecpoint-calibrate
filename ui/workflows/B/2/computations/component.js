@@ -17,48 +17,68 @@ import {
 
 import { isNotEmpty, isValid } from './index'
 
-const operations = [
-  {
-    text: 'Accumulated Field',
-    value: 'ACCUMULATED_FIELD',
-  },
-  {
-    text: 'Ratio Field',
-    value: 'RATIO_FIELD',
-  },
-  {
-    text: 'Instantaneous Field',
-    value: 'INSTANTANEOUS_FIELD',
-  },
-  {
-    text: 'Maximum Field',
-    value: 'MAXIMUM_FIELD',
-  },
-  {
-    text: 'Minimum Field',
-    value: 'MINIMUM_FIELD',
-  },
-  {
-    text: 'Average Field',
-    value: 'AVERAGE_FIELD',
-  },
-  {
-    text: 'Weighted Average Field',
-    value: 'WEIGHTED_AVERAGE_FIELD',
-  },
-  {
-    text: 'Vector Module',
-    value: 'VECTOR_MODULE',
-  },
-  {
-    text: '24h Solar Radiaton',
-    value: '24H_SOLAR_RADIATION',
-  },
-  {
-    text: 'Local Solar Time',
-    value: 'LOCAL_SOLAR_TIME',
-  },
-]
+const operations = type =>
+  type === 'ACCUMULATED'
+    ? [
+        {
+          text: 'Accumulated Field',
+          value: 'ACCUMULATED_FIELD',
+        },
+        {
+          text: 'Ratio Field',
+          value: 'RATIO_FIELD',
+        },
+        {
+          text: 'Instantaneous Field',
+          value: 'INSTANTANEOUS_FIELD',
+        },
+        {
+          text: 'Maximum Field',
+          value: 'MAXIMUM_FIELD',
+        },
+        {
+          text: 'Minimum Field',
+          value: 'MINIMUM_FIELD',
+        },
+        {
+          text: 'Average Field',
+          value: 'AVERAGE_FIELD',
+        },
+        {
+          text: 'Weighted Average Field',
+          value: 'WEIGHTED_AVERAGE_FIELD',
+        },
+        {
+          text: 'Vector Module',
+          value: 'VECTOR_MODULE',
+        },
+        {
+          text: '24h Solar Radiaton',
+          value: '24H_SOLAR_RADIATION',
+        },
+        {
+          text: 'Local Solar Time',
+          value: 'LOCAL_SOLAR_TIME',
+        },
+      ]
+    : [
+        {
+          text: 'Ratio Field',
+          value: 'RATIO_FIELD',
+        },
+        {
+          text: 'Instantaneous Field',
+          value: 'INSTANTANEOUS_FIELD',
+        },
+        {
+          text: 'Vector Module',
+          value: 'VECTOR_MODULE',
+        },
+        {
+          text: 'Local Solar Time',
+          value: 'LOCAL_SOLAR_TIME',
+        },
+      ]
 
 class Computation extends Component {
   isPositive = () => (isNotEmpty([this.props]) && !this.unitsHasError() ? true : null)
@@ -114,7 +134,7 @@ class Computation extends Component {
             placeholder="Select field type"
             fluid
             selection
-            options={operations}
+            options={operations(this.props.field)}
             value={this.props.field}
             onChange={(e, { value }) =>
               this.props.onFieldChange(this.props.index, value)

@@ -28,9 +28,14 @@ class Processing extends Component {
       accumulation: this.props.predictand.accumulation || 0,
       code: this.props.predictand.code,
       error: this.props.predictand.error,
-      min_value: this.props.predictand.minValueAcc,
+      min_value: this.props.predictand.minValueAcc || -1, // Ignored by the backend for FE
       type_: this.props.predictand.type,
       units: this.props.predictand.units,
+    }
+
+    const predictors = {
+      ...this.props.predictors,
+      sampling_interval: -1, // Ignored by the backend for FE
     }
 
     client.post(
@@ -39,8 +44,8 @@ class Processing extends Component {
         body: {
           parameters,
           predictand,
+          predictors,
           observations: this.props.observations,
-          predictors: this.props.predictors,
           computations: this.props.computations.fields,
         },
         json: true,
