@@ -17,12 +17,11 @@ import _ from 'lodash'
 
 import { SortableContainer, SortableElement } from 'react-sortable-hoc'
 
-import Tree from './tree'
-
 import client from '~/utils/client'
 import download from '~/utils/download'
 import BreakPoints from '../breakpoints'
 import SparseBreakPoints from '../sparseBreakpoints'
+import Tree from '../tree'
 
 const SortableItem = SortableElement(({ value }) => (
   <Segment secondary textAlign="center">
