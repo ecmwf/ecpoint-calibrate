@@ -1,41 +1,15 @@
 import React, { Component } from 'react'
 
-import {
-  Grid,
-  Card,
-  Button,
-  Icon,
-  Label,
-  Table,
-  Segment,
-  Item,
-  Popup,
-  Input,
-} from 'semantic-ui-react'
+import { Grid, Card, Button, Icon, Item, Input } from 'semantic-ui-react'
 
 import _ from 'lodash'
-
-import { SortableContainer, SortableElement } from 'react-sortable-hoc'
 
 import client from '~/utils/client'
 import download from '~/utils/download'
 import BreakPoints from '../breakpoints'
 import SparseBreakPoints from '../sparseBreakpoints'
 import Tree from '../tree'
-
-const SortableItem = SortableElement(({ value }) => (
-  <Segment secondary textAlign="center">
-    {value}
-  </Segment>
-))
-
-const SortableList = SortableContainer(({ items }) => (
-  <Segment.Group raised size="mini">
-    {items.map((value, index) => (
-      <SortableItem key={`item-${index}`} index={index} value={value} />
-    ))}
-  </Segment.Group>
-))
+import Levels from '../levels'
 
 class PostProcessing extends Component {
   state = { tree: null }
@@ -147,25 +121,26 @@ class PostProcessing extends Component {
         : true
       : true
 
-  getYLimitField = () => (
-    <Item>
-      <Item.Content>
-        <Item.Header>
-          <h5>Enter maximum value of Y-axis in the histograms:</h5>
-        </Item.Header>
-        <Item.Description>
-          <Input
-            value={this.props.yLim || ''}
-            error={this.yLimHasError()}
-            onChange={e => this.props.onYLimChange(e.target.value)}
-          />
-        </Item.Description>
-        <Item.Extra>
-          Valid values are all floating-point numbers in the set <code>(0, 1]</code>.
-        </Item.Extra>
-      </Item.Content>
-    </Item>
-  )
+  getYLimitField = () =>
+    this.props.thrGridOut.length > 0 && (
+      <Item>
+        <Item.Content>
+          <Item.Header>
+            <h5>Enter maximum value of Y-axis in the histograms:</h5>
+          </Item.Header>
+          <Item.Description>
+            <Input
+              value={this.props.yLim || ''}
+              error={this.yLimHasError()}
+              onChange={e => this.props.onYLimChange(e.target.value)}
+            />
+          </Item.Description>
+          <Item.Extra>
+            Valid values are all floating-point numbers in the set <code>(0, 1]</code>.
+          </Item.Extra>
+        </Item.Content>
+      </Item>
+    )
 
   getDecisionTree = () =>
     this.props.thrGridOut.length > 0 && (
@@ -217,30 +192,6 @@ class PostProcessing extends Component {
     </Grid>
   )
 
-  getSortableFields = () => (
-    <Item>
-      <Item.Content>
-        <Item.Header>
-          <h5>Rearrange the levels of the decision tree below:</h5>
-        </Item.Header>
-        <Item.Description>
-          <SortableList
-            items={this.props.fields}
-            onSortEnd={({ oldIndex, newIndex }) =>
-              this.props.onFieldsSortEnd(this.props.fields, oldIndex, newIndex)
-            }
-          />
-        </Item.Description>
-        <Item.Extra>
-          <small>
-            <b>Note:</b> Modifying the current arrangement will clear the threshold
-            breakpoints in the sheet below.
-          </small>
-        </Item.Extra>
-      </Item.Content>
-    </Item>
-  )
-
   render = () =>
     this.props.fields.length > 0 && (
       <Grid padded>
@@ -255,7 +206,7 @@ class PostProcessing extends Component {
             <Card.Content>
               <Card.Description>
                 <Item.Group divided>
-                  {this.getSortableFields()}
+                  <Levels />
                   <SparseBreakPoints />
                   <Item>
                     <Item.Content>

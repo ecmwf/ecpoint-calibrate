@@ -2,7 +2,6 @@ import { connect } from 'react-redux'
 
 import PostProcessing from './component'
 
-import { setFields, onFieldsSortEnd } from './actions'
 import { setBreakpoints } from '../breakpoints/actions'
 
 const getFirstRow = fields =>
@@ -35,11 +34,6 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  setFields: fields => dispatch(setFields(fields)),
-
-  onFieldsSortEnd: (fields, oldIndex, newIndex) =>
-    dispatch(onFieldsSortEnd(fields, oldIndex, newIndex)),
-
   onYLimChange: value => dispatch({ type: 'POSTPROCESSING.SET_Y_LIM', value }),
 
   setBreakpoints: (labels, matrix) => dispatch(setBreakpoints(labels, matrix)),
