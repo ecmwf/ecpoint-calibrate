@@ -35,7 +35,7 @@ class Processing extends Component {
 
     const predictors = {
       ...this.props.predictors,
-      sampling_interval: -1, // Ignored by the backend for FE
+      sampling_interval: this.props.predictors.sampling_interval || -1, // Ignored by the backend for FE
     }
 
     client.post(

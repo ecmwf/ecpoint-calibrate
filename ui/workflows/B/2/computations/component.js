@@ -134,7 +134,7 @@ class Computation extends Component {
             placeholder="Select field type"
             fluid
             selection
-            options={operations(this.props.field)}
+            options={operations(this.props.predictand.type)}
             value={this.props.field}
             onChange={(e, { value }) =>
               this.props.onFieldChange(this.props.index, value)
@@ -308,6 +308,7 @@ class Computations extends Component {
               setMulScaleValue={this.props.setMulScaleValue}
               setAddScaleValue={this.props.setAddScaleValue}
               predictors={this.props.predictors}
+              predictand={this.props.predictand}
               observations={this.props.observations}
               togglePostProcess={this.props.toggleComputationPostProcess}
               updateUnits={this.props.updateUnits}
