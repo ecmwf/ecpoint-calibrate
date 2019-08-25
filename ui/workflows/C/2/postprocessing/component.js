@@ -155,6 +155,7 @@ class PostProcessing extends Component {
               labels={this.getLabels()}
               path={this.props.path}
               yLim={this.props.yLim}
+              fields={this.props.fields}
             />
           )}
         </Item.Content>

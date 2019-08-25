@@ -156,6 +156,7 @@ export default class TreeContainer extends Component {
           nodeMeta={this.state.nodeMeta}
           breakpoints={this.props.breakpoints}
           setBreakpoints={this.props.setBreakpoints}
+          fields={this.props.fields}
         />
       </div>
     )
