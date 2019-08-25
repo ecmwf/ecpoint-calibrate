@@ -283,7 +283,7 @@ class WeatherType(object):
         ax.yaxis.set_tick_params(labelsize=7)
 
         out = pandas.cut(data, bins=bins, include_lowest=True)
-        series = out.value_counts(normalize=True)
+        series = out.value_counts(normalize=True, sort=False)
 
         subplot = series.plot.bar(ax=ax, rot=45, ylim=(0, y_lim))
         patches = subplot.patches
