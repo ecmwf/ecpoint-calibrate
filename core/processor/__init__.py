@@ -278,16 +278,17 @@ def run(config):
             # predictor input
             predictor_code = computer.computation.inputs[0]["code"]
 
-            steps = (
-                [step_start_sr, step_end_sr]
-                if computation.field == "24H_SOLAR_RADIATION"
-                else steps
-            )
-
             computation_steps = []
 
             paths_to_read = Computer.filter_paths_to_read(
-                paths=[get_grib_path(predictor_code, step) for step in steps],
+                paths=[
+                    get_grib_path(predictor_code, step)
+                    for step in (
+                        [step_start_sr, step_end_sr]
+                        if computation.field == "24H_SOLAR_RADIATION"
+                        else steps
+                    )
+                ],
                 computation=computation.field,
             )
 
