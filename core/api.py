@@ -212,6 +212,83 @@ def get_predictor_units():
     return Response(json.dumps({"units": units}), mimetype="application/json")
 
 
+@app.route("/postprocessing/get-breakpoints-suggestions", methods=("POST",))
+def get_breakpoints_suggestions():
+    payload = request.get_json()
+
+    labels, thrWT, path, predictor = (
+        payload["labels"],
+        payload["thrWT"],
+        payload["path"],
+        payload["predictor"],
+    )
+
+    predictor_matrix = ASCIIDecoder(path=path).dataframe
+
+    thrWT = [float(cell) for cell in thrWT]
+    series = pandas.Series(dict(zip(labels, thrWT)))
+    thrL, thrH = series.iloc[::2], series.iloc[1::2]
+
+    wt = WeatherType(
+        thrL=thrL, thrH=thrH, thrL_labels=labels[::2], thrH_labels=labels[1::2]
+    )
+    error, title = wt.evaluate(predictor_matrix)
+
+    # predictor = predictor_matrix[predictor]
+    # error = error[predictor.argsort()]
+
+    return Response(
+        json.dumps({"error": error, "title": title}), mimetype="application/json"
+    )
+
+
+@app.route("/postprocessing/validate-num-sub-samples", methods=("POST",))
+def get_sample_size():
+    payload = request.get_json()
+
+    path, predictor, numSubMem, minNumCases, numSubSamples = (
+        payload["path"],
+        payload["predictor"],
+        int(payload["numSubMem"]),
+        int(payload["minNumCases"]),
+        int(payload["numSubSamples"]),
+    )
+
+    predictor_matrix = ASCIIDecoder(path=path).dataframe
+    predictor = predictor_matrix[predictor]
+
+    if (len(predictor) // numSubSamples) < (minNumCases * numSubMem) < len(predictor):
+        return Response(
+            json.dumps(
+                {
+                    "type": "negative",
+                    "header": "The size of the sub-samples to analyse is too small",
+                    "body": [
+                        f"Minimum no. of cases in each sub-sample: {minNumCases * numSubMem}",
+                        f"Size of the sub-samples analysed: {len(predictor) // numSubSamples}",
+                        "Please provide a smaller number of sub-samples.",
+                    ],
+                }
+            ),
+            mimetype="application/json",
+        )
+
+    return Response(
+        json.dumps(
+            {
+                "type": "positive",
+                "header": "Validation of the sub-sample size is successful",
+                "body": [
+                    f"No. of considered sub-samples: {numSubSamples}",
+                    f"No. of cases in each sub-sample: {len(predictor) // numSubSamples}",
+                    f"Minimum no. of cases in each sub-sample: {minNumCases * numSubMem}",
+                ],
+            }
+        ),
+        mimetype="application/json",
+    )
+
+
 @lru_cache(maxsize=None)
 def get_units(path):
     base_predictor_path = Path(path)

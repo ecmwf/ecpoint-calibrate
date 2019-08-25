@@ -157,6 +157,8 @@ export default class TreeContainer extends Component {
           breakpoints={this.props.breakpoints}
           setBreakpoints={this.props.setBreakpoints}
           fields={this.props.fields}
+          path={this.props.path}
+          labels={this.props.labels}
         />
       </div>
     )
