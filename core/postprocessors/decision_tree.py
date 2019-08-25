@@ -9,6 +9,8 @@ import numpy as np
 import pandas
 from numpy import inf
 
+from core.utils import int_or_float
+
 from .generics import Node
 
 matplotlib.style.use("seaborn")
@@ -112,7 +114,7 @@ class DecisionTree(object):
             for level, (low, predictor, high) in enumerate(zip(thrL, predictors, thrH)):
 
                 text = "{low} < {predictor} < {high}".format(
-                    low=low, high=high, predictor=predictor
+                    low=int_or_float(low), predictor=predictor, high=int_or_float(high)
                 )
                 parent = curr
 
@@ -246,7 +248,9 @@ class WeatherType(object):
             predictors_matrix = predictors_matrix[mask]
 
             title_pred += "({low} <= {pred} < {high}) ".format(
-                low=thrL_temp, pred=predictor_shortname, high=thrH_temp
+                low=int_or_float(thrL_temp),
+                pred=predictor_shortname,
+                high=int_or_float(thrH_temp),
             )
 
         return error.to_list(), title_pred
