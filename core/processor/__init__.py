@@ -223,23 +223,6 @@ def run(config):
                 and computation.inputs[0]["code"] == config.predictand.code
             )
 
-        # Step generation and adjustment
-        if config.predictand.is_accumulated:
-            steps = list(
-                range(step_s, step_s + acc, config.predictors.sampling_interval)
-            )
-
-            # Make senses to compute (accumulated) Solar Radiation for only accumulated predictand.
-            if acc == 24:
-                step_start_sr, step_end_sr = steps[0], steps[-1]
-            else:
-                if steps[-1] <= 24:
-                    step_start_sr, step_end_sr = 0, 24
-                else:
-                    step_start_sr, step_end_sr = steps[-1] - 24, steps[-1]
-        else:
-            steps = [step_s]
-
         logging.info("")
         logging.info("PREDICTORS COMPUTATIONS:")
 
@@ -278,21 +261,37 @@ def run(config):
             # predictor input
             predictor_code = computer.computation.inputs[0]["code"]
 
+            # Step generation and adjustment
+            if not config.predictand.is_accumulated:
+                steps = [step_s]
+            else:
+                if computation.field == "24H_SOLAR_RADIATION":
+                    if acc == 24:
+                        steps = [step_s, step_s + acc]
+                    else:
+                        if step_s + acc <= 24:
+                            steps = [0, 24]
+                        else:
+                            steps = [step_s + acc - 24, step_s + acc]
+                elif computation.field in [
+                    "WEIGHTED_AVERAGE_FIELD",
+                    "MAXIMUM_FIELD",
+                    "MINIMUM_FIELD",
+                    "AVERAGE_FIELD",
+                ]:
+                    steps = list(
+                        range(
+                            step_s,
+                            step_s + acc + 1,
+                            config.predictors.sampling_interval,
+                        )
+                    )
+                else:
+                    steps = [step_s, step_s + acc]
+
             computation_steps = []
 
-            paths_to_read = Computer.filter_paths_to_read(
-                paths=[
-                    get_grib_path(predictor_code, step)
-                    for step in (
-                        [step_start_sr, step_end_sr]
-                        if computation.field == "24H_SOLAR_RADIATION"
-                        else steps
-                    )
-                ],
-                computation=computation.field,
-            )
-
-            for path in paths_to_read:
+            for path in [get_grib_path(predictor_code, step) for step in steps]:
                 logging.info(f"  Reading forecast file: {os.path.basename(path)}")
 
                 try:
