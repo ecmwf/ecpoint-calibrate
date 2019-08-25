@@ -47,6 +47,7 @@ class Split extends Component {
               onClick={() => {
                 const matrix = this.split(this.state.customSplitValue)
                 this.props.setBreakpoints(matrix)
+                this.setState({ customSplitValue: '' })
                 this.props.onClose()
               }}
             />
