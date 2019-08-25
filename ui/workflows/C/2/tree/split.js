@@ -11,6 +11,8 @@ import {
   Radio,
   Message,
   Segment,
+  Grid,
+  Table,
 } from 'semantic-ui-react'
 import _ from 'lodash'
 import client from '~/utils/client'
@@ -24,6 +26,7 @@ class Split extends Component {
     minNumCases: 10,
     numSubSamples: 20,
     msg: null,
+    breakpoints: null,
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -76,25 +79,30 @@ class Split extends Component {
         this.state.numSubMem,
         this.state.numSubSamples,
         this.state.minNumCases
-      ) &&
-      client.post(
-        {
-          url: '/postprocessing/get-breakpoints-suggestions',
-          body: {
-            labels: this.props.labels,
-            thrWT: this.props.breakpoints.map(row => _.flatMap(row.slice(1)))[
-              this.props.nodeMeta.idxWT
-            ],
-            path: this.props.path,
-            predictor: this.props.nodeMeta.predictor,
-          },
-          json: true,
-        },
-        (err, httpResponse, body) => {
-          console.log(body)
-        }
       )
   }
+
+  launchKS_test = () =>
+    client.post(
+      {
+        url: '/postprocessing/get-breakpoints-suggestions',
+        body: {
+          labels: this.props.labels,
+          thrWT: this.props.breakpoints.map(row => _.flatMap(row.slice(1)))[
+            this.props.nodeMeta.idxWT
+          ],
+          path: this.props.path,
+          predictor: this.props.nodeMeta.predictor,
+          numSubMem: this.state.numSubMem,
+          numSubSamples: this.state.numSubSamples,
+          minNumCases: this.state.minNumCases,
+        },
+        json: true,
+      },
+      (err, httpResponse, body) => {
+        this.setState({ breakpoints: body.breakpoints })
+      }
+    )
 
   validateSubSamples = (numSubMem, numSubSamples, minNumCases) => {
     if (numSubMem === '' || numSubSamples === '' || minNumCases === '') {
@@ -197,6 +205,49 @@ class Split extends Component {
       </Segment>
     )
 
+  getSuggestionSegment = () => (
+    <Grid centered>
+      {this.state.auto &&
+        this.state.msg !== null &&
+        this.state.msg.type === 'positive' && (
+          <Grid.Row>
+            <Button
+              content="Launch Kolmogorov-Smirnov Test"
+              positive
+              onClick={() => this.launchKS_test()}
+            />
+          </Grid.Row>
+        )}
+
+      {this.state.breakpoints !== null && (
+        <Grid.Row>
+          <Table collapsing celled selectable>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell colSpan="2" textAlign="center">
+                  Suggested Breakpoints
+                </Table.HeaderCell>
+              </Table.Row>
+              <Table.Row>
+                <Table.HeaderCell textAlign="center">Index</Table.HeaderCell>
+                <Table.HeaderCell textAlign="center">Value</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+
+            <Table.Body>
+              {this.state.breakpoints.map((bp, idx) => (
+                <Table.Row key={idx}>
+                  <Table.Cell>{idx + 1}</Table.Cell>
+                  <Table.Cell>{bp}</Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table>
+        </Grid.Row>
+      )}
+    </Grid>
+  )
+
   getCustomSplitInput = () =>
     !this.state.auto && (
       <Segment padded>
@@ -220,12 +271,25 @@ class Split extends Component {
   render = () => {
     return (
       !_.isEmpty(this.props.nodeMeta) && (
-        <Modal size={'large'} open={this.props.open} onClose={this.props.onClose}>
+        <Modal
+          size={'large'}
+          open={this.props.open}
+          onClose={() => {
+            this.setState({
+              customSplitValue: '',
+              auto: false,
+              msg: null,
+              breakpoints: null,
+            })
+            this.props.onClose()
+          }}
+        >
           <Modal.Header>Splitting WT {this.props.nodeMeta.code}</Modal.Header>
           <Modal.Content>
             {this.getAutoSplitToggler()}
             {this.getAutoSplitInputParameters()}
             {this.getCustomSplitInput()}
+            {this.getSuggestionSegment()}
           </Modal.Content>
           <Modal.Actions>
             <Button
@@ -240,7 +304,12 @@ class Split extends Component {
               onClick={() => {
                 const matrix = this.split()
                 this.props.setBreakpoints(matrix)
-                this.setState({ customSplitValue: '', auto: false, msg: true })
+                this.setState({
+                  customSplitValue: '',
+                  auto: false,
+                  msg: null,
+                  breakpoints: null,
+                })
                 this.props.onClose()
               }}
             />

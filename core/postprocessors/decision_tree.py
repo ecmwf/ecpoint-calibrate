@@ -158,7 +158,7 @@ class DecisionTree(object):
                 thrH_labels=thrH_out.columns.tolist(),
             )
 
-            error, _ = wt.evaluate(predictors_matrix)
+            error, _, _ = wt.evaluate(predictors_matrix)
             error = sorted(error)
 
             centre_bin = (((2.0 * a) + 1) / (2.0 * nBin)) * len(error)
@@ -253,7 +253,7 @@ class WeatherType(object):
                 high=int_or_float(thrH_temp),
             )
 
-        return error.to_list(), title_pred
+        return error.to_list(), predictors_matrix, title_pred
 
     @staticmethod
     def plot(data, title, y_lim, out_path=None):

@@ -13,6 +13,7 @@ from core.loaders.ascii import ASCIIDecoder
 from core.loaders.fieldset import Fieldset
 from core.models import Config
 from core.postprocessors.decision_tree import DecisionTree, WeatherType
+from core.postprocessors.ks_engine import KolmogorovSmirnovEngine
 from core.processor import run
 
 app = Flask(__name__)
@@ -136,7 +137,7 @@ def get_wt_histogram():
     wt = WeatherType(
         thrL=thrL, thrH=thrH, thrL_labels=labels[::2], thrH_labels=labels[1::2]
     )
-    error, title = wt.evaluate(predictor_matrix)
+    error, _, title = wt.evaluate(predictor_matrix)
     plot = wt.plot(error, title, float(y_lim))
 
     return jsonify({"histogram": plot})
@@ -167,7 +168,7 @@ def save_wt_histograms():
             thrL=thrL, thrH=thrH, thrL_labels=labels[::2], thrH_labels=labels[1::2]
         )
 
-        error, title = wt.evaluate(predictor_matrix)
+        error, _, title = wt.evaluate(predictor_matrix)
 
         wt_code = thrGridOut[idx][0]
         wt.plot(
@@ -216,11 +217,14 @@ def get_predictor_units():
 def get_breakpoints_suggestions():
     payload = request.get_json()
 
-    labels, thrWT, path, predictor = (
+    labels, thrWT, path, predictor, numSubMem, minNumCases, numSubSamples = (
         payload["labels"],
         payload["thrWT"],
         payload["path"],
         payload["predictor"],
+        int(payload["numSubMem"]),
+        int(payload["minNumCases"]),
+        int(payload["numSubSamples"]),
     )
 
     predictor_matrix = ASCIIDecoder(path=path).dataframe
@@ -232,13 +236,20 @@ def get_breakpoints_suggestions():
     wt = WeatherType(
         thrL=thrL, thrH=thrH, thrL_labels=labels[::2], thrH_labels=labels[1::2]
     )
-    error, title = wt.evaluate(predictor_matrix)
+    error, predictor_matrix, title = wt.evaluate(predictor_matrix)
 
-    # predictor = predictor_matrix[predictor]
-    # error = error[predictor.argsort()]
+    predictor = predictor_matrix[predictor]
+    error = np.asarray(error)[predictor.argsort()]
+
+    PosAll = pandas.Series(range(len(predictor)))
+    PosBP = pandas.Series(
+        list(range(0, len(predictor), len(predictor) // numSubSamples))
+        + [len(predictor)]
+    )
+    breakpoints = KolmogorovSmirnovEngine().run(predictor, error, PosAll, PosBP)
 
     return Response(
-        json.dumps({"error": error, "title": title}), mimetype="application/json"
+        json.dumps({"breakpoints": breakpoints}), mimetype="application/json"
     )
 
 
