@@ -67,11 +67,16 @@ class Split extends Component {
     }))
   }
 
-  onAutoSplitActivate = () => {
+  onAutoSplitToggle = () => {
     const newAutoValue = !this.state.auto
     this.setState({ auto: newAutoValue })
 
     newAutoValue &&
+      this.validateSubSamples(
+        this.state.numSubMem,
+        this.state.numSubSamples,
+        this.state.minNumCases
+      ) &&
       client.post(
         {
           url: '/postprocessing/get-breakpoints-suggestions',
@@ -118,7 +123,7 @@ class Split extends Component {
     <Radio
       toggle
       label="Suggest breakpoints"
-      onChange={this.onAutoSplitActivate}
+      onChange={this.onAutoSplitToggle}
       defaultChecked={this.state.auto}
     />
   )
