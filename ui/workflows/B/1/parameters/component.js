@@ -130,7 +130,7 @@ class Parameters extends Component {
           <h5>
             Enter length of the spin-up window: &nbsp;&nbsp;&nbsp;
             <Popup trigger={<Icon name="info circle" />} size="tiny">
-              Only forecast leadtimes greater thab or equal to this value will be
+              Only forecast leadtimes greater than or equal to this value will be
               considered.
             </Popup>
           </h5>

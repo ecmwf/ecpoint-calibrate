@@ -97,3 +97,14 @@ def point_data_table_logs():
           'LonOBS' is given in degrees East (i.e. from -180 to +180 E).
     """
     )
+
+
+def step_information_logs(config):
+    return dedent(
+        f"""
+    The start step of the acc period (StepS) is considered between
+    'LimSU' (to avoid the spin-up window), and 'IntBT+(LimSU-1)' (to consider the shortest range forecast available)."
+
+    Therefore, StepS will range between t+{config.parameters.spinup_limit} and t+{config.parameters.model_interval + config.parameters.spinup_limit - 1}
+    """
+    )

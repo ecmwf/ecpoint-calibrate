@@ -17,6 +17,7 @@ from .log_factory import (
     point_data_table_logs,
     predictand_logs,
     predictors_logs,
+    step_information_logs,
 )
 from .utils import iter_daterange
 
@@ -64,6 +65,7 @@ def run(config):
     header += "\n# ".join(observations_logs(config).split("\n"))
     header += "\n# ".join(output_file_logs(config).split("\n"))
     header += "\n# ".join(point_data_table_logs().split("\n"))
+    header += "\n# ".join(step_information_logs(config).split("\n"))
 
     serializer.add_header(header.strip())
 
@@ -102,13 +104,7 @@ def run(config):
     ) * config.computations[0].mulScale
     predictand_scaled_units = config.observations.units
 
-    logging.info(
-        "The start step of the acc period (StepS) is considered between 'LimSU+1' "
-        "(to avoid the spin-up window), and 'IntBT+LimSU' (to consider the shortest range forecast available)."
-    )
-    logging.info(
-        f"Therefore, StepS will range between t+{spinup_limit+1} and t+{model_interval + spinup_limit}"
-    )
+    logging.info(step_information_logs(config))
 
     for curr_date, curr_time, step_s, case in iter_daterange(
         start_date=BaseDateS,
