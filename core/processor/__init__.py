@@ -186,7 +186,7 @@ def run(config):
         if config.predictand.is_accumulated:
             obs_path = (
                 PathOBS
-                / f"acc{acc:02}h"
+                / f"Acc{acc:02}h"
                 / DateVF
                 / f"tp_{acc:02d}_{DateVF}_{HourVF}.geo"
             )
