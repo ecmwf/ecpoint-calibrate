@@ -109,7 +109,8 @@ class DecisionTree(object):
             predictors = [predictor.replace("_thrL", "") for predictor in thrL.keys()]
 
             curr = root
-            for low, predictor, high in zip(thrL, predictors, thrH):
+            for level, (low, predictor, high) in enumerate(zip(thrL, predictors, thrH)):
+
                 text = "{low} < {predictor} < {high}".format(
                     low=low, high=high, predictor=predictor
                 )
@@ -123,6 +124,8 @@ class DecisionTree(object):
                     continue
                 else:
                     maybe_child = Node(text)
+                    maybe_child.meta["predictor"] = predictor
+                    maybe_child.meta["level"] = level
                     # For a path in the decision tree that has been resolved, we want
                     # to add only those nodes to the tree that have a decision, i.e.
                     # a bounded range.

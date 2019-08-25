@@ -71,7 +71,6 @@ class PostProcessing extends Component {
         json: true,
       },
       (err, httpResponse, { matrix }) => {
-        this.props.setBreakpoints(labels, matrix)
         this.postThrGridOut(matrix)
       }
     )
@@ -83,6 +82,7 @@ class PostProcessing extends Component {
     /* We pass the matrix instead of using it from this.props.thrGridOut to avoid
      * concurrency issues. */
     const labels = this.getLabels()
+    this.props.setBreakpoints(labels, matrix)
     client.post(
       {
         url: '/postprocessing/create-decision-tree',
@@ -150,7 +150,8 @@ class PostProcessing extends Component {
           {!this.yLimHasError() && this.state.tree && (
             <Tree
               data={this.state.tree}
-              thrGridOut={this.props.thrGridOut}
+              breakpoints={this.props.thrGridOut}
+              setBreakpoints={matrix => this.postThrGridOut(matrix)}
               labels={this.getLabels()}
               path={this.props.path}
               yLim={this.props.yLim}
@@ -212,7 +213,7 @@ class PostProcessing extends Component {
                   {this.getCTAs()}
                   {this.props.thrGridOut.length > 0 && (
                     <BreakPoints
-                      postBreakpoints={matrix => this.postThrGridOut(matrix)}
+                      setBreakpoints={matrix => this.postThrGridOut(matrix)}
                       labels={this.getLabels()}
                     />
                   )}

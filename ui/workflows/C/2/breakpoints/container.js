@@ -8,9 +8,7 @@ const mapStateToProps = state => ({
   breakpoints: state.postprocessing.thrGridOut,
 })
 
-const mapDispatchToProps = dispatch => ({
-  setBreakpoints: (labels, matrix) => dispatch(setBreakpoints(labels, matrix)),
-})
+const mapDispatchToProps = dispatch => ({})
 
 export default connect(
   mapStateToProps,

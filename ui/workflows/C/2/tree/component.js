@@ -9,14 +9,16 @@ import { Button, Dimmer, Loader, Radio } from 'semantic-ui-react'
 import download from '~/utils/download'
 import client from '~/utils/client'
 import MappingFunction from './mappingFunction'
+import Split from './split'
 
 const mainProcess = remote.require('./server')
 
 export default class TreeContainer extends Component {
   state = {
-    open: false,
+    openMappingFunction: false,
+    openSplit: false,
     histogram: null,
-    code: null,
+    nodeMeta: null,
     saveInProgress: false,
     treeEditMode: false,
   }
@@ -32,13 +34,13 @@ export default class TreeContainer extends Component {
   }
 
   onNodeClickExploreMode = node => {
-    !node._children && this.setState({ open: true, code: node.meta.code })
+    !node._children && this.setState({ openMappingFunction: true, nodeMeta: node.meta })
     client.post(
       {
         url: '/postprocessing/generate-wt-histogram',
         body: {
           labels: this.props.labels,
-          thrWT: this.props.thrGridOut.map(row => _.flatMap(row.slice(1)))[
+          thrWT: this.props.breakpoints.map(row => _.flatMap(row.slice(1)))[
             node.meta.idxWT
           ],
           path: this.props.path,
@@ -50,7 +52,9 @@ export default class TreeContainer extends Component {
     )
   }
 
-  onNodeClickEditMode = node => alert('hmmm')
+  onNodeClickEditMode = node => {
+    !node._children && this.setState({ openSplit: true, nodeMeta: node.meta })
+  }
 
   onNodeClick = (node, event) => {
     this.state.treeEditMode
@@ -58,89 +62,104 @@ export default class TreeContainer extends Component {
       : this.onNodeClickExploreMode(node)
   }
 
-  render = () => (
-    <div
-      style={{
-        width: '100%',
-        height: '100vh',
-      }}
-      ref={tc => (this.treeContainer = tc)}
-    >
-      <Button
-        content="Save all WTs as PNG"
-        icon="download"
-        labelPosition="left"
-        floated="right"
-        onClick={() => {
-          const path = mainProcess.selectDirectory()
-          const destinationDir = path && path.length !== 0 ? path.pop() : null
+  render = () => {
+    return (
+      <div
+        style={{
+          width: '100%',
+          height: '100vh',
+        }}
+        ref={tc => (this.treeContainer = tc)}
+      >
+        <Button
+          content="Save all WTs as PNG"
+          icon="download"
+          labelPosition="left"
+          floated="right"
+          onClick={() => {
+            const path = mainProcess.selectDirectory()
+            const destinationDir = path && path.length !== 0 ? path.pop() : null
 
-          if (destinationDir === null) {
-            return
-          }
+            if (destinationDir === null) {
+              return
+            }
 
-          this.setState({ saveInProgress: true })
-          client.post(
-            {
-              url: '/postprocessing/save-wt-histograms',
-              body: {
-                labels: this.props.labels,
-                thrGridOut: this.props.thrGridOut,
-                path: this.props.path,
-                yLim: this.props.yLim,
-                destinationDir,
+            this.setState({ saveInProgress: true })
+            client.post(
+              {
+                url: '/postprocessing/save-wt-histograms',
+                body: {
+                  labels: this.props.labels,
+                  thrGridOut: this.props.breakpoints,
+                  path: this.props.path,
+                  yLim: this.props.yLim,
+                  destinationDir,
+                },
+                json: true,
               },
-              json: true,
-            },
-            (err, httpResponse, body) => this.setState({ saveInProgress: false })
-          )
-        }}
-      />
+              (err, httpResponse, body) => this.setState({ saveInProgress: false })
+            )
+          }}
+        />
 
-      <Dimmer active={this.state.saveInProgress === true}>
-        <Loader indeterminate>
-          Saving all Mapping Functions as PNGs. Please wait.
-        </Loader>
-      </Dimmer>
+        <Dimmer active={this.state.saveInProgress === true}>
+          <Loader indeterminate>
+            Saving all Mapping Functions as PNGs. Please wait.
+          </Loader>
+        </Dimmer>
 
-      <Button
-        content="Save decision tree as PNG"
-        icon="download"
-        labelPosition="left"
-        floated="right"
-        onClick={() => {
-          const node = this.treeContainer.getElementsByTagName('svg')[0]
+        <Button
+          content="Save decision tree as PNG"
+          icon="download"
+          labelPosition="left"
+          floated="right"
+          onClick={() => {
+            const node = this.treeContainer.getElementsByTagName('svg')[0]
+            saveSvgAsPng(node, 'decision-tree.png', { backgroundColor: '#ffffff' })
+          }}
+        />
 
-          saveSvgAsPng(node, 'decision-tree.png', { backgroundColor: '#ffffff' })
-        }}
-      />
+        <Radio
+          toggle
+          label="Edit mode"
+          onChange={() => this.setState({ treeEditMode: !this.state.treeEditMode })}
+          defaultChecked={this.state.treeEditMode}
+        />
 
-      <Radio
-        toggle
-        label="Edit mode"
-        onChange={() => this.setState({ treeEditMode: !this.state.treeEditMode })}
-        defaultChecked={this.state.treeEditMode}
-      />
+        <Tree
+          data={this.props.data}
+          translate={this.state.translate}
+          orientation={'vertical'}
+          onClick={(node, event) => this.onNodeClick(node, event)}
+          allowForeignObjects
+          nodeLabelComponent={{
+            render: <NodeLabel />,
+          }}
+        />
 
-      <Tree
-        data={this.props.data}
-        translate={this.state.translate}
-        orientation={'vertical'}
-        onClick={(node, event) => this.onNodeClick(node, event)}
-        allowForeignObjects
-        nodeLabelComponent={{
-          render: <NodeLabel />,
-        }}
-      />
+        <MappingFunction
+          onClose={() =>
+            this.setState({
+              openMappingFunction: false,
+              histogram: null,
+              nodeMeta: null,
+            })
+          }
+          open={this.state.openMappingFunction}
+          image={this.state.histogram}
+          nodeMeta={this.state.nodeMeta}
+        />
 
-      <MappingFunction
-        onClose={() => this.setState({ open: false, histogram: null, code: null })}
-        open={this.state.open}
-        image={this.state.histogram}
-        code={this.state.code}
-      />
-    </div>
-  )
+        <Split
+          onClose={() => this.setState({ openSplit: false })}
+          open={this.state.openSplit}
+          nodeMeta={this.state.nodeMeta}
+          breakpoints={this.props.breakpoints}
+          setBreakpoints={this.props.setBreakpoints}
+        />
+      </div>
+    )
+  }
 }
 
 const NodeLabel = ({ nodeData }) => (
@@ -148,6 +167,6 @@ const NodeLabel = ({ nodeData }) => (
     style={{ fontSize: '12px', paddingLeft: '15px', width: '200px', fontWeight: 700 }}
   >
     <p>{nodeData.name}</p>
-    {!_.isEmpty(nodeData.meta) && <p>WT {nodeData.meta.code}</p>}
+    {nodeData.meta.code && <p>WT {nodeData.meta.code}</p>}
   </div>
 )
