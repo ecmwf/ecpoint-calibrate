@@ -239,7 +239,12 @@ def get_breakpoints_suggestions():
     error, predictor_matrix, title = wt.evaluate(predictor_matrix)
 
     predictor = predictor_matrix[predictor]
-    error = np.asarray(error)[predictor.argsort()]
+    error = np.asarray(error)
+
+    sort_indices = predictor.argsort()
+
+    error = error[sort_indices]
+    predictor = predictor[sort_indices]
 
     PosAll = pandas.Series(range(len(predictor)))
     PosBP = pandas.Series(
