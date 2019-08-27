@@ -217,12 +217,11 @@ def get_predictor_units():
 def get_breakpoints_suggestions():
     payload = request.get_json()
 
-    labels, thrWT, path, predictor, numSubMem, minNumCases, numSubSamples = (
+    labels, thrWT, path, predictor, minNumCases, numSubSamples = (
         payload["labels"],
         payload["thrWT"],
         payload["path"],
         payload["predictor"],
-        int(payload["numSubMem"]),
         int(payload["minNumCases"]),
         int(payload["numSubSamples"]),
     )
@@ -262,10 +261,9 @@ def get_breakpoints_suggestions():
 def get_sample_size():
     payload = request.get_json()
 
-    path, predictor, numSubMem, minNumCases, numSubSamples = (
+    path, predictor, minNumCases, numSubSamples = (
         payload["path"],
         payload["predictor"],
-        int(payload["numSubMem"]),
         int(payload["minNumCases"]),
         int(payload["numSubSamples"]),
     )
@@ -273,14 +271,14 @@ def get_sample_size():
     predictor_matrix = ASCIIDecoder(path=path).dataframe
     predictor = predictor_matrix[predictor]
 
-    if (len(predictor) // numSubSamples) < (minNumCases * numSubMem) < len(predictor):
+    if (len(predictor) // numSubSamples) < minNumCases < len(predictor):
         return Response(
             json.dumps(
                 {
                     "type": "negative",
                     "header": "The size of the sub-samples to analyse is too small",
                     "body": [
-                        f"Minimum no. of cases in each sub-sample: {minNumCases * numSubMem}",
+                        f"Minimum no. of cases in each sub-sample: {minNumCases}",
                         f"Size of the sub-samples analysed: {len(predictor) // numSubSamples}",
                         "Please provide a smaller number of sub-samples.",
                     ],
@@ -297,7 +295,7 @@ def get_sample_size():
                 "body": [
                     f"No. of considered sub-samples: {numSubSamples}",
                     f"No. of cases in each sub-sample: {len(predictor) // numSubSamples}",
-                    f"Minimum no. of cases in each sub-sample: {minNumCases * numSubMem}",
+                    f"Minimum no. of cases in each sub-sample: {minNumCases}",
                 ],
             }
         ),

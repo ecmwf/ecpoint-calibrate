@@ -22,8 +22,7 @@ class Split extends Component {
     customSplitValue: '',
     customSplitLevel: '',
     auto: false,
-    numSubMem: 100,
-    minNumCases: 10,
+    minNumCases: 1000,
     numSubSamples: 20,
     msg: null,
     breakpoints: null,
@@ -75,11 +74,7 @@ class Split extends Component {
     this.setState({ auto: newAutoValue })
 
     newAutoValue &&
-      this.validateSubSamples(
-        this.state.numSubMem,
-        this.state.numSubSamples,
-        this.state.minNumCases
-      )
+      this.validateSubSamples(this.state.numSubSamples, this.state.minNumCases)
   }
 
   launchKS_test = () =>
@@ -93,7 +88,6 @@ class Split extends Component {
           ],
           path: this.props.path,
           predictor: this.props.nodeMeta.predictor,
-          numSubMem: this.state.numSubMem,
           numSubSamples: this.state.numSubSamples,
           minNumCases: this.state.minNumCases,
         },
@@ -104,8 +98,8 @@ class Split extends Component {
       }
     )
 
-  validateSubSamples = (numSubMem, numSubSamples, minNumCases) => {
-    if (numSubMem === '' || numSubSamples === '' || minNumCases === '') {
+  validateSubSamples = (numSubSamples, minNumCases) => {
+    if (numSubSamples === '' || minNumCases === '') {
       this.setState({ msg: null })
     } else {
       client.post(
@@ -114,7 +108,6 @@ class Split extends Component {
           body: {
             path: this.props.path,
             predictor: this.props.nodeMeta.predictor,
-            numSubMem,
             numSubSamples,
             minNumCases,
           },
@@ -139,23 +132,6 @@ class Split extends Component {
   getAutoSplitInputParameters = () =>
     this.state.auto && (
       <Segment padded="very" raised>
-        <h5>No. of sub-members to create per mapping function:</h5>
-        <Input
-          error={
-            this.state.numSubMem === '' || /^\d+$/.test(this.state.numSubMem)
-              ? null
-              : true
-          }
-          value={this.state.numSubMem}
-          onChange={e => {
-            this.setState({ numSubMem: e.target.value })
-            this.validateSubSamples(
-              e.target.value,
-              this.state.numSubSamples,
-              this.state.minNumCases
-            )
-          }}
-        />
         <h5>Minimum no. of cases per sub-member in the mapping functions:</h5>
         <Input
           error={
@@ -166,11 +142,7 @@ class Split extends Component {
           value={this.state.minNumCases}
           onChange={e => {
             this.setState({ minNumCases: e.target.value })
-            this.validateSubSamples(
-              this.state.numSubMem,
-              this.state.numSubSamples,
-              e.target.value
-            )
+            this.validateSubSamples(this.state.numSubSamples, e.target.value)
           }}
         />
         <h5>No. of sub-samples to analyse to define the breakpoints:</h5>
@@ -183,11 +155,7 @@ class Split extends Component {
           value={this.state.numSubSamples}
           onChange={e => {
             this.setState({ numSubSamples: e.target.value })
-            this.validateSubSamples(
-              this.state.numSubMem,
-              e.target.value,
-              this.state.minNumCases
-            )
+            this.validateSubSamples(e.target.value, this.state.minNumCases)
           }}
         />
 
