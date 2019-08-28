@@ -62,6 +62,19 @@ export default class TreeContainer extends Component {
       : this.onNodeClickExploreMode(node)
   }
 
+  handleKeyboardInput = e => {
+    const code = e.keyCode ? e.keyCode : e.which
+
+    if (code === 69) {
+      //'e' key
+      this.setState({ treeEditMode: !this.state.treeEditMode })
+    }
+  }
+
+  componentWillMount() {
+    window.addEventListener('keydown', this.handleKeyboardInput.bind(this))
+  }
+
   render = () => {
     return (
       <div
@@ -119,11 +132,12 @@ export default class TreeContainer extends Component {
           }}
         />
 
+        <p>Press 'e' or click to toggle:</p>
         <Radio
           toggle
           label="Edit mode"
           onChange={() => this.setState({ treeEditMode: !this.state.treeEditMode })}
-          defaultChecked={this.state.treeEditMode}
+          checked={this.state.treeEditMode}
         />
 
         <Tree
