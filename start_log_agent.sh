@@ -2,4 +2,4 @@
 
 rm -f ${HOME}/ecpoint.logs
 touch ${HOME}/ecpoint.logs
-npx frontail --disable-usage-stats -l 10000 ${HOME}/ecpoint.logs
+npx frontail --disable-usage-stats -l 1000 ${HOME}/ecpoint.logs
