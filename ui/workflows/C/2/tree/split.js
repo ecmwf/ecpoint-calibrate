@@ -15,6 +15,10 @@ import {
   Table,
 } from 'semantic-ui-react'
 import _ from 'lodash'
+
+import ReactDataSheet from 'react-datasheet'
+import 'react-datasheet/lib/react-datasheet.css'
+
 import client from '~/utils/client'
 
 class Split extends Component {
@@ -94,7 +98,12 @@ class Split extends Component {
         json: true,
       },
       (err, httpResponse, body) => {
-        this.setState({ breakpoints: body.breakpoints })
+        this.setState({
+          breakpoints: body.breakpoints.map((bp, idx) => [
+            { value: idx, readOnly: true },
+            { value: bp, readOnly: false },
+          ]),
+        })
       }
     )
 
@@ -188,30 +197,45 @@ class Split extends Component {
         )}
 
       {this.state.breakpoints !== null && (
-        <Grid.Row>
-          <Table collapsing celled selectable>
-            <Table.Header>
-              <Table.Row>
-                <Table.HeaderCell colSpan="2" textAlign="center">
-                  Suggested Breakpoints
-                </Table.HeaderCell>
-              </Table.Row>
-              <Table.Row>
-                <Table.HeaderCell textAlign="center">Index</Table.HeaderCell>
-                <Table.HeaderCell textAlign="center">Value</Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>
-
-            <Table.Body>
-              {this.state.breakpoints.map((bp, idx) => (
-                <Table.Row key={idx}>
-                  <Table.Cell>{idx + 1}</Table.Cell>
-                  <Table.Cell>{bp}</Table.Cell>
-                </Table.Row>
-              ))}
-            </Table.Body>
-          </Table>
-        </Grid.Row>
+        <>
+          <Grid.Row centered columns={4}>
+            <h5>Suggested breakpoints</h5>
+          </Grid.Row>
+          <Grid.Row centered columns={4}>
+            <Grid.Column>
+              <ReactDataSheet
+                data={this.state.breakpoints}
+                valueRenderer={cell => cell.value}
+                onCellsChanged={changes => {
+                  const grid = this.state.breakpoints.map(row => [...row])
+                  changes.forEach(({ cell, row, col, value }) => {
+                    grid[row][col] = { ...grid[row][col], value }
+                  })
+                  this.setState({ breakpoints: grid })
+                }}
+                rowRenderer={props => (
+                  <tr>
+                    {props.children}
+                    &nbsp;&nbsp;&nbsp;
+                    {props.row > 0 && (
+                      <Button
+                        icon="delete"
+                        circular
+                        onClick={() => {
+                          const grid = this.state.breakpoints.map(row => [...row])
+                          grid.splice(props.row, 1)
+                          this.setState({ breakpoints: grid })
+                        }}
+                        size="mini"
+                        disabled={props.row === 0 ? true : null}
+                      />
+                    )}
+                  </tr>
+                )}
+              />
+            </Grid.Column>
+          </Grid.Row>
+        </>
       )}
     </Grid>
   )
