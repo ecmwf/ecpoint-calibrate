@@ -9,7 +9,7 @@ export const setPath = path => async dispatch => {
     client.post(
       { url: '/get-fields-from-ascii-table', body: { path: path_ }, json: true },
       (err, httpResponse, body) =>
-        dispatch({ type: 'PRELOADER.SET_FIELDS', data: body })
+        dispatch({ type: 'POSTPROCESSING.SET_FIELDS', data: body })
     )
   }
 }

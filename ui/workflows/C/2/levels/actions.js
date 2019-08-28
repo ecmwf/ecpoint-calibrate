@@ -1,7 +1,7 @@
 import { arrayMove } from 'react-sortable-hoc'
 
 export const setFields = fields => ({
-  type: 'PRELOADER.SET_FIELDS',
+  type: 'POSTPROCESSING.SET_FIELDS',
   data: fields,
 })
 

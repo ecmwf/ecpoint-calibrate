@@ -5,7 +5,7 @@ import Levels from './component'
 import { setFields, onFieldsSortEnd } from './actions'
 
 const mapStateToProps = state => ({
-  fields: state.preloader.fields,
+  fields: state.postprocessing.fields,
 })
 
 const mapDispatchToProps = dispatch => ({

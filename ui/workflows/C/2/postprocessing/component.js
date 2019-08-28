@@ -15,43 +15,15 @@ class PostProcessing extends Component {
   state = { tree: null }
 
   hasError() {
-    // Get the grid without the header
-    const grid = this.props.thrGridIn.slice(1)
-
-    if (grid.length === 0) {
-      return true
-    }
-
-    // Get the first row without the left (index) column
-    const firstRow = grid[0].slice(1)
-
-    const firstRowisValid = _.every(
-      firstRow,
-      cell =>
-        cell.value === 'inf' ||
-        cell.value === '-inf' ||
-        /^(\d+\.?\d*|\.\d+)$/.test(cell.value)
-    )
-
-    if (!firstRowisValid) {
-      return true
-    }
-
-    const remainingRows = grid.slice(1)
-
-    if (remainingRows.length === 0) {
-      return false
-    }
-
-    return !_.every(remainingRows, row =>
-      _.every(
-        row.slice(1),
-        cell =>
-          cell.value === '' ||
-          cell.value === 'inf' ||
-          cell.value === '-inf' ||
-          /^(\d+\.?\d*|\.\d+)$/.test(cell.value)
-      )
+    return !_.every(
+      this.props.thrGridIn.slice(1),
+      row =>
+        _.every(
+          row.slice(1),
+          cell =>
+            ['', 'inf', '-inf'].includes(cell.value) ||
+            /^(\d+\.?\d*|\.\d+)$/.test(cell.value)
+        ) && !_.every(row.slice(1), cell => cell.value === '')
     )
   }
 
