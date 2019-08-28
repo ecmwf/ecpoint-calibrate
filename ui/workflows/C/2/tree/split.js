@@ -16,6 +16,11 @@ import {
 } from 'semantic-ui-react'
 import _ from 'lodash'
 
+import map from 'lodash/fp/map'
+import flatten from 'lodash/fp/flatten'
+import reverse from 'lodash/fp/reverse'
+import flow from 'lodash/fp/flow'
+
 import ReactDataSheet from 'react-datasheet'
 import 'react-datasheet/lib/react-datasheet.css'
 
@@ -42,11 +47,8 @@ class Split extends Component {
     }
   }
 
-  split = () => {
-    const matrix = this.props.breakpoints.map(row => _.flatMap(row.slice(1)))
+  split = (value, level, matrix) => {
     const idx = this.props.nodeMeta.idxWT
-
-    const [value, level] = [this.state.customSplitValue, this.state.customSplitLevel]
 
     const source = [...matrix[idx]]
     const newWt = [...matrix[idx]]
@@ -58,10 +60,18 @@ class Split extends Component {
     return [..._.slice(matrix, 0, idx), source, newWt, ..._.slice(matrix, idx + 1)]
   }
 
-  splitHasError = () => {
+  customSplitHasError = () => {
     const value = this.state.customSplitValue
     return value === '' || /^(\d+\.?\d*|\.\d+)$/.test(value) ? null : true
   }
+
+  generatedSplitHasError = () =>
+    this.state.breakpoints === null ||
+    !_.every(
+      this.state.breakpoints.map(row =>
+        row.slice(1).map(cell => /^(\d+\.?\d*|\.\d+)$/.test(cell.value))
+      )
+    )
 
   getLevelOptions = () => {
     const validLevels = _.slice(this.props.fields, this.props.nodeMeta.level)
@@ -244,7 +254,7 @@ class Split extends Component {
     !this.state.auto && (
       <Segment padded>
         <Input
-          error={this.splitHasError()}
+          error={this.customSplitHasError()}
           value={this.state.customSplitValue}
           onChange={e => this.setState({ customSplitValue: e.target.value })}
           label={
@@ -289,12 +299,29 @@ class Split extends Component {
               icon="checkmark"
               content="Split"
               disabled={
-                this.state.customSplitValue === '' ||
-                this.state.customSplitLevel === '' ||
-                this.splitHasError()
+                this.state.auto
+                  ? this.generatedSplitHasError()
+                  : this.state.customSplitValue === '' ||
+                    this.state.customSplitLevel === '' ||
+                    this.customSplitHasError()
               }
               onClick={() => {
-                const matrix = this.split()
+                let matrix = [
+                  ...this.props.breakpoints.map(row => [..._.flatMap(row.slice(1))]),
+                ]
+
+                const values = this.state.auto
+                  ? flow(
+                      map(row => row.slice(1).map(cell => cell.value)),
+                      flatten,
+                      reverse
+                    )(this.state.breakpoints)
+                  : [this.state.customSplitValue]
+
+                values.forEach(value => {
+                  matrix = this.split(value, this.state.customSplitLevel, matrix)
+                })
+
                 this.props.setBreakpoints(matrix)
                 this.setState({
                   customSplitValue: '',
