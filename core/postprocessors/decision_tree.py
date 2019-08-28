@@ -133,7 +133,7 @@ class DecisionTree(object):
                     # a bounded range.
                     #
                     # An exception is when we're adding a node to the Root.
-                    if parent.is_root or not maybe_child.is_unbounded:
+                    if not maybe_child.is_unbounded:
                         curr = maybe_child
                         parent.add_child(curr)
 
@@ -142,6 +142,7 @@ class DecisionTree(object):
                 code = cls.wt_code(thrL_out, thrH_out)[i]
                 curr.meta["code"] = code
 
+        root.meta["level"] = -1
         return root
 
     @classmethod

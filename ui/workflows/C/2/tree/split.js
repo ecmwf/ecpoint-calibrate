@@ -42,7 +42,7 @@ class Split extends Component {
       ...state,
       customSplitLevel:
         !_.isEmpty(props.nodeMeta) && state.customSplitValue === ''
-          ? props.nodeMeta.level
+          ? props.nodeMeta.level + 1
           : state.customSplitLevel,
     }
   }
@@ -74,7 +74,7 @@ class Split extends Component {
     )
 
   getLevelOptions = () => {
-    const validLevels = _.slice(this.props.fields, this.props.nodeMeta.level)
+    const validLevels = _.slice(this.props.fields, this.state.customSplitLevel)
 
     return validLevels.map(field => ({
       key: field,
@@ -101,7 +101,7 @@ class Split extends Component {
             this.props.nodeMeta.idxWT
           ],
           path: this.props.path,
-          predictor: this.props.nodeMeta.predictor,
+          predictor: this.props.fields[this.state.customSplitLevel + 1],
           numSubSamples: this.state.numSubSamples,
           minNumCases: this.state.minNumCases,
         },
@@ -126,7 +126,7 @@ class Split extends Component {
           url: '/postprocessing/validate-num-sub-samples',
           body: {
             path: this.props.path,
-            predictor: this.props.nodeMeta.predictor,
+            predictor: this.props.fields[this.state.customSplitLevel + 1],
             numSubSamples,
             minNumCases,
           },
