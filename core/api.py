@@ -240,15 +240,15 @@ def get_breakpoints_suggestions():
     wt = WeatherType(
         thrL=thrL, thrH=thrH, thrL_labels=labels[::2], thrH_labels=labels[1::2]
     )
-    error, predictor_matrix, title = wt.evaluate(predictor_matrix)
 
+    error, predictor_matrix, title = wt.evaluate(predictor_matrix)
     predictor = predictor_matrix[predictor]
     error = np.asarray(error)
 
     sort_indices = predictor.argsort()
-
     error = error[sort_indices]
-    predictor = predictor[sort_indices]
+    predictor = predictor[::]
+    predictor.sort_values(inplace=True)
 
     PosAll = pandas.Series(range(len(predictor)))
     PosBP = pandas.Series(
