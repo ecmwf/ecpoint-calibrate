@@ -42,7 +42,11 @@ class Split extends Component {
       ...state,
       customSplitLevel:
         !_.isEmpty(props.nodeMeta) && state.customSplitValue === ''
-          ? props.nodeMeta.level + 1
+          ? props.nodeMeta.level + 1 === props.fields.length
+            ? props.nodeMeta.level
+            : props.nodeMeta.level === -1
+            ? 0
+            : props.nodeMeta.level
           : state.customSplitLevel,
     }
   }
@@ -74,7 +78,14 @@ class Split extends Component {
     )
 
   getLevelOptions = () => {
-    const validLevels = _.slice(this.props.fields, this.state.customSplitLevel)
+    const level =
+      this.props.nodeMeta.level + 1 === this.props.fields.length
+        ? this.props.nodeMeta.level
+        : this.props.nodeMeta.level === -1
+        ? 0
+        : this.props.nodeMeta.level
+
+    const validLevels = _.slice(this.props.fields, level)
 
     return validLevels.map(field => ({
       key: field,
@@ -101,7 +112,10 @@ class Split extends Component {
             this.props.nodeMeta.idxWT
           ],
           path: this.props.path,
-          predictor: this.props.fields[this.state.customSplitLevel + 1],
+          predictor:
+            this.state.customSplitLevel + 1 === this.props.fields.length
+              ? this.props.fields[this.state.customSplitLevel]
+              : this.props.fields[this.state.customSplitLevel + 1],
           numSubSamples: this.state.numSubSamples,
           minNumCases: this.state.minNumCases,
         },
@@ -260,7 +274,9 @@ class Split extends Component {
           label={
             <Dropdown
               options={this.getLevelOptions()}
-              onChange={(e, { value }) => this.setState({ customSplitLevel: value })}
+              onChange={(e, { value }) => {
+                this.setState({ customSplitLevel: value })
+              }}
               value={this.state.customSplitLevel}
             />
           }
