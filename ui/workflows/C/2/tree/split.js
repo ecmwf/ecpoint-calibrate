@@ -270,6 +270,18 @@ class Split extends Component {
       </Segment>
     )
 
+  getSplitLevelDropdown = () =>
+    this.state.auto && (
+      <Segment padded>
+        <h5>Select the level at which breakpoints must be suggested:</h5>
+        <Dropdown
+          options={this.getLevelOptions()}
+          onChange={(e, { value }) => this.setState({ customSplitLevel: value })}
+          value={this.state.customSplitLevel}
+        />
+      </Segment>
+    )
+
   render = () => {
     return (
       !_.isEmpty(this.props.nodeMeta) && (
@@ -291,6 +303,7 @@ class Split extends Component {
             {this.getAutoSplitToggler()}
             {this.getAutoSplitInputParameters()}
             {this.getCustomSplitInput()}
+            {this.getSplitLevelDropdown()}
             {this.getSuggestionSegment()}
           </Modal.Content>
           <Modal.Actions>
