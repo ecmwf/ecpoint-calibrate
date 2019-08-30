@@ -112,10 +112,7 @@ class Split extends Component {
             this.props.nodeMeta.idxWT
           ],
           path: this.props.path,
-          predictor:
-            this.state.customSplitLevel + 1 === this.props.fields.length
-              ? this.props.fields[this.state.customSplitLevel]
-              : this.props.fields[this.state.customSplitLevel + 1],
+          predictor: this.props.fields[this.state.customSplitLevel],
           numSubSamples: this.state.numSubSamples,
           minNumCases: this.state.minNumCases,
         },
@@ -140,7 +137,7 @@ class Split extends Component {
           url: '/postprocessing/validate-num-sub-samples',
           body: {
             path: this.props.path,
-            predictor: this.props.fields[this.state.customSplitLevel + 1],
+            predictor: this.props.fields[this.state.customSplitLevel],
             numSubSamples,
             minNumCases,
           },
