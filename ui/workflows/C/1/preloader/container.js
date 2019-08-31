@@ -7,6 +7,7 @@ import { completeSection } from '~/commonActions'
 
 const mapStateToProps = state => ({
   path: state.preloader.path,
+  loading: state.preloader.loading,
 })
 
 const mapDispatchToProps = dispatch => ({

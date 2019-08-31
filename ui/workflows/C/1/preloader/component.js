@@ -11,6 +11,8 @@ import {
   Icon,
   Label,
   Popup,
+  Dimmer,
+  Loader,
 } from 'semantic-ui-react'
 
 import { isEmpty } from './index'
@@ -27,7 +29,9 @@ class Preloader extends Component {
 
         <Item.Description>
           <Button
-            onClick={() => this.props.onPathChange(mainProcess.openFile() || null)}
+            onClick={() => {
+              this.props.onPathChange(mainProcess.openFile() || null)
+            }}
           >
             Browse
           </Button>
@@ -54,24 +58,29 @@ class Preloader extends Component {
   }
 
   render = () => (
-    <Grid container centered>
-      <Grid.Column>
-        <Card fluid color="black">
-          <Card.Header>
-            <Grid.Column floated="left">
-              Select ascii table file containing computed fields
-            </Grid.Column>
-            <Grid.Column floated="right">
-              {this.isComplete() && <Icon name="check circle" />}
-            </Grid.Column>
-          </Card.Header>
-          <Card.Content>
-            <Card.Description />
-            <Item.Group divided>{this.getField()}</Item.Group>
-          </Card.Content>
-        </Card>
-      </Grid.Column>
-    </Grid>
+    <>
+      <Grid container centered>
+        <Grid.Column>
+          <Card fluid color="black">
+            <Card.Header>
+              <Grid.Column floated="left">
+                Select ascii table file containing computed fields
+              </Grid.Column>
+              <Grid.Column floated="right">
+                {this.isComplete() && <Icon name="check circle" />}
+              </Grid.Column>
+            </Card.Header>
+            <Card.Content>
+              <Card.Description />
+              <Item.Group divided>{this.getField()}</Item.Group>
+            </Card.Content>
+          </Card>
+        </Grid.Column>
+      </Grid>
+      <Dimmer active={this.props.loading}>
+        <Loader indeterminate>Reading point-data table. Please wait.</Loader>
+      </Dimmer>
+    </>
   )
 }
 

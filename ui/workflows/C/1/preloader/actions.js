@@ -5,6 +5,7 @@ export const setPath = path => async dispatch => {
 
   if (path_ !== null) {
     await dispatch({ type: 'PRELOADER.SET_PATH', data: path_ })
+    await dispatch({ type: 'PRELOADER.SET_LOADING', data: true })
 
     client.post(
       { url: '/get-fields-from-ascii-table', body: { path: path_ }, json: true },
@@ -18,6 +19,7 @@ export const setPath = path => async dispatch => {
           error,
           bins,
         })
+        dispatch({ type: 'PRELOADER.SET_LOADING', data: false })
       }
     )
   }
