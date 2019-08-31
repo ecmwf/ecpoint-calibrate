@@ -26,7 +26,8 @@ class KolmogorovSmirnovEngine:
 
             if stat.pvalue <= 0.01:  # The test rejects the null hypothesis
                 thr = predictor.iloc[pos2]
-                breakpoints.append(f"{thr:.2f}")
+                if f"{thr:.3f}" not in breakpoints:
+                    breakpoints.append(f"{thr:.3f}")
 
                 pos1 = pos2
                 pos2 = pos3
