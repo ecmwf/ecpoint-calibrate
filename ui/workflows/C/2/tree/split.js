@@ -73,7 +73,7 @@ class Split extends Component {
 
     const values = this.state.auto
       ? flow(
-          map(row => row.map(cell => cell.value)),
+          map(row => row.slice(1).map(cell => cell.value)),
           flatten,
           reverse
         )(this.state.breakpoints)
@@ -273,7 +273,7 @@ class Split extends Component {
                           url: '/postprocessing/save-wt-histograms',
                           body: {
                             labels: this.props.labels,
-                            thrGridOut,
+                            thrGridOut: patches,
                             path: this.props.path,
                             yLim: this.props.yLim,
                             bins: this.props.bins,
