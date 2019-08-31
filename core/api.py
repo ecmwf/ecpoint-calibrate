@@ -76,9 +76,9 @@ def get_fields_from_ascii_table():
         json.dumps(
             {
                 "fields": list(fields),
-                "minValue": min(df["FER"]),
-                "maxValue": max(df["FER"]),
-                "count": len(df["FER"]),
+                "minValue": min(df[error]),
+                "maxValue": max(df[error]),
+                "count": len(df[error]),
                 "error": error,
                 "bins": WeatherType.DEFAULT_FER_BINS if error == "FER" else [],
             }
