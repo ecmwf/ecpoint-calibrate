@@ -14,7 +14,7 @@ const defaultState = {
     3: { processing: false },
   },
   C: {
-    1: { preloader: false },
+    1: { preloader: false, binning: false },
     2: { postprocessing: false },
   },
 }

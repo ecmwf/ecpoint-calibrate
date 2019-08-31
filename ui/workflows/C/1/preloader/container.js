@@ -11,7 +11,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   onPathChange: path => dispatch(setPath(path)),
-
   completeSection: (workflow, page) => dispatch(completeSection('C', 1, 'preloader')),
 })
 

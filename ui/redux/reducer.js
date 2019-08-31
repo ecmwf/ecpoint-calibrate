@@ -9,6 +9,7 @@ import computationsReducer from './computationsReducer'
 import postprocessingReducer from './postprocessingReducer'
 import appReducer from './appReducer'
 import preloaderReducer from './preloaderReducer'
+import binningReducer from './binningReducer'
 import workflowReducer from './workflowReducer'
 
 const reducer = combineReducers({
@@ -20,6 +21,7 @@ const reducer = combineReducers({
   postprocessing: postprocessingReducer,
   app: appReducer,
   preloader: preloaderReducer,
+  binning: binningReducer,
   page: pageReducer,
   workflow: workflowReducer,
 })

@@ -231,8 +231,32 @@ class WeatherType(object):
     thrL_labels = attr.ib()
     thrH_labels = attr.ib()
 
+    error_type = attr.ib(default=None)
+
+    DEFAULT_FER_BINS = [
+        -1.1,
+        -0.99,
+        -0.75,
+        -0.5,
+        -0.25,
+        0.25,
+        0.5,
+        0.75,
+        1,
+        1.5,
+        2,
+        3,
+        5,
+        10,
+        25,
+        50,
+        1000,
+    ]
+
     def evaluate(self, predictors_matrix):
-        error = predictors_matrix["FER"]
+        self.error_type = "FER" if "FER" in predictors_matrix else "FE"
+
+        error = predictors_matrix[self.error_type]
         title_pred = ""
 
         for thrL_label, thrH_label in zip(self.thrL_labels, self.thrH_labels):
@@ -256,34 +280,16 @@ class WeatherType(object):
 
         return error.to_list(), predictors_matrix, title_pred
 
-    @staticmethod
-    def plot(data, title, y_lim, out_path=None):
-        bins = [
-            -1.1,
-            -0.99,
-            -0.75,
-            -0.5,
-            -0.25,
-            0.25,
-            0.5,
-            0.75,
-            1,
-            1.5,
-            2,
-            3,
-            5,
-            10,
-            25,
-            50,
-            1000,
-        ]
-
+    def plot(self, data, bins: list, title, y_lim, out_path=None):
         data = pandas.Series(data)
 
         fig, ax = plt.subplots()
         plt.tight_layout(pad=5)
 
-        ax.set_xlabel("FER Bins [-]", fontsize=8)
+        ax.set_xlabel(
+            f"{self.error_type} Bins {'[-]' if self.error_type == 'FER' else ''}",
+            fontsize=8,
+        )
         ax.set_ylabel("Frequencies [-]", fontsize=8)
         ax.set_title(title, fontsize=8)
 
@@ -297,26 +303,7 @@ class WeatherType(object):
         patches = subplot.patches
 
         autolabel(ax, patches, y_cum=len(out))
-
-        green_patches, white_patches, yellow_patches, red_patches = (
-            patches[:4],
-            patches[4:5],
-            patches[5:10],
-            patches[10:],
-        )
-
-        for patch in green_patches:
-            patch.set_facecolor("#2ecc71")
-
-        for patch in white_patches:
-            patch.set_facecolor("#ffffff")
-            patch.set_edgecolor("#000000")
-
-        for patch in yellow_patches:
-            patch.set_facecolor("#fef160")
-
-        for patch in red_patches:
-            patch.set_facecolor("#d64541")
+        colorize_patches(patches, bins, self.error_type)
 
         if out_path:
             return fig.savefig(out_path, format="png")
@@ -343,3 +330,50 @@ def autolabel(ax, patches, y_cum):
         ax.text(
             text_x, text_y, text, ha="center", va="bottom", color="black", fontsize=7
         )
+
+
+def colorize_patches(patches, bins, error_type):
+    if error_type == "FER":
+        green = [i for i in bins if i < 0][:-1]
+        yellow = [i for i in bins if i > 0][1:][:5]
+
+        green_patches, white_patches, yellow_patches, red_patches = (
+            patches[: len(green)],
+            patches[len(green) : len(green) + 1],
+            patches[len(green) + 2 - 1 : len(green) + 2 + len(yellow)],
+            patches[len(green) + 2 + len(yellow) - 1 :],
+        )
+
+        for patch in green_patches:
+            patch.set_facecolor("#2ecc71")
+
+        for patch in white_patches:
+            patch.set_facecolor("#ffffff")
+            patch.set_edgecolor("#000000")
+
+        for patch in yellow_patches:
+            patch.set_facecolor("#fef160")
+
+        for patch in red_patches:
+            patch.set_facecolor("#d64541")
+    elif error_type == "FE":
+        blue = [i for i in bins if i < 0][:-1]
+        blue_patches, white_patches, red_patches = (
+            patches[: len(blue)],
+            patches[len(blue) : len(blue) + 1],
+            patches[len(blue) + 2 - 1 :],
+        )
+
+        for patch in blue_patches:
+            patch.set_facecolor("#2c82c9")
+
+        for patch in white_patches:
+            patch.set_facecolor("#ffffff")
+            patch.set_edgecolor("#000000")
+
+        for patch in red_patches:
+            patch.set_facecolor("#d64541")
+
+    else:
+        # Do not apply any color
+        pass

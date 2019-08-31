@@ -69,7 +69,22 @@ def get_fields_from_ascii_table():
         "FER",
         "FE",
     }
-    return Response(json.dumps(list(fields)), mimetype="application/json")
+
+    error = "FER" if "FER" in df.columns else "FE"
+
+    return Response(
+        json.dumps(
+            {
+                "fields": list(fields),
+                "minValue": min(df["FER"]),
+                "maxValue": max(df["FER"]),
+                "count": len(df["FER"]),
+                "error": error,
+                "bins": WeatherType.DEFAULT_FER_BINS if error == "FER" else [],
+            }
+        ),
+        mimetype="application/json",
+    )
 
 
 @app.route("/postprocessing/create-wt-matrix", methods=("POST",))
@@ -126,11 +141,12 @@ def get_decision_tree():
 @app.route("/postprocessing/generate-wt-histogram", methods=("POST",))
 def get_wt_histogram():
     payload = request.get_json()
-    labels, thrWT, path, y_lim = (
+    labels, thrWT, path, y_lim, bins = (
         payload["labels"],
         payload["thrWT"],
         payload["path"],
         payload["yLim"],
+        payload["bins"],
     )
 
     predictor_matrix = ASCIIDecoder(path=path).dataframe
@@ -139,11 +155,13 @@ def get_wt_histogram():
     series = pandas.Series(dict(zip(labels, thrWT)))
     thrL, thrH = series.iloc[::2], series.iloc[1::2]
 
+    bins = [float(each) for each in bins]
+
     wt = WeatherType(
         thrL=thrL, thrH=thrH, thrL_labels=labels[::2], thrH_labels=labels[1::2]
     )
     error, _, title = wt.evaluate(predictor_matrix)
-    plot = wt.plot(error, title, float(y_lim))
+    plot = wt.plot(error, bins, title, float(y_lim))
 
     return jsonify({"histogram": plot})
 
@@ -151,18 +169,21 @@ def get_wt_histogram():
 @app.route("/postprocessing/save-wt-histograms", methods=("POST",))
 def save_wt_histograms():
     payload = request.get_json()
-    labels, thrGridOut, path, y_lim, destination = (
+    labels, thrGridOut, path, y_lim, destination, bins = (
         payload["labels"],
         payload["thrGridOut"],
         payload["path"],
         payload["yLim"],
         payload["destinationDir"],
+        payload["bins"],
     )
 
     predictor_matrix = ASCIIDecoder(path=path).dataframe
 
     matrix = [[float(cell) for cell in row[1:]] for row in thrGridOut]
     df = pandas.DataFrame.from_records(matrix, columns=labels)
+
+    bins = [float(each) for each in bins]
 
     thrL_out, thrH_out = df.iloc[:, ::2], df.iloc[:, 1::2]
 
@@ -178,6 +199,7 @@ def save_wt_histograms():
         wt_code = thrGridOut[idx][0]
         wt.plot(
             error,
+            bins,
             title,
             y_lim=float(y_lim),
             out_path=os.path.join(destination, f"WT_{wt_code}"),
