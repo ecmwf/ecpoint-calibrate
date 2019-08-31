@@ -14,6 +14,8 @@ import {
   Grid,
   Table,
 } from 'semantic-ui-react'
+
+import { remote } from 'electron'
 import _ from 'lodash'
 
 import map from 'lodash/fp/map'
@@ -25,6 +27,8 @@ import ReactDataSheet from 'react-datasheet'
 import 'react-datasheet/lib/react-datasheet.css'
 
 import client from '~/utils/client'
+
+const mainProcess = remote.require('./server')
 
 class Split extends Component {
   state = {
@@ -62,6 +66,24 @@ class Split extends Component {
     source[level * 2 + 1] = value
 
     return [..._.slice(matrix, 0, idx), source, newWt, ..._.slice(matrix, idx + 1)]
+  }
+
+  getMatrixAfterSplit = () => {
+    let matrix = [...this.props.breakpoints.map(row => [..._.flatMap(row.slice(1))])]
+
+    const values = this.state.auto
+      ? flow(
+          map(row => row.map(cell => cell.value)),
+          flatten,
+          reverse
+        )(this.state.breakpoints)
+      : [this.state.customSplitValue]
+
+    values.forEach(value => {
+      matrix = this.split(value, this.state.customSplitLevel, matrix)
+    })
+
+    return [matrix, values.length]
   }
 
   customSplitHasError = () => {
@@ -214,6 +236,60 @@ class Split extends Component {
               positive
               onClick={() => this.launchKS_test()}
             />
+            {!this.generatedSplitHasError() && (
+              <Button
+                content="Save suggested MFs"
+                onClick={() => {
+                  const path = mainProcess.selectDirectory()
+                  const destinationDir = path && path.length !== 0 ? path.pop() : null
+
+                  if (destinationDir === null) {
+                    return
+                  }
+
+                  const [matrix, nSplits] = this.getMatrixAfterSplit()
+
+                  client.post(
+                    {
+                      url: '/postprocessing/get-wt-codes',
+                      body: {
+                        labels: this.props.labels,
+                        matrix,
+                      },
+                      json: true,
+                    },
+                    (err, httpResponse, { codes }) => {
+                      const thrGridOut = matrix.map((row, idx) =>
+                        _.concat(codes[idx], row)
+                      )
+                      const patches = _.slice(
+                        thrGridOut,
+                        this.props.nodeMeta.idxWT,
+                        this.props.nodeMeta.idxWT + nSplits + 1
+                      )
+
+                      client.post(
+                        {
+                          url: '/postprocessing/save-wt-histograms',
+                          body: {
+                            labels: this.props.labels,
+                            thrGridOut,
+                            path: this.props.path,
+                            yLim: this.props.yLim,
+                            bins: this.props.bins,
+                            destinationDir,
+                          },
+                          json: true,
+                        },
+                        (err2, httpResponse2, body) => {
+                          console.log(body)
+                        }
+                      )
+                    }
+                  )
+                }}
+              />
+            )}
           </Grid.Row>
         )}
 
@@ -332,22 +408,7 @@ class Split extends Component {
                     this.customSplitHasError()
               }
               onClick={() => {
-                let matrix = [
-                  ...this.props.breakpoints.map(row => [..._.flatMap(row.slice(1))]),
-                ]
-
-                const values = this.state.auto
-                  ? flow(
-                      map(row => row.slice(1).map(cell => cell.value)),
-                      flatten,
-                      reverse
-                    )(this.state.breakpoints)
-                  : [this.state.customSplitValue]
-
-                values.forEach(value => {
-                  matrix = this.split(value, this.state.customSplitLevel, matrix)
-                })
-
+                const [matrix, nSplits] = this.getMatrixAfterSplit()
                 this.props.setBreakpoints(matrix)
                 this.setState({
                   customSplitValue: '',
