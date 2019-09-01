@@ -39,6 +39,7 @@ class Split extends Component {
     numSubSamples: 20,
     msg: null,
     breakpoints: null,
+    loading: false,
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -124,7 +125,8 @@ class Split extends Component {
       this.validateSubSamples(this.state.numSubSamples, this.state.minNumCases)
   }
 
-  launchKS_test = () =>
+  launchKS_test = () => {
+    this.setState({ loading: true })
     client.post(
       {
         url: '/postprocessing/get-breakpoints-suggestions',
@@ -146,9 +148,11 @@ class Split extends Component {
             { value: idx, readOnly: true },
             { value: bp, readOnly: false },
           ]),
+          loading: false,
         })
       }
     )
+  }
 
   validateSubSamples = (numSubSamples, minNumCases) => {
     if (numSubSamples === '' || minNumCases === '') {
@@ -401,6 +405,11 @@ class Split extends Component {
             {this.getCustomSplitInput()}
             {this.getSplitLevelDropdown()}
             {this.getSuggestionSegment()}
+            <Dimmer active={this.state.loading}>
+              <Loader indeterminate>
+                Running Kolmogorov-Smirnov test. Please wait.
+              </Loader>
+            </Dimmer>
           </Modal.Content>
           <Modal.Actions>
             <Button
