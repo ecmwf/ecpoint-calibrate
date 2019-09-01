@@ -211,7 +211,12 @@ def save_wt_histograms():
 @app.route("/postprocessing/create-error-rep", methods=("POST",))
 def get_error_rep():
     payload = request.get_json()
-    labels, matrix, path = payload["labels"], payload["matrix"], payload["path"]
+    labels, matrix, path, numCols = (
+        payload["labels"],
+        payload["matrix"],
+        payload["path"],
+        payload["numCols"],
+    )
 
     matrix = [[float(cell) for cell in row] for row in matrix]
 
@@ -221,7 +226,7 @@ def get_error_rep():
 
     predictor_matrix = ASCIIDecoder(path=path).dataframe
     rep = DecisionTree.cal_rep_error(
-        predictor_matrix, thrL_out=thrL, thrH_out=thrH, nBin=100
+        predictor_matrix, thrL_out=thrL, thrH_out=thrH, nBin=int(numCols)
     )
 
     s = StringIO()

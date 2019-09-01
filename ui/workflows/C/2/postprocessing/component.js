@@ -26,7 +26,7 @@ const mainProcess = remote.require('./server')
 const jetpack = require('fs-jetpack')
 
 class PostProcessing extends Component {
-  state = { tree: null, loading: false }
+  state = { tree: null, loading: false, numColsMFs: '' }
 
   hasError() {
     return !_.every(
@@ -44,7 +44,7 @@ class PostProcessing extends Component {
   isComplete = () => !this.hasError()
 
   postThrGridIn() {
-    this.setState({ loading: true }) /* will be set to false by postThrGridOut */
+    this.setState({ loading: 'Generating weather types.' })
     const labels = this.getLabels()
 
     const records = this.props.thrGridIn
@@ -69,7 +69,7 @@ class PostProcessing extends Component {
     /* We pass the matrix instead of using it from this.props.thrGridOut to avoid
      * concurrency issues. */
 
-    this.setState({ loading: true })
+    this.setState({ loading: 'Generating and rendering decision tree.' })
     const labels = this.getLabels()
     this.props.setBreakpoints(labels, matrix)
     client.post(
@@ -83,18 +83,25 @@ class PostProcessing extends Component {
   }
 
   saveError() {
+    this.setState({ loading: 'Generating Mapping Functions.' })
     const labels = this.getLabels()
     const matrix = this.props.thrGridOut.map(row => _.flatMap(row.slice(1)))
 
     client.post(
       {
         url: '/postprocessing/create-error-rep',
-        body: { labels, matrix, path: this.props.path },
+        body: { labels, matrix, path: this.props.path, numCols: this.state.numColsMFs },
         json: true,
       },
-      (err, httpResponse, body) => download('error.csv', body)
+      (err, httpResponse, body) => {
+        download('error.csv', body)
+        this.setState({ loading: false })
+      }
     )
   }
+
+  numColsMFsHasError = () =>
+    this.state.numColsMFs !== '' && !/^\d+$/.test(this.state.numColsMFs)
 
   saveBreakPoints() {
     const labels = this.getLabels()
@@ -187,18 +194,25 @@ class PostProcessing extends Component {
       {this.props.thrGridOut.length > 0 && (
         <>
           <Button
-            content="Save mapping functions as CSV"
-            icon="download"
-            labelPosition="left"
-            floated="right"
-            onClick={() => this.saveError()}
-          />
-          <Button
             content="Save breakpoints as CSV"
             icon="download"
             labelPosition="left"
             floated="right"
             onClick={() => this.saveBreakPoints()}
+          />
+          <Input
+            action={{
+              labelPosition: 'left',
+              icon: 'download',
+              content: 'Save MFs as CSV',
+              floated: 'right',
+              onClick: () => this.saveError(),
+              disabled: this.state.numColsMFs === '' || this.numColsMFsHasError(),
+            }}
+            actionPosition="left"
+            placeholder="Enter no. of columns"
+            error={this.numColsMFsHasError()}
+            onChange={e => this.setState({ numColsMFs: e.target.value })}
           />
         </>
       )}
@@ -236,10 +250,8 @@ class PostProcessing extends Component {
               </Card.Description>
             </Card.Content>
           </Card>
-          <Dimmer active={this.state.loading} inverted>
-            <Loader indeterminate>
-              Generating and rendering the decision tree. Please wait.
-            </Loader>
+          <Dimmer active={this.state.loading !== false} inverted>
+            <Loader indeterminate>{this.state.loading} Please wait.</Loader>
           </Dimmer>
         </Grid.Column>
       </Grid>
