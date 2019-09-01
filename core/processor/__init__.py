@@ -461,7 +461,7 @@ def run(config):
 
         columns = (
             [
-                ("BaseDate", [curr_date] * n),
+                ("BaseDate", [curr_date.strftime("%Y%m%d")] * n),
                 ("BaseTime", [curr_time] * n),
                 (
                     "StepF" if config.predictand.is_accumulated else "Step",
