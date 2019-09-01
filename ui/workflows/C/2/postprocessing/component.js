@@ -4,12 +4,17 @@ import { Grid, Card, Button, Icon, Item, Input } from 'semantic-ui-react'
 
 import _ from 'lodash'
 
+import { remote } from 'electron'
+
 import client from '~/utils/client'
 import download from '~/utils/download'
 import BreakPoints from '../breakpoints'
 import SparseBreakPoints from '../sparseBreakpoints'
 import Tree from '../tree'
 import Levels from '../levels'
+
+const mainProcess = remote.require('./server')
+const jetpack = require('fs-jetpack')
 
 class PostProcessing extends Component {
   state = { tree: null }
@@ -148,6 +153,25 @@ class PostProcessing extends Component {
         size="medium"
         onClick={() => this.postThrGridIn()}
       />
+
+      <Button
+        content="Load breakpoints from CSV"
+        icon="upload"
+        labelPosition="left"
+        primary
+        size="medium"
+        onClick={() => {
+          const path = mainProcess.openFile() || null
+
+          if (path !== null) {
+            const csv = jetpack.read(path.pop())
+            const data = csv.split('\n').map(row => row.split(','))
+            const matrix = data.slice(1).map(row => row.slice(1))
+            this.postThrGridOut(matrix)
+          }
+        }}
+      />
+
       {this.props.thrGridOut.length > 0 && (
         <>
           <Button
