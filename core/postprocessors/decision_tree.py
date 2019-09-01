@@ -7,6 +7,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas
+from colour import Color
 from numpy import inf
 
 from core.utils import int_or_float
@@ -102,7 +103,15 @@ class DecisionTree(object):
     @classmethod
     def construct_tree(cls, thrL_out, thrH_out):
         root = Node("Root")
+        root.meta["level"] = -1
+
         num_wt = len(thrL_out)
+
+        num_predictors = len(thrL_out.columns)
+
+        leaf_color_codes = [
+            color.hex for color in Color("red").range_to(Color("blue"), num_predictors)
+        ] + [Color("black").hex]
 
         for i in range(num_wt):
             thrL = thrL_out.ix[i, :]
@@ -131,8 +140,6 @@ class DecisionTree(object):
                     # For a path in the decision tree that has been resolved, we want
                     # to add only those nodes to the tree that have a decision, i.e.
                     # a bounded range.
-                    #
-                    # An exception is when we're adding a node to the Root.
                     if not maybe_child.is_unbounded:
                         curr = maybe_child
                         parent.add_child(curr)
@@ -141,8 +148,14 @@ class DecisionTree(object):
                 curr.meta["idxWT"] = i
                 code = cls.wt_code(thrL_out, thrH_out)[i]
                 curr.meta["code"] = code
+                curr.nodeSvgShape = {
+                    "shape": "circle",
+                    "shapeProps": {
+                        "r": 10,
+                        "stroke": leaf_color_codes[curr.meta["level"]],
+                    },
+                }
 
-        root.meta["level"] = -1
         return root
 
     @classmethod

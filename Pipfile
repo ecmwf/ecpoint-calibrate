@@ -23,6 +23,7 @@ xarray = "*"
 healthcheck = "*"
 netcdf4 = "*"
 scipy = "*"
+colour = "*"
 
 [requires]
 python_version = "3.7"

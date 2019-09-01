@@ -9,6 +9,7 @@ class Node(object):
     children = attr.ib(default=attr.Factory(list))
     parent = attr.ib(default=None)
     meta = attr.ib(default=attr.Factory(dict))
+    nodeSvgShape = attr.ib(default=attr.Factory(dict))
 
     @property
     def json(self) -> dict:
