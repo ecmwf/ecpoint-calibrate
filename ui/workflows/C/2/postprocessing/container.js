@@ -10,7 +10,7 @@ const mapStateToProps = state => ({
   path: state.preloader.path,
   fields: state.postprocessing.fields,
   yLim: state.postprocessing.yLim,
-  bins: state.binning.bins,
+  ...state.binning,
 })
 
 const mapDispatchToProps = dispatch => ({

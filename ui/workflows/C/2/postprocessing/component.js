@@ -129,6 +129,7 @@ class PostProcessing extends Component {
               yLim={this.props.yLim}
               fields={this.props.fields}
               bins={this.props.bins}
+              count={this.props.count}
             />
           )}
         </Item.Content>

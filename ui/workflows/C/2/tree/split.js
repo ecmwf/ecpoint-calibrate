@@ -154,21 +154,28 @@ class Split extends Component {
     if (numSubSamples === '' || minNumCases === '') {
       this.setState({ msg: null })
     } else {
-      client.post(
-        {
-          url: '/postprocessing/validate-num-sub-samples',
-          body: {
-            path: this.props.path,
-            predictor: this.props.fields[this.state.customSplitLevel],
-            numSubSamples,
-            minNumCases,
-          },
-          json: true,
-        },
-        (err, httpResponse, body) => {
-          this.setState({ msg: body })
-        }
-      )
+      const cases = parseInt(this.props.count / numSubSamples)
+      const msg =
+        minNumCases < this.props.count && cases < minNumCases
+          ? {
+              type: 'negative',
+              header: 'The size of the sub-samples to analyse is too small',
+              body: [
+                `Minimum no. of cases in each sub-sample: ${minNumCases}`,
+                `Size of the sub-samples analysed: ${cases}`,
+                'Please provide a smaller number of sub-samples.',
+              ],
+            }
+          : {
+              type: 'positive',
+              header: 'Validation of the sub-sample size is successful',
+              body: [
+                `No. of considered sub-samples: ${numSubSamples}`,
+                `No. of cases in each sub-sample: ${cases}`,
+                `Minimum no. of cases in each sub-sample: ${minNumCases}`,
+              ],
+            }
+      this.setState({ msg })
     }
   }
 

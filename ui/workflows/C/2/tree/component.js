@@ -177,6 +177,7 @@ export default class TreeContainer extends Component {
           labels={this.props.labels}
           yLim={this.props.yLim}
           bins={this.props.bins}
+          count={this.props.count}
         />
       </div>
     )
