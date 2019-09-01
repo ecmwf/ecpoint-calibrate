@@ -117,6 +117,7 @@ class Computation extends Component {
             onChange={e =>
               this.props.onShortNameChange(this.props.index, e.target.value)
             }
+            error={this.props.predictors.codes.includes(this.props.shortname)}
           />
           <br />
           <p>Full name:</p>
