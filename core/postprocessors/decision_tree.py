@@ -290,14 +290,14 @@ class WeatherType(object):
             f"{self.error_type} Bins {'[-]' if self.error_type == 'FER' else ''}",
             fontsize=8,
         )
-        ax.set_ylabel("Frequencies [-]", fontsize=8)
+        ax.set_ylabel("Frequencies [%]", fontsize=8)
         ax.set_title(title, fontsize=8)
 
         ax.xaxis.set_tick_params(labelsize=7)
         ax.yaxis.set_tick_params(labelsize=7)
 
         out = pandas.cut(data, bins=bins, include_lowest=True)
-        series = out.value_counts(normalize=True, sort=False)
+        series = out.value_counts(normalize=True, sort=False) * 100
 
         subplot = series.plot.bar(ax=ax, rot=45, ylim=(0, y_lim))
         patches = subplot.patches

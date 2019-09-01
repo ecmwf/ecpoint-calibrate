@@ -2,7 +2,7 @@ const defaultState = {
   thrGridIn: [],
   thrGridOut: [],
   fields: [],
-  yLim: 1,
+  yLim: 100,
 }
 
 const getFirstRow = fields =>

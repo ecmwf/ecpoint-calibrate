@@ -87,8 +87,8 @@ class PostProcessing extends Component {
   }
 
   yLimHasError = () =>
-    this.props.yLim === '' || /^(\d+\.?\d*|\.\d+)$/.test(this.props.yLim)
-      ? parseFloat(this.props.yLim) > 0 && parseFloat(this.props.yLim) <= 1.0
+    this.props.yLim === '' || /^\d+$/.test(this.props.yLim)
+      ? parseInt(this.props.yLim) > 0 && parseInt(this.props.yLim) <= 100
         ? null
         : true
       : true
@@ -108,7 +108,8 @@ class PostProcessing extends Component {
             />
           </Item.Description>
           <Item.Extra>
-            Valid values are all floating-point numbers in the set <code>(0, 1]</code>.
+            Valid values are all floating-point numbers in the set <code>(0, 100]</code>
+            .
           </Item.Extra>
         </Item.Content>
       </Item>

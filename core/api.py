@@ -161,7 +161,7 @@ def get_wt_histogram():
         thrL=thrL, thrH=thrH, thrL_labels=labels[::2], thrH_labels=labels[1::2]
     )
     error, _, title = wt.evaluate(predictor_matrix)
-    plot = wt.plot(error, bins, title, float(y_lim))
+    plot = wt.plot(error, bins, title, int(y_lim))
 
     return jsonify({"histogram": plot})
 
@@ -201,7 +201,7 @@ def save_wt_histograms():
             error,
             bins,
             title,
-            y_lim=float(y_lim),
+            y_lim=int(y_lim),
             out_path=os.path.join(destination, f"WT_{wt_code}"),
         )
 
