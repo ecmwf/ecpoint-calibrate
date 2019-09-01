@@ -2,6 +2,8 @@ import React from 'react'
 
 import { Modal, Image, Button, Dimmer, Loader } from 'semantic-ui-react'
 
+import download from '~/utils/download'
+
 const MappingFunction = props => {
   const histURI = `data:image/jpeg;base64,${props.image}`
   return (
