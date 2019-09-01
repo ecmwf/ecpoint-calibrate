@@ -1,6 +1,15 @@
 import React, { Component } from 'react'
 
-import { Grid, Card, Button, Icon, Item, Input } from 'semantic-ui-react'
+import {
+  Grid,
+  Card,
+  Button,
+  Icon,
+  Item,
+  Input,
+  Dimmer,
+  Loader,
+} from 'semantic-ui-react'
 
 import _ from 'lodash'
 
@@ -17,7 +26,7 @@ const mainProcess = remote.require('./server')
 const jetpack = require('fs-jetpack')
 
 class PostProcessing extends Component {
-  state = { tree: null }
+  state = { tree: null, loading: false }
 
   hasError() {
     return !_.every(
@@ -35,6 +44,7 @@ class PostProcessing extends Component {
   isComplete = () => !this.hasError()
 
   postThrGridIn() {
+    this.setState({ loading: true }) /* will be set to false by postThrGridOut */
     const labels = this.getLabels()
 
     const records = this.props.thrGridIn
@@ -58,6 +68,8 @@ class PostProcessing extends Component {
   postThrGridOut = matrix => {
     /* We pass the matrix instead of using it from this.props.thrGridOut to avoid
      * concurrency issues. */
+
+    this.setState({ loading: true })
     const labels = this.getLabels()
     this.props.setBreakpoints(labels, matrix)
     client.post(
@@ -66,7 +78,7 @@ class PostProcessing extends Component {
         body: { labels, matrix },
         json: true,
       },
-      (err, httpResponse, tree) => this.setState({ tree })
+      (err, httpResponse, tree) => this.setState({ tree, loading: false })
     )
   }
 
@@ -125,7 +137,7 @@ class PostProcessing extends Component {
       <Item>
         <Item.Content>
           <br />
-          {!this.yLimHasError() && this.state.tree && (
+          {!this.yLimHasError() && this.state.tree && !this.state.loading && (
             <Tree
               data={this.state.tree}
               breakpoints={this.props.thrGridOut}
@@ -211,7 +223,7 @@ class PostProcessing extends Component {
                   <SparseBreakPoints />
 
                   {this.getCTAs()}
-                  {this.props.thrGridOut.length > 0 && (
+                  {this.props.thrGridOut.length > 0 && !this.state.loading && (
                     <BreakPoints
                       setBreakpoints={matrix => this.postThrGridOut(matrix)}
                       labels={this.getLabels()}
@@ -224,6 +236,11 @@ class PostProcessing extends Component {
               </Card.Description>
             </Card.Content>
           </Card>
+          <Dimmer active={this.state.loading} inverted>
+            <Loader indeterminate>
+              Generating and rendering the decision tree. Please wait.
+            </Loader>
+          </Dimmer>
         </Grid.Column>
       </Grid>
     )
