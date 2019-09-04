@@ -3,12 +3,12 @@
   "version": "0.7.5",
   "description": "GUI for ecPoint-Calibrate powered by Electron and React",
   "engines": {
-    "node": "==12.1.0"
+    "node": "==12.4.0"
   },
   "main": "./server.js",
   "scripts": {
     "preinstall": "rm -rvf node_modules/*/.git",
-    "start": "electron . --disable-gpu",
+    "start": "electron .",
     "build": "webpack --progress --colors",
     "lint": "prettier --config ./.prettierrc --write 'ui/**/*.js'"
   },
@@ -43,7 +43,7 @@
     "babel-loader": "^8.0.6",
     "copy-webpack-plugin": "4.5.1",
     "css-loader": "0.28.11",
-    "electron": "4.2.0",
+    "electron": "6.0.7",
     "file-loader": "1.1.10",
     "frontail": "^4.6.0",
     "fs-jetpack": "^2.2.2",

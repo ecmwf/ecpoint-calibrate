@@ -10,7 +10,11 @@ const { app, BrowserWindow, dialog } = electron
 let mainWindow = null
 
 const createWindow = () => {
-  mainWindow = new BrowserWindow()
+  mainWindow = new BrowserWindow({
+        webPreferences: {
+            nodeIntegration: true
+        }
+    })
 
   mainWindow.maximize()
   mainWindow.loadURL(
@@ -40,24 +44,43 @@ app.on('activate', () => {
   }
 })
 
+/* handle crashes and kill events */
+process.on('uncaughtException', function(err) {
+  // log the message and stack trace
+  fs.writeFileSync('crash.log', err + "\n" + err.stack);
+
+  // relaunch the app
+  app.relaunch({args: []});
+  app.exit(0);
+})
+
+process.on('SIGTERM', function() {
+  fs.writeFileSync('shutdown.log', "Received SIGTERM signal");
+
+  // relaunch the app
+  app.relaunch({args: []});
+  app.exit(0);
+})
+
+
 exports.selectMultiDirectory = () =>
-  dialog.showOpenDialog(mainWindow, {
+  dialog.showOpenDialogSync(mainWindow, {
     properties: ['openDirectory', 'multiSelections'],
   }) || []
 
 exports.selectDirectory = () =>
-  dialog.showOpenDialog(mainWindow, {
+  dialog.showOpenDialogSync(mainWindow, {
     properties: ['openDirectory'],
   })
 
 exports.saveFile = () =>
-  dialog.showSaveDialog(mainWindow, {
+  dialog.showSaveDialogSync(mainWindow, {
     title: 'Output file path',
     defaultPath: 'test.ascii',
   })
 
 exports.openFile = () =>
-  dialog.showOpenDialog(mainWindow, {
+  dialog.showOpenDialogSync(mainWindow, {
     title: 'Input file path',
     properties: ['openFile'],
   })
