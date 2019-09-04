@@ -11,10 +11,11 @@ let mainWindow = null
 
 const createWindow = () => {
   mainWindow = new BrowserWindow({
-        webPreferences: {
-            nodeIntegration: true
-        }
-    })
+    webPreferences: {
+      nodeIntegration: true,
+      allowRunningInsecureContent: true,
+    },
+  })
 
   mainWindow.maximize()
   mainWindow.loadURL(
@@ -47,21 +48,20 @@ app.on('activate', () => {
 /* handle crashes and kill events */
 process.on('uncaughtException', function(err) {
   // log the message and stack trace
-  fs.writeFileSync('crash.log', err + "\n" + err.stack);
+  fs.writeFileSync('crash.log', err + '\n' + err.stack)
 
   // relaunch the app
-  app.relaunch({args: []});
-  app.exit(0);
+  app.relaunch({ args: [] })
+  app.exit(0)
 })
 
 process.on('SIGTERM', function() {
-  fs.writeFileSync('shutdown.log', "Received SIGTERM signal");
+  fs.writeFileSync('shutdown.log', 'Received SIGTERM signal')
 
   // relaunch the app
-  app.relaunch({args: []});
-  app.exit(0);
+  app.relaunch({ args: [] })
+  app.exit(0)
 })
-
 
 exports.selectMultiDirectory = () =>
   dialog.showOpenDialogSync(mainWindow, {

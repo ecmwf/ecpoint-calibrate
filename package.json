@@ -10,7 +10,7 @@
     "preinstall": "rm -rvf node_modules/*/.git",
     "start": "electron .",
     "build": "webpack --progress --colors",
-    "lint": "prettier --config ./.prettierrc --write 'ui/**/*.js'"
+    "lint": "prettier --config ./.prettierrc --write 'ui/**/*.js' server.js"
   },
   "author": "Anirudha Bose <anirudha.bose@alumni.cern>",
   "repository": "github:esowc/ecpoint-Calibrate",
