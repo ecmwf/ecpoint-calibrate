@@ -86,10 +86,11 @@ export default class TreeContainer extends Component {
         ref={tc => (this.treeContainer = tc)}
       >
         <Button
-          content="Save all WTs as PNG"
+          content="Save WTs as PNG"
           icon="download"
           labelPosition="left"
           floated="right"
+          size="tiny"
           onClick={() => {
             const path = mainProcess.selectDirectory()
             const destinationDir = path && path.length !== 0 ? path.pop() : null
@@ -124,10 +125,11 @@ export default class TreeContainer extends Component {
         </Dimmer>
 
         <Button
-          content="Save decision tree as PNG"
+          content="Save tree as PNG"
           icon="download"
           labelPosition="left"
           floated="right"
+          size="tiny"
           onClick={() => {
             const node = this.treeContainer.getElementsByTagName('svg')[0]
             saveSvgAsPng(node, 'decision-tree.png', { backgroundColor: '#ffffff' })

@@ -3,6 +3,7 @@ const defaultState = {
   thrGridOut: [],
   fields: [],
   yLim: 100,
+  tree: null,
 }
 
 const getFirstRow = fields =>
@@ -34,6 +35,10 @@ export default (state = defaultState, action) => {
 
     case 'POSTPROCESSING.SET_WT_MATRIX': {
       return { ...state, thrGridOut: action.grid }
+    }
+
+    case 'POSTPROCESSING.SET_TREE': {
+      return { ...state, tree: action.data }
     }
 
     case 'POSTPROCESSING.SET_FIELDS': {

@@ -18,4 +18,14 @@ export const setBreakpoints = (labels, matrix) => async dispatch => {
       }
     }
   )
+
+  await client.post(
+    {
+      url: '/postprocessing/create-decision-tree',
+      body: { labels, matrix },
+      json: true,
+    },
+    async (err, httpResponse, tree) =>
+      await dispatch({ type: 'POSTPROCESSING.SET_TREE', data: tree })
+  )
 }

@@ -425,7 +425,7 @@ class Split extends Component {
               }
               onClick={() => {
                 const [matrix, nSplits] = this.getMatrixAfterSplit()
-                this.props.setBreakpoints(matrix)
+                this.props.setBreakpoints(this.props.labels, matrix)
                 this.setState({
                   customSplitValue: '',
                   auto: false,

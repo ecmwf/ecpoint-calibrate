@@ -2,15 +2,19 @@ import { connect } from 'react-redux'
 
 import SparseBreakpoints from './component'
 
-import { setBreakpoints } from './actions'
+import { setBreakpoints as setSparseBreakpoints } from './actions'
+import { setBreakpoints } from '../breakpoints/actions'
 
 const mapStateToProps = state => ({
-  breakpoints: state.postprocessing.thrGridIn,
+  sparseBreakpoints: state.postprocessing.thrGridIn,
+  breakpoints: state.postprocessing.thrGridOut,
+  labels: state.postprocessing.thrGridIn[0].slice(1).map(cell => cell.value),
   fields: state.postprocessing.fields,
 })
 
 const mapDispatchToProps = dispatch => ({
-  setBreakpoints: grid => dispatch(setBreakpoints(grid)),
+  setSparseBreakpoints: grid => dispatch(setSparseBreakpoints(grid)),
+  setBreakpoints: (labels, matrix) => dispatch(setBreakpoints(labels, matrix)),
 })
 
 export default connect(
