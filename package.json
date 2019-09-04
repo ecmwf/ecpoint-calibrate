@@ -8,7 +8,7 @@
   "main": "./server.js",
   "scripts": {
     "preinstall": "rm -rvf node_modules/*/.git",
-    "start": "electron .",
+    "start": "electron . --disable-gpu",
     "build": "webpack --progress --colors",
     "lint": "prettier --config ./.prettierrc --write 'ui/**/*.js'"
   },
