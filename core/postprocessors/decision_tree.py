@@ -33,7 +33,7 @@ class DecisionTree(object):
         acc = 1
 
         for i in range(self.num_predictors):
-            temp = self.thrL_in.ix[:, i].dropna()
+            temp = self.thrL_in.iloc[:, i].dropna()
             temp = temp[temp != ""]
             thresholds_num[i] = len(temp)
             acc = acc * len(temp)
@@ -49,9 +49,9 @@ class DecisionTree(object):
         thrL_matrix = np.zeros(dim)
         thrH_matrix = np.zeros(dim)
 
-        tempL = self.thrL_in.ix[:, -1].dropna()
+        tempL = self.thrL_in.iloc[:, -1].dropna()
         tempL = tempL[tempL != ""]
-        tempH = self.thrH_in.ix[:, -1].dropna()
+        tempH = self.thrH_in.iloc[:, -1].dropna()
         tempH = tempH[tempH != ""]
 
         m = len(tempL)
@@ -65,9 +65,9 @@ class DecisionTree(object):
         # All left columns
         rep = 1
         for i in range(self.num_predictors - 2, -1, -1):
-            tempL1 = self.thrL_in.ix[:, i].dropna()
+            tempL1 = self.thrL_in.iloc[:, i].dropna()
             tempL1 = tempL1[tempL1 != ""]
-            tempH1 = self.thrH_in.ix[:, i].dropna()
+            tempH1 = self.thrH_in.iloc[:, i].dropna()
             tempH1 = tempH1[tempH1 != ""]
             m = len(tempL1)
 
@@ -114,8 +114,8 @@ class DecisionTree(object):
         ] + [Color("black").hex]
 
         for i in range(num_wt):
-            thrL = thrL_out.ix[i, :]
-            thrH = thrH_out.ix[i, :]
+            thrL = thrL_out.iloc[i, :]
+            thrH = thrH_out.iloc[i, :]
 
             predictors = [predictor.replace("_thrL", "") for predictor in thrL.keys()]
 
@@ -166,8 +166,8 @@ class DecisionTree(object):
 
         for i in range(num_wt):
             wt = WeatherType(
-                thrL=thrL_out.ix[i, :],
-                thrH=thrH_out.ix[i, :],
+                thrL=thrL_out.iloc[i, :],
+                thrH=thrH_out.iloc[i, :],
                 thrL_labels=thrL_out.columns.tolist(),
                 thrH_labels=thrH_out.columns.tolist(),
             )
@@ -206,9 +206,9 @@ class DecisionTree(object):
         wt_arr = []
         wt_temp = ""
         for j in range(num_pred):
-            if thrL_out.ix[0, j] == -inf and thrH_out.ix[0, j] == inf:
+            if thrL_out.iloc[0, j] == -inf and thrH_out.iloc[0, j] == inf:
                 wt[0][j] = 0
-            elif thrL_out.ix[0, j] == -inf and thrH_out.ix[0, j] != inf:
+            elif thrL_out.iloc[0, j] == -inf and thrH_out.iloc[0, j] != inf:
                 wt[0][j] = 1
 
             wt_temp += str(int(wt[0][j]))
@@ -218,14 +218,14 @@ class DecisionTree(object):
         for i in range(1, num_wt):
             wt_temp = ""
             for j in range(num_pred):
-                if thrL_out.ix[i, j] == -inf and thrH_out.ix[i, j] == inf:
+                if thrL_out.iloc[i, j] == -inf and thrH_out.iloc[i, j] == inf:
                     wt[i][j] = 0
-                elif thrL_out.ix[i, j] == -inf and thrH_out.ix[i, j] != inf:
+                elif thrL_out.iloc[i, j] == -inf and thrH_out.iloc[i, j] != inf:
                     wt[i][j] = 1
                 else:
                     if (
-                        thrL_out.ix[i][j] == thrL_out.ix[i - 1][j]
-                        and thrH_out.ix[i][j] == thrH_out.ix[i - 1][j]
+                        thrL_out.iloc[i, j] == thrL_out.iloc[i - 1, j]
+                        and thrH_out.iloc[i, j] == thrH_out.iloc[i - 1, j]
                     ):
                         wt[i][j] = wt[i - 1][j]
                     else:
