@@ -17,8 +17,6 @@ import Tree from '../tree'
 import Levels from '../levels'
 
 class PostProcessing extends Component {
-  state = { loading: false }
-
   isComplete = () => true
 
   yLimHasError = () =>
@@ -54,9 +52,7 @@ class PostProcessing extends Component {
     <Item>
       <Item.Content>
         <br />
-        {!this.yLimHasError() && this.props.tree !== null && !this.state.loading && (
-          <Tree />
-        )}
+        {!this.yLimHasError() && this.props.tree !== null && <Tree />}
       </Item.Content>
     </Item>
   )
@@ -78,16 +74,13 @@ class PostProcessing extends Component {
                   <Item.Group divided>
                     <Levels />
                     <SparseBreakPoints />
-                    {!this.state.loading && <BreakPoints />}
+                    <BreakPoints />
                     {this.getYLimitField()}
                     {this.getDecisionTree()}
                   </Item.Group>
                 </Card.Description>
               </Card.Content>
             </Card>
-            <Dimmer active={this.state.loading !== false} inverted>
-              <Loader indeterminate>{this.state.loading} Please wait.</Loader>
-            </Dimmer>
           </Grid.Column>
         </Grid>
       )
