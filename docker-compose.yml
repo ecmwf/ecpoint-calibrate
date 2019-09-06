@@ -18,6 +18,9 @@ services:
       # Mount home directory of host as /root
       - $HOME:/root
 
+      # Mount host tmp directory of host as /tmp
+      - /tmp:/tmp
+
     environment:
       - DISPLAY=$DISPLAY
 
@@ -44,6 +47,9 @@ services:
 
       # Mount home directory of host as /root
       - $HOME:/root
+
+      # Mount host tmp directory of host as /tmp
+      - /tmp:/tmp
 
     environment:
       - DISPLAY=$DISPLAY
