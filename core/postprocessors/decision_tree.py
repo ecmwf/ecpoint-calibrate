@@ -12,6 +12,7 @@ from numpy import inf
 
 from core.utils import int_or_float
 
+from .conditional_verification import plot_obs_freq
 from .generics import Node
 
 matplotlib.style.use("seaborn")
@@ -325,6 +326,9 @@ class WeatherType(object):
             fig.savefig(img, format="png")
             img.seek(0)
             return b64encode(img.read()).decode()
+
+    def plot_maps(self, data, code):
+        return plot_obs_freq(data, code)
 
 
 def autolabel(ax, patches, y_cum):

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 
 import { remote } from 'electron'
 import _ from 'lodash'
+
 import Tree from 'react-d3-tree'
 import { saveSvgAsPng } from 'save-svg-as-png'
 
@@ -9,6 +10,7 @@ import { Button, Dimmer, Loader, Radio } from 'semantic-ui-react'
 import download from '~/utils/download'
 import client from '~/utils/client'
 import MappingFunction from './mappingFunction'
+import Map from './map'
 import Split from './split'
 
 const mainProcess = remote.require('./server')
@@ -16,11 +18,13 @@ const mainProcess = remote.require('./server')
 export default class TreeContainer extends Component {
   state = {
     openMappingFunction: false,
+    openMaps: false,
     openSplit: false,
     histogram: null,
     nodeMeta: null,
     saveInProgress: false,
     treeEditMode: false,
+    conditionalVerificationMode: false,
   }
 
   componentDidMount() {
@@ -31,6 +35,52 @@ export default class TreeContainer extends Component {
         y: 14,
       },
     })
+  }
+
+  renderPDF = url => {
+    // Loaded via <script> tag, create shortcut to access PDF.js exports.
+    var pdfjsLib = window['pdfjs-dist/build/pdf']
+
+    // The workerSrc property shall be specified.
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://mozilla.github.io/pdf.js/build/pdf.worker.js'
+
+    // Asynchronous download of PDF
+    var loadingTask = pdfjsLib.getDocument(url)
+    loadingTask.promise.then(
+      function(pdf) {
+        console.log('PDF loaded')
+
+        // Fetch the first page
+        var pageNumber = 1
+        pdf.getPage(pageNumber).then(function(page) {
+          console.log('Page loaded')
+
+          var scale = 2
+          var viewport = page.getViewport({ scale: scale })
+
+          // Prepare canvas using PDF page dimensions
+          var canvas = document.getElementById('map-viewer')
+          var context = canvas.getContext('2d')
+          canvas.height = viewport.height
+          canvas.width = viewport.width
+
+          // Render PDF page into canvas context
+          var renderContext = {
+            canvasContext: context,
+            viewport: viewport,
+          }
+          var renderTask = page.render(renderContext)
+          renderTask.promise.then(function() {
+            console.log('Page rendered')
+          })
+        })
+      },
+      function(reason) {
+        // PDF loading error
+        console.error(reason)
+      }
+    )
   }
 
   onNodeClickExploreMode = node => {
@@ -53,6 +103,27 @@ export default class TreeContainer extends Component {
     )
   }
 
+  onNodeClickConditionalVerificationMode = node => {
+    !node._children && this.setState({ openMaps: true, nodeMeta: node.meta })
+    client.post(
+      {
+        url: '/postprocessing/plot-obs-freq',
+        body: {
+          labels: this.props.labels,
+          thrWT: this.props.breakpoints.map(row => _.flatMap(row.slice(1)))[
+            node.meta.idxWT
+          ],
+          path: this.props.path,
+          code: node.meta.code,
+        },
+        json: true,
+      },
+      (err, httpResponse, body) => {
+        this.renderPDF('file://' + body.path)
+      }
+    )
+  }
+
   onNodeClickEditMode = node => {
     !node._children && this.setState({ openSplit: true, nodeMeta: node.meta })
   }
@@ -60,6 +131,8 @@ export default class TreeContainer extends Component {
   onNodeClick = (node, event) => {
     this.state.treeEditMode
       ? this.onNodeClickEditMode(node)
+      : this.state.conditionalVerificationMode
+      ? this.onNodeClickConditionalVerificationMode(node)
       : this.onNodeClickExploreMode(node)
   }
 
@@ -143,6 +216,22 @@ export default class TreeContainer extends Component {
           onChange={() => this.setState({ treeEditMode: !this.state.treeEditMode })}
           checked={this.state.treeEditMode}
         />
+        <br />
+        <br />
+        <Radio
+          toggle
+          label="Conditional verification mode"
+          onChange={() =>
+            this.setState({
+              conditionalVerificationMode: !this.state.conditionalVerificationMode,
+              treeEditMode:
+                this.state.conditionalVerificationMode === false
+                  ? false
+                  : this.state.treeEditMode,
+            })
+          }
+          checked={this.state.conditionalVerificationMode}
+        />
 
         <Tree
           data={this.props.data}
@@ -164,6 +253,19 @@ export default class TreeContainer extends Component {
             })
           }
           open={this.state.openMappingFunction}
+          image={this.state.histogram}
+          nodeMeta={this.state.nodeMeta}
+        />
+
+        <Map
+          onClose={() =>
+            this.setState({
+              openMaps: false,
+              histogram: null,
+              nodeMeta: null,
+            })
+          }
+          open={this.state.openMaps}
           image={this.state.histogram}
           nodeMeta={this.state.nodeMeta}
         />

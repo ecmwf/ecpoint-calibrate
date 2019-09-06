@@ -289,6 +289,32 @@ def get_breakpoints_suggestions():
     )
 
 
+@app.route("/postprocessing/plot-obs-freq", methods=("POST",))
+def get_obs_frequency():
+    payload = request.get_json()
+    labels, thrWT, path, code = (
+        payload["labels"],
+        payload["thrWT"],
+        payload["path"],
+        payload["code"],
+    )
+
+    predictor_matrix = ASCIIDecoder(path=path).dataframe
+
+    thrWT = [float(cell) for cell in thrWT]
+    series = pandas.Series(dict(zip(labels, thrWT)))
+    thrL, thrH = series.iloc[::2], series.iloc[1::2]
+
+    wt = WeatherType(
+        thrL=thrL, thrH=thrH, thrL_labels=labels[::2], thrH_labels=labels[1::2]
+    )
+    error, predictor_matrix, _ = wt.evaluate(predictor_matrix)
+
+    pdf_path = wt.plot_maps(predictor_matrix, code)
+
+    return jsonify({"path": pdf_path})
+
+
 @lru_cache(maxsize=None)
 def get_units(path):
     base_predictor_path = Path(path)
