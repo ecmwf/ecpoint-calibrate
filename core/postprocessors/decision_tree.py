@@ -340,7 +340,7 @@ def autolabel(ax, patches, y_cum):
         if value == 0:
             continue
 
-        text = value
+        text = human_format(value)
         text_x = patch.get_x() + patch.get_width() / 2
         text_y = patch.get_height() + padding
 
@@ -349,10 +349,19 @@ def autolabel(ax, patches, y_cum):
         )
 
 
+def human_format(num):
+    magnitude = 0
+    while abs(num) >= 1000:
+        magnitude += 1
+        num /= 1000.0
+    # add more suffixes if you need them
+    return "%.1f%s" % (num, ["", "K", "M", "G", "T", "P"][magnitude])
+
+
 def colorize_patches(patches, bins, error_type):
     if error_type == "FER":
         green = [i for i in bins if i < 0][:-1]
-        yellow = [i for i in bins if i > 0][1:][:5]
+        yellow = [i for i in bins if (0 < i <= 2)][1:]
 
         green_patches, white_patches, yellow_patches, red_patches = (
             patches[: len(green)],
