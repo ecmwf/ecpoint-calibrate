@@ -6,7 +6,7 @@ import _ from 'lodash'
 import Tree from 'react-d3-tree'
 import { saveSvgAsPng } from 'save-svg-as-png'
 
-import { Button, Dimmer, Loader, Radio } from 'semantic-ui-react'
+import { Button, Dimmer, Loader, Radio, Form, Grid } from 'semantic-ui-react'
 import download from '~/utils/download'
 import client from '~/utils/client'
 import MappingFunction from './mappingFunction'
@@ -140,8 +140,32 @@ export default class TreeContainer extends Component {
     const code = e.keyCode ? e.keyCode : e.which
 
     if (code === 69) {
-      //'e' key
-      this.setState({ treeEditMode: !this.state.treeEditMode })
+      // 'e' key
+      this.setState({
+        treeEditMode: !this.state.treeEditMode,
+        conditionalVerificationMode: false,
+      })
+    }
+
+    if (code === 65) {
+      // 'a' key
+      this.state.conditionalVerificationMode !== 'a'
+        ? this.setState({ treeEditMode: false, conditionalVerificationMode: 'a' })
+        : this.setState({ conditionalVerificationMode: false })
+    }
+
+    if (code === 66) {
+      // 'b' key
+      this.state.conditionalVerificationMode !== 'b'
+        ? this.setState({ treeEditMode: false, conditionalVerificationMode: 'b' })
+        : this.setState({ conditionalVerificationMode: false })
+    }
+
+    if (code === 67) {
+      // 'c' key
+      this.state.conditionalVerificationMode !== 'c'
+        ? this.setState({ treeEditMode: false, conditionalVerificationMode: 'c' })
+        : this.setState({ conditionalVerificationMode: false })
     }
   }
 
@@ -158,80 +182,127 @@ export default class TreeContainer extends Component {
         }}
         ref={tc => (this.treeContainer = tc)}
       >
-        <Button
-          content="Save WTs as PNG"
-          icon="download"
-          labelPosition="left"
-          floated="right"
-          size="tiny"
-          onClick={() => {
-            const path = mainProcess.selectDirectory()
-            const destinationDir = path && path.length !== 0 ? path.pop() : null
+        <Grid>
+          <Grid.Column floated="left" width={5}>
+            <Form>
+              <p>General mode:</p>
+              <Form.Field>
+                <Radio
+                  toggle
+                  label="Edit mode"
+                  onChange={() =>
+                    this.setState({
+                      treeEditMode: !this.state.treeEditMode,
+                      conditionalVerificationMode: false,
+                    })
+                  }
+                  checked={this.state.treeEditMode}
+                />
+              </Form.Field>
 
-            if (destinationDir === null) {
-              return
-            }
+              <p>Conditional verification modes:</p>
+              <Form.Group>
+                <Form.Field>
+                  <Radio
+                    label="Observation frequency"
+                    name="radioGroup"
+                    value="a"
+                    checked={this.state.conditionalVerificationMode === 'a'}
+                    onChange={() =>
+                      this.state.conditionalVerificationMode !== 'a'
+                        ? this.setState({
+                            conditionalVerificationMode: 'a',
+                            treeEditMode: false,
+                          })
+                        : this.setState({ conditionalVerificationMode: false })
+                    }
+                    toggle
+                  />
+                </Form.Field>
+                <Form.Field>
+                  <Radio
+                    label="FER"
+                    name="radioGroup"
+                    value="b"
+                    checked={this.state.conditionalVerificationMode === 'b'}
+                    onChange={() =>
+                      this.state.conditionalVerificationMode !== 'b'
+                        ? this.setState({
+                            conditionalVerificationMode: 'b',
+                            treeEditMode: false,
+                          })
+                        : this.setState({ conditionalVerificationMode: false })
+                    }
+                    toggle
+                  />
+                </Form.Field>
+                <Form.Field>
+                  <Radio
+                    label="FE"
+                    name="radioGroup"
+                    value="c"
+                    checked={this.state.conditionalVerificationMode === 'c'}
+                    onChange={() =>
+                      this.state.conditionalVerificationMode !== 'c'
+                        ? this.setState({
+                            conditionalVerificationMode: 'c',
+                            treeEditMode: false,
+                          })
+                        : this.setState({ conditionalVerificationMode: false })
+                    }
+                    toggle
+                  />
+                </Form.Field>
+              </Form.Group>
+            </Form>
+          </Grid.Column>
+          <Grid.Column floated="right" width={5}>
+            <Button
+              content="Save WTs as PNG"
+              icon="download"
+              labelPosition="left"
+              floated="right"
+              size="tiny"
+              onClick={() => {
+                const path = mainProcess.selectDirectory()
+                const destinationDir = path && path.length !== 0 ? path.pop() : null
 
-            this.setState({ saveInProgress: true })
-            client.post(
-              {
-                url: '/postprocessing/save-wt-histograms',
-                body: {
-                  labels: this.props.labels,
-                  thrGridOut: this.props.breakpoints,
-                  path: this.props.path,
-                  yLim: this.props.yLim,
-                  destinationDir,
-                  bins: this.props.bins,
-                },
-                json: true,
-              },
-              (err, httpResponse, body) => this.setState({ saveInProgress: false })
-            )
-          }}
-        />
+                if (destinationDir === null) {
+                  return
+                }
 
-        <Dimmer active={this.state.saveInProgress === true}>
-          <Loader indeterminate>
-            Saving all Mapping Functions as PNGs. Please wait.
-          </Loader>
-        </Dimmer>
+                this.setState({ saveInProgress: true })
+                client.post(
+                  {
+                    url: '/postprocessing/save-wt-histograms',
+                    body: {
+                      labels: this.props.labels,
+                      thrGridOut: this.props.breakpoints,
+                      path: this.props.path,
+                      yLim: this.props.yLim,
+                      destinationDir,
+                      bins: this.props.bins,
+                    },
+                    json: true,
+                  },
+                  (err, httpResponse, body) => this.setState({ saveInProgress: false })
+                )
+              }}
+            />
 
-        <Button
-          content="Save tree as PNG"
-          icon="download"
-          labelPosition="left"
-          floated="right"
-          size="tiny"
-          onClick={() => {
-            const node = this.treeContainer.getElementsByTagName('svg')[0]
-            saveSvgAsPng(node, 'decision-tree.png', { backgroundColor: '#ffffff' })
-          }}
-        />
-
-        <p>Press 'e' or click to toggle:</p>
-        <Radio
-          toggle
-          label="Edit mode"
-          onChange={() => this.setState({ treeEditMode: !this.state.treeEditMode })}
-          checked={this.state.treeEditMode}
-        />
-        <br />
-        <br />
-        <Radio
-          toggle
-          label="Conditional verification mode"
-          onChange={() =>
-            this.setState({
-              conditionalVerificationMode: !this.state.conditionalVerificationMode,
-              treeEditMode:
-                this.state.conditionalVerificationMode === false
-                  ? false
-                  : this.state.treeEditMode,
-            })
-          }
-          checked={this.state.conditionalVerificationMode}
-        />
+            <Button
+              content="Save tree as PNG"
+              icon="download"
+              labelPosition="left"
+              floated="right"
+              size="tiny"
+              onClick={() => {
+                const node = this.treeContainer.getElementsByTagName('svg')[0]
+                saveSvgAsPng(node, 'decision-tree.png', { backgroundColor: '#ffffff' })
+              }}
+            />
+          </Grid.Column>
+        </Grid>
 
         <Tree
           data={this.props.data}
@@ -283,6 +354,11 @@ export default class TreeContainer extends Component {
           bins={this.props.bins}
           count={this.props.count}
         />
+        <Dimmer active={this.state.saveInProgress === true}>
+          <Loader indeterminate>
+            Saving all Mapping Functions as PNGs. Please wait.
+          </Loader>
+        </Dimmer>
       </div>
     )
   }
