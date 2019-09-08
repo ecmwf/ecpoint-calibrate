@@ -26,6 +26,10 @@ To configure a volume, simply add it to the two services (`core`, `electron`, an
 $ ./go.sh
 ```
 
+### Software Architecture
+
+![](/share/architecutre.png)
+
 
 ### Collaborators
 
