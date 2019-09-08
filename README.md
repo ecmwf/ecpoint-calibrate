@@ -28,7 +28,7 @@ $ ./go.sh
 
 ### Software Architecture
 
-![](/share/architecutre.png)
+![](/share/architecture.png)
 
 
 ### Collaborators
