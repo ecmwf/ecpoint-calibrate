@@ -51,7 +51,7 @@ def plot_obs_freq(predictor_matrix, code):
     )
 
     with NamedTemporaryFile(mode="w", suffix=".geo") as f, NamedTemporaryFile(
-        delete=False, suffix=".ps"
+        delete=False, suffix=".pdf"
     ) as pdf:
         data = df.to_string(index=False, header=False)
 
@@ -69,14 +69,12 @@ def plot_obs_freq(predictor_matrix, code):
 
         geo = mv.read(f.name)
 
-        ps = mv.ps_output(output_name=pdf.name.replace(".ps", ""))
-        mv.setoutput(ps)
+        pdf_obj = mv.pdf_output(output_name=pdf.name.replace(".pdf", ""))
+        mv.setoutput(pdf_obj)
 
         mv.plot(coastline, symbol, legend, title, geo)
 
-        subprocess.call(["ps2pdf", pdf.name], cwd=os.path.dirname(pdf.name))
-
-        return pdf.name.replace(".ps", ".pdf")
+        return pdf.name
 
 
 def plot_FER_avg(data):
