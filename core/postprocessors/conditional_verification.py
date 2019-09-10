@@ -7,7 +7,7 @@ import metview as mv
 
 
 def plot_obs_freq(predictor_matrix, code):
-    df = predictor_matrix[["LatOBS", "LonOBS", "OBS"]]
+    df = predictor_matrix[["LonOBS", "LatOBS", "OBS"]]
 
     coastline = mv.mcoast(
         map_coastline_thickness=2, map_boundaries="on", map_coastline_colour="chestnut"
