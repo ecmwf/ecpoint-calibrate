@@ -62,9 +62,7 @@ def plot_obs_freq(predictor_matrix, code):
         return pdf.name
 
 
-def plot_FER_avg(predictor_matrix, data):
-    df = predictor_matrix[["LonOBS", "LatOBS", "FER"]]
-
+def plot_avg(predictor_matrix, code):
     coastline = mv.mcoast(
         map_coastline_thickness=2, map_boundaries="on", map_coastline_colour="chestnut"
     )
@@ -94,21 +92,34 @@ def plot_FER_avg(predictor_matrix, data):
         legend_entry_text_width=50,
     )
 
+    error = "FER" if "FER" in predictor_matrix.columns else "FE"
+
     title = mv.mtext(
         text_line_count=4,
-        text_line_1="OBS Frequency",  # To sostitute with "FE" values when relevant.
-        text_line_2="WT Code = " + WTcode,
+        text_line_1=f"{error} Mean",
+        text_line_2=f"WT Code = {code}",
         text_line_4=" ",
         text_font="arial",
         text_font_size=0.4,
     )
 
-    ps = mv.ps_output(output_name="./FERav.ps")
-    mv.setoutput(ps)
-    mv.plot(coastline, symbol, legend, title, data)
+    df = predictor_matrix[["LonOBS", "LatOBS", error]]
+    grouped_df = df.groupby(["LatOBS", "LonOBS"])[error].mean().reset_index()
+
+    geo = mv.create_geo(len(grouped_df), "xyv")
+    geo = mv.set_latitudes(geo, grouped_df["LatOBS"].to_numpy(dtype=np.float))
+    geo = mv.set_longitudes(geo, grouped_df["LonOBS"].to_numpy(dtype=np.float))
+    geo = mv.set_values(geo, grouped_df[error].to_numpy(dtype=np.float))
+
+    with NamedTemporaryFile(delete=False, suffix=".pdf") as pdf:
+        pdf_obj = mv.pdf_output(output_name=pdf.name.replace(".pdf", ""))
+        mv.setoutput(pdf_obj)
+
+        mv.plot(coastline, symbol, legend, title, geo)
+        return pdf.name
 
 
-def plot_FER_std_dev(data):
+def plot_std(predictor_matrix, code):
     coastline = mv.mcoast(
         map_coastline_thickness=2, map_boundaries="on", map_coastline_colour="chestnut"
     )
@@ -140,16 +151,28 @@ def plot_FER_std_dev(data):
         legend_entry_text_width=50,
     )
 
+    error = "FER" if "FER" in predictor_matrix.columns else "FE"
+
     title = mv.mtext(
         text_line_count=4,
-        text_line_1="OBS Frequency",  # To sostitute with "FE" values when relevant.
-        text_line_2="WT Code = " + WTcode,
+        text_line_1=f"{error} Standard Deviation",
+        text_line_2=f"WT Code = {code}",
         text_line_4=" ",
         text_font="arial",
         text_font_size=0.4,
     )
 
-    # Saving map plot as a .ps file
-    ps = mv.ps_output(output_name="./FERstd.ps")
-    mv.setoutput(ps)
-    mv.plot(coastline, symbol, legend, title, data)
+    df = predictor_matrix[["LonOBS", "LatOBS", error]]
+    grouped_df = df.groupby(["LatOBS", "LonOBS"])[error].mean().reset_index()
+
+    geo = mv.create_geo(len(grouped_df), "xyv")
+    geo = mv.set_latitudes(geo, grouped_df["LatOBS"].to_numpy(dtype=np.float))
+    geo = mv.set_longitudes(geo, grouped_df["LonOBS"].to_numpy(dtype=np.float))
+    geo = mv.set_values(geo, grouped_df[error].to_numpy(dtype=np.float))
+
+    with NamedTemporaryFile(delete=False, suffix=".pdf") as pdf:
+        pdf_obj = mv.pdf_output(output_name=pdf.name.replace(".pdf", ""))
+        mv.setoutput(pdf_obj)
+
+        mv.plot(coastline, symbol, legend, title, geo)
+        return pdf.name

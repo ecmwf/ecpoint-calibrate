@@ -289,14 +289,15 @@ def get_breakpoints_suggestions():
     )
 
 
-@app.route("/postprocessing/plot-obs-freq", methods=("POST",))
+@app.route("/postprocessing/plot-cv-map", methods=("POST",))
 def get_obs_frequency():
     payload = request.get_json()
-    labels, thrWT, path, code = (
+    labels, thrWT, path, code, mode = (
         payload["labels"],
         payload["thrWT"],
         payload["path"],
         payload["code"],
+        payload["mode"],
     )
 
     predictor_matrix = ASCIIDecoder(path=path).dataframe
@@ -310,7 +311,7 @@ def get_obs_frequency():
     )
     error, predictor_matrix, _ = wt.evaluate(predictor_matrix)
 
-    pdf_path = wt.plot_maps(predictor_matrix, code)
+    pdf_path = wt.plot_maps(predictor_matrix, code, mode.lower())
 
     return jsonify({"path": pdf_path})
 

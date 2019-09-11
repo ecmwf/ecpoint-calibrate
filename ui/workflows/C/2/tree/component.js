@@ -107,7 +107,7 @@ export default class TreeContainer extends Component {
     !node._children && this.setState({ openMaps: true, nodeMeta: node.meta })
     client.post(
       {
-        url: '/postprocessing/plot-obs-freq',
+        url: '/postprocessing/plot-cv-map',
         body: {
           labels: this.props.labels,
           thrWT: this.props.breakpoints.map(row => _.flatMap(row.slice(1)))[
@@ -115,6 +115,7 @@ export default class TreeContainer extends Component {
           ],
           path: this.props.path,
           code: node.meta.code,
+          mode: this.state.conditionalVerificationMode,
         },
         json: true,
       },
