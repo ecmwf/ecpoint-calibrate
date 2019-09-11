@@ -1,14 +1,10 @@
-import os
-import subprocess
 from tempfile import NamedTemporaryFile
-from textwrap import dedent
 
 import metview as mv
+import numpy as np
 
 
 def plot_obs_freq(predictor_matrix, code):
-    df = predictor_matrix[["LonOBS", "LatOBS", "OBS"]]
-
     coastline = mv.mcoast(
         map_coastline_thickness=2, map_boundaries="on", map_coastline_colour="chestnut"
     )
@@ -50,34 +46,25 @@ def plot_obs_freq(predictor_matrix, code):
         text_font_size=0.4,
     )
 
-    with NamedTemporaryFile(mode="w", suffix=".geo") as f, NamedTemporaryFile(
-        delete=False, suffix=".pdf"
-    ) as pdf:
-        data = df.to_string(index=False, header=False)
+    df = predictor_matrix[["LonOBS", "LatOBS", "OBS"]]
+    grouped_df = df.groupby(["LatOBS", "LonOBS"], as_index=False).count()
 
-        f.write(
-            dedent(
-                """
-        #GEO
-        #FORMAT XYV
-        # lon-x	lat-y	value
-        #DATA
-        """
-            ).lstrip()
-        )
-        f.write(data)
+    geo = mv.create_geo(len(grouped_df), "xyv")
+    geo = mv.set_latitudes(geo, grouped_df["LatOBS"].to_numpy(dtype=np.float))
+    geo = mv.set_longitudes(geo, grouped_df["LonOBS"].to_numpy(dtype=np.float))
+    geo = mv.set_values(geo, grouped_df["OBS"].to_numpy(dtype=np.float))
 
-        geo = mv.read(f.name)
-
+    with NamedTemporaryFile(delete=False, suffix=".pdf") as pdf:
         pdf_obj = mv.pdf_output(output_name=pdf.name.replace(".pdf", ""))
         mv.setoutput(pdf_obj)
 
         mv.plot(coastline, symbol, legend, title, geo)
-
         return pdf.name
 
 
-def plot_FER_avg(data):
+def plot_FER_avg(predictor_matrix, data):
+    df = predictor_matrix[["LonOBS", "LatOBS", "FER"]]
+
     coastline = mv.mcoast(
         map_coastline_thickness=2, map_boundaries="on", map_coastline_colour="chestnut"
     )
