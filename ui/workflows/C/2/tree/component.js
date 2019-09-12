@@ -22,7 +22,7 @@ export default class TreeContainer extends Component {
     openSplit: false,
     histogram: null,
     nodeMeta: null,
-    saveInProgress: false,
+    loading: false,
     treeEditMode: false,
     conditionalVerificationMode: false,
   }
@@ -104,7 +104,10 @@ export default class TreeContainer extends Component {
   }
 
   onNodeClickConditionalVerificationMode = node => {
-    !node._children && this.setState({ openMaps: true, nodeMeta: node.meta })
+    !node._children &&
+      this.setState({
+        loading: 'Generating conditional verification map. Please wait.',
+      })
     client.post(
       {
         url: '/postprocessing/plot-cv-map',
@@ -121,6 +124,7 @@ export default class TreeContainer extends Component {
       },
       (err, httpResponse, body) => {
         this.renderPDF('file://' + body.path)
+        this.setState({ openMaps: true, nodeMeta: node.meta, loading: false })
       }
     )
   }
@@ -222,7 +226,7 @@ export default class TreeContainer extends Component {
                 </Form.Field>
                 <Form.Field>
                   <Radio
-                    label="FER"
+                    label="Mean"
                     name="radioGroup"
                     value="b"
                     checked={this.state.conditionalVerificationMode === 'b'}
@@ -239,7 +243,7 @@ export default class TreeContainer extends Component {
                 </Form.Field>
                 <Form.Field>
                   <Radio
-                    label="FE"
+                    label="Standard Deviation"
                     name="radioGroup"
                     value="c"
                     checked={this.state.conditionalVerificationMode === 'c'}
@@ -272,7 +276,9 @@ export default class TreeContainer extends Component {
                   return
                 }
 
-                this.setState({ saveInProgress: true })
+                this.setState({
+                  loading: 'Saving all Mapping Functions as PNGs. Please wait.',
+                })
                 client.post(
                   {
                     url: '/postprocessing/save-wt-histograms',
@@ -286,7 +292,7 @@ export default class TreeContainer extends Component {
                     },
                     json: true,
                   },
-                  (err, httpResponse, body) => this.setState({ saveInProgress: false })
+                  (err, httpResponse, body) => this.setState({ loading: false })
                 )
               }}
             />
@@ -355,10 +361,8 @@ export default class TreeContainer extends Component {
           bins={this.props.bins}
           count={this.props.count}
         />
-        <Dimmer active={this.state.saveInProgress === true}>
-          <Loader indeterminate>
-            Saving all Mapping Functions as PNGs. Please wait.
-          </Loader>
+        <Dimmer active={this.state.loading !== false} inverted>
+          <Loader indeterminate>{this.state.loading}</Loader>
         </Dimmer>
       </div>
     )
