@@ -20,7 +20,7 @@ export default class TreeContainer extends Component {
     openMappingFunction: false,
     openMaps: false,
     openSplit: false,
-    histogram: null,
+    graph: null,
     nodeMeta: null,
     loading: false,
     treeEditMode: false,
@@ -99,7 +99,7 @@ export default class TreeContainer extends Component {
         },
         json: true,
       },
-      (err, httpResponse, body) => this.setState({ histogram: body.histogram })
+      (err, httpResponse, body) => this.setState({ graph: body.histogram })
     )
   }
 
@@ -124,7 +124,12 @@ export default class TreeContainer extends Component {
       },
       (err, httpResponse, body) => {
         this.renderPDF('file://' + body.path)
-        this.setState({ openMaps: true, nodeMeta: node.meta, loading: false })
+        this.setState({
+          openMaps: true,
+          nodeMeta: node.meta,
+          loading: false,
+          graph: body.path,
+        })
       }
     )
   }
@@ -326,12 +331,12 @@ export default class TreeContainer extends Component {
           onClose={() =>
             this.setState({
               openMappingFunction: false,
-              histogram: null,
+              graph: null,
               nodeMeta: null,
             })
           }
           open={this.state.openMappingFunction}
-          image={this.state.histogram}
+          image={this.state.graph}
           nodeMeta={this.state.nodeMeta}
         />
 
@@ -339,12 +344,12 @@ export default class TreeContainer extends Component {
           onClose={() =>
             this.setState({
               openMaps: false,
-              histogram: null,
+              graph: null,
               nodeMeta: null,
             })
           }
           open={this.state.openMaps}
-          image={this.state.histogram}
+          graph={this.state.graph}
           nodeMeta={this.state.nodeMeta}
         />
 

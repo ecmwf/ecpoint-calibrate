@@ -18,7 +18,11 @@ class Output extends Component {
         </Item.Header>
 
         <Item.Description>
-          <Button onClick={() => this.props.onOutPathChange(mainProcess.saveFile())}>
+          <Button
+            onClick={() =>
+              this.props.onOutPathChange(mainProcess.saveFile('test.ascii'))
+            }
+          >
             Browse
           </Button>
         </Item.Description>

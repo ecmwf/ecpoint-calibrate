@@ -73,10 +73,10 @@ exports.selectDirectory = () =>
     properties: ['openDirectory'],
   })
 
-exports.saveFile = () =>
+exports.saveFile = defaultPath =>
   dialog.showSaveDialogSync(mainWindow, {
     title: 'Output file path',
-    defaultPath: 'test.ascii',
+    defaultPath,
   })
 
 exports.openFile = () =>
