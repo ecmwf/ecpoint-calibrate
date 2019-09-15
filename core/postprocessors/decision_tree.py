@@ -111,8 +111,29 @@ class DecisionTree(object):
         num_predictors = len(thrL_out.columns)
 
         leaf_color_codes = [
-            color.hex for color in Color("red").range_to(Color("blue"), num_predictors)
-        ] + [Color("black").hex]
+            color.hex
+            for color in (
+                Color("#f278f6"),
+                Color("#d10330"),
+                Color("#ea9826"),
+                Color("#d0c912"),
+                Color("#88c927"),
+                Color("#359761"),
+                Color("#2ad0ba"),
+                Color("#4b8bab"),
+                Color("#9797f4"),
+                Color("#4d4ffa"),
+            )
+        ]
+
+        if num_predictors > 10:
+            leaf_color_codes += [
+                color.hex
+                for color in Color("#af0fff").range_to(
+                    Color("#cb94ff"), num_predictors - 10
+                )
+            ]
+        leaf_color_codes += [Color("black").hex]
 
         for i in range(num_wt):
             thrL = thrL_out.iloc[i, :]
