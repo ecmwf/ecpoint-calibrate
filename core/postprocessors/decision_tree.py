@@ -362,11 +362,12 @@ def autolabel(ax, patches, y_cum):
     padding = max_y_value * 0.01
 
     for patch in patches:
-        value = int(patch.get_height() * y_cum)
+        value = patch.get_height() * y_cum / 100.0
         if value == 0:
             continue
 
         text = human_format(value)
+
         text_x = patch.get_x() + patch.get_width() / 2
         text_y = patch.get_height() + padding
 
@@ -381,7 +382,14 @@ def human_format(num):
         magnitude += 1
         num /= 1000.0
     # add more suffixes if you need them
-    return "%.1f%s" % (num, ["", "K", "M", "G", "T", "P"][magnitude])
+
+    format_value = "%.2f" % num
+    if float(format_value) - int(float(format_value)) == 0:
+        num = "%d" % num
+    else:
+        num = format_value
+
+    return f'{num}{["", "K", "M", "G", "T", "P"][magnitude]}'
 
 
 def colorize_patches(patches, bins, error_type):
