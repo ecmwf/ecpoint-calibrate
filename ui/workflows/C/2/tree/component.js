@@ -210,7 +210,7 @@ export default class TreeContainer extends Component {
                 />
               </Form.Field>
 
-              <p>Conditional verification modes:</p>
+              <p>Conditional verification plots:</p>
               <Form.Group>
                 <Form.Field>
                   <Radio
