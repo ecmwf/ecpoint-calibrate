@@ -54,11 +54,12 @@ services:
     environment:
       - DISPLAY=$DISPLAY
       - DOCKER=1
+      - NODE_OPTIONS="--max-old-space-size=8192"
 
     devices:
       - /dev/dri:/dev/dri
 
-    command: wait-for-it core:8888/healthcheck --timeout=5 -- npm start -- --no-sandbox --js-flags="--max_old_space_size=8192"
+    command: wait-for-it core:8888/healthcheck --timeout=5 -- npm start -- --no-sandbox
 
   logger:
     build:
