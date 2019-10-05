@@ -1,6 +1,9 @@
 # ecPoint-Calibrate
 
-Meteorological software for calibration of model outputs, and conditional verification of short and medium range weather forecasts.
+Interactive meteorological software for calibration of model outputs, statistical post-processing, and generation of conditional-verification maps, for short and medium range weather forecasts.
+
+Development of this project was sponsored by [ECMWF, UK](https://www.ecmwf.int).
+
 
 [![CircleCI](https://circleci.com/gh/esowc/ecPoint-Calibrate.svg?style=svg)](https://circleci.com/gh/esowc/ecPoint-Calibrate)
 [![codecov](https://codecov.io/gh/esowc/ecPoint-Calibrate/branch/master/graph/badge.svg)](https://codecov.io/gh/esowc/ecPoint-Calibrate)
