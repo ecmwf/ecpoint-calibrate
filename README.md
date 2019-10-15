@@ -1,8 +1,9 @@
 # ecPoint-Calibrate
 
-Interactive meteorological software for calibration of model outputs, statistical post-processing, and generation of conditional-verification maps, for short and medium range weather forecasts.
+ecPoint-Calibrate is a software that uses conditional verification tools to compare numerical weather prediction (NWP) model outputs against point observations and, in this way, anticipate sub-grid variability and identify variability and identify biases at grid scale. 
+It provides a dynamic and user-friendly environment to post-process NWP model parameters (such as precipitation, wind, temperature, etc.) and produce probabilistic products for geographical locations (everywhere in the world, and up to medium-range forecasts).
 
-Development of this project was sponsored by [ECMWF, UK](https://www.ecmwf.int).
+The development of this project was sponsored by the project "Summer of Weather Code (ESoWC)" at [ECMWF, UK](https://www.ecmwf.int).
 
 
 [![CircleCI](https://circleci.com/gh/esowc/ecPoint-Calibrate.svg?style=svg)](https://circleci.com/gh/esowc/ecPoint-Calibrate)
