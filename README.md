@@ -3,7 +3,7 @@
 ecPoint-Calibrate is a software that uses conditional verification tools to compare numerical weather prediction (NWP) model outputs against point observations and, in this way, anticipate sub-grid variability and identify variability and identify biases at grid scale. 
 It provides a dynamic and user-friendly environment to post-process NWP model parameters (such as precipitation, wind, temperature, etc.) and produce probabilistic products for geographical locations (everywhere in the world, and up to medium-range forecasts).
 
-The development of this project was sponsored by the project "ECMWF Summer of Weather Code (ESoWC)". [@esowc_ecmwf](https://twitter.com/esowc_ecmwf?lang=en), [ECMWF, UK](https://www.ecmwf.int).
+The development of this project was sponsored by the project "ECMWF Summer of Weather Code (ESoWC)". [@esowc_ecmwf](https://twitter.com/esowc_ecmwf?lang=en), [ECMWF](https://www.ecmwf.int).
 
 
 [![CircleCI](https://circleci.com/gh/esowc/ecPoint-Calibrate.svg?style=svg)](https://circleci.com/gh/esowc/ecPoint-Calibrate)
@@ -20,12 +20,12 @@ The development of this project was sponsored by the project "ECMWF Summer of We
 ### Setup
 
 ```sh
-$ git clone git@github.com:esowc/ecPoint-Calibrate.git
+$ git clone https://github.com/esowc/ecPoint-Calibrate.git
 $ cd ecPoint-Calibrate
 ```
 
-At this point, you must configure the source of your dataset on the filesystem, and make it available to the Docker services using [volumes](https://docs.docker.com/storage/volumes). Normally, if the data lives on a removable media, such as an external HDD, you shouldn't need to do anything.
-
+At this point, you must configure the source of your dataset on the filesystem, and make it available to the Docker services using [volumes](https://docs.docker.com/storage/volumes). 
+Normally, if the data lives on a removable media, such as an external HDD, you shouldn't need to do anything.
 To configure a volume, simply add it to the two services (`core`, `electron`, and `logger`) in the [`docker_compose.yml`](/docker-compose.yml) file.
 
 ```sh
@@ -39,8 +39,8 @@ $ ./go.sh
 
 ### Collaborators
 
-| Name           | Position            | Affiliation    |
-|----------------|---------------------|----------------|
-| Anirudha Bose  | Software Engineer   | Ledger, Paris  |
-| Fatima Pillosu | Scientist           | ECMWF, Reading |
-| Timothy Hewson | Principal Scientist | ECMWF, Reading |
+|      Name      |          Position         |               Affiliation               |
+|----------------|---------------------------|-----------------------------------------|
+| Anirudha Bose  |     Software Engineer     |          Ledger (Paris,France)          |
+| Fatima Pillosu | Scientist & PhD Candidate | ECMWF & Reading University (Reading,UK) |
+| Timothy Hewson |    Principal Scientist    |           ECMWF (Reading,UK)            |
