@@ -16,7 +16,7 @@ The development of this project was sponsored by the project "ECMWF Summer of We
 
 - [Docker](https://www.docker.com/products/docker-desktop)
 - [Docker Compose](https://docs.docker.com/compose/install)
-
+- NOTE: if a user uses python and pip in a conda environments, it is recommended that Docker and Docker-Compose are installed outsite such environment as this could cause problems during the installation of the software. It is better to install Docker and Docker-Compose using the default installation of Python and pip, for example in /usr/bin. 
 
 ### Setup
 
