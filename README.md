@@ -30,6 +30,13 @@ At this point, the dataset source must be configured on the filesystem, and make
 $ ./go.sh
 ```
 
+### Access files create with Docker
+```sh
+$ docker ps
+$ docker exec -it <container name> /bin/bash
+```
+
+
 ### Software Architecture
 
 ![](/share/architecture.png)
