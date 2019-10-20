@@ -46,6 +46,6 @@ $ docker exec -it <container name> /bin/bash
 
 |      Name      |          Position         |               Affiliation               |
 |----------------|---------------------------|-----------------------------------------|
-| Anirudha Bose  |     Software Engineer     |          Ledger (Paris,France)          |
-| Fatima Pillosu | Scientist & PhD Candidate | ECMWF & Reading University (Reading,UK) |
-| Timothy Hewson |    Principal Scientist    |           ECMWF (Reading,UK)            |
+| Anirudha Bose  |     Software Engineer     |          Ledger (Paris, France)         |
+| Fatima Pillosu | Scientist & PhD Candidate | ECMWF & Reading University (Reading, UK)|
+| Timothy Hewson |    Principal Scientist    |           ECMWF (Reading, UK)           |
