@@ -14,6 +14,7 @@ const createWindow = () => {
     webPreferences: {
       nodeIntegration: true,
       allowRunningInsecureContent: true,
+      devTools: process.env.ENV !== 'production',
     },
   })
 

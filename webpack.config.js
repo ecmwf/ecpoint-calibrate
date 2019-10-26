@@ -3,7 +3,7 @@ const { resolve, join } = require('path')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const config = {
-  mode: 'development',
+  mode: process.env.ENV || 'development',
 
   entry: ['@babel/polyfill', './main.js'],
 
