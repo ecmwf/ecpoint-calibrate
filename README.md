@@ -32,8 +32,7 @@ $ ./go.sh
 
 ### Access files create with Docker
 ```sh
-$ docker ps
-$ docker exec -it <container name> /bin/bash
+$ docker-compose exec core bash
 ```
 
 
