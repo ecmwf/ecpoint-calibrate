@@ -1,3 +1,4 @@
+import os
 from base64 import b64encode
 from tempfile import NamedTemporaryFile
 
@@ -175,6 +176,7 @@ def plot_geo(geo, coastline, symbol, legend, title):
         pdf_obj = mv.pdf_output(output_name=pdf.name.replace(".pdf", ""))
         mv.setoutput(pdf_obj)
         mv.plot(coastline, symbol, legend, title, geo)
+        os.chmod(pdf.name, 0o444)
 
         with open(png.name.replace(".png", ".1.png"), "rb") as img:
             return {"preview": b64encode(img.read()).decode(), "pdf": pdf.name}
