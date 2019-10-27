@@ -1,5 +1,7 @@
 FROM ubuntu:19.04
 
+ARG ENV=production
+
 RUN apt-get update && \
     apt-get install -yqq apt-transport-https wget gnupg2
 
