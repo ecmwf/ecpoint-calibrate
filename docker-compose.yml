@@ -8,6 +8,8 @@ services:
 
     image: onyb/ecpoint-calibrate-core
 
+    shm_size: "2gb"
+
     volumes:
       # Forward UNIX domain sockets
       - /tmp/.X11-unix:/tmp/.X11-unix
@@ -21,6 +23,9 @@ services:
       # Mount host tmp directory of host as /tmp
       - /tmp:/tmp
 
+      # Workaround for Electron's "Out of memory" issues
+      - /dev/shm:/dev/shm
+
     environment:
       - DISPLAY=$DISPLAY
 
@@ -31,10 +36,14 @@ services:
 
     ports:
       - 8888:8888
+
+
   electron:
     build:
       context: .
       dockerfile: Dockerfile.electron
+
+    shm_size: "2gb"
 
     image: onyb/ecpoint-calibrate-electron
 
@@ -50,6 +59,9 @@ services:
 
       # Mount host tmp directory of host as /tmp
       - /tmp:/tmp
+
+      # Workaround for Electron's "Out of memory" issues
+      - /dev/shm:/dev/shm
 
     environment:
       - DISPLAY=$DISPLAY
@@ -67,6 +79,8 @@ services:
       context: .
       dockerfile: Dockerfile.logger
 
+    shm_size: "2gb"
+
     image: onyb/ecpoint-calibrate-logger
 
     volumes:
@@ -75,6 +89,9 @@ services:
 
       # Mount home directory of host as /root
       - $HOME:/root
+
+      # Workaround for Electron's "Out of memory" issues
+      - /dev/shm:/dev/shm
 
     ports:
       - 9001:9001
