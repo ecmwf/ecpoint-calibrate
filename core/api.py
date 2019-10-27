@@ -311,9 +311,9 @@ def get_obs_frequency():
     )
     error, predictor_matrix, _ = wt.evaluate(predictor_matrix)
 
-    pdf_path = wt.plot_maps(predictor_matrix, code, mode.lower())
+    cv_map = wt.plot_maps(predictor_matrix, code, mode.lower())
 
-    return jsonify({"path": pdf_path})
+    return jsonify(cv_map)
 
 
 @lru_cache(maxsize=None)
