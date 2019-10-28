@@ -23,10 +23,6 @@ class Preloader extends Component {
   getField = () => (
     <Item>
       <Item.Content>
-        <Item.Header>
-          <h5>Select ascii table file containing the pre-computed fields:</h5>
-        </Item.Header>
-
         <Item.Description>
           <Button
             onClick={() => {
@@ -63,9 +59,7 @@ class Preloader extends Component {
         <Grid.Column>
           <Card fluid color="black">
             <Card.Header>
-              <Grid.Column floated="left">
-                Select ascii table file containing computed fields
-              </Grid.Column>
+              <Grid.Column floated="left">Select point data table</Grid.Column>
               <Grid.Column floated="right">
                 {this.isComplete() && <Icon name="check circle" />}
               </Grid.Column>
