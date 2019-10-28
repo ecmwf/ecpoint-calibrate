@@ -68,9 +68,6 @@ services:
       - DOCKER=1
       - NODE_OPTIONS="--max-old-space-size=8192"
       - ENV=production
-      - http_proxy="${http_proxy}"
-      - https_proxy="${https_proxy}"
-      - no_proxy="${no_proxy}"
 
     devices:
       - /dev/dri:/dev/dri
