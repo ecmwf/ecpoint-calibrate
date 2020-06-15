@@ -7,7 +7,7 @@ import numpy as np
 
 from core.loaders.ascii import ASCIIEncoder
 from core.loaders.fieldset import Fieldset
-from core.loaders.geopoints import read_geopoints
+from core.loaders.geopoints import get_geopoints_values, read_geopoints
 
 from ..computations.models import Computer
 from .log_factory import (
@@ -357,7 +357,7 @@ def run(config):
                 computations_result.append(
                     (
                         computation.shortname,
-                        np.around(ref_geopoints.values(), decimals=3),
+                        np.around(get_geopoints_values(ref_geopoints), decimals=3),
                     )
                 )
             else:
@@ -365,7 +365,7 @@ def run(config):
                     geopoints = geopoints.filter(mask)
 
                 computations_result.append(
-                    (computation.shortname, np.around(geopoints.values(), decimals=3))
+                    (computation.shortname, np.around(get_geopoints_values(geopoints), decimals=3))
                 )
 
             logging.info("")
@@ -390,14 +390,13 @@ def run(config):
                 dividend, divisor = steps
                 if config.predictand.is_accumulated:
                     computed_value = computer.run(
-                        dividend.nearest_gridpoint(obs).filter(mask).values(),
-                        divisor.nearest_gridpoint(obs).filter(mask).values(),
+                        get_geopoints_values(dividend.nearest_gridpoint(obs).filter(mask)),
+                        get_geopoints_values(divisor.nearest_gridpoint(obs).filter(mask)),
                     )
                 else:
-                    computed_value = (
+                    computed_value = get_geopoints_values(
                         computer.run(dividend.values, divisor.values)
                         .nearest_gridpoint(obs)
-                        .values()
                     )
                 computations_result.append(
                     (computation.shortname, np.around(computed_value, decimals=3))
@@ -408,9 +407,9 @@ def run(config):
                     (
                         computation.shortname,
                         np.around(
-                            computed_value.nearest_gridpoint(obs).filter(mask).values()
+                            get_geopoints_values(computed_value.nearest_gridpoint(obs).filter(mask))
                             if config.predictand.is_accumulated
-                            else computed_value.nearest_gridpoint(obs).values(),
+                            else get_geopoints_values(computed_value.nearest_gridpoint(obs)),
                             decimals=3,
                         ),
                     )
@@ -427,11 +426,11 @@ def run(config):
 
         logging.info(f"  Computing the {config.predictand.error}.")
         if config.predictand.error == "FER":
-            FER = ((obs - ref_geopoints) / ref_geopoints).values()
+            FER = get_geopoints_values((obs - ref_geopoints) / ref_geopoints)
             vals_errors.append(("FER", np.around(FER, decimals=3)))
 
         if config.predictand.error == "FE":
-            FE = (obs - ref_geopoints).values()
+            FE = get_geopoints_values(obs - ref_geopoints)
             vals_errors.append(("FE", np.around(FE, decimals=3)))
 
         LST_computation = next(
@@ -476,8 +475,8 @@ def run(config):
             + [
                 ("LatOBS", latObs),
                 ("LonOBS", lonObs),
-                ("OBS", obs.values()),
-                ("Predictand", np.around(ref_geopoints.values(), decimals=3)),
+                ("OBS", get_geopoints_values(obs)),
+                ("Predictand", np.around(get_geopoints_values(ref_geopoints), decimals=3)),
             ]
             + vals_errors
             + computations_result
