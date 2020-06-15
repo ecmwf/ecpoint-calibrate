@@ -32,7 +32,7 @@ services:
     devices:
       - /dev/dri:/dev/dri
 
-    command: wait-for-it logger:9001 --timeout=5 -- python -m core.api
+    command: wait-for-it logger:9001 --timeout=5 -- pipenv run server
 
     ports:
       - 8888:8888
