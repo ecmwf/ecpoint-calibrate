@@ -228,3 +228,6 @@ venv.bak/
 .idea
 .vscode
 *.idx
+
+# Custom
+.DS_Store
