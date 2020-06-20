@@ -8,12 +8,7 @@ services:
 
     image: onyb/ecpoint-calibrate-core
 
-    shm_size: "2gb"
-
     volumes:
-      # Forward UNIX domain sockets
-      - /tmp/.X11-unix:/tmp/.X11-unix
-
       # Mount externally plugged devices
       - /media:/media
 
@@ -22,15 +17,6 @@ services:
 
       # Mount host tmp directory of host as /tmp
       - /tmp:/tmp
-
-      # Workaround for Electron's "Out of memory" issues
-      - /dev/shm:/dev/shm
-
-    environment:
-      - DISPLAY=$DISPLAY
-
-    devices:
-      - /dev/dri:/dev/dri
 
     command: wait-for-it logger:9001 --timeout=5 -- pipenv run server
 

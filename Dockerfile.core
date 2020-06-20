@@ -8,6 +8,7 @@ COPY --from=build /opt/conda/ /opt/conda/
 
 ENV PATH /usr/local/bin:/opt/conda/bin:$PATH
 ENV PYTHONPATH /app:$PYTHONPATH
+ENV PIPENV_VENV_IN_PROJECT=1
 ENV ECCODES_DEFINITION_PATH /opt/conda/share/eccodes/definitions
 ENV PYTHONUNBUFFERED 1
 
