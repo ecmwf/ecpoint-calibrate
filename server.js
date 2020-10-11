@@ -47,23 +47,33 @@ const docker = new Docker({
 
 let containers = []
 
-const containerFactory = opts => image =>
-  docker
-    .run(image, [], process.stdout, opts, function(err, data, container) {
-      if (err) {
-        process.platform !== 'darwin' ? app.quit() : app.exit(1)
-        return console.error(err.json.message)
-      }
+const containerFactory = opts => image => {
+  docker.pull(image, (err, stream) => {
+    console.log(`Pulling image: ${image}`)
+    docker.modem.followProgress(stream, onFinished)
 
-      return container.remove({
-        force: true,
-      })
-    })
-    .on('container', function(container) {
-      const shortCID = container.id.substring(0, 12)
-      console.log(`Running Docker container: image=${image} containerID=${shortCID}`)
-      containers.push(shortCID)
-    })
+    function onFinished(err, output) {
+      docker
+        .run(image, [], process.stdout, opts, function(err, data, container) {
+          if (err) {
+            process.platform !== 'darwin' ? app.quit() : app.exit(1)
+            return console.error(err.json.message)
+          }
+
+          return container.remove({
+            force: true,
+          })
+        })
+        .on('container', function(container) {
+          const shortCID = container.id.substring(0, 12)
+          console.log(
+            `Running Docker container: image=${image} containerID=${shortCID}`
+          )
+          containers.push(shortCID)
+        })
+    }
+  })
+}
 
 const backendSvc = containerFactory({
   Volumes: {
@@ -86,7 +96,7 @@ const backendSvc = containerFactory({
   },
 })
 
-backendSvc('onyb/ecpoint-calibrate-core')
+backendSvc('onyb/ecpoint-calibrate-core:develop')
 
 const loggerSvc = containerFactory({
   ExposedPorts: {
