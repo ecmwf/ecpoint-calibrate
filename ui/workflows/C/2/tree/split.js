@@ -252,9 +252,8 @@ class Split extends Component {
                 content="Save suggested MFs"
                 onClick={() => {
                   const path = mainProcess.selectDirectory()
-                  const destinationDir = path && path.length !== 0 ? path.pop() : null
 
-                  if (destinationDir === null) {
+                  if (path === null) {
                     return
                   }
 
@@ -288,7 +287,7 @@ class Split extends Component {
                             path: this.props.path,
                             yLim: this.props.yLim,
                             bins: this.props.bins,
-                            destinationDir,
+                            path,
                           },
                           json: true,
                         },

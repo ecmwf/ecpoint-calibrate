@@ -228,9 +228,7 @@ export default class TreeContainer extends Component {
               size="tiny"
               onClick={() => {
                 const path = mainProcess.selectDirectory()
-                const destinationDir = path && path.length !== 0 ? path.pop() : null
-
-                if (destinationDir === null) {
+                if (path === null) {
                   return
                 }
 
@@ -245,7 +243,7 @@ export default class TreeContainer extends Component {
                       thrGridOut: this.props.breakpoints,
                       path: this.props.path,
                       yLim: this.props.yLim,
-                      destinationDir,
+                      path,
                       bins: this.props.bins,
                     },
                     json: true,

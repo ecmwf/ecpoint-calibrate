@@ -26,7 +26,7 @@ class Preloader extends Component {
         <Item.Description>
           <Button
             onClick={() => {
-              this.props.onPathChange(mainProcess.openFile() || null)
+              this.props.onPathChange(mainProcess.openFile())
             }}
           >
             Browse

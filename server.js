@@ -39,6 +39,8 @@ const createWindow = () => {
  * Docker management for launching Core backend.
  */
 const image = 'onyb/ecpoint-calibrate-core'
+const home = app.getPath('home')
+const media = process.platform === 'darwin' ? '/Volumes' : '/media'
 
 console.log('Run Docker image: ' + image)
 
@@ -55,15 +57,15 @@ docker
     process.stdout,
     {
       Volumes: {
-        '/root': {},
+        '/home': {},
         '/media': {},
-        '/tmp': {},
       },
       ExposedPorts: {
         '8888/tcp': {},
       },
+      Env: [`HOST_HOME=${home}`, `HOST_MEDIA=${media}`],
       Hostconfig: {
-        Binds: ['/tmp:/tmp'],
+        Binds: [`${home}:/home`, `${media}:/media`],
         PortBindings: {
           '8888/tcp': [
             {
@@ -103,15 +105,13 @@ app.on('activate', () => {
   }
 })
 
-exports.selectMultiDirectory = () =>
-  dialog.showOpenDialogSync(mainWindow, {
-    properties: ['openDirectory', 'multiSelections'],
-  }) || []
-
-exports.selectDirectory = () =>
-  dialog.showOpenDialogSync(mainWindow, {
+exports.selectDirectory = () => {
+  const path = dialog.showOpenDialogSync(mainWindow, {
     properties: ['openDirectory'],
   })
+
+  return path && path.length !== 0 ? path.pop() : null
+}
 
 exports.saveFile = defaultPath =>
   dialog.showSaveDialogSync(mainWindow, {
@@ -119,8 +119,11 @@ exports.saveFile = defaultPath =>
     defaultPath,
   })
 
-exports.openFile = () =>
-  dialog.showOpenDialogSync(mainWindow, {
+exports.openFile = () => {
+  const path = dialog.showOpenDialogSync(mainWindow, {
     title: 'Input file path',
     properties: ['openFile'],
   })
+
+  return path && path.length !== 0 ? path.pop() : null
+}

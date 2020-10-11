@@ -158,16 +158,17 @@ class Breakpoints extends Component {
               primary
               size="tiny"
               onClick={() => {
-                const path = mainProcess.openFile() || null
-
-                if (path !== null) {
-                  const csv = jetpack.read(path.pop())
-                  const data = csv.split('\n').map(row => row.split(','))
-                  const matrix = data.slice(1).map(row => row.slice(1))
-                  //this.setState({ loading: 'Generating and rendering decision tree.' })
-                  this.props.setBreakpoints(this.props.labels, matrix)
-                  //this.setState({ loading: false })
+                const path = mainProcess.openFile()
+                if (path === null) {
+                  return
                 }
+
+                const csv = jetpack.read(path)
+                const data = csv.split('\n').map(row => row.split(','))
+                const matrix = data.slice(1).map(row => row.slice(1))
+                //this.setState({ loading: 'Generating and rendering decision tree.' })
+                this.props.setBreakpoints(this.props.labels, matrix)
+                //this.setState({ loading: false })
               }}
             />
 
