@@ -41,42 +41,61 @@ const createWindow = () => {
 const home = app.getPath('home')
 const media = process.platform === 'darwin' ? '/Volumes' : '/media'
 
+// Initialize Docker to communicate with the Docker Engine.
 const docker = new Docker({
   socketPath: '/var/run/docker.sock',
 })
 
-let containers = []
+// containers is an array that tracks the IDs of the containers launched. This
+// is particularly useful for stopping the containers on shutdown.
+const containers = []
 
-const containerFactory = opts => image => {
-  docker.pull(image, (err, stream) => {
-    docker.modem.followProgress(stream, onFinished, onProgress)
+// dockerRuntimePromises is an array of Promise objects that tracks the status
+// of spawning various Docker containers required to run the software.
+// The Promise object is created before pulling and running the image, and
+// resolved only when the container has started running on the host.
+//
+// Electron app must wait for the promises in this array to be resolved
+// successfully before launching the GUI window.
+const dockerRuntimePromises = []
 
-    function onFinished(err, output) {
-      docker
-        .run(image, [], process.stdout, opts, function(err, data, container) {
-          if (err) {
-            process.platform !== 'darwin' ? app.quit() : app.exit(1)
-            return console.error(err.json.message)
-          }
+const containerFactory = opts => image =>
+  new Promise(function(resolve, reject) {
+    docker.pull(image, (err, stream) => {
+      docker.modem.followProgress(stream, onFinished, onProgress)
 
-          return container.remove({
-            force: true,
+      function onFinished(err, output) {
+        docker
+          .run(image, [], process.stdout, opts, function(err, data, container) {
+            if (err) {
+              console.error(err.json.message)
+              reject()
+              process.platform !== 'darwin' ? app.quit() : app.exit(1)
+              return
+            }
+
+            return container.remove({
+              force: true,
+            })
           })
-        })
-        .on('container', function(container) {
-          const shortCID = container.id.substring(0, 12)
-          console.log(
-            `Running Docker container: image=${image} containerID=${shortCID}`
-          )
-          containers.push(shortCID)
-        })
-    }
+          .on('container', function(container) {
+            const cid = container.id.substring(0, 12)
+            console.log(`Running Docker container: image=${image} containerID=${cid}`)
+            containers.push(cid)
 
-    function onProgress(event) {
-      console.log(event.status)
-    }
+            // Wait for 5 seconds before resolving the promise, to be sure that
+            // the container is ready to serve requests.
+            setTimeout(function() {
+              resolve()
+            }, 5000)
+          })
+      }
+
+      function onProgress(event) {
+        console.log(event.status)
+      }
+    })
   })
-}
 
 const backendSvc = containerFactory({
   Volumes: {
@@ -99,7 +118,7 @@ const backendSvc = containerFactory({
   },
 })
 
-backendSvc('onyb/ecpoint-calibrate-core:develop')
+dockerRuntimePromises.push(backendSvc('onyb/ecpoint-calibrate-core:develop'))
 
 const loggerSvc = containerFactory({
   ExposedPorts: {
@@ -116,9 +135,12 @@ const loggerSvc = containerFactory({
   },
 })
 
-loggerSvc('onyb/ecpoint-calibrate-logger')
+dockerRuntimePromises.push(loggerSvc('onyb/ecpoint-calibrate-logger'))
 
-app.on('ready', createWindow)
+app.on('ready', async () => {
+  await Promise.all(dockerRuntimePromises)
+  createWindow()
+})
 
 app.on('window-all-closed', async () => {
   await Promise.all(
