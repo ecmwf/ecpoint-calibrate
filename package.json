@@ -1,16 +1,26 @@
 {
-  "name": "ecPoint-Calibrate",
+  "name": "ecpoint-calibrate",
   "version": "0.9.0",
   "description": "GUI for ecPoint-Calibrate powered by Electron and React",
   "engines": {
     "node": "14.5.0"
   },
-  "main": "./server.js",
+  "main": "server.js",
   "scripts": {
     "preinstall": "rm -rvf node_modules/*/.git",
     "start": "electron .",
     "build": "webpack --progress --colors",
-    "lint": "prettier --config ./.prettierrc --write 'ui/**/*.js' server.js"
+    "lint": "prettier --config ./.prettierrc --write 'ui/**/*.js' server.js",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "build": {
+    "appId": "com.ecmwf.ecpoint",
+    "productName": "ecPoint-Calibrate",
+    "directories": {
+      "output": "pkg"
+    }
   },
   "author": "Anirudha Bose <anirudha.bose@alumni.cern>",
   "repository": "github:esowc/ecpoint-Calibrate",
@@ -46,6 +56,7 @@
     "copy-webpack-plugin": "4.5.1",
     "css-loader": "0.28.11",
     "electron": "7.0.0",
+    "electron-builder": "^22.8.1",
     "file-loader": "1.1.10",
     "frontail": "^4.6.0",
     "fs-jetpack": "^2.2.2",

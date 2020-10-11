@@ -231,3 +231,5 @@ venv.bak/
 
 # Custom
 .DS_Store
+pkg
+dist
