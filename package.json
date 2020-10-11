@@ -55,7 +55,7 @@
     "babel-loader": "^8.0.6",
     "copy-webpack-plugin": "4.5.1",
     "css-loader": "0.28.11",
-    "electron": "7.0.0",
+    "electron": "7.2.4",
     "electron-builder": "^22.8.1",
     "file-loader": "1.1.10",
     "frontail": "^4.6.0",
