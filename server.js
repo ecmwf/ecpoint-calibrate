@@ -49,8 +49,7 @@ let containers = []
 
 const containerFactory = opts => image => {
   docker.pull(image, (err, stream) => {
-    console.log(`Pulling image: ${image}`)
-    docker.modem.followProgress(stream, onFinished)
+    docker.modem.followProgress(stream, onFinished, onProgress)
 
     function onFinished(err, output) {
       docker
@@ -71,6 +70,10 @@ const containerFactory = opts => image => {
           )
           containers.push(shortCID)
         })
+    }
+
+    function onProgress(event) {
+      console.log(event.status)
     }
   })
 }
