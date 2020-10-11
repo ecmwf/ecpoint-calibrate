@@ -38,44 +38,18 @@ const createWindow = () => {
 /*
  * Docker management for launching Core backend.
  */
-const image = 'onyb/ecpoint-calibrate-core'
 const home = app.getPath('home')
 const media = process.platform === 'darwin' ? '/Volumes' : '/media'
-
-console.log('Run Docker image: ' + image)
 
 const docker = new Docker({
   socketPath: '/var/run/docker.sock',
 })
 
-let cid
+let containers = []
 
-docker
-  .run(
-    image,
-    [],
-    process.stdout,
-    {
-      Volumes: {
-        '/home': {},
-        '/media': {},
-      },
-      ExposedPorts: {
-        '8888/tcp': {},
-      },
-      Env: [`HOST_HOME=${home}`, `HOST_MEDIA=${media}`],
-      Hostconfig: {
-        Binds: [`${home}:/home`, `${media}:/media`],
-        PortBindings: {
-          '8888/tcp': [
-            {
-              HostPort: '8888',
-            },
-          ],
-        },
-      },
-    },
-    function(err, data, container) {
+const containerFactory = opts => image =>
+  docker
+    .run(image, [], process.stdout, opts, function(err, data, container) {
       if (err) {
         process.platform !== 'darwin' ? app.quit() : app.exit(1)
         return console.error(err.json.message)
@@ -84,19 +58,65 @@ docker
       return container.remove({
         force: true,
       })
-    }
-  )
-  .on('container', function(container) {
-    cid = container.id
-    console.log('Container: ' + cid)
-  })
+    })
+    .on('container', function(container) {
+      const shortCID = container.id.substring(0, 12)
+      console.log(`Running Docker container: image=${image} containerID=${shortCID}`)
+      containers.push(shortCID)
+    })
+
+const backendSvc = containerFactory({
+  Volumes: {
+    '/home': {},
+    '/media': {},
+  },
+  ExposedPorts: {
+    '8888/tcp': {},
+  },
+  Env: [`HOST_HOME=${home}`, `HOST_MEDIA=${media}`],
+  Hostconfig: {
+    Binds: [`${home}:/home`, `${media}:/media`],
+    PortBindings: {
+      '8888/tcp': [
+        {
+          HostPort: '8888',
+        },
+      ],
+    },
+  },
+})
+
+backendSvc('onyb/ecpoint-calibrate-core')
+
+const loggerSvc = containerFactory({
+  ExposedPorts: {
+    '9001/tcp': {},
+  },
+  Hostconfig: {
+    PortBindings: {
+      '9001/tcp': [
+        {
+          HostPort: '9001',
+        },
+      ],
+    },
+  },
+})
+
+loggerSvc('onyb/ecpoint-calibrate-logger')
 
 app.on('ready', createWindow)
 
-app.on('window-all-closed', () => {
-  console.log('Stopping container: ' + cid)
-  const container = docker.getContainer(cid)
-  container.stop({}, () => (process.platform !== 'darwin' ? app.quit() : app.exit(0)))
+app.on('window-all-closed', async () => {
+  await Promise.all(
+    containers.map(container => {
+      console.log('Stopping container: ' + container)
+      return docker.getContainer(container).stop({})
+    })
+  )
+
+  console.log('Exiting...')
+  process.platform !== 'darwin' ? app.quit() : app.exit(0)
 })
 
 app.on('activate', () => {
