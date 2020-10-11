@@ -20,7 +20,13 @@
     "productName": "ecPoint-Calibrate",
     "directories": {
       "output": "pkg"
-    }
+    },
+    "files": [
+      "dist",
+      "server.js",
+      "package.json",
+      "index.html"
+    ]
   },
   "author": "Anirudha Bose <anirudha.bose@alumni.cern>",
   "repository": "github:esowc/ecpoint-Calibrate",
