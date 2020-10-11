@@ -9,6 +9,7 @@ import pandas
 from flask import Flask, Response, jsonify, request
 from healthcheck import EnvironmentDump, HealthCheck
 
+from core.utils import sanitize_path
 from core.loaders.ascii import ASCIIDecoder
 from core.loaders.fieldset import Fieldset
 from core.models import Config
@@ -34,7 +35,7 @@ def stream_computation_logs():
 @app.route("/predictors", methods=("POST",))
 def get_predictors():
     payload = request.get_json()
-    path = payload["path"]
+    path = sanitize_path(payload["path"])
 
     codes = [
         name
@@ -52,7 +53,7 @@ def get_predictors():
 @app.route("/get-fields-from-ascii-table", methods=("POST",))
 def get_fields_from_ascii_table():
     payload = request.get_json()
-    path = payload["path"]
+    path = sanitize_path(payload["path"])
 
     df = ASCIIDecoder(path=path).dataframe
     fields = set(df.columns) - {
@@ -144,7 +145,7 @@ def get_wt_histogram():
     labels, thrWT, path, y_lim, bins = (
         payload["labels"],
         payload["thrWT"],
-        payload["path"],
+        sanitize_path(payload["path"]),
         payload["yLim"],
         payload["bins"],
     )
@@ -172,7 +173,7 @@ def save_wt_histograms():
     labels, thrGridOut, path, y_lim, destination, bins = (
         payload["labels"],
         payload["thrGridOut"],
-        payload["path"],
+        sanitize_path(payload["path"]),
         payload["yLim"],
         payload["destinationDir"],
         payload["bins"],
@@ -214,7 +215,7 @@ def get_error_rep():
     labels, matrix, path, numCols = (
         payload["labels"],
         payload["matrix"],
-        payload["path"],
+        sanitize_path(payload["path"]),
         payload["numCols"],
     )
 
@@ -238,7 +239,7 @@ def get_error_rep():
 @app.route("/get-predictor-units", methods=("POST",))
 def get_predictor_units():
     payload = request.get_json()
-    path = payload["path"]
+    path = sanitize_path(payload["path"])
 
     units = get_units(path)
 
@@ -252,7 +253,7 @@ def get_breakpoints_suggestions():
     labels, thrWT, path, predictor, minNumCases, numSubSamples = (
         payload["labels"],
         payload["thrWT"],
-        payload["path"],
+        sanitize_path(payload["path"]),
         payload["predictor"],
         int(payload["minNumCases"]),
         int(payload["numSubSamples"]),
@@ -295,7 +296,7 @@ def get_obs_frequency():
     labels, thrWT, path, code, mode = (
         payload["labels"],
         payload["thrWT"],
-        payload["path"],
+        sanitize_path(payload["path"]),
         payload["code"],
         payload["mode"],
     )
