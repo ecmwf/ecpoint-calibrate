@@ -1,5 +1,8 @@
 const electron = require('electron')
 const path = require('path')
+const { exec } = require('child_process')
+const fs = require('fs')
+const Docker = require('dockerode')
 
 const { app, BrowserWindow, dialog } = electron
 
@@ -32,36 +35,72 @@ const createWindow = () => {
   })
 }
 
+/*
+ * Docker management for launching Core backend.
+ */
+const image = 'onyb/ecpoint-calibrate-core'
+
+console.log('Run Docker image: ' + image)
+
+const docker = new Docker({
+  socketPath: '/var/run/docker.sock',
+})
+
+let cid
+
+docker
+  .run(
+    image,
+    [],
+    process.stdout,
+    {
+      Volumes: {
+        '/root': {},
+        '/media': {},
+        '/tmp': {},
+      },
+      ExposedPorts: {
+        '8888/tcp': {},
+      },
+      Hostconfig: {
+        Binds: ['/tmp:/tmp'],
+        PortBindings: {
+          '8888/tcp': [
+            {
+              HostPort: '8888',
+            },
+          ],
+        },
+      },
+    },
+    function(err, data, container) {
+      if (err) {
+        process.platform !== 'darwin' ? app.quit() : app.exit(1)
+        return console.error(err.json.message)
+      }
+
+      return container.remove({
+        force: true,
+      })
+    }
+  )
+  .on('container', function(container) {
+    cid = container.id
+    console.log('Container: ' + cid)
+  })
+
 app.on('ready', createWindow)
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+  console.log('Stopping container: ' + cid)
+  const container = docker.getContainer(cid)
+  container.stop({}, () => (process.platform !== 'darwin' ? app.quit() : app.exit(0)))
 })
 
 app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
   }
-})
-
-/* handle crashes and kill events */
-process.on('uncaughtException', function(err) {
-  // log the message and stack trace
-  fs.writeFileSync('crash.log', err + '\n' + err.stack)
-
-  // relaunch the app
-  app.relaunch({ args: [] })
-  app.exit(0)
-})
-
-process.on('SIGTERM', function() {
-  fs.writeFileSync('shutdown.log', 'Received SIGTERM signal')
-
-  // relaunch the app
-  app.relaunch({ args: [] })
-  app.exit(0)
 })
 
 exports.selectMultiDirectory = () =>

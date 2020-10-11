@@ -1,9 +1,9 @@
 {
   "name": "ecPoint-Calibrate",
-  "version": "0.8.4",
+  "version": "0.9.0",
   "description": "GUI for ecPoint-Calibrate powered by Electron and React",
   "engines": {
-    "node": "==12.4.0"
+    "node": "14.5.0"
   },
   "main": "./server.js",
   "scripts": {
@@ -15,7 +15,9 @@
   "author": "Anirudha Bose <anirudha.bose@alumni.cern>",
   "repository": "github:esowc/ecpoint-Calibrate",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "dockerode": "^3.2.1"
+  },
   "devDependencies": {
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",

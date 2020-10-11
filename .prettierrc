@@ -3,3 +3,4 @@ printWidth: 88
 semi: false
 singleQuote: true
 trailingComma: "es5"
+arrowParens: "avoid"
