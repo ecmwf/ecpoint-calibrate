@@ -1,11 +1,11 @@
-export const setDateStartField = moment => ({
+export const setDateStartField = date => ({
   type: 'PARAMETERS.SET_DATE_START_FIELD',
-  value: moment.format('YYYYMMDD'),
+  value: date.toISOString(),
 })
 
-export const setDateEndField = moment => ({
+export const setDateEndField = date => ({
   type: 'PARAMETERS.SET_DATE_END_FIELD',
-  value: moment.format('YYYYMMDD'),
+  value: date.toISOString(),
 })
 
 export const setLimSUField = value => ({

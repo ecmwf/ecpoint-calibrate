@@ -3,7 +3,6 @@ import React, { Component } from 'react'
 import { Grid, Card, Button, Input, Item, Icon, Radio, Popup } from 'semantic-ui-react'
 
 import DatePicker from 'react-datepicker'
-import moment from 'moment'
 
 import 'react-datepicker/dist/react-datepicker.css'
 
@@ -61,11 +60,10 @@ class Parameters extends Component {
 
   getDateStartField = () => {
     const dateStart =
-      this.props.parameters.date_start &&
-      moment(this.props.parameters.date_start, 'YYYYMMDD')
+      this.props.parameters.date_start && new Date(this.props.parameters.date_start)
     const dateEnd =
-      this.props.parameters.date_end &&
-      moment(this.props.parameters.date_end, 'YYYYMMDD')
+      this.props.parameters.date_end && new Date(this.props.parameters.date_end)
+
     return (
       <Item>
         <Item.Content>
