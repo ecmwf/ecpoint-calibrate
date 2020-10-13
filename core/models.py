@@ -1,15 +1,19 @@
 from pathlib import Path
 
 import attr
+import dateutil.parser
+
+def format_date(value: str) -> str:
+    return dateutil.parser.isoparse(value).strftime('%Y%m%d')
 
 
 @attr.s
 class Parameters(object):
     # start base date of the forecast (in YYYYMMDD format)
-    date_start = attr.ib(converter=str)
+    date_start = attr.ib(converter=format_date)
 
     # final base date of the forecast (in YYYYMMDD format)
-    date_end = attr.ib(converter=str)
+    date_end = attr.ib(converter=format_date)
 
     # upper limit (in hours) of the window in forecast with spin-up problems
     spinup_limit = attr.ib(converter=int)
