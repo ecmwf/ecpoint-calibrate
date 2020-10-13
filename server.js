@@ -17,6 +17,7 @@ const createWindow = () => {
     webPreferences: {
       nodeIntegration: true,
       allowRunningInsecureContent: true,
+      enableRemoteModule: true,
       devTools: true,
     },
   })
