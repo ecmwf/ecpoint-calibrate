@@ -15,28 +15,15 @@ The development of this project was sponsored by the project "ECMWF Summer of We
 ### Requirements
 
 - [Docker](https://docs.docker.com/install/)
-- [Docker Compose](https://docs.docker.com/compose/install)
-- NOTE: if a user uses python and pip in a conda environment, it is recommended that Docker and Docker-Compose are installed outsite such environment as this could cause problems running ecPoint-Calibrate. It is better to install Docker and Docker-Compose using the default installation of Python and pip, for example in /usr/bin. 
 
-### Setup
+### Usage
 
-```sh
-$ git clone https://github.com/esowc/ecPoint-Calibrate.git
-$ cd ecPoint-Calibrate
-```
-At this point, the dataset source must be configured on the filesystem, and make it available to the Docker services using [volumes](https://docs.docker.com/storage/volumes). Normally, if the data lives on a removable media, such as an external HDD, you shouldn't need to do anything. To configure a volume, simply add the dataset source to the services `core`, `electron`, and `logger` in the [`docker_compose.yml`](/docker-compose.yml) file.
+1. Download the latest release (AppImage file) from the [Releases](https://github.com/esowc/ecPoint-Calibrate/releases) page. Currently, only Linux is supported.
+2. Navigate to the folder where the package was downloaded.
+3. Run it like: `./ecPoint-Calibrate-0.9.0.AppImage`
+4. Wait for the GUI window to launch.
 
-```sh
-$ ./go.sh
-```
-
-### Access files create with Docker
-```sh
-$ docker-compose exec core bash
-```
-
-
-### Software Architecture
+### Software Architecture  (OUTDATED!)
 
 ![](/share/architecture.png)
 
