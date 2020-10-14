@@ -1,0 +1,29 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: '14.5.0'
+
+      - name: Install dependencies and build bundle
+        run: |
+          yarn
+          yarn build
+
+      - name: Build/release Electron app
+        uses: samuelmeuli/action-electron-builder@v1
+        with:
+          github_token: ${{ secrets.github_token }}
+          release: true
