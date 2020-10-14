@@ -2,11 +2,7 @@ version: '3.7'
 
 services:
   core:
-    build:
-      context: .
-      dockerfile: Dockerfile.core
-
-    image: onyb/ecpoint-calibrate-core
+    image: onyb/ecpoint-calibrate-core:legacy
 
     volumes:
       # Mount externally plugged devices
@@ -25,13 +21,9 @@ services:
 
 
   electron:
-    build:
-      context: .
-      dockerfile: Dockerfile.electron
-
     shm_size: "2gb"
 
-    image: onyb/ecpoint-calibrate-electron
+    image: onyb/ecpoint-calibrate-electron:legacy
 
     volumes:
       # Forward UNIX domain sockets
@@ -61,13 +53,9 @@ services:
     command: wait-for-it core:8888/healthcheck --timeout=5 -- npm start -- --no-sandbox
 
   logger:
-    build:
-      context: .
-      dockerfile: Dockerfile.logger
-
     shm_size: "2gb"
 
-    image: onyb/ecpoint-calibrate-logger
+    image: onyb/ecpoint-calibrate-logger:legacy
 
     volumes:
       # Mount externally plugged devices
