@@ -26,7 +26,12 @@
       "server.js",
       "package.json",
       "index.html"
-    ]
+    ],
+    "linux": {
+      "target": "AppImage",
+      "vendor": "ECMWF",
+      "category": "Science"
+    }
   },
   "author": "Anirudha Bose <anirudha.bose@alumni.cern>",
   "repository": "github:esowc/ecpoint-Calibrate",
