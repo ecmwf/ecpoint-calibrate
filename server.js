@@ -64,8 +64,8 @@ const bindings = [
 ].filter(e => e !== null)
 
 // Docker image names
-const backendImage = 'onyb/ecpoint-calibrate-core:develop'
-const loggerImage = 'onyb/ecpoint-calibrate-logger'
+const backendImage = `onyb/ecpoint-calibrate-core:${app.getVersion()}`
+const loggerImage = `onyb/ecpoint-calibrate-logger:${app.getVersion()}`
 
 // Initialize Docker to communicate with the Docker Engine.
 const docker = new Docker({
