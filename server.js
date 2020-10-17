@@ -1,13 +1,10 @@
-const electron = require('electron')
 const path = require('path')
-const { exec } = require('child_process')
-const fs = require('fs')
 const Docker = require('dockerode')
 
-const { app, BrowserWindow, dialog } = electron
+const { app, BrowserWindow, dialog } = require('electron')
 
 /*
- * Electron Window Management
+ * Electron Window Management.
  */
 
 let mainWindow = null
@@ -36,11 +33,18 @@ const createWindow = () => {
   })
 }
 
+const exit = () => {
+  console.log('Exiting...')
+  process.platform !== 'darwin' ? app.quit() : app.exit(0)
+}
+
 /*
  * Docker management for launching Core backend.
  */
 const home = app.getPath('home')
 const media = process.platform === 'darwin' ? '/Volumes' : '/media'
+const backendImage = 'onyb/ecpoint-calibrate-core:develop'
+const loggerImage = 'onyb/ecpoint-calibrate-logger'
 
 // Initialize Docker to communicate with the Docker Engine.
 const docker = new Docker({
@@ -60,6 +64,36 @@ const containers = []
 // successfully before launching the GUI window.
 const dockerRuntimePromises = []
 
+const stopContainers = async containers =>
+  await Promise.all(
+    containers.map(container => {
+      console.log('Stopping container: ' + container)
+      return docker.getContainer(container).stop({})
+    })
+  )
+
+const findAndStopStaleContainers = async () =>
+  new Promise(
+    async (resolve, reject) =>
+      await docker.listContainers(
+        {
+          filters: {
+            ancestor: [backendImage, loggerImage],
+          },
+        },
+        async (err, data) => {
+          if (err) {
+            console.error(err.json.message)
+            reject()
+            exit()
+          }
+
+          await stopContainers(data.map(c => c.Id.substring(0, 12)))
+          resolve()
+        }
+      )
+  )
+
 const containerFactory = opts => image =>
   new Promise(function(resolve, reject) {
     docker.pull(image, (err, stream) => {
@@ -71,7 +105,7 @@ const containerFactory = opts => image =>
             if (err) {
               console.error(err.json.message)
               reject()
-              process.platform !== 'darwin' ? app.quit() : app.exit(1)
+              exit()
               return
             }
 
@@ -119,8 +153,6 @@ const backendSvc = containerFactory({
   },
 })
 
-dockerRuntimePromises.push(backendSvc('onyb/ecpoint-calibrate-core:develop'))
-
 const loggerSvc = containerFactory({
   ExposedPorts: {
     '9001/tcp': {},
@@ -136,23 +168,24 @@ const loggerSvc = containerFactory({
   },
 })
 
-dockerRuntimePromises.push(loggerSvc('onyb/ecpoint-calibrate-logger'))
-
 app.on('ready', async () => {
+  // Stop all stale containers left running from a previous ungraceful shutdown.
+  await findAndStopStaleContainers()
+
+  // Start background Docker services.
+  dockerRuntimePromises.push(backendSvc(backendImage))
+  dockerRuntimePromises.push(loggerSvc(loggerImage))
+
+  // Wait for the background Docker services to be ready.
   await Promise.all(dockerRuntimePromises)
+
+  // Launch the GUI window.
   createWindow()
 })
 
 app.on('window-all-closed', async () => {
-  await Promise.all(
-    containers.map(container => {
-      console.log('Stopping container: ' + container)
-      return docker.getContainer(container).stop({})
-    })
-  )
-
-  console.log('Exiting...')
-  process.platform !== 'darwin' ? app.quit() : app.exit(0)
+  await stopContainers(containers)
+  exit()
 })
 
 app.on('activate', () => {
