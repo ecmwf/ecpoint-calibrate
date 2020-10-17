@@ -1,3 +1,4 @@
+const fs = require('fs')
 const path = require('path')
 const Docker = require('dockerode')
 
@@ -41,8 +42,28 @@ const exit = () => {
 /*
  * Docker management for launching Core backend.
  */
+
+// Volumes management
+const pathExists = path => {
+  try {
+    if (fs.existsSync(path)) {
+      return true
+    }
+  } catch (err) {
+    console.error(err)
+    return false
+  }
+}
+
 const home = app.getPath('home')
 const media = process.platform === 'darwin' ? '/Volumes' : '/media'
+const bindings = [
+  pathExists(home) ? `${home}:/home` : null,
+  pathExists(media) ? `${media}:/media` : null,
+  pathExists('/vol') ? '/vol:/vol' : null,
+].filter(e => e !== null)
+
+// Docker image names
 const backendImage = 'onyb/ecpoint-calibrate-core:develop'
 const loggerImage = 'onyb/ecpoint-calibrate-logger'
 
@@ -140,9 +161,9 @@ const backendSvc = containerFactory({
   ExposedPorts: {
     '8888/tcp': {},
   },
-  Env: [`HOST_HOME=${home}`, `HOST_MEDIA=${media}`],
+  Env: [`HOST_BINDINGS=${bindings.join(',')}`],
   Hostconfig: {
-    Binds: [`${home}:/home`, `${media}:/media`],
+    Binds: bindings,
     PortBindings: {
       '8888/tcp': [
         {

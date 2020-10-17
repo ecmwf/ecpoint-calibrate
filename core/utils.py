@@ -20,6 +20,13 @@ def int_or_float(value: float) -> Union[int, float]:
 
 
 def sanitize_path(path: str) -> str:
+    bindings = os.environ.get("HOST_BINDINGS", "").split(",")
+
+    for binding in bindings:
+        host, local = binding.split(":")
+        path = path.replace(host, local)
+
+    # Kept for backwards compatibility.
     return path.replace(
         os.environ["HOST_HOME"], "/home"
     ).replace(os.environ["HOST_MEDIA"], "/media")
