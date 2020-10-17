@@ -190,22 +190,26 @@ const loggerSvc = containerFactory({
 })
 
 app.on('ready', async () => {
-  // Stop all stale containers left running from a previous ungraceful shutdown.
-  await findAndStopStaleContainers()
+  if (!process.env.DEV) {
+    // Stop all stale containers left running from a previous ungraceful shutdown.
+    await findAndStopStaleContainers()
 
-  // Start background Docker services.
-  dockerRuntimePromises.push(backendSvc(backendImage))
-  dockerRuntimePromises.push(loggerSvc(loggerImage))
+    // Start background Docker services.
+    dockerRuntimePromises.push(backendSvc(backendImage))
+    dockerRuntimePromises.push(loggerSvc(loggerImage))
 
-  // Wait for the background Docker services to be ready.
-  await Promise.all(dockerRuntimePromises)
-
+    // Wait for the background Docker services to be ready.
+    await Promise.all(dockerRuntimePromises)
+  }
   // Launch the GUI window.
   createWindow()
 })
 
 app.on('window-all-closed', async () => {
-  await stopContainers(containers)
+  if (!process.env.DEV) {
+    await stopContainers(containers)
+  }
+
   exit()
 })
 

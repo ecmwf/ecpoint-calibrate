@@ -20,7 +20,10 @@ def int_or_float(value: float) -> Union[int, float]:
 
 
 def sanitize_path(path: str) -> str:
-    bindings = os.environ.get("HOST_BINDINGS", "").split(",")
+    if bindings := os.environ.get("HOST_BINDINGS"):
+        bindings = bindings.split(",")
+    else:
+        return path
 
     for binding in bindings:
         host, local = binding.split(":")
