@@ -1,19 +1,22 @@
 from pathlib import Path
+from typing import List
 
 import attr
 import dateutil.parser
+from datetime import date
 
-def format_date(value: str) -> str:
-    return dateutil.parser.isoparse(value).strftime('%Y%m%d')
+
+def format_date(value: str) -> date:
+    return dateutil.parser.isoparse(value).date()
 
 
 @attr.s
 class Parameters(object):
     # start base date of the forecast (in YYYYMMDD format)
-    date_start = attr.ib(converter=format_date)
+    date_start: date = attr.ib(converter=format_date)
 
     # final base date of the forecast (in YYYYMMDD format)
-    date_end = attr.ib(converter=format_date)
+    date_end: date = attr.ib(converter=format_date)
 
     # upper limit (in hours) of the window in forecast with spin-up problems
     spinup_limit = attr.ib(converter=int)
@@ -93,11 +96,11 @@ class Computation:
 
 @attr.s
 class Config(object):
-    parameters = attr.ib()
-    predictand = attr.ib()
-    observations = attr.ib()
-    predictors = attr.ib()
-    computations = attr.ib()
+    parameters: Parameters = attr.ib()
+    predictand: Predictand = attr.ib()
+    observations: Observations = attr.ib()
+    predictors: Predictors = attr.ib()
+    computations: List[Computation] = attr.ib()
 
     @classmethod
     def from_dict(cls, data):

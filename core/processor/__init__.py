@@ -8,6 +8,7 @@ import numpy as np
 from core.loaders.ascii import ASCIIEncoder
 from core.loaders.fieldset import Fieldset
 from core.loaders.geopoints import get_geopoints_values, read_geopoints
+from core.models import Config
 
 from ..computations.models import Computer
 from .log_factory import (
@@ -30,7 +31,7 @@ console.setLevel(logging.DEBUG)
 logging.getLogger("").addHandler(console)
 
 
-def run(config):
+def run(config: Config):
     BaseDateS = config.parameters.date_start
     BaseDateF = config.parameters.date_end
     acc = config.predictand.accumulation
@@ -41,10 +42,8 @@ def run(config):
     PathOUT = config.parameters.out_path
 
     # Set up the input/output parameters
-    BaseDateS = datetime.strptime(BaseDateS, "%Y%m%d").date()
-    BaseDateF = datetime.strptime(BaseDateF, "%Y%m%d").date()
-    BaseDateSSTR = BaseDateS.strftime("%Y%m%d")
-    BaseDateFSTR = BaseDateF.strftime("%Y%m%d")
+    BaseDateSSTR = BaseDateS.strftime("%Y-%m-%d")
+    BaseDateFSTR = BaseDateF.strftime("%Y-%m-%d")
 
     computations = config.computations
 
@@ -121,10 +120,10 @@ def run(config):
         logging.info("FORECAST PARAMETERS:")
 
         if config.predictand.is_accumulated:
-            forecast = f'{curr_date.strftime("%Y%m%d")}, {curr_time:02d} UTC, (t+{step_s}, t+{step_s + acc})'
+            forecast = f'{curr_date.strftime("%Y-%m-%d")}, {curr_time:02d} UTC, (t+{step_s}, t+{step_s + acc})'
         else:
             forecast = (
-                f'{curr_date.strftime("%Y%m%d")}, {curr_time:02d} UTC, (t+{step_s})'
+                f'{curr_date.strftime("%Y-%m-%d")}, {curr_time:02d} UTC, (t+{step_s})'
             )
 
         logging.info(f"  {forecast}")
@@ -462,13 +461,13 @@ def run(config):
 
         columns = (
             [
-                ("BaseDate", [curr_date.strftime("%Y%m%d")] * n),
+                ("BaseDate", [curr_date.strftime("%Y-%m-%d")] * n),
                 ("BaseTime", [curr_time] * n),
                 (
                     "StepF" if config.predictand.is_accumulated else "Step",
                     [step_s + acc] * n,
                 ),
-                ("DateOBS", [DateVF] * n),
+                ("DateOBS", [validDateF.strftime("%Y-%m-%d")] * n),
                 ("TimeOBS", [HourVF] * n),
             ]
             + vals_LST
