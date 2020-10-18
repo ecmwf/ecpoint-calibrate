@@ -25,6 +25,7 @@ netcdf4 = "*"
 scipy = "*"
 colour = "*"
 python-dateutil = "*"
+pyarrow = "*"
 
 [requires]
 python_version = "3.8"
