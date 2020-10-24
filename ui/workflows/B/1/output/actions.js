@@ -3,3 +3,8 @@ export const setOutPath = path => ({
   type: 'PARAMETERS.SET_OUT_PATH',
   data: path,
 })
+
+export const setOutFormat = format => ({
+  type: 'PARAMETERS.SET_OUT_FORMAT',
+  data: format,
+})

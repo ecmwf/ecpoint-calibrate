@@ -17,6 +17,7 @@ class Processing extends Component {
       date_end: this.props.parameters.date_end,
       spinup_limit: this.props.parameters.limSU,
       out_path: this.props.parameters.outPath,
+      out_format: this.props.parameters.outFormat,
       model_type: this.props.parameters.modelType,
       model_interval: this.props.parameters.model_interval,
       step_interval: this.props.parameters.step_interval,

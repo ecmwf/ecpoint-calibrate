@@ -1,6 +1,7 @@
 const defaultState = {
   limSU: '',
   outPath: '',
+  outFormat: 'PARQUET',
   modelType: 'grib',
   model_interval: '',
   step_interval: '',
@@ -23,6 +24,10 @@ export default (state = defaultState, action) => {
 
     case 'PARAMETERS.SET_OUT_PATH': {
       return { ...state, outPath: action.data }
+    }
+
+    case 'PARAMETERS.SET_OUT_FORMAT': {
+      return { ...state, outFormat: action.data, outPath: '' }
     }
 
     case 'PARAMETERS.SET_MODEL_TYPE': {
