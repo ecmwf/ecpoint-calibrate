@@ -6,6 +6,7 @@ from textwrap import dedent
 import numpy as np
 
 from core.loaders.ascii import ASCIIEncoder
+from core.loaders.parquet import ParquetPointDataTableWriter
 from core.loaders.fieldset import Fieldset
 from core.loaders.geopoints import get_geopoints_values, read_geopoints
 from core.models import Config
@@ -38,8 +39,6 @@ def run(config: Config):
     spinup_limit = config.parameters.spinup_limit
     PathOBS = config.observations.path
     PathFC = config.predictors.path
-    PathPredictand = config.predictand.path
-    PathOUT = config.parameters.out_path
 
     # Set up the input/output parameters
     BaseDateSSTR = BaseDateS.strftime("%Y-%m-%d")
@@ -47,7 +46,10 @@ def run(config: Config):
 
     computations = config.computations
 
-    serializer = ASCIIEncoder(path=PathOUT)
+    if config.parameters.out_format == "ASCII":
+        serializer = ASCIIEncoder(path=config.parameters.out_path)
+    elif config.parameters.out_format == "PARQUET":
+        serializer = ParquetPointDataTableWriter(path=config.parameters.out_path)
 
     header = dedent(
         f"""
@@ -457,7 +459,8 @@ def run(config: Config):
         obsUSED += n
         logging.info("")
         logging.info("POINT DATA TABLE:")
-        logging.info(f"  Saving the point data table to output file: {PathOUT}")
+        logging.info(f"  Saving the point data table to output file: {config.parameters.out_path}")
+        logging.info(f"  Point data table format: {config.parameters.out_format}")
 
         columns = (
             [

@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from typing import List
 
 import attr
@@ -66,6 +67,19 @@ class ParquetPointDataTableWriter:
         if self._pq_writer:
             self._pq_writer.close()
             self._pq_writer = None
+
+    # +----------------------------------------------------------+
+    # | Compatibility methods to follow the API of ASCIIEncoder. |
+    # +----------------------------------------------------------+
+    def add_columns_chunk(self, columns):
+        df = pd.DataFrame.from_dict(OrderedDict(columns))
+        return self.append(df)
+
+    def add_header(self, header):
+        return self.add_metadata("header", header)
+
+    def add_footer(self, footer):
+        return self.add_metadata("footer", footer)
 
 
 @attr.s(slots=True)

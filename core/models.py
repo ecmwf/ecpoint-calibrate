@@ -24,6 +24,9 @@ class Parameters(object):
     # output file path
     out_path = attr.ib(converter=str)
 
+    # output file format
+    out_format = attr.ib(converter=str)
+
     # Model type: {grib, netcdf}
     model_type = attr.ib(converter=str)
 
