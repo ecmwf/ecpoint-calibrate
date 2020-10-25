@@ -1,7 +1,11 @@
 from collections import OrderedDict
+from functools import partial
+from typing import List
 
 import attr
 import pandas
+
+from core.loaders import BasePointDataReader
 
 
 @attr.s(slots=True)
@@ -30,12 +34,21 @@ class ASCIIEncoder(object):
             f.write("\n")
 
 
-@attr.s(slots=True)
-class ASCIIDecoder(object):
-    path = attr.ib()
+class ASCIIDecoder(BasePointDataReader):
+    @property
+    def _reader(self):
+        return partial(
+            pandas.read_csv, self.path, comment="#", skip_blank_lines=True, sep=r"\s+"
+        )
 
     @property
     def dataframe(self):
-        return pandas.read_csv(
-            self.path, comment="#", skip_blank_lines=True, sep=r"\s+"
-        )
+        return self._reader()
+
+    @property
+    def columns(self) -> List[str]:
+        df = self._reader(nrows=0)
+        return list(df.columns)
+
+    def select(self, *args):
+        return self._reader(usecols=args)

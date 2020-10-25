@@ -10,9 +10,8 @@ from flask import Flask, Response, jsonify, request
 from healthcheck import EnvironmentDump, HealthCheck
 
 from core.utils import sanitize_path
-from core.loaders.ascii import ASCIIDecoder
+from core.loaders import load_point_data_by_path
 from core.loaders.fieldset import Fieldset
-from core.loaders.parquet import ParquetPointDataTableReader
 from core.models import Config
 from core.postprocessors.decision_tree import DecisionTree, WeatherType
 from core.postprocessors.ks_engine import KolmogorovSmirnovEngine
@@ -56,7 +55,9 @@ def get_fields_from_ascii_table():
     payload = request.get_json()
     path = sanitize_path(payload["path"])
 
-    df = load_dataframe(path)
+    loader = load_point_data_by_path(path)
+    df = loader.dataframe
+
     fields = set(df.columns) - {
         "BaseDate",
         "BaseTime",
@@ -151,7 +152,8 @@ def get_wt_histogram():
         payload["bins"],
     )
 
-    predictor_matrix = load_dataframe(path)
+    loader = load_point_data_by_path(path)
+    predictor_matrix = loader.dataframe
 
     thrWT = [float(cell) for cell in thrWT]
     series = pandas.Series(dict(zip(labels, thrWT)))
@@ -180,7 +182,8 @@ def save_wt_histograms():
         payload["bins"],
     )
 
-    predictor_matrix = load_dataframe(path)
+    loader = load_point_data_by_path(path)
+    predictor_matrix = loader.dataframe
 
     matrix = [[float(cell) for cell in row[1:]] for row in thrGridOut]
     df = pandas.DataFrame.from_records(matrix, columns=labels)
@@ -226,7 +229,9 @@ def get_error_rep():
 
     thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
 
-    predictor_matrix = load_dataframe(path)
+    loader = load_point_data_by_path(path)
+    predictor_matrix = loader.dataframe
+
     rep = DecisionTree.cal_rep_error(
         predictor_matrix, thrL_out=thrL, thrH_out=thrH, nBin=int(numCols)
     )
@@ -260,7 +265,8 @@ def get_breakpoints_suggestions():
         int(payload["numSubSamples"]),
     )
 
-    predictor_matrix = load_dataframe(path)
+    loader = load_point_data_by_path(path)
+    predictor_matrix = loader.dataframe
 
     thrWT = [float(cell) for cell in thrWT]
     series = pandas.Series(dict(zip(labels, thrWT)))
@@ -302,7 +308,8 @@ def get_obs_frequency():
         payload["mode"],
     )
 
-    predictor_matrix = load_dataframe(path)
+    loader = load_point_data_by_path(path)
+    predictor_matrix = loader.dataframe
 
     thrWT = [float(cell) for cell in thrWT]
     series = pandas.Series(dict(zip(labels, thrWT)))
@@ -327,13 +334,6 @@ def get_units(path):
 
     first_grib_file = next(base_predictor_path.glob("**/*.grib"))
     return Fieldset.from_path(first_grib_file).units
-
-
-def load_dataframe(path: str) -> pandas.DataFrame:
-    if path.endswith(".ascii"):
-        return ASCIIDecoder(path=path).dataframe
-    elif path.endswith(".parquet"):
-        return ParquetPointDataTableReader(path=path).dataframe
 
 
 def main():

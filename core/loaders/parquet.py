@@ -1,11 +1,14 @@
 from collections import OrderedDict
-from typing import List
+from dataclasses import dataclass
+from typing import List, Optional
 
 import attr
 import numpy as np
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
+
+from core.loaders import BasePointDataReader
 
 
 @attr.s(slots=True)
@@ -82,15 +85,12 @@ class ParquetPointDataTableWriter:
         return self.add_metadata("footer", footer)
 
 
-@attr.s(slots=True)
-class ParquetPointDataTableReader:
-    # Public attributes
-    path = attr.ib()
-
+@dataclass
+class ParquetPointDataTableReader(BasePointDataReader):
     # Internal instance attributes
-    _columns = attr.ib(default=None)
-    _metadata = attr.ib(default=None)
-    _dataframe = attr.ib(default=None)
+    _columns: Optional[list] = None
+    _metadata: Optional[dict] = None
+    _dataframe: Optional[pd.DataFrame] = None
 
     @property
     def columns(self) -> List[str]:
@@ -114,3 +114,6 @@ class ParquetPointDataTableReader:
             self._metadata = pq_reader.schema_arrow.metadata
 
         return self._metadata
+
+    def select(self, *args):
+        return pd.read_parquet(self.path, engine="pyarrow", columns=list(args))
