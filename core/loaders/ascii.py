@@ -39,6 +39,7 @@ class ASCIIEncoder(object):
 class ASCIIDecoder(BasePointDataReader):
     # Internal instance attributes
     _columns: Optional[list] = field(default=None, repr=False)
+    _dataframe: Optional[pandas.DataFrame] = field(default=None, repr=False)
 
     @property
     def _reader(self):
@@ -48,7 +49,10 @@ class ASCIIDecoder(BasePointDataReader):
 
     @property
     def dataframe(self) -> pandas.DataFrame:
-        return self._reader()
+        if self._dataframe is None:
+            self._dataframe = self._reader()
+
+        return self._dataframe
 
     @property
     def columns(self) -> List[str]:
