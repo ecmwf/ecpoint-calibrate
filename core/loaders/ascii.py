@@ -62,5 +62,5 @@ class ASCIIDecoder(BasePointDataReader):
 
         return self._columns
 
-    def select(self, *args) -> pandas.DataFrame:
+    def select(self, *args: str) -> pandas.DataFrame:
         return self._reader(usecols=args)

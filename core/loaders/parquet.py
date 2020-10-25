@@ -115,5 +115,5 @@ class ParquetPointDataTableReader(BasePointDataReader):
 
         return self._metadata
 
-    def select(self, *args) -> pd.DataFrame:
+    def select(self, *args: str) -> pd.DataFrame:
         return pd.read_parquet(self.path, engine="pyarrow", columns=list(args))

@@ -26,7 +26,7 @@ class BasePointDataReader(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def select(self, *args):
+    def select(self, *args: str) -> pandas.DataFrame:
         raise NotImplementedError
 
     @property
