@@ -56,9 +56,9 @@ def get_fields_from_ascii_table():
     path = sanitize_path(payload["path"])
 
     loader = load_point_data_by_path(path)
-    df = loader.dataframe
 
-    fields = set(df.columns) - {
+    columns = loader.columns
+    fields = set(columns) - {
         "BaseDate",
         "BaseTime",
         "StepF",
@@ -73,15 +73,16 @@ def get_fields_from_ascii_table():
         "FE",
     }
 
-    error = "FER" if "FER" in df.columns else "FE"
+    error = "FER" if "FER" in columns else "FE"
+    error_values = loader.select(error)
 
     return Response(
         json.dumps(
             {
                 "fields": list(fields),
-                "minValue": min(df[error]),
-                "maxValue": max(df[error]),
-                "count": len(df[error]),
+                "minValue": float(error_values.min()),
+                "maxValue": float(error_values.max()),
+                "count": int(error_values.count()),
                 "error": error,
                 "bins": WeatherType.DEFAULT_FER_BINS if error == "FER" else [],
             }
