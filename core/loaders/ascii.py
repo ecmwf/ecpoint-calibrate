@@ -1,6 +1,7 @@
 from collections import OrderedDict
+from dataclasses import dataclass, field
 from functools import partial
-from typing import List
+from typing import List, Optional
 
 import attr
 import pandas
@@ -34,7 +35,11 @@ class ASCIIEncoder(object):
             f.write("\n")
 
 
+@dataclass
 class ASCIIDecoder(BasePointDataReader):
+    # Internal instance attributes
+    _columns: Optional[list] = field(default=None, repr=False)
+
     @property
     def _reader(self):
         return partial(
@@ -47,8 +52,11 @@ class ASCIIDecoder(BasePointDataReader):
 
     @property
     def columns(self) -> List[str]:
-        df = self._reader(nrows=0)
-        return list(df.columns)
+        if not self._columns:
+            df = self._reader(nrows=0)
+            self._columns = list(df.columns)
+
+        return self._columns
 
     def select(self, *args) -> pandas.DataFrame:
         return self._reader(usecols=args)
