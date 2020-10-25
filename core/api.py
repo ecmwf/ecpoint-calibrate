@@ -238,8 +238,7 @@ def get_error_rep():
     )
 
     s = StringIO()
-    np.savetxt(s, rep, delimiter=",")
-
+    rep.to_csv(s)
     return jsonify(s.getvalue())
 
 

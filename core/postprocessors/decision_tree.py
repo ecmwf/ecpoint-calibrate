@@ -181,8 +181,9 @@ class DecisionTree(object):
         return root
 
     @classmethod
-    def cal_rep_error(cls, predictors_matrix, thrL_out, thrH_out, nBin):
+    def cal_rep_error(cls, predictors_matrix, thrL_out, thrH_out, nBin) -> pandas.DataFrame:
         num_wt = len(thrL_out)
+        codes = cls.wt_code(thrL_out, thrH_out)
         rep_error = np.zeros((num_wt, nBin))
         a = np.arange(nBin)
 
@@ -218,7 +219,8 @@ class DecisionTree(object):
 
                 rep_error[i][k] = ((low_val * w_low) + (up_val * w_up)) / (w_low + w_up)
 
-        return rep_error
+        df = pandas.DataFrame(data=rep_error, index=codes)
+        return df.round(3)
 
     @classmethod
     def wt_code(cls, thrL_out, thrH_out):
