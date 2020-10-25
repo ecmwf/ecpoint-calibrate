@@ -92,6 +92,9 @@ class ParquetPointDataTableReader(BasePointDataReader):
     _metadata: Optional[dict] = field(default=None, repr=False)
     _dataframe: Optional[pd.DataFrame] = field(default=None, repr=False)
 
+    # Fields for implementing the iterator protocol
+    _current_row_group: int = field(default=0, repr=False)
+
     @property
     def columns(self) -> List[str]:
         if not self._columns:
@@ -117,3 +120,17 @@ class ParquetPointDataTableReader(BasePointDataReader):
 
     def select(self, *args: str) -> pd.DataFrame:
         return pd.read_parquet(self.path, engine="pyarrow", columns=list(args))
+
+    def __iter__(self) -> "ParquetPointDataTableReader":
+        self._current_row_group = 0
+        return self
+
+    def __next__(self) -> pd.DataFrame:
+        pq_reader = pq.ParquetFile(self.path)
+
+        if self._current_row_group == pq_reader.num_row_groups:
+            raise StopIteration
+
+        table = pq_reader.read_row_group(self._current_row_group)
+        self._current_row_group += 1
+        return table.to_pandas()

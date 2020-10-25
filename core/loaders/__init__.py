@@ -40,6 +40,14 @@ class BasePointDataReader(abc.ABC):
         """
         return ErrorType.FER if ErrorType.FER.name in self.columns else ErrorType.FE
 
+    @abc.abstractmethod
+    def __iter__(self):
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def __next__(self) -> pandas.DataFrame:
+        raise NotImplementedError
+
 
 def load_point_data_by_path(path: str) -> BasePointDataReader:
     from core.loaders.ascii import ASCIIDecoder

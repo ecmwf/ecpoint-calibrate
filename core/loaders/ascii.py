@@ -41,6 +41,11 @@ class ASCIIDecoder(BasePointDataReader):
     _columns: Optional[list] = field(default=None, repr=False)
     _dataframe: Optional[pandas.DataFrame] = field(default=None, repr=False)
 
+    # Fields for implementing the iterator protocol
+    _current_csv_offset: int = field(default=0, repr=False)
+
+    _chunk_size = 100000
+
     @property
     def _reader(self):
         return partial(
@@ -64,3 +69,21 @@ class ASCIIDecoder(BasePointDataReader):
 
     def select(self, *args: str) -> pandas.DataFrame:
         return self._reader(usecols=args)
+
+    def __iter__(self) -> "ASCIIDecoder":
+        self._current_csv_offset = 0
+        return self
+
+    def __next__(self) -> pandas.DataFrame:
+        df: pandas.DataFrame = self._reader(
+            nrows=self._chunk_size,
+            skiprows=self._current_csv_offset,
+            header=0,
+            names=self.columns,
+        )
+
+        if df.empty:
+            raise StopIteration
+
+        self._current_csv_offset += self._chunk_size
+        return df
