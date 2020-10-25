@@ -15,7 +15,7 @@ import {
   Popup,
 } from 'semantic-ui-react'
 
-import { isNotEmpty, isValid } from './index'
+import { isNotEmpty, isValid, patterns } from './index'
 
 const operations = type =>
   type === 'ACCUMULATED'
@@ -81,7 +81,12 @@ const operations = type =>
       ]
 
 class Computation extends Component {
-  isPositive = () => (isNotEmpty([this.props]) && !this.unitsHasError() ? true : null)
+  isPositive = () =>
+    isNotEmpty([this.props.fields[this.props.index]]) &&
+    !this.unitsHasError() &&
+    isValid([this.props.fields[this.props.index]])
+      ? true
+      : null
 
   getPredictors = () =>
     this.props.predictors.codes
@@ -204,7 +209,7 @@ class Computation extends Component {
             <Input
               fluid
               value={this.props.mulScale}
-              error={!/^(\d+\.?\d*|\.\d+)$/.test(this.props.mulScale)}
+              error={!patterns.mulScale.test(this.props.mulScale)}
               onChange={e =>
                 this.props.setMulScaleValue(this.props.index, e.target.value)
               }
@@ -220,7 +225,7 @@ class Computation extends Component {
             <Input
               fluid
               value={this.props.addScale}
-              error={!/^(\d+\.?\d*|\.\d+)$/.test(this.props.addScale)}
+              error={!patterns.addScale.test(this.props.addScale)}
               onChange={e =>
                 this.props.setAddScaleValue(this.props.index, e.target.value)
               }
