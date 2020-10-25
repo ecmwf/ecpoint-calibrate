@@ -70,7 +70,7 @@
     "file-loader": "1.1.10",
     "frontail": "^4.6.0",
     "fs-jetpack": "^2.2.2",
-    "lodash": "4.17.13",
+    "lodash": "^4.17.20",
     "prettier": "1.18.2",
     "react": "^16.13.1",
     "react-d3-tree": "1.11.0",
