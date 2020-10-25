@@ -42,7 +42,7 @@ class ASCIIDecoder(BasePointDataReader):
         )
 
     @property
-    def dataframe(self):
+    def dataframe(self) -> pandas.DataFrame:
         return self._reader()
 
     @property
@@ -50,5 +50,5 @@ class ASCIIDecoder(BasePointDataReader):
         df = self._reader(nrows=0)
         return list(df.columns)
 
-    def select(self, *args):
+    def select(self, *args) -> pandas.DataFrame:
         return self._reader(usecols=args)

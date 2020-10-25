@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Optional
 
 import attr
@@ -88,9 +88,9 @@ class ParquetPointDataTableWriter:
 @dataclass
 class ParquetPointDataTableReader(BasePointDataReader):
     # Internal instance attributes
-    _columns: Optional[list] = None
-    _metadata: Optional[dict] = None
-    _dataframe: Optional[pd.DataFrame] = None
+    _columns: Optional[list] = field(default=None, repr=False)
+    _metadata: Optional[dict] = field(default=None, repr=False)
+    _dataframe: Optional[pd.DataFrame] = field(default=None, repr=False)
 
     @property
     def columns(self) -> List[str]:
@@ -115,5 +115,5 @@ class ParquetPointDataTableReader(BasePointDataReader):
 
         return self._metadata
 
-    def select(self, *args):
+    def select(self, *args) -> pd.DataFrame:
         return pd.read_parquet(self.path, engine="pyarrow", columns=list(args))
