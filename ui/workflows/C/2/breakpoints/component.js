@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { Grid, Button, Table, Item, Popup, Input } from 'semantic-ui-react'
+import { Button, Table, Popup, Input } from 'semantic-ui-react'
 import _ from 'lodash'
 
 import client from '~/utils/client'
@@ -84,7 +84,7 @@ class Breakpoints extends Component {
     this.state.numColsMFs !== '' && !/^\d+$/.test(this.state.numColsMFs)
 
   saveError() {
-    //this.setState({ loading: 'Generating Mapping Functions.' })
+    this.props.setLoading('Generating Mapping Functions.')
     const labels = this.props.labels
     const matrix = this.props.breakpoints.map(row => _.flatMap(row.slice(1)))
 
@@ -95,8 +95,8 @@ class Breakpoints extends Component {
         json: true,
       },
       (err, httpResponse, body) => {
+        this.props.setLoading(false)
         download('error.csv', body)
-        //this.setState({ loading: false })
       }
     )
   }
@@ -166,9 +166,9 @@ class Breakpoints extends Component {
                 const csv = jetpack.read(path)
                 const data = csv.split('\n').map(row => row.split(','))
                 const matrix = data.slice(1).map(row => row.slice(1))
-                //this.setState({ loading: 'Generating and rendering decision tree.' })
+                this.props.setLoading('Generating and rendering decision tree.')
                 this.props.setBreakpoints(this.props.labels, matrix)
-                //this.setState({ loading: false })
+                this.props.setLoading(false)
               }}
             />
 

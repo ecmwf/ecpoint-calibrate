@@ -53,6 +53,10 @@ export default (state = defaultState, action) => {
       return { ...state, yLim: action.value }
     }
 
+    case 'POSTPROCESSING.SET_LOADING': {
+      return { ...state, loading: action.data }
+    }
+
     default: {
       return state
     }

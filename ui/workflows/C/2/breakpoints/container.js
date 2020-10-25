@@ -2,7 +2,7 @@ import { connect } from 'react-redux'
 
 import Breakpoints from './component'
 
-import { setBreakpoints } from './actions'
+import { setBreakpoints, setLoading } from './actions'
 
 const mapStateToProps = state => ({
   breakpoints: state.postprocessing.thrGridOut,
@@ -11,6 +11,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
+  setLoading: value => dispatch(setLoading(value)),
   setBreakpoints: (labels, matrix) => dispatch(setBreakpoints(labels, matrix)),
 })
 

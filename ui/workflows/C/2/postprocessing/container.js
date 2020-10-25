@@ -11,6 +11,7 @@ const mapStateToProps = state => ({
   fields: state.postprocessing.fields,
   yLim: state.postprocessing.yLim,
   tree: state.postprocessing.tree,
+  loading: state.postprocessing.loading,
   ...state.binning,
 })
 

@@ -1,15 +1,6 @@
 import React, { Component } from 'react'
 
-import {
-  Grid,
-  Card,
-  Button,
-  Icon,
-  Item,
-  Input,
-  Dimmer,
-  Loader,
-} from 'semantic-ui-react'
+import { Grid, Card, Icon, Item, Input, Dimmer, Loader } from 'semantic-ui-react'
 
 import BreakPoints from '../breakpoints'
 import SparseBreakPoints from '../sparseBreakpoints'
@@ -72,11 +63,20 @@ class PostProcessing extends Component {
               <Card.Content>
                 <Card.Description>
                   <Item.Group divided>
+                    <Dimmer active={!!this.props.loading}>
+                      <Loader indeterminate>{this.props.loading}</Loader>
+                    </Dimmer>
                     <Levels />
                     <SparseBreakPoints />
                     <BreakPoints />
-                    {this.getYLimitField()}
-                    {this.getDecisionTree()}
+
+                    {/* Hide tree until loading is finished for better experience */}
+                    {!this.props.loading && (
+                      <>
+                        {this.getYLimitField()}
+                        {this.getDecisionTree()}
+                      </>
+                    )}
                   </Item.Group>
                 </Card.Description>
               </Card.Content>

@@ -29,3 +29,8 @@ export const setBreakpoints = (labels, matrix) => async dispatch => {
       await dispatch({ type: 'POSTPROCESSING.SET_TREE', data: tree })
   )
 }
+
+export const setLoading = value => ({
+  type: 'POSTPROCESSING.SET_LOADING',
+  data: value,
+})
