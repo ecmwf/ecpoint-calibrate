@@ -1,4 +1,13 @@
-.git
-node_modules
-pm
-share
+# Ignore everything
+**
+
+# Allow files and directories
+!/Pipfile
+!/Pipfile.lock
+!/core/**
+
+# Ignore unnecessary files inside allowed directories
+**/*~
+**/*.pyc
+**/.DS_Store
+**/Thumbs.db

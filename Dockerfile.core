@@ -23,10 +23,8 @@ RUN pip install -U pip wheel setuptools pipenv
 WORKDIR /app
 
 COPY Pipfile Pipfile.lock ./
-RUN pipenv install --dev --skip-lock
+RUN pipenv sync
 
-COPY pytest.ini .
 COPY core core/
-COPY tests tests/
 
 CMD [ "pipenv", "run", "server" ]
