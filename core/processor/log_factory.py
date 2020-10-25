@@ -81,18 +81,20 @@ def output_file_logs(config):
     )
 
 
-def point_data_table_logs():
+def point_data_table_logs(config):
+    step = "StepF" if config.predictand.is_accumulated else "Step"
+
     return dedent(
         f"""
     ************************************
     ecPoint-Calibrate - POINT DATA TABLE
     ************************************
-    NOTE: 'DateOBS' and 'TimeOBS' correspond to the end of the accumulation period
+    NOTE: 'DateOBS' and 'TimeOBS' correspond to the date and time that the observation was taken.
           (as defined by 'BaseDate', 'BaseTime', and 'StepF').
 
-          'BaseDate' and 'DateOBS' are given in the YYYYMMDD format.
+          'BaseDate' and 'DateOBS' are given in the YYYY-MM-DD format.
           'BaseTime' and 'TimeOBS' are given in UTC time.
-          'StepF' is given in the HH format.
+          '{step}' is given in the HH format.
           'LatOBS' is given in degrees North (i.e. from -90 to +90 N).
           'LonOBS' is given in degrees East (i.e. from -180 to +180 E).
     """

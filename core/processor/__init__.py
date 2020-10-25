@@ -65,7 +65,7 @@ def run(config: Config):
     header += "\n# ".join(predictors_logs(config).split("\n"))
     header += "\n# ".join(observations_logs(config).split("\n"))
     header += "\n# ".join(output_file_logs(config).split("\n"))
-    header += "\n# ".join(point_data_table_logs().split("\n"))
+    header += "\n# ".join(point_data_table_logs(config).split("\n"))
     header += "\n# ".join(step_information_logs(config).split("\n"))
 
     serializer.add_header(header.strip())
@@ -89,7 +89,7 @@ def run(config: Config):
     logging.info(predictors_logs(config))
     logging.info(observations_logs(config))
     logging.info(output_file_logs(config))
-    logging.info(point_data_table_logs())
+    logging.info(point_data_table_logs(config))
 
     logging.info("*** START COMPUTATIONS ***")
 
