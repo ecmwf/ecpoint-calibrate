@@ -33,7 +33,10 @@
     }
   },
   "author": "Anirudha Bose <anirudha.bose@alumni.cern>",
-  "repository": "github:esowc/ecpoint-Calibrate",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/esowc/ecPoint-Calibrate.git"
+  },
   "license": "MIT",
   "dependencies": {
     "dockerode": "^3.2.1"
