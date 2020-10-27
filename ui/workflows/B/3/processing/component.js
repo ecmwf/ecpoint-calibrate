@@ -72,11 +72,7 @@ class Processing extends Component {
       <Grid.Row>
         <Grid.Column>
           <Iframe
-            url={
-              process.env.RUNNING_IN_DOCKER === 'true'
-                ? 'http://logger:9001'
-                : 'http://0.0.0.0:9001'
-            }
+            url="http://0.0.0.0:9001"
             width="100%"
             height="750px"
             display="initial"
