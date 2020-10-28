@@ -1,4 +1,5 @@
-import client from '~/utils/client'
+import { httpClient as client } from '~/utils/client'
+import toast from '~/utils/toast'
 
 export const setPath = path => async dispatch => {
   if (path === null) {
@@ -6,17 +7,14 @@ export const setPath = path => async dispatch => {
   }
 
   await dispatch({ type: 'PREDICTORS.SET_PATH', data: path })
-
-  client.post(
-    { url: '/predictors', body: { path: path }, json: true },
-    (err, httpResponse, body) => {
-      if (!!err) {
-        console.error(err)
-      } else {
-        dispatch({ type: 'PREDICTORS.SET_CODES', data: body })
-      }
-    }
-  )
+  await client
+    .post('/predictors', { path })
+    .then(response => dispatch({ type: 'PREDICTORS.SET_CODES', data: response.data }))
+    .catch(e => {
+      console.error(e)
+      console.error(`Error response: ${e.response}`)
+      toast.error(`${e.response.status} ${e.response.statusText}`)
+    })
 }
 
 export const setSamplingInterval = value => ({

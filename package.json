@@ -64,7 +64,7 @@
     "@babel/polyfill": "^7.4.4",
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-react": "^7.0.0",
-    "axios": "^0.18.1",
+    "axios": "^0.21.0",
     "babel-loader": "^8.0.6",
     "copy-webpack-plugin": "4.5.1",
     "css-loader": "0.28.11",
