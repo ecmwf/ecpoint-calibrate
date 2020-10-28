@@ -26,6 +26,7 @@ scipy = "*"
 colour = "*"
 python-dateutil = "*"
 pyarrow = "*"
+flask-cors = "*"
 
 [requires]
 python_version = "3.8"

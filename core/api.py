@@ -7,6 +7,8 @@ from pathlib import Path
 import numpy as np
 import pandas
 from flask import Flask, Response, jsonify, request
+from flask_cors import CORS
+
 from healthcheck import EnvironmentDump, HealthCheck
 
 from core.utils import sanitize_path
@@ -18,6 +20,7 @@ from core.postprocessors.ks_engine import KolmogorovSmirnovEngine
 from core.processor import run
 
 app = Flask(__name__)
+cors = CORS(app)
 
 # wrap the flask app and give a heathcheck url
 health = HealthCheck(app, "/healthcheck")
