@@ -14,6 +14,8 @@ import {
 
 import Header from './header'
 import Menu from './menu'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import Page from './page'
 
 import ring from '~/assets/img/ring.png'
@@ -25,6 +27,17 @@ class App extends Component {
     <>
       <Header />
       <Page />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </>
   )
 
