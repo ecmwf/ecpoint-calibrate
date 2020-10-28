@@ -4,6 +4,7 @@ import { Button, Table, Popup, Input } from 'semantic-ui-react'
 import _ from 'lodash'
 
 import client from '~/utils/client'
+import toast from '~/utils/toast'
 import download from '~/utils/download'
 
 import { remote } from 'electron'
@@ -88,17 +89,26 @@ class Breakpoints extends Component {
     const labels = this.props.labels
     const matrix = this.props.breakpoints.map(row => _.flatMap(row.slice(1)))
 
-    client.post(
-      {
-        url: '/postprocessing/create-error-rep',
-        body: { labels, matrix, path: this.props.path, numCols: this.state.numColsMFs },
-        json: true,
-      },
-      (err, httpResponse, body) => {
+    client
+      .post('/postprocessing/create-error-rep', {
+        labels,
+        matrix,
+        path: this.props.path,
+        numCols: this.state.numColsMFs,
+      })
+      .then(response => {
         this.props.setLoading(false)
-        download('error.csv', body)
-      }
-    )
+        download('error.csv', response.data)
+      })
+      .catch(e => {
+        console.error(e)
+        if (e.response !== undefined) {
+          console.error(`Error response: ${e.response}`)
+          toast.error(`${e.response.status} ${e.response.statusText}`)
+        } else {
+          toast.error('Empty response from server')
+        }
+      })
   }
 
   saveBreakPoints() {

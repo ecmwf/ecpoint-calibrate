@@ -1,4 +1,5 @@
 import client from '~/utils/client'
+import toast from '~/utils/toast'
 
 export const setPath = path => async dispatch => {
   if (path === null) {
@@ -8,19 +9,23 @@ export const setPath = path => async dispatch => {
   await dispatch({ type: 'PRELOADER.SET_PATH', data: path })
   await dispatch({ type: 'PRELOADER.SET_LOADING', data: true })
 
-  client.post(
-    { url: '/get-fields-from-ascii-table', body: { path: path }, json: true },
-    (err, httpResponse, { fields, minValue, maxValue, count, error, bins }) => {
-      dispatch({ type: 'POSTPROCESSING.SET_FIELDS', data: fields })
+  client
+    .post('/get-fields-from-ascii-table', { path })
+    .then(response => {
+      dispatch({ type: 'POSTPROCESSING.SET_FIELDS', data: response.data.fields })
       dispatch({
         type: 'BINNING.SET_POINT_DATA_META_FIELDS',
-        minValue,
-        maxValue,
-        count,
-        error,
-        bins,
+        ...response.data,
       })
-      dispatch({ type: 'PRELOADER.SET_LOADING', data: false })
-    }
-  )
+    })
+    .catch(e => {
+      console.error(e)
+      if (e.response !== undefined) {
+        console.error(`Error response: ${e.response}`)
+        toast.error(`${e.response.status} ${e.response.statusText}`)
+      } else {
+        toast.error('Empty response from server')
+      }
+    })
+    .then(() => dispatch({ type: 'PRELOADER.SET_LOADING', data: false }))
 }

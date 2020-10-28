@@ -7,6 +7,7 @@ import { Button, Item, Label } from 'semantic-ui-react'
 import _ from 'lodash'
 
 import client from '~/utils/client'
+import toast from '~/utils/toast'
 
 class SparseBreakpoints extends Component {
   componentDidMount() {
@@ -47,17 +48,21 @@ class SparseBreakpoints extends Component {
       .slice(1)
       .map(row => _.flatMap(row.slice(1), cell => cell.value))
 
-    client.post(
-      {
-        url: '/postprocessing/create-wt-matrix',
-        body: { labels, records },
-        json: true,
-      },
-      (err, httpResponse, { matrix }) => {
-        this.props.setBreakpoints(labels, matrix)
+    client
+      .post('/postprocessing/create-wt-matrix', { labels, records })
+      .then(response => {
+        this.props.setBreakpoints(labels, response.data.matrix)
         this.setState({ loading: false })
-      }
-    )
+      })
+      .catch(e => {
+        console.error(e)
+        if (e.response !== undefined) {
+          console.error(`Error response: ${e.response}`)
+          toast.error(`${e.response.status} ${e.response.statusText}`)
+        } else {
+          toast.error('Empty response from server')
+        }
+      })
   }
 
   render = () => {

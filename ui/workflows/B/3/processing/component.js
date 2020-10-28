@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
 
-import { Grid, Segment, Button, Modal } from 'semantic-ui-react'
+import { Grid, Button } from 'semantic-ui-react'
 import Iframe from 'react-iframe'
 
 import client from '~/utils/client'
-import download from '~/utils/download'
-import * as jetpack from 'fs-jetpack'
+import toast from '~/utils/toast'
 
 class Processing extends Component {
   state = { status: 'initial' }
@@ -39,23 +38,27 @@ class Processing extends Component {
       sampling_interval: this.props.predictors.sampling_interval || -1, // Ignored by the backend for FE
     }
 
-    client.post(
-      {
-        url: '/computation-logs',
-        body: {
-          parameters,
-          predictand,
-          predictors,
-          observations: this.props.observations,
-          computations: this.props.computations.fields,
-        },
-        json: true,
-      },
-      (err, httpResponse, body) => {
+    client
+      .post('/computation-logs', {
+        parameters,
+        predictand,
+        predictors,
+        observations: this.props.observations,
+        computations: this.props.computations.fields,
+      })
+      .then(() => {
         this.setState({ status: 'completed' })
         this.props.completeSection()
-      }
-    )
+      })
+      .catch(e => {
+        console.error(e)
+        if (e.response !== undefined) {
+          console.error(`Error response: ${e.response}`)
+          toast.error(`${e.response.status} ${e.response.statusText}`)
+        } else {
+          toast.error('Empty response from server')
+        }
+      })
   }
 
   render = () => (

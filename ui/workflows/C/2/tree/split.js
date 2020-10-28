@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 
 import {
   Modal,
-  Image,
   Button,
   Dimmer,
   Loader,
@@ -12,7 +11,6 @@ import {
   Message,
   Segment,
   Grid,
-  Table,
 } from 'semantic-ui-react'
 
 import { remote } from 'electron'
@@ -25,8 +23,8 @@ import flow from 'lodash/fp/flow'
 
 import ReactDataSheet from 'react-datasheet'
 import 'react-datasheet/lib/react-datasheet.css'
-
 import client from '~/utils/client'
+import toast from '~/utils/toast'
 
 const mainProcess = remote.require('./server')
 
@@ -127,31 +125,35 @@ class Split extends Component {
 
   launchKS_test = () => {
     this.setState({ loading: true })
-    client.post(
-      {
-        url: '/postprocessing/get-breakpoints-suggestions',
-        body: {
-          labels: this.props.labels,
-          thrWT: this.props.breakpoints.map(row => _.flatMap(row.slice(1)))[
-            this.props.nodeMeta.idxWT
-          ],
-          path: this.props.path,
-          predictor: this.props.fields[this.state.customSplitLevel],
-          numSubSamples: this.state.numSubSamples,
-          minNumCases: this.state.minNumCases,
-        },
-        json: true,
-      },
-      (err, httpResponse, body) => {
+    client
+      .post('/postprocessing/get-breakpoints-suggestions', {
+        labels: this.props.labels,
+        thrWT: this.props.breakpoints.map(row => _.flatMap(row.slice(1)))[
+          this.props.nodeMeta.idxWT
+        ],
+        path: this.props.path,
+        predictor: this.props.fields[this.state.customSplitLevel],
+        numSubSamples: this.state.numSubSamples,
+        minNumCases: this.state.minNumCases,
+      })
+      .then(response => {
         this.setState({
-          breakpoints: body.breakpoints.map((bp, idx) => [
+          breakpoints: response.data.breakpoints.map((bp, idx) => [
             { value: idx, readOnly: true },
             { value: bp, readOnly: false },
           ]),
           loading: false,
         })
-      }
-    )
+      })
+      .catch(e => {
+        console.error(e)
+        if (e.response !== undefined) {
+          console.error(`Error response: ${e.response}`)
+          toast.error(`${e.response.status} ${e.response.statusText}`)
+        } else {
+          toast.error('Empty response from server')
+        }
+      })
   }
 
   validateSubSamples = (numSubSamples, minNumCases) => {
@@ -259,18 +261,14 @@ class Split extends Component {
 
                   const [matrix, nSplits] = this.getMatrixAfterSplit()
 
-                  client.post(
-                    {
-                      url: '/postprocessing/get-wt-codes',
-                      body: {
-                        labels: this.props.labels,
-                        matrix,
-                      },
-                      json: true,
-                    },
-                    (err, httpResponse, { codes }) => {
+                  client
+                    .post('/postprocessing/get-wt-codes', {
+                      labels: this.props.labels,
+                      matrix,
+                    })
+                    .then(response => {
                       const thrGridOut = matrix.map((row, idx) =>
-                        _.concat(codes[idx], row)
+                        _.concat(response.data.codes[idx], row)
                       )
                       const patches = _.slice(
                         thrGridOut,
@@ -278,25 +276,35 @@ class Split extends Component {
                         this.props.nodeMeta.idxWT + nSplits + 1
                       )
 
-                      client.post(
-                        {
-                          url: '/postprocessing/save-wt-histograms',
-                          body: {
-                            labels: this.props.labels,
-                            thrGridOut: patches,
-                            path: this.props.path,
-                            yLim: this.props.yLim,
-                            bins: this.props.bins,
-                            path,
-                          },
-                          json: true,
-                        },
-                        (err2, httpResponse2, body) => {
-                          console.log(body)
-                        }
-                      )
-                    }
-                  )
+                      client
+                        .post('/postprocessing/save-wt-histograms', {
+                          labels: this.props.labels,
+                          thrGridOut: patches,
+                          path: this.props.path,
+                          yLim: this.props.yLim,
+                          bins: this.props.bins,
+                          destinationDir: path,
+                        })
+                        .then(response => console.log(response.data))
+                        .catch(e => {
+                          console.error(e)
+                          if (e.response !== undefined) {
+                            console.error(`Error response: ${e.response}`)
+                            toast.error(`${e.response.status} ${e.response.statusText}`)
+                          } else {
+                            toast.error('Empty response from server')
+                          }
+                        })
+                    })
+                    .catch(e => {
+                      console.error(e)
+                      if (e.response !== undefined) {
+                        console.error(`Error response: ${e.response}`)
+                        toast.error(`${e.response.status} ${e.response.statusText}`)
+                      } else {
+                        toast.error('Empty response from server')
+                      }
+                    })
                 }}
               />
             )}

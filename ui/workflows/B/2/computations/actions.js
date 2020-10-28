@@ -1,4 +1,5 @@
 import client from '~/utils/client'
+import toast from '~/utils/toast'
 
 export const addComputation = data => ({
   type: 'COMPUTATIONS.ADD',
@@ -30,21 +31,25 @@ export const updateComputationInputs = (index, inputs) => ({
 })
 
 export const fetchAndUpdateInputUnits = (index, input) => async dispatch => {
-  client.post(
-    { url: '/get-predictor-units', body: { path: input.path }, json: true },
-    (err, httpResponse, body) => {
-      if (!!err) {
-        console.error(err)
+  await client
+    .post('/get-predictor-units', { path: input.path })
+    .then(response =>
+      dispatch({
+        type: 'COMPUTATIONS.SET_INPUT_UNITS',
+        code: input.code,
+        units: response.data.units,
+        index,
+      })
+    )
+    .catch(e => {
+      console.error(e)
+      if (e.response !== undefined) {
+        console.error(`Error response: ${e.response}`)
+        toast.error(`${e.response.status} ${e.response.statusText}`)
       } else {
-        dispatch({
-          type: 'COMPUTATIONS.SET_INPUT_UNITS',
-          code: input.code,
-          units: body.units,
-          index,
-        })
+        toast.error('Empty response from server')
       }
-    }
-  )
+    })
 }
 
 export const removeComputation = index => ({

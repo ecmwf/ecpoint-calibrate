@@ -7,8 +7,8 @@ import Tree from 'react-d3-tree'
 import { saveSvgAsPng } from 'save-svg-as-png'
 
 import { Button, Dimmer, Loader, Radio, Form, Grid } from 'semantic-ui-react'
-import download from '~/utils/download'
 import client from '~/utils/client'
+import toast from '~/utils/toast'
 import MappingFunction from './mappingFunction'
 import Map from './map'
 import Split from './split'
@@ -39,22 +39,28 @@ export default class TreeContainer extends Component {
 
   onNodeClickExploreMode = node => {
     !node._children && this.setState({ openMappingFunction: true, nodeMeta: node.meta })
-    client.post(
-      {
-        url: '/postprocessing/generate-wt-histogram',
-        body: {
-          labels: this.props.labels,
-          thrWT: this.props.breakpoints.map(row => _.flatMap(row.slice(1)))[
-            node.meta.idxWT
-          ],
-          path: this.props.path,
-          yLim: this.props.yLim,
-          bins: this.props.bins,
-        },
-        json: true,
-      },
-      (err, httpResponse, body) => this.setState({ graph: body.histogram })
-    )
+    client
+      .post('/postprocessing/generate-wt-histogram', {
+        labels: this.props.labels,
+        thrWT: this.props.breakpoints.map(row => _.flatMap(row.slice(1)))[
+          node.meta.idxWT
+        ],
+        path: this.props.path,
+        yLim: this.props.yLim,
+        bins: this.props.bins,
+      })
+      .then(response => {
+        this.setState({ graph: response.data.histogram })
+      })
+      .catch(e => {
+        console.error(e)
+        if (e.response !== undefined) {
+          console.error(`Error response: ${e.response}`)
+          toast.error(`${e.response.status} ${e.response.statusText}`)
+        } else {
+          toast.error('Empty response from server')
+        }
+      })
   }
 
   onNodeClickConditionalVerificationMode = node => {
@@ -62,29 +68,33 @@ export default class TreeContainer extends Component {
       this.setState({
         loading: 'Generating conditional verification map. Please wait.',
       })
-    client.post(
-      {
-        url: '/postprocessing/plot-cv-map',
-        body: {
-          labels: this.props.labels,
-          thrWT: this.props.breakpoints.map(row => _.flatMap(row.slice(1)))[
-            node.meta.idxWT
-          ],
-          path: this.props.path,
-          code: node.meta.code,
-          mode: this.state.conditionalVerificationMode,
-        },
-        json: true,
-      },
-      (err, httpResponse, body) => {
+    client
+      .post('/postprocessing/plot-cv-map', {
+        labels: this.props.labels,
+        thrWT: this.props.breakpoints.map(row => _.flatMap(row.slice(1)))[
+          node.meta.idxWT
+        ],
+        path: this.props.path,
+        code: node.meta.code,
+        mode: this.state.conditionalVerificationMode,
+      })
+      .then(response => {
         this.setState({
           openMaps: true,
           nodeMeta: node.meta,
           loading: false,
-          graph: body,
+          graph: response.data,
         })
-      }
-    )
+      })
+      .catch(e => {
+        console.error(e)
+        if (e.response !== undefined) {
+          console.error(`Error response: ${e.response}`)
+          toast.error(`${e.response.status} ${e.response.statusText}`)
+        } else {
+          toast.error('Empty response from server')
+        }
+      })
   }
 
   onNodeClickEditMode = node => {
@@ -235,21 +245,26 @@ export default class TreeContainer extends Component {
                 this.setState({
                   loading: 'Saving all Mapping Functions as PNGs. Please wait.',
                 })
-                client.post(
-                  {
-                    url: '/postprocessing/save-wt-histograms',
-                    body: {
-                      labels: this.props.labels,
-                      thrGridOut: this.props.breakpoints,
-                      path: this.props.path,
-                      yLim: this.props.yLim,
-                      path,
-                      bins: this.props.bins,
-                    },
-                    json: true,
-                  },
-                  (err, httpResponse, body) => this.setState({ loading: false })
-                )
+                client
+                  .post('/postprocessing/save-wt-histograms', {
+                    labels: this.props.labels,
+                    thrGridOut: this.props.breakpoints,
+                    path: this.props.path,
+                    yLim: this.props.yLim,
+                    destinationDir: path,
+                    bins: this.props.bins,
+                  })
+                  .then(() => this.setState({ loading: false }))
+                  .catch(e => {
+                    console.error(e)
+                    if (e.response !== undefined) {
+                      console.error(`Error response: ${e.response}`)
+                      toast.error(`${e.response.status} ${e.response.statusText}`)
+                    } else {
+                      toast.error('Empty response from server')
+                    }
+                  })
+                  .then(() => this.setState({ loading: false }))
               }}
             />
 

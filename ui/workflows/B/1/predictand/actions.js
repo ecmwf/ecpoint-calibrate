@@ -1,4 +1,5 @@
 import client from '~/utils/client'
+import toast from '~/utils/toast'
 
 export const setType = type => ({
   type: 'PREDICTAND.SET_TYPE',
@@ -12,16 +13,20 @@ export const setPath = path => async dispatch => {
 
   await dispatch({ type: 'PREDICTAND.SET_PATH', data: path })
 
-  client.post(
-    { url: '/get-predictor-units', body: { path: path }, json: true },
-    (err, httpResponse, body) => {
-      if (!!err) {
-        console.error(err)
+  await client
+    .post('/get-predictor-units', { path })
+    .then(response =>
+      dispatch({ type: 'PREDICTAND.SET_UNITS', data: response.data.units })
+    )
+    .catch(e => {
+      console.error(e)
+      if (e.response !== undefined) {
+        console.error(`Error response: ${e.response}`)
+        toast.error(`${e.response.status} ${e.response.statusText}`)
       } else {
-        dispatch({ type: 'PREDICTAND.SET_UNITS', data: body.units })
+        toast.error('Empty response from server')
       }
-    }
-  )
+    })
 }
 
 export const set_minValueAcc = value => ({

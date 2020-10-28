@@ -1,4 +1,4 @@
-import { httpClient as client } from '~/utils/client'
+import client from '~/utils/client'
 import toast from '~/utils/toast'
 
 export const setPath = path => async dispatch => {
@@ -12,8 +12,12 @@ export const setPath = path => async dispatch => {
     .then(response => dispatch({ type: 'PREDICTORS.SET_CODES', data: response.data }))
     .catch(e => {
       console.error(e)
-      console.error(`Error response: ${e.response}`)
-      toast.error(`${e.response.status} ${e.response.statusText}`)
+      if (e.response !== undefined) {
+        console.error(`Error response: ${e.response}`)
+        toast.error(`${e.response.status} ${e.response.statusText}`)
+      } else {
+        toast.error('Empty response from server')
+      }
     })
 }
 
