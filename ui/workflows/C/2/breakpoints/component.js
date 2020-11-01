@@ -113,7 +113,9 @@ class Breakpoints extends Component {
 
   saveBreakPoints() {
     const labels = this.props.labels
-    const rows = this.props.breakpoints.map(row => row.join(',')).join('\n')
+    const rows = this.props.breakpoints
+      .map(row => row.map(cell => cell.replace('inf', '9999')).join(','))
+      .join('\n')
     const csv = [['WT code', ...labels], rows].join('\n')
     download('BreakPointsWT.csv', csv)
   }
