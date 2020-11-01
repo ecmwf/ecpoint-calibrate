@@ -181,7 +181,9 @@ class DecisionTree(object):
         return root
 
     @classmethod
-    def cal_rep_error(cls, predictors_matrix, thrL_out, thrH_out, nBin) -> pandas.DataFrame:
+    def cal_rep_error(
+        cls, predictors_matrix, thrL_out, thrH_out, nBin
+    ) -> pandas.DataFrame:
         num_wt = len(thrL_out)
         codes = cls.wt_code(thrL_out, thrH_out)
         rep_error = np.zeros((num_wt, nBin))
@@ -332,6 +334,16 @@ class WeatherType(object):
 
         ax.xaxis.set_tick_params(labelsize=7)
         ax.yaxis.set_tick_params(labelsize=7)
+
+        ax.text(
+            x=0.05,
+            y=0.95,
+            s=f"total = {human_format(data.count())}",
+            transform=ax.transAxes,
+            fontsize="x-small",
+            verticalalignment="top",
+            bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.5),
+        )
 
         out = pandas.cut(data, bins=bins, include_lowest=True)
         series = out.value_counts(normalize=True, sort=False) * 100
