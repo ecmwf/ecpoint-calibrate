@@ -104,13 +104,18 @@ const findAndStopStaleContainers = async () =>
         },
         async (err, data) => {
           if (err) {
-            console.error(err.json.message)
+            if (!!err.json) {
+              console.error(err.json.message)
+            } else {
+              console.error(err)
+            }
+
             reject()
             exit()
+          } else {
+            await stopContainers(data.map(c => c.Id.substring(0, 12)))
+            resolve()
           }
-
-          await stopContainers(data.map(c => c.Id.substring(0, 12)))
-          resolve()
         }
       )
   )
