@@ -88,14 +88,21 @@ class Computation extends Component {
       ? true
       : null
 
-  getPredictors = () =>
-    this.props.predictors.codes
-      .map(e => ({ key: e, text: e, value: e }))
-      .concat(
-        this.props.computedVariables
-          .map(v => ({ key: v, text: v, value: v }))
-          .filter(v => v.key !== this.props.shortname)
-      )
+  getPredictors = () => {
+    const canPrefillSolarRadiation =
+      this.props.field === '24H_SOLAR_RADIATION' &&
+      this.props.predictors.codes.includes('sr')
+
+    return canPrefillSolarRadiation
+      ? [{ key: 'sr', text: 'sr', value: 'sr' }]
+      : this.props.predictors.codes
+          .map(e => ({ key: e, text: e, value: e }))
+          .concat(
+            this.props.computedVariables
+              .map(v => ({ key: v, text: v, value: v }))
+              .filter(v => v.key !== this.props.shortname)
+          )
+  }
 
   unitsHasError = () =>
     this.props.index === 0
