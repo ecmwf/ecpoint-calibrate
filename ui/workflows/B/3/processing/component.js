@@ -75,7 +75,7 @@ class Processing extends Component {
       <Grid.Row>
         <Grid.Column>
           <Iframe
-            url="http://0.0.0.0:9001"
+            url="http://localhost:9001"
             width="100%"
             height="750px"
             display="initial"

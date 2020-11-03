@@ -1,6 +1,6 @@
 const axios = require('axios')
 
-const HOST = '0.0.0.0'
+const HOST = 'localhost'
 const PROTOCOL = 'http'
 const PORT = '8888'
 
