@@ -54,7 +54,7 @@ def load_point_data_by_path(path: str, cheaper: bool = False) -> BasePointDataRe
     from core.loaders.ascii import ASCIIDecoder
     from core.loaders.parquet import ParquetPointDataTableReader
 
-    if path.endswith(".ascii"):
+    if path.endswith(".ascii") or path.endswith(".csv"):
         return ASCIIDecoder(path=path, cheaper=cheaper)
     elif path.endswith(".parquet"):
         return ParquetPointDataTableReader(path=path, cheaper=cheaper)
