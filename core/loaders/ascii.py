@@ -1,10 +1,10 @@
 from collections import OrderedDict
 from dataclasses import dataclass, field
 from functools import partial
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import attr
-import pandas
+import pandas as pd
 
 from core.loaders import BasePointDataReader
 
@@ -24,7 +24,7 @@ class ASCIIEncoder(object):
             f.write(footer)
 
     def add_columns_chunk(self, columns):
-        df = pandas.DataFrame.from_dict(OrderedDict(columns))
+        df = pd.DataFrame.from_dict(OrderedDict(columns))
 
         with open(self.path, "a") as f:
             if not self.first_chunk_address_added:
@@ -39,7 +39,7 @@ class ASCIIEncoder(object):
 class ASCIIDecoder(BasePointDataReader):
     # Internal instance attributes
     _columns: Optional[list] = field(default=None, repr=False)
-    _dataframe: Optional[pandas.DataFrame] = field(default=None, repr=False)
+    _dataframe: Optional[pd.DataFrame] = field(default=None, repr=False)
 
     # Fields for implementing the iterator protocol
     _current_csv_offset: int = field(default=0, repr=False)
@@ -49,11 +49,11 @@ class ASCIIDecoder(BasePointDataReader):
     @property
     def _reader(self):
         return partial(
-            pandas.read_csv, self.path, comment="#", skip_blank_lines=True, sep=r"\s+"
+            pd.read_csv, self.path, comment="#", skip_blank_lines=True, sep=r"\s+"
         )
 
     @property
-    def dataframe(self) -> pandas.DataFrame:
+    def dataframe(self) -> pd.DataFrame:
         if self._dataframe is None:
             self._dataframe = self._reader()
 
@@ -67,15 +67,19 @@ class ASCIIDecoder(BasePointDataReader):
 
         return self._columns
 
-    def select(self, *args: str) -> pandas.DataFrame:
-        return self._reader(usecols=args)
+    def select(self, *args: str, series: bool = True) -> Union[pd.DataFrame, pd.Series]:
+        result = self._reader(usecols=args)
+        if series and len(args) == 1:
+            (col,) = args
+            result = result[col]
+        return result
 
     def __iter__(self) -> "ASCIIDecoder":
         self._current_csv_offset = 0
         return self
 
-    def __next__(self) -> pandas.DataFrame:
-        df: pandas.DataFrame = self._reader(
+    def __next__(self) -> pd.DataFrame:
+        df: pd.DataFrame = self._reader(
             nrows=self._chunk_size,
             skiprows=self._current_csv_offset,
             header=0,

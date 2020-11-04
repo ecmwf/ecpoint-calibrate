@@ -8,16 +8,15 @@ import numpy as np
 import pandas
 from flask import Flask, Response, jsonify, request
 from flask_cors import CORS
-
 from healthcheck import EnvironmentDump, HealthCheck
 
-from core.utils import sanitize_path
 from core.loaders import load_point_data_by_path
 from core.loaders.fieldset import Fieldset
 from core.models import Config
 from core.postprocessors.decision_tree import DecisionTree, WeatherType
 from core.postprocessors.ks_engine import KolmogorovSmirnovEngine
 from core.processor import run
+from core.utils import sanitize_path
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -157,7 +156,6 @@ def get_wt_histogram():
     )
 
     loader = load_point_data_by_path(path)
-    predictor_matrix = loader.dataframe
 
     thrWT = [float(cell) for cell in thrWT]
     series = pandas.Series(dict(zip(labels, thrWT)))
@@ -168,7 +166,10 @@ def get_wt_histogram():
     wt = WeatherType(
         thrL=thrL, thrH=thrH, thrL_labels=labels[::2], thrH_labels=labels[1::2]
     )
-    error, _, title = wt.evaluate(predictor_matrix)
+
+    df, title = wt.evaluate(loader.error_type.name, loader=loader)
+    error = df[loader.error_type.name]
+
     plot = wt.plot(error, bins, title, int(y_lim))
 
     return jsonify({"histogram": plot})
@@ -185,9 +186,9 @@ def save_wt_histograms():
         payload["destinationDir"],
         payload["bins"],
     )
+    destination = sanitize_path(destination)
 
     loader = load_point_data_by_path(path)
-    predictor_matrix = loader.dataframe
 
     matrix = [[float(cell) for cell in row[1:]] for row in thrGridOut]
     df = pandas.DataFrame.from_records(matrix, columns=labels)
@@ -203,7 +204,8 @@ def save_wt_histograms():
             thrL=thrL, thrH=thrH, thrL_labels=labels[::2], thrH_labels=labels[1::2]
         )
 
-        error, _, title = wt.evaluate(predictor_matrix)
+        dataframe, title = wt.evaluate(loader.error_type.name, loader=loader)
+        error = dataframe[loader.error_type.name]
 
         wt_code = thrGridOut[idx][0]
         wt.plot(
@@ -211,7 +213,7 @@ def save_wt_histograms():
             bins,
             title,
             y_lim=int(y_lim),
-            out_path=os.path.join(destination, f"WT_{wt_code}"),
+            out_path=os.path.join(destination, f"WT_{wt_code}.png"),
         )
 
     return jsonify({"status": "success"})
@@ -234,10 +236,9 @@ def get_error_rep():
     thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
 
     loader = load_point_data_by_path(path)
-    predictor_matrix = loader.dataframe
 
     rep = DecisionTree.cal_rep_error(
-        predictor_matrix, thrL_out=thrL, thrH_out=thrH, nBin=int(numCols)
+        loader, thrL_out=thrL, thrH_out=thrH, nBin=int(numCols)
     )
 
     s = StringIO()
@@ -269,7 +270,6 @@ def get_breakpoints_suggestions():
     )
 
     loader = load_point_data_by_path(path)
-    predictor_matrix = loader.dataframe
 
     thrWT = [float(cell) for cell in thrWT]
     series = pandas.Series(dict(zip(labels, thrWT)))
@@ -279,9 +279,9 @@ def get_breakpoints_suggestions():
         thrL=thrL, thrH=thrH, thrL_labels=labels[::2], thrH_labels=labels[1::2]
     )
 
-    error, predictor_matrix, title = wt.evaluate(predictor_matrix)
-    predictor = predictor_matrix[predictor]
-    error = np.asarray(error)
+    df, title = wt.evaluate(loader.error_type.name, predictor, loader=loader)
+    error = df[loader.error_type.name].to_numpy()
+    predictor = df[predictor]
 
     sort_indices = predictor.argsort()
     error = error[sort_indices]
@@ -312,7 +312,6 @@ def get_obs_frequency():
     )
 
     loader = load_point_data_by_path(path)
-    predictor_matrix = loader.dataframe
 
     thrWT = [float(cell) for cell in thrWT]
     series = pandas.Series(dict(zip(labels, thrWT)))
@@ -321,9 +320,11 @@ def get_obs_frequency():
     wt = WeatherType(
         thrL=thrL, thrH=thrH, thrL_labels=labels[::2], thrH_labels=labels[1::2]
     )
-    error, predictor_matrix, _ = wt.evaluate(predictor_matrix)
 
-    cv_map = wt.plot_maps(predictor_matrix, code, mode.lower())
+    df, _ = wt.evaluate(
+        loader.error_type.name, "LonOBS", "LatOBS", "OBS", loader=loader
+    )
+    cv_map = wt.plot_maps(df, code, mode.lower())
 
     return jsonify(cv_map)
 

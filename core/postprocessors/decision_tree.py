@@ -1,15 +1,17 @@
 import math
 from base64 import b64encode
 from io import BytesIO
+from typing import Tuple
 
 import attr
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas
+import pandas as pd
 from colour import Color
 from numpy import inf
 
+from core.loaders import BasePointDataReader
 from core.utils import int_or_float
 
 from .conditional_verification import plot_avg, plot_obs_freq, plot_std
@@ -97,8 +99,8 @@ class DecisionTree(object):
                         counter = ind_f
 
         return (
-            pandas.DataFrame(data=thrL_matrix, columns=self.thrL_in.columns),
-            pandas.DataFrame(data=thrH_matrix, columns=self.thrH_in.columns),
+            pd.DataFrame(data=thrL_matrix, columns=self.thrL_in.columns),
+            pd.DataFrame(data=thrH_matrix, columns=self.thrH_in.columns),
         )
 
     @classmethod
@@ -182,8 +184,8 @@ class DecisionTree(object):
 
     @classmethod
     def cal_rep_error(
-        cls, predictors_matrix, thrL_out, thrH_out, nBin
-    ) -> pandas.DataFrame:
+        cls, loader: BasePointDataReader, thrL_out, thrH_out, nBin
+    ) -> pd.DataFrame:
         num_wt = len(thrL_out)
         codes = cls.wt_code(thrL_out, thrH_out)
         rep_error = np.zeros((num_wt, nBin))
@@ -197,8 +199,8 @@ class DecisionTree(object):
                 thrH_labels=thrH_out.columns.tolist(),
             )
 
-            error, _, _ = wt.evaluate(predictors_matrix)
-            error = sorted(error)
+            df, title = wt.evaluate(loader.error_type.name, loader=loader)
+            error = df[loader.error_type.name].sort_values().to_numpy()
 
             centre_bin = (((2.0 * a) + 1) / (2.0 * nBin)) * len(error)
 
@@ -221,7 +223,7 @@ class DecisionTree(object):
 
                 rep_error[i][k] = ((low_val * w_low) + (up_val * w_up)) / (w_low + w_up)
 
-        df = pandas.DataFrame(data=rep_error, index=codes)
+        df = pd.DataFrame(data=rep_error, index=codes)
         return df.round(3)
 
     @classmethod
@@ -292,7 +294,47 @@ class WeatherType(object):
         1000,
     ]
 
-    def evaluate(self, predictors_matrix):
+    def evaluate(
+        self, *cols: str, loader: BasePointDataReader
+    ) -> Tuple[pd.DataFrame, str]:
+        self.error_type = loader.error_type.name
+
+        if loader.cheaper:
+            df: pd.DataFrame = loader.select(*cols, series=False)
+        else:
+            df: pd.DataFrame = loader.dataframe[list(cols)]
+
+        title_pred = ""
+
+        for thrL_label, thrH_label in zip(self.thrL_labels, self.thrH_labels):
+            thrL_temp = self.thrL[thrL_label]
+            thrH_temp = self.thrH[thrH_label]
+
+            predictor_shortname = thrL_label.replace("_thrL", "")
+
+            if loader.cheaper:
+                temp_pred: pd.Series = loader.select(predictor_shortname)
+            else:
+                temp_pred: pd.Series = loader.dataframe[predictor_shortname]
+
+            mask = (temp_pred >= thrL_temp) & (temp_pred < thrH_temp)
+
+            df = df.loc[mask]
+
+            title_pred += "({low} <= {pred} < {high}) ".format(
+                low=int_or_float(thrL_temp),
+                pred=predictor_shortname,
+                high=int_or_float(thrH_temp),
+            )
+
+        return df, title_pred
+
+    def _evaluate(self, predictors_matrix):
+        """
+        Deprecated decision tree evaluator, now replaced by evaluate().
+
+        Algorithm is very similar to evaluate() with loader.cheaper=False.
+        """
         self.error_type = "FER" if "FER" in predictors_matrix else "FE"
 
         error = predictors_matrix[self.error_type]
@@ -320,8 +362,6 @@ class WeatherType(object):
         return error.to_list(), predictors_matrix, title_pred
 
     def plot(self, data, bins: list, title, y_lim, out_path=None):
-        data = pandas.Series(data)
-
         fig, ax = plt.subplots()
         plt.tight_layout(pad=5)
 
@@ -345,7 +385,7 @@ class WeatherType(object):
             bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.5),
         )
 
-        out = pandas.cut(data, bins=bins, include_lowest=True)
+        out = pd.cut(data, bins=bins, include_lowest=True)
         series = out.value_counts(normalize=True, sort=False) * 100
 
         subplot = series.plot.bar(ax=ax, rot=45, ylim=(0, y_lim))

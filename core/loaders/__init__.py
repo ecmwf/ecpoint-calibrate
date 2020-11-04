@@ -1,9 +1,9 @@
 import abc
 from dataclasses import dataclass
 from enum import Enum
-from typing import List
+from typing import List, Union
 
-import pandas
+import pandas as pd
 
 
 class ErrorType(Enum):
@@ -14,10 +14,11 @@ class ErrorType(Enum):
 @dataclass
 class BasePointDataReader(abc.ABC):
     path: str
+    cheaper: bool = False
 
     @property
     @abc.abstractmethod
-    def dataframe(self) -> pandas.DataFrame:
+    def dataframe(self) -> pd.DataFrame:
         raise NotImplementedError
 
     @property
@@ -26,7 +27,7 @@ class BasePointDataReader(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def select(self, *args: str) -> pandas.DataFrame:
+    def select(self, *args: str, series: bool = True) -> Union[pd.DataFrame, pd.Series]:
         raise NotImplementedError
 
     @property
@@ -45,15 +46,15 @@ class BasePointDataReader(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def __next__(self) -> pandas.DataFrame:
+    def __next__(self) -> pd.DataFrame:
         raise NotImplementedError
 
 
-def load_point_data_by_path(path: str) -> BasePointDataReader:
+def load_point_data_by_path(path: str, cheaper: bool = False) -> BasePointDataReader:
     from core.loaders.ascii import ASCIIDecoder
     from core.loaders.parquet import ParquetPointDataTableReader
 
     if path.endswith(".ascii"):
-        return ASCIIDecoder(path=path)
+        return ASCIIDecoder(path=path, cheaper=cheaper)
     elif path.endswith(".parquet"):
-        return ParquetPointDataTableReader(path=path)
+        return ParquetPointDataTableReader(path=path, cheaper=cheaper)

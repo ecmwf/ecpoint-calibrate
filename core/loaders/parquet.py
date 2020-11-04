@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import attr
 import numpy as np
@@ -118,8 +118,12 @@ class ParquetPointDataTableReader(BasePointDataReader):
 
         return self._metadata
 
-    def select(self, *args: str) -> pd.DataFrame:
-        return pd.read_parquet(self.path, engine="pyarrow", columns=list(args))
+    def select(self, *args: str, series: bool = True) -> Union[pd.DataFrame, pd.Series]:
+        result = pd.read_parquet(self.path, engine="pyarrow", columns=list(args))
+        if series and len(args) == 1:
+            (col,) = args
+            result = result[col]
+        return result
 
     def __iter__(self) -> "ParquetPointDataTableReader":
         self._current_row_group = 0
