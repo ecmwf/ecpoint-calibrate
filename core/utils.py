@@ -1,6 +1,8 @@
 import os
+from datetime import date
 from typing import Union
 
+import dateutil.parser
 from numpy import inf
 
 
@@ -30,3 +32,7 @@ def sanitize_path(path: str) -> str:
         path = path.replace(host, local)
 
     return path
+
+
+def format_date(value: str) -> date:
+    return dateutil.parser.isoparse(value).date()

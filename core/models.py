@@ -1,13 +1,13 @@
+from datetime import date
 from pathlib import Path
 from typing import List
 
 import attr
-import dateutil.parser
-from datetime import date
 
+from core.utils import format_date
+from core.utils import sanitize_path as sanitize_path_raw
 
-def format_date(value: str) -> date:
-    return dateutil.parser.isoparse(value).date()
+sanitize_path = lambda path: Path(sanitize_path(path))
 
 
 @attr.s
@@ -22,7 +22,7 @@ class Parameters(object):
     spinup_limit = attr.ib(converter=int)
 
     # output file path
-    out_path = attr.ib(converter=str)
+    out_path = attr.ib(converter=sanitize_path_raw)
 
     # output file format
     out_format = attr.ib(converter=str)
@@ -45,7 +45,7 @@ class Predictand(object):
     # accumulation (in hours) of the parameter to post-process
     accumulation = attr.ib(converter=int)
 
-    path = attr.ib(converter=Path)
+    path = attr.ib(converter=sanitize_path)
 
     code = attr.ib(converter=str)
 
@@ -66,7 +66,7 @@ class Predictand(object):
 class Observations(object):
     # path of the database that contains the observations for the parameter
     # to post-process
-    path = attr.ib(converter=Path)
+    path = attr.ib(converter=sanitize_path)
 
     units = attr.ib(converter=str)
 
@@ -75,7 +75,7 @@ class Observations(object):
 class Predictors(object):
     # path of the database that contains the parameter to post-process and the
     # predictors
-    path = attr.ib(converter=Path)
+    path = attr.ib(converter=sanitize_path)
 
     sampling_interval = attr.ib(converter=int)
 
