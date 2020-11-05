@@ -7,7 +7,7 @@ import attr
 from core.utils import format_date
 from core.utils import sanitize_path as sanitize_path_raw
 
-sanitize_path = lambda path: Path(sanitize_path(path))
+sanitize_path = lambda path: Path(sanitize_path_raw(path))
 
 
 @attr.s
