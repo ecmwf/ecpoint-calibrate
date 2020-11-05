@@ -1,6 +1,7 @@
 const defaultState = {
   path: null,
   loading: false,
+  cheaper: false,
 }
 
 export default (state = defaultState, action) => {
@@ -11,6 +12,10 @@ export default (state = defaultState, action) => {
 
     case 'PRELOADER.SET_LOADING': {
       return { ...state, loading: action.data }
+    }
+
+    case 'PRELOADER.SET_CHEAPER': {
+      return { ...state, cheaper: action.data }
     }
 
     default: {

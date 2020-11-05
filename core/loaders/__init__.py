@@ -55,6 +55,11 @@ def load_point_data_by_path(path: str, cheaper: bool = False) -> BasePointDataRe
     from core.loaders.parquet import ParquetPointDataTableReader
 
     if path.endswith(".ascii") or path.endswith(".csv"):
-        return ASCIIDecoder(path=path, cheaper=cheaper)
+        loader = ASCIIDecoder(path=path, cheaper=cheaper)
     elif path.endswith(".parquet"):
-        return ParquetPointDataTableReader(path=path, cheaper=cheaper)
+        loader = ParquetPointDataTableReader(path=path, cheaper=cheaper)
+    else:
+        raise ValueError(f"invalid file extension: {path}")
+
+    print(f"Loaded point data table: {loader}")
+    return loader

@@ -135,6 +135,7 @@ class Split extends Component {
         predictor: this.props.fields[this.state.customSplitLevel],
         numSubSamples: this.state.numSubSamples,
         minNumCases: this.state.minNumCases,
+        cheaper: this.props.cheaper,
       })
       .then(response => {
         this.setState({

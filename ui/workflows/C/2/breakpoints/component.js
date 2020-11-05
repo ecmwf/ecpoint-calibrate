@@ -95,6 +95,7 @@ class Breakpoints extends Component {
         matrix,
         path: this.props.path,
         numCols: this.state.numColsMFs,
+        cheaper: this.props.cheaper,
       })
       .then(response => {
         this.props.setLoading(false)

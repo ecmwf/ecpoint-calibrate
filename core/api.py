@@ -4,7 +4,6 @@ from functools import lru_cache
 from io import StringIO
 from pathlib import Path
 
-import numpy as np
 import pandas
 from flask import Flask, Response, jsonify, request
 from flask_cors import CORS
@@ -147,15 +146,16 @@ def get_decision_tree():
 @app.route("/postprocessing/generate-wt-histogram", methods=("POST",))
 def get_wt_histogram():
     payload = request.get_json()
-    labels, thrWT, path, y_lim, bins = (
+    labels, thrWT, path, y_lim, bins, cheaper = (
         payload["labels"],
         payload["thrWT"],
         sanitize_path(payload["path"]),
         payload["yLim"],
         payload["bins"],
+        payload["cheaper"],
     )
 
-    loader = load_point_data_by_path(path)
+    loader = load_point_data_by_path(path, cheaper=cheaper)
 
     thrWT = [float(cell) for cell in thrWT]
     series = pandas.Series(dict(zip(labels, thrWT)))
@@ -178,17 +178,18 @@ def get_wt_histogram():
 @app.route("/postprocessing/save-wt-histograms", methods=("POST",))
 def save_wt_histograms():
     payload = request.get_json()
-    labels, thrGridOut, path, y_lim, destination, bins = (
+    labels, thrGridOut, path, y_lim, destination, bins, cheaper = (
         payload["labels"],
         payload["thrGridOut"],
         sanitize_path(payload["path"]),
         payload["yLim"],
         payload["destinationDir"],
         payload["bins"],
+        payload["cheaper"],
     )
     destination = sanitize_path(destination)
 
-    loader = load_point_data_by_path(path)
+    loader = load_point_data_by_path(path, cheaper=cheaper)
 
     matrix = [[float(cell) for cell in row[1:]] for row in thrGridOut]
     df = pandas.DataFrame.from_records(matrix, columns=labels)
@@ -222,11 +223,12 @@ def save_wt_histograms():
 @app.route("/postprocessing/create-error-rep", methods=("POST",))
 def get_error_rep():
     payload = request.get_json()
-    labels, matrix, path, numCols = (
+    labels, matrix, path, numCols, cheaper = (
         payload["labels"],
         payload["matrix"],
         sanitize_path(payload["path"]),
         payload["numCols"],
+        payload["cheaper"],
     )
 
     matrix = [[float(cell) for cell in row] for row in matrix]
@@ -235,7 +237,7 @@ def get_error_rep():
 
     thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
 
-    loader = load_point_data_by_path(path)
+    loader = load_point_data_by_path(path, cheaper=cheaper)
 
     rep = DecisionTree.cal_rep_error(
         loader, thrL_out=thrL, thrH_out=thrH, nBin=int(numCols)
@@ -260,16 +262,17 @@ def get_predictor_units():
 def get_breakpoints_suggestions():
     payload = request.get_json()
 
-    labels, thrWT, path, predictor, minNumCases, numSubSamples = (
+    labels, thrWT, path, predictor, minNumCases, numSubSamples, cheaper = (
         payload["labels"],
         payload["thrWT"],
         sanitize_path(payload["path"]),
         payload["predictor"],
         int(payload["minNumCases"]),
         int(payload["numSubSamples"]),
+        payload["cheaper"],
     )
 
-    loader = load_point_data_by_path(path)
+    loader = load_point_data_by_path(path, cheaper=cheaper)
 
     thrWT = [float(cell) for cell in thrWT]
     series = pandas.Series(dict(zip(labels, thrWT)))
@@ -303,15 +306,16 @@ def get_breakpoints_suggestions():
 @app.route("/postprocessing/plot-cv-map", methods=("POST",))
 def get_obs_frequency():
     payload = request.get_json()
-    labels, thrWT, path, code, mode = (
+    labels, thrWT, path, code, mode, cheaper = (
         payload["labels"],
         payload["thrWT"],
         sanitize_path(payload["path"]),
         payload["code"],
         payload["mode"],
+        payload["cheaper"],
     )
 
-    loader = load_point_data_by_path(path)
+    loader = load_point_data_by_path(path, cheaper=cheaper)
 
     thrWT = [float(cell) for cell in thrWT]
     series = pandas.Series(dict(zip(labels, thrWT)))

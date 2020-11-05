@@ -48,6 +48,7 @@ export default class TreeContainer extends Component {
         path: this.props.path,
         yLim: this.props.yLim,
         bins: this.props.bins,
+        cheaper: this.props.cheaper,
       })
       .then(response => {
         this.setState({ graph: response.data.histogram })
@@ -77,6 +78,7 @@ export default class TreeContainer extends Component {
         path: this.props.path,
         code: node.meta.code,
         mode: this.state.conditionalVerificationMode,
+        cheaper: this.props.cheaper,
       })
       .then(response => {
         this.setState({
@@ -253,6 +255,7 @@ export default class TreeContainer extends Component {
                     yLim: this.props.yLim,
                     destinationDir: path,
                     bins: this.props.bins,
+                    cheaper: this.props.cheaper,
                   })
                   .then(() => this.setState({ loading: false }))
                   .catch(e => {
@@ -331,6 +334,7 @@ export default class TreeContainer extends Component {
           yLim={this.props.yLim}
           bins={this.props.bins}
           count={this.props.count}
+          cheaper={this.props.cheaper}
         />
         <Dimmer active={this.state.loading !== false} inverted>
           <Loader indeterminate>{this.state.loading}</Loader>
