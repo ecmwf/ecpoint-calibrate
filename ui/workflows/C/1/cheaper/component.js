@@ -13,6 +13,7 @@ class Cheaper extends Component {
           </p>
           <Radio
             toggle
+            defaultChecked={this.props.cheaper}
             onChange={() => this.props.onCheaperChange(!this.props.cheaper)}
           />
         </Item.Description>
