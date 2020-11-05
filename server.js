@@ -61,7 +61,12 @@ const bindings = [
   pathExists(home) ? `${home}:/home` : null,
   pathExists(media) ? `${media}:/media` : null,
   pathExists('/vol') ? '/vol:/vol' : null,
+  pathExists('/tmp') ? '/tmp:/tmp' : null,
+  pathExists('/var/tmp') ? '/var/tmp:/var/tmp' : null,
+  pathExists('/scratch') ? '/scratch:/scratch' : null,
 ].filter(e => e !== null)
+
+console.log(`Detected volume bindings: ${bindings}`)
 
 // Docker image names
 const backendImage = `onyb/ecpoint-calibrate-core:${app.getVersion()}`
