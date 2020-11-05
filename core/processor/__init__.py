@@ -24,7 +24,7 @@ from .log_factory import (
 from .utils import iter_daterange
 
 logging.basicConfig(
-    filename=f'{os.environ["HOME"]}/ecpoint.logs', filemode="w", level=logging.INFO
+    filename=f'/var/tmp/ecpoint.logs', filemode="w", level=logging.INFO
 )
 
 console = logging.StreamHandler()

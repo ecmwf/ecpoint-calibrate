@@ -164,10 +164,6 @@ const containerFactory = opts => image =>
   })
 
 const backendSvc = containerFactory({
-  Volumes: {
-    '/home': {},
-    '/media': {},
-  },
   ExposedPorts: {
     '8888/tcp': {},
   },
@@ -189,6 +185,7 @@ const loggerSvc = containerFactory({
     '9001/tcp': {},
   },
   Hostconfig: {
+    Binds: ['/var/tmp:/var/tmp'],
     PortBindings: {
       '9001/tcp': [
         {
