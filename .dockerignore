@@ -5,7 +5,7 @@
 !/Pipfile
 !/Pipfile.lock
 !/core/**
-
+!/start_log_agent.sh
 # Ignore unnecessary files inside allowed directories
 **/*~
 **/*.pyc
