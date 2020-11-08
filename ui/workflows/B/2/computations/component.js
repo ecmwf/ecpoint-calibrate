@@ -211,7 +211,7 @@ class Computation extends Component {
         <Table.Cell collapsing>
           <Grid.Row>
             <p>
-              <b>Multiplication factor:</b>
+              <b>Multiplying Factor:</b>
             </p>
             <Input
               fluid
@@ -227,7 +227,7 @@ class Computation extends Component {
           </Grid.Row>
           <Grid.Row>
             <p>
-              <b>Addition factor:</b>
+              <b>Value to Add:</b>
             </p>
             <Input
               fluid
