@@ -99,7 +99,7 @@ class Breakpoints extends Component {
       })
       .then(response => {
         this.props.setLoading(false)
-        download('error.csv', response.data)
+        download(`${this.props.error}.csv`, response.data)
       })
       .catch(e => {
         console.error(e)

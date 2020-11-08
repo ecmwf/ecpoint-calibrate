@@ -9,6 +9,7 @@ const mapStateToProps = state => ({
   path: state.preloader.path,
   labels: state.postprocessing.thrGridIn[0].slice(1).map(cell => cell.value),
   cheaper: state.preloader.cheaper,
+  error: state.binning.error,
 })
 
 const mapDispatchToProps = dispatch => ({
