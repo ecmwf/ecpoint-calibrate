@@ -44,8 +44,8 @@ class Split extends Component {
     return {
       ...state,
       customSplitLevel:
-        !_.isEmpty(props.nodeMeta) && state.customSplitValue === ''
-          ? props.nodeMeta.level + 1 === props.fields.length
+        !_.isEmpty(props.nodeMeta) && state.customSplitLevel === ''
+          ? props.nodeMeta.level === props.fields.length - 1
             ? props.nodeMeta.level
             : props.nodeMeta.level === -1
             ? 0
