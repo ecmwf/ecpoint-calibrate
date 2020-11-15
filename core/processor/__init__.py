@@ -131,14 +131,14 @@ def run(config: Config):
         logging.info(f"  {forecast}")
 
         if forecast in counter_used_FC:
-            logging.warn(
+            logging.warning(
                 f"  The above forecast was already considered for computation in Case {counter_used_FC[forecast]}"
             )
             continue
 
         # Reading the forecasts
         if curr_date < BaseDateS or curr_date > BaseDateF:
-            logging.warn(
+            logging.warning(
                 f"  Forecast out of the calibration period {BaseDateSSTR} - {BaseDateFSTR}. Forecast not considered."
             )
             continue
@@ -201,7 +201,7 @@ def run(config: Config):
         try:
             obs = read_geopoints(path=obs_path)
         except IOError:
-            logging.warn(f"  Observation file not found in DB: {obs_path}.")
+            logging.warning(f"  Observation file not found in DB: {obs_path}.")
             continue
         except Exception:
             logging.error(
@@ -212,7 +212,7 @@ def run(config: Config):
         nOBS = len(obs)
 
         if nOBS == 0:
-            logging.warn(
+            logging.warning(
                 f"  No observation in the file: {os.path.basename(obs_path)}. Forecast not considered."
             )
             continue
@@ -300,7 +300,7 @@ def run(config: Config):
                 try:
                     fieldset = Fieldset.from_path(path=path)
                 except IOError:
-                    logging.warn(f"  Forecast file not found: {path}.")
+                    logging.warning(f"  Forecast file not found: {path}.")
                     skip = True
                     break
                 except Exception:
@@ -343,7 +343,7 @@ def run(config: Config):
 
                 if not ref_geopoints:
                     if config.predictand.is_accumulated:
-                        logging.warn(
+                        logging.warning(
                             f"  The observation file does not contain observations that correspond to "
                             f" {computation.shortname} >= "
                             f"{predictand_min_value} {predictand_scaled_units}/{acc}h."
