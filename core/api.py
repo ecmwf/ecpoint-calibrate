@@ -92,6 +92,16 @@ def get_fields_from_ascii_table():
     )
 
 
+@app.route("/get-pdt-metadata", methods=("POST",))
+def get_pdt_metadata():
+    payload = request.get_json()
+    path = sanitize_path(payload["path"])
+
+    loader = load_point_data_by_path(path)
+
+    return Response(json.dumps(loader.metadata), mimetype="application/json")
+
+
 @app.route("/postprocessing/create-wt-matrix", methods=("POST",))
 def create_weather_types_matrix():
     payload = request.get_json()

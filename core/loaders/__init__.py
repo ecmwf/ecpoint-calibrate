@@ -23,6 +23,11 @@ class BasePointDataReader(abc.ABC):
 
     @property
     @abc.abstractmethod
+    def metadata(self) -> dict:
+        raise NotImplementedError
+
+    @property
+    @abc.abstractmethod
     def columns(self) -> List[str]:
         raise NotImplementedError
 

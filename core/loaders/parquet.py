@@ -114,7 +114,9 @@ class ParquetPointDataTableReader(BasePointDataReader):
     def metadata(self) -> dict:
         if not self._metadata:
             pq_reader = pq.ParquetFile(self.path)
-            self._metadata = pq_reader.schema_arrow.metadata
+            raw_metadata = pq_reader.schema_arrow.metadata
+
+            self._metadata = {k.decode(): v.decode() for k, v in raw_metadata.items()}
 
         return self._metadata
 

@@ -1,6 +1,7 @@
 from collections import OrderedDict
 from dataclasses import dataclass, field
 from functools import partial
+from itertools import takewhile
 from typing import List, Optional, Union
 
 import attr
@@ -66,6 +67,17 @@ class ASCIIDecoder(BasePointDataReader):
             self._columns = list(df.columns)
 
         return self._columns
+
+    @property
+    def metadata(self) -> dict:
+        with open(self.path, "r") as f:
+            lines = takewhile(lambda s: s.startswith("#"), f)
+            header = "".join(lines)
+
+        return {
+            "header": header,
+            "footer": "Cannot read footer comments from CSV Point Data Tables",
+        }
 
     def select(self, *args: str, series: bool = True) -> Union[pd.DataFrame, pd.Series]:
         result = self._reader(usecols=args)
