@@ -1,26 +1,17 @@
 import React, { Component } from 'react'
-import { remote } from 'electron'
 
 import {
   Grid,
-  Input,
   Card,
-  Button,
-  Radio,
   Item,
   Icon,
   Label,
-  Popup,
   TextArea,
   Form,
   Message,
 } from 'semantic-ui-react'
 
 import _ from 'lodash'
-
-import { isEmpty } from './index'
-
-const mainProcess = remote.require('./server')
 
 class Binning extends Component {
   getTextArea = () => (

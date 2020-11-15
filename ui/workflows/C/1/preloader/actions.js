@@ -29,3 +29,27 @@ export const setPath = path => async dispatch => {
     })
     .then(() => dispatch({ type: 'PRELOADER.SET_LOADING', data: false }))
 }
+
+export const getMetadata = path => async dispatch => {
+  if (path === null) {
+    return
+  }
+
+  await dispatch({ type: 'PRELOADER.SET_LOADING', data: true })
+
+  client
+    .post('/get-pdt-metadata', { path })
+    .then(response => {
+      dispatch({ type: 'PRELOADER.SET_METADATA', data: response.data })
+    })
+    .catch(e => {
+      console.error(e)
+      if (e.response !== undefined) {
+        console.error(`Error response: ${e.response}`)
+        toast.error(`${e.response.status} ${e.response.statusText}`)
+      } else {
+        toast.error('Empty response from server')
+      }
+    })
+    .then(() => dispatch({ type: 'PRELOADER.SET_LOADING', data: false }))
+}

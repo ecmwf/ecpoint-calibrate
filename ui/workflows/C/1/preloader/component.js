@@ -1,21 +1,9 @@
 import React, { Component } from 'react'
 import { remote } from 'electron'
 
-import {
-  Grid,
-  Input,
-  Card,
-  Button,
-  Radio,
-  Item,
-  Icon,
-  Label,
-  Popup,
-  Dimmer,
-  Loader,
-} from 'semantic-ui-react'
+import { Grid, Card, Button, Item, Icon, Dimmer, Loader } from 'semantic-ui-react'
 
-import { isEmpty } from './index'
+import PDTViewer from '../pdtViewer'
 
 const mainProcess = remote.require('./server')
 
@@ -33,12 +21,24 @@ class Preloader extends Component {
           </Button>
         </Item.Description>
         <Item.Extra>
-          {this.props.outPath ? (
-            <p>
-              <b>Path:</b> {this.props.path}
-            </p>
-          ) : (
-            this.props.path
+          {this.props.path !== null && (
+            <>
+              <p>
+                <b>Path:</b> {this.props.path}
+              </p>
+
+              <br />
+              <p>
+                <Button
+                  size="mini"
+                  onClick={() => {
+                    this.props.onGetMetadata(this.props.path)
+                  }}
+                >
+                  View metadata
+                </Button>
+              </p>
+            </>
           )}
         </Item.Extra>
       </Item.Content>

@@ -1,4 +1,3 @@
-import client from '~/utils/client'
 import _ from 'lodash'
 
 export const setBins = csv => ({
