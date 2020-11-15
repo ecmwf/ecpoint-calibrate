@@ -84,13 +84,19 @@ def output_file_logs(config):
 def point_data_table_logs(config):
     step = "StepF" if config.predictand.is_accumulated else "Step"
 
+    acc_step_info = (
+        f"(as defined by 'BaseDate', 'BaseTime', and '{step}')."
+        if config.predictand.is_accumulated
+        else ""
+    )
+
     return dedent(
         f"""
     ************************************
     ecPoint-Calibrate - POINT DATA TABLE
     ************************************
     NOTE: 'DateOBS' and 'TimeOBS' correspond to the date and time that the observation was taken.
-          (as defined by 'BaseDate', 'BaseTime', and 'StepF').
+          {acc_step_info}
 
           'BaseDate' and 'DateOBS' are given in the YYYY-MM-DD format.
           'BaseTime' and 'TimeOBS' are given in UTC time.
@@ -102,11 +108,14 @@ def point_data_table_logs(config):
 
 
 def step_information_logs(config):
+    step = "StepS" if config.predictand.is_accumulated else "Step"
+    step_info = "of the acc period (StepS)" if config.predictand.is_accumulated else "(Step)"
+
     return dedent(
         f"""
-    The start step of the acc period (StepS) is considered between
+    The start step {step_info} is considered between
     'LimSU' (to avoid the spin-up window), and 'IntBT+(LimSU-1)' (to consider the shortest range forecast available)."
 
-    Therefore, StepS will range between t+{config.parameters.spinup_limit} and t+{config.parameters.model_interval + config.parameters.spinup_limit - 1}
+    Therefore, {step} will range between t+{config.parameters.spinup_limit} and t+{config.parameters.model_interval + config.parameters.spinup_limit - 1}
     """
     )
