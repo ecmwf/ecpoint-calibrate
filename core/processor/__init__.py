@@ -473,7 +473,6 @@ def run(config: Config):
                 ("DateOBS", [validDateF.strftime("%Y-%m-%d")] * n),
                 ("TimeOBS", [HourVF] * n),
             ]
-            + vals_LST
             + [
                 ("LatOBS", latObs),
                 ("LonOBS", lonObs),
@@ -481,6 +480,7 @@ def run(config: Config):
                 ("Predictand", np.around(get_geopoints_values(ref_geopoints), decimals=3)),
             ]
             + vals_errors
+            + vals_LST
             + computations_result
         )
 
