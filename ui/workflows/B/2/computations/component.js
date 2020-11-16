@@ -236,9 +236,7 @@ class Computation extends Component {
               onChange={e =>
                 this.props.setAddScaleValue(this.props.index, e.target.value)
               }
-              disabled={['24H_SOLAR_RADIATION', 'LOCAL_SOLAR_TIME'].includes(
-                this.props.field
-              )}
+              disabled={['24H_SOLAR_RADIATION'].includes(this.props.field)}
             />
           </Grid.Row>
           <br />
