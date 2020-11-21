@@ -38,7 +38,7 @@ export default class TreeContainer extends Component {
   }
 
   onNodeClickExploreMode = node => {
-    !node._children && this.setState({ openMappingFunction: true, nodeMeta: node.meta })
+    this.setState({ openMappingFunction: true, nodeMeta: node.meta })
     client
       .post('/postprocessing/generate-wt-histogram', {
         labels: this.props.labels,
@@ -65,10 +65,9 @@ export default class TreeContainer extends Component {
   }
 
   onNodeClickConditionalVerificationMode = node => {
-    !node._children &&
-      this.setState({
-        loading: 'Generating conditional verification map. Please wait.',
-      })
+    this.setState({
+      loading: 'Generating conditional verification map. Please wait.',
+    })
     client
       .post('/postprocessing/plot-cv-map', {
         labels: this.props.labels,
@@ -100,15 +99,21 @@ export default class TreeContainer extends Component {
   }
 
   onNodeClickEditMode = node => {
-    !node._children && this.setState({ openSplit: true, nodeMeta: node.meta })
+    this.setState({ openSplit: true, nodeMeta: node.meta })
   }
 
   onNodeClick = (node, event) => {
-    this.state.treeEditMode
-      ? this.onNodeClickEditMode(node)
-      : this.state.conditionalVerificationMode
-      ? this.onNodeClickConditionalVerificationMode(node)
-      : this.onNodeClickExploreMode(node)
+    if (!!node._children) {
+      return
+    }
+
+    if (this.state.treeEditMode) {
+      this.onNodeClickEditMode(node)
+    } else if (this.state.conditionalVerificationMode) {
+      this.onNodeClickConditionalVerificationMode(node)
+    } else {
+      this.onNodeClickExploreMode(node)
+    }
   }
 
   handleKeyboardInput = e => {
