@@ -121,6 +121,21 @@ class Computation extends Component {
       ? 'The units of the chosen variables should match.'
       : null
 
+  updateInputs = value =>
+    this.props.onInputsChange(
+      this.props.index,
+      value.map(input => ({
+        code: input,
+        name: this.props.computedVariables.includes(input)
+          ? this.props.fields.filter(x => x.shortname === input)[0].fullname
+          : null,
+        units: this.props.computedVariables.includes(input)
+          ? this.props.fields.filter(x => x.shortname === input)[0].units
+          : null,
+        path: this.props.predictors.path + '/' + input,
+      }))
+    )
+
   render() {
     return (
       <Table.Row positive={this.isPositive()}>
@@ -170,18 +185,7 @@ class Computation extends Component {
             placeholder="Select computation input(s)"
             value={this.props.inputs.map(input => input.code)}
             options={this.getPredictors()}
-            onChange={(e, { value }) =>
-              this.props.onInputsChange(
-                this.props.index,
-                value.map(input => ({
-                  code: input,
-                  units: this.props.computedVariables.includes(input)
-                    ? this.props.fields.filter(x => x.shortname === input)[0].units
-                    : null,
-                  path: this.props.predictors.path + '/' + input,
-                }))
-              )
-            }
+            onChange={(e, { value }) => this.updateInputs(value)}
             disabled={
               this.props.index === 0 || this.props.field === 'LOCAL_SOLAR_TIME'
                 ? true
@@ -193,7 +197,11 @@ class Computation extends Component {
             <Table size="small" compact="very" basic="very">
               <Table.Header>
                 <Table.Row>
-                  <Table.HeaderCell textAlign="center" colSpan="2">
+                  <Table.HeaderCell />
+                  <Table.HeaderCell textAlign="center">
+                    <b>Name</b>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell textAlign="center">
                     <b>Units</b>
                   </Table.HeaderCell>
                 </Table.Row>
@@ -202,6 +210,7 @@ class Computation extends Component {
                 {this.props.inputs.map((input, key) => (
                   <Table.Row textAlign="center" key={key}>
                     <Table.Cell collapsing>{input.code}</Table.Cell>
+                    <Table.Cell collapsing>{input.name}</Table.Cell>
                     <Table.Cell collapsing>{input.units}</Table.Cell>
                   </Table.Row>
                 ))}

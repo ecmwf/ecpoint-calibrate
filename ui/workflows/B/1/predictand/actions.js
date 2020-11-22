@@ -14,9 +14,9 @@ export const setPath = path => async dispatch => {
   await dispatch({ type: 'PREDICTAND.SET_PATH', data: path })
 
   await client
-    .post('/get-predictor-units', { path })
+    .post('/get-predictor-metadata', { path })
     .then(response =>
-      dispatch({ type: 'PREDICTAND.SET_UNITS', data: response.data.units })
+      dispatch({ type: 'PREDICTAND.SET_METADATA', data: response.data })
     )
     .catch(e => {
       console.error(e)

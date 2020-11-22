@@ -84,6 +84,7 @@ export default (state = defaultState, action) => {
             return {
               ...item,
               inputs: action.inputs,
+              name: action.name,
               units: !['RATIO_FIELD', '24H_SOLAR_RADIATION'].includes(item.field)
                 ? action.inputs.length > 0
                   ? action.inputs[0].units
@@ -95,7 +96,7 @@ export default (state = defaultState, action) => {
         }),
       }
 
-    case 'COMPUTATIONS.SET_INPUT_UNITS':
+    case 'COMPUTATIONS.SET_INPUT_METADATA':
       return {
         ...state,
         fields: state.fields.map(item => {
@@ -105,6 +106,7 @@ export default (state = defaultState, action) => {
               inputs: item.inputs.map(input => ({
                 ...input,
                 units: input.code === action.code ? action.units : input.units,
+                name: input.code === action.code ? action.name : input.name,
               })),
               units: !['RATIO_FIELD', '24H_SOLAR_RADIATION'].includes(item.field)
                 ? item.mulScale === '1' && item.addScale === '0'

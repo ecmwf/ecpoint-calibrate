@@ -46,7 +46,7 @@ def get_predictors():
 
     # Warming up the LRU cache for fetching units
     for code in codes:
-        get_units(os.path.join(path, code))
+        get_metadata(os.path.join(path, code))
 
     return Response(json.dumps(codes), mimetype="application/json")
 
@@ -258,14 +258,13 @@ def get_error_rep():
     return jsonify(s.getvalue())
 
 
-@app.route("/get-predictor-units", methods=("POST",))
+@app.route("/get-predictor-metadata", methods=("POST",))
 def get_predictor_units():
     payload = request.get_json()
     path = sanitize_path(payload["path"])
 
-    units = get_units(path)
-
-    return Response(json.dumps({"units": units}), mimetype="application/json")
+    metadata = get_metadata(path)
+    return Response(json.dumps(metadata), mimetype="application/json")
 
 
 @app.route("/postprocessing/get-breakpoints-suggestions", methods=("POST",))
@@ -344,14 +343,16 @@ def get_obs_frequency():
 
 
 @lru_cache(maxsize=None)
-def get_units(path):
+def get_metadata(path):
     base_predictor_path = Path(path)
 
     if not base_predictor_path.exists():
         return "-"
 
     first_grib_file = next(base_predictor_path.glob("**/*.grib"))
-    return Fieldset.from_path(first_grib_file).units
+
+    fieldset = Fieldset.from_path(first_grib_file)
+    return {"units": fieldset.units, "name": fieldset.name}
 
 
 def main():

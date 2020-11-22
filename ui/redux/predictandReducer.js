@@ -6,6 +6,7 @@ const defaultState = {
   minValueAcc: '',
   accumulation: '',
   units: null,
+  name: null,
 }
 
 export default (state = defaultState, action) => {
@@ -16,10 +17,10 @@ export default (state = defaultState, action) => {
         : state
     }
 
-    case 'PREDICTAND.SET_UNITS': {
+    case 'PREDICTAND.SET_METADATA': {
       return {
         ...state,
-        units: action.data,
+        ...action.data,
       }
     }
 

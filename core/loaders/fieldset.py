@@ -18,6 +18,10 @@ class Fieldset(metview.Fieldset):
     def units(self):
         return metview.grib_get_string(self, "units")
 
+    @property
+    def name(self) -> str:
+        return metview.grib_get_string(self, "name")
+
     @classmethod
     def from_path(cls, path: Union[Path, str]):
         if isinstance(path, Path):

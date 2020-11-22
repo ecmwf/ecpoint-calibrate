@@ -32,13 +32,13 @@ export const updateComputationInputs = (index, inputs) => ({
 
 export const fetchAndUpdateInputUnits = (index, input) => async dispatch => {
   await client
-    .post('/get-predictor-units', { path: input.path })
+    .post('/get-predictor-metadata', { path: input.path })
     .then(response =>
       dispatch({
-        type: 'COMPUTATIONS.SET_INPUT_UNITS',
+        type: 'COMPUTATIONS.SET_INPUT_METADATA',
         code: input.code,
-        units: response.data.units,
         index,
+        ...response.data,
       })
     )
     .catch(e => {
