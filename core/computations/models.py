@@ -6,7 +6,9 @@ from .utils import (
     compute_24h_solar_radiation,
     compute_accumulated_field,
     compute_average_field,
-    compute_instantaneous_field,
+    compute_instantaneous_field_100,
+    compute_instantaneous_field_010,
+    compute_instantaneous_field_001,
     compute_local_solar_time,
     compute_maximum,
     compute_minimum,
@@ -20,7 +22,9 @@ from .utils import (
 class Computer(object):
     meta = {
         "ACCUMULATED_FIELD": compute_accumulated_field,
-        "INSTANTANEOUS_FIELD": compute_instantaneous_field,
+        "INSTANTANEOUS_FIELD_100": compute_instantaneous_field_100,
+        "INSTANTANEOUS_FIELD_010": compute_instantaneous_field_010,
+        "INSTANTANEOUS_FIELD_001": compute_instantaneous_field_001,
         "WEIGHTED_AVERAGE_FIELD": compute_weighted_average_field,
         "24H_SOLAR_RADIATION": compute_24h_solar_radiation,
         "VECTOR_MODULE": compute_vector,
@@ -43,24 +47,3 @@ class Computer(object):
                 operator.add(computed_value, self.computation.addScale),
                 self.computation.mulScale,
             )
-
-    @classmethod
-    def filter_paths_to_read(cls, paths, computation):
-        if computation == "ACCUMULATED_FIELD":
-            return paths[0], paths[-1]
-        if computation == "INSTANTANEOUS_FIELD":
-            return paths[0]
-        if computation == "24H_SOLAR_RADIATION":
-            return paths[0], paths[-1]
-
-        if computation == "RATIO_FIELD":
-            return paths
-
-        if computation in (
-            "WEIGHTED_AVERAGE_FIELD",
-            "MAXIMUM_FIELD",
-            "MINIMUM_FIELD",
-            "AVERAGE_FIELD",
-            "VECTOR_MODULE",
-        ):
-            return paths

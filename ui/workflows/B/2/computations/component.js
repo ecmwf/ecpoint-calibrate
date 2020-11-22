@@ -9,7 +9,6 @@ import {
   Dropdown,
   Input,
   Label,
-  Radio,
   Checkbox,
   Message,
   Popup,
@@ -29,8 +28,16 @@ const operations = type =>
           value: 'RATIO_FIELD',
         },
         {
-          text: 'Instantaneous Field',
-          value: 'INSTANTANEOUS_FIELD',
+          text: 'Instantaneous Field - Begin',
+          value: 'INSTANTANEOUS_FIELD_100',
+        },
+        {
+          text: 'Instantaneous Field - Middle',
+          value: 'INSTANTANEOUS_FIELD_010',
+        },
+        {
+          text: 'Instantaneous Field - End',
+          value: 'INSTANTANEOUS_FIELD_001',
         },
         {
           text: 'Maximum Field',
@@ -68,7 +75,7 @@ const operations = type =>
         },
         {
           text: 'Instantaneous Field',
-          value: 'INSTANTANEOUS_FIELD',
+          value: 'INSTANTANEOUS_FIELD_100',
         },
         {
           text: 'Vector Module',
@@ -372,7 +379,7 @@ class Computations extends Component {
       field:
         this.props.predictand.type === 'ACCUMULATED'
           ? 'ACCUMULATED_FIELD'
-          : 'INSTANTANEOUS_FIELD',
+          : 'INSTANTANEOUS_FIELD_100',
       inputs: [input],
       mulScale: '1',
       addScale: '0',

@@ -14,7 +14,7 @@ def compute_24h_solar_radiation(*args):
 
 def compute_weighted_average_field(*args):
     weighted_sum_of_first_and_last_items = args[0] * 0.5 + args[-1] * 0.5
-    items_excluding_first_and_last = args[1 : len(args) - 1]
+    items_excluding_first_and_last = args[1: len(args) - 1]
 
     if items_excluding_first_and_last:
         total_sum = reduce(
@@ -48,8 +48,16 @@ def compute_ratio_field(dividend, divisor):
     return dividend / divisor
 
 
-def compute_instantaneous_field(*args):
+def compute_instantaneous_field_100(*args):
     return args[0]
+
+
+def compute_instantaneous_field_001(*args):
+    return args[-1]
+
+
+def compute_instantaneous_field_010(*args):
+    return args[len(args) // 2]
 
 
 def compute_local_solar_time(longitudes, hour):
