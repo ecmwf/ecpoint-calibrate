@@ -1,5 +1,4 @@
 import os
-from base64 import b64encode
 from tempfile import NamedTemporaryFile
 
 import metview as mv
@@ -56,7 +55,7 @@ def plot_obs_freq(predictor_matrix, code):
     geo = mv.set_longitudes(geo, grouped_df["LonOBS"].to_numpy(dtype=np.float))
     geo = mv.set_values(geo, grouped_df["OBS"].to_numpy(dtype=np.float))
 
-    return plot_geo(geo, coastline, symbol, legend, title)
+    return plot_geo(geo, coastline, symbol, legend, title, code)
 
 
 def plot_avg(predictor_matrix, code):
@@ -108,7 +107,7 @@ def plot_avg(predictor_matrix, code):
     geo = mv.set_longitudes(geo, grouped_df["LonOBS"].to_numpy(dtype=np.float))
     geo = mv.set_values(geo, grouped_df[error].to_numpy(dtype=np.float))
 
-    return plot_geo(geo, coastline, symbol, legend, title)
+    return plot_geo(geo, coastline, symbol, legend, title, code)
 
 
 def plot_std(predictor_matrix, code):
@@ -162,21 +161,14 @@ def plot_std(predictor_matrix, code):
     geo = mv.set_longitudes(geo, grouped_df["LonOBS"].to_numpy(dtype=np.float))
     geo = mv.set_values(geo, grouped_df[error].to_numpy(dtype=np.float))
 
-    return plot_geo(geo, coastline, symbol, legend, title)
+    return plot_geo(geo, coastline, symbol, legend, title, code)
 
 
-def plot_geo(geo, coastline, symbol, legend, title):
-    with NamedTemporaryFile(suffix=".png") as png, NamedTemporaryFile(
-        delete=False, suffix=".pdf"
-    ) as pdf:
-        png_obj = mv.png_output(output_name=png.name.replace(".png", ""))
-        mv.setoutput(png_obj)
-        mv.plot(coastline, symbol, legend, title, geo)
-
+def plot_geo(geo, coastline, symbol, legend, title, code):
+    with NamedTemporaryFile(delete=False, suffix=f"__WT_{code}.pdf") as pdf:
         pdf_obj = mv.pdf_output(output_name=pdf.name.replace(".pdf", ""))
         mv.setoutput(pdf_obj)
         mv.plot(coastline, symbol, legend, title, geo)
         os.chmod(pdf.name, 0o444)
 
-        with open(png.name.replace(".png", ".1.png"), "rb") as img:
-            return {"preview": b64encode(img.read()).decode(), "pdf": pdf.name}
+        return {"pdf": pdf.name}

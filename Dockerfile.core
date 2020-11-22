@@ -14,7 +14,8 @@ ENV PYTHONUNBUFFERED 1
 
 RUN apt-get update && apt-get install -y  --no-install-recommends \
     build-essential \
-    wait-for-it
+    wait-for-it \
+    fonts-arkpandora
 
 RUN rm -rf /root/* /tmp/* /var/cache/apt/archives/*.deb /var/lib/apt/lists/*
 

@@ -1,4 +1,5 @@
 const fs = require('fs')
+const url = require('url')
 const path = require('path')
 const Docker = require('dockerode')
 
@@ -247,4 +248,29 @@ exports.openFile = () => {
   })
 
   return path && path.length !== 0 ? path.pop() : null
+}
+
+exports.openPDF = (filePath, title) => {
+  let pdfWindow = new BrowserWindow({
+    title: title,
+    width: 1200,
+    height: 800,
+    webPreferences: {
+      plugins: true,
+    },
+  })
+
+  pdfWindow.loadURL(
+    url.format({
+      pathname: filePath,
+      protocol: 'file:',
+      slashes: true,
+    })
+  )
+
+  pdfWindow.setMenu(null)
+
+  pdfWindow.on('closed', function() {
+    pdfWindow = null
+  })
 }

@@ -10,7 +10,6 @@ import { Button, Dimmer, Loader, Radio, Form, Grid } from 'semantic-ui-react'
 import client from '~/utils/client'
 import toast from '~/utils/toast'
 import MappingFunction from './mappingFunction'
-import Map from './map'
 import Split from './split'
 
 const mainProcess = remote.require('./server')
@@ -18,7 +17,6 @@ const mainProcess = remote.require('./server')
 export default class TreeContainer extends Component {
   state = {
     openMappingFunction: false,
-    openMaps: false,
     openSplit: false,
     graph: null,
     nodeMeta: null,
@@ -81,11 +79,10 @@ export default class TreeContainer extends Component {
       })
       .then(response => {
         this.setState({
-          openMaps: true,
-          nodeMeta: node.meta,
           loading: false,
-          graph: response.data,
         })
+
+        mainProcess.openPDF(response.data.pdf, `WT_${node.meta.code}`)
       })
       .catch(e => {
         console.error(e)
@@ -311,19 +308,6 @@ export default class TreeContainer extends Component {
           }
           open={this.state.openMappingFunction}
           image={this.state.graph}
-          nodeMeta={this.state.nodeMeta}
-        />
-
-        <Map
-          onClose={() =>
-            this.setState({
-              openMaps: false,
-              graph: null,
-              nodeMeta: null,
-            })
-          }
-          open={this.state.openMaps}
-          graph={this.state.graph}
           nodeMeta={this.state.nodeMeta}
         />
 
