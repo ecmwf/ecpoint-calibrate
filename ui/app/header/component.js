@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Image, Icon, Button } from 'semantic-ui-react'
+import { Image, Dropdown } from 'semantic-ui-react'
 import logo from '~/assets/img/ECMWF_logo.png'
 
 const Header = props => (
@@ -27,10 +27,19 @@ const Header = props => (
           marginTop: '-10px',
         }}
       >
-        <Button icon labelPosition="left" onClick={() => props.resetApp()}>
-          <Icon name="left arrow" />
-          Main menu
-        </Button>
+        <Dropdown text="Menu" icon="bars" floating labeled button className="icon">
+          <Dropdown.Menu>
+            {props.workflow === 'C' && (
+              <Dropdown.Item
+                disabled={props.page.activePageNumber !== 2}
+                onClick={props.onSaveOperationClicked}
+              >
+                Save Operation
+              </Dropdown.Item>
+            )}
+            <Dropdown.Item onClick={() => props.resetApp()}>Home</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
       </div>
     )}
   </div>

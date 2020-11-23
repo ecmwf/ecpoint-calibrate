@@ -1,19 +1,8 @@
 import React, { Component } from 'react'
 
-import {
-  Modal,
-  Button,
-  Image,
-  Grid,
-  Segment,
-  Rail,
-  List,
-  Icon,
-  Popup,
-} from 'semantic-ui-react'
+import { Button, Image, Grid, Icon, Popup } from 'semantic-ui-react'
 
 import Header from './header'
-import Menu from './menu'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Page from './page'

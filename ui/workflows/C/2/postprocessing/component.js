@@ -6,6 +6,7 @@ import BreakPoints from '../breakpoints'
 import SparseBreakPoints from '../sparseBreakpoints'
 import Tree from '../tree'
 import Levels from '../levels'
+import SaveOperation from '../saveOperation'
 
 class PostProcessing extends Component {
   isComplete = () => true
@@ -48,6 +49,8 @@ class PostProcessing extends Component {
     </Item>
   )
 
+  getSaveOperation = () => <SaveOperation />
+
   render = () => {
     return (
       this.props.fields.length > 0 && (
@@ -75,6 +78,7 @@ class PostProcessing extends Component {
                       <>
                         {this.getYLimitField()}
                         {this.getDecisionTree()}
+                        {this.getSaveOperation()}
                       </>
                     )}
                   </Item.Group>

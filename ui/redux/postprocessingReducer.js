@@ -4,6 +4,7 @@ const defaultState = {
   fields: [],
   yLim: 100,
   tree: null,
+  saveOperation: false,
 }
 
 const getFirstRow = fields =>
@@ -55,6 +56,10 @@ export default (state = defaultState, action) => {
 
     case 'POSTPROCESSING.SET_LOADING': {
       return { ...state, loading: action.data }
+    }
+
+    case 'POSTPROCESSING.SET_SAVE_OPERATION': {
+      return { ...state, saveOperation: action.data }
     }
 
     default: {
