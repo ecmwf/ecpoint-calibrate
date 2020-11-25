@@ -7,26 +7,31 @@ import { remote } from 'electron'
 
 import client from '~/utils/client'
 import toast from '~/utils/toast'
-import download from '~/utils/download'
+const jetpack = require('fs-jetpack')
 
 const mainProcess = remote.require('./server')
 
+const defaultState = {
+  family: null,
+  version: null,
+  accumulation: null,
+  inf: 'inf',
+  mfcols: null,
+  outPath: null,
+}
+
 class SaveOperation extends Component {
-  state = {
-    family: null,
-    version: null,
-    accumulation: null,
-    inf: 'inf',
-    mfcols: null,
-    outPath: null,
-  }
+  state = defaultState
 
   isEmpty = () => {
     if (this.props.mode === 'mf') {
       return !this.state.mfcols || !this.state.outPath
     } else if (this.props.mode === 'wt') {
       return !this.state.outPath
-    } else if (this.props.mode === 'breakpoints') {
+    } else if (
+      this.props.mode === 'breakpoints' ||
+      this.props.mode === 'breakpoints-upload'
+    ) {
       return !this.state.inf || !this.state.outPath
     } else {
       return (
@@ -37,6 +42,11 @@ class SaveOperation extends Component {
         !this.state.outPath
       )
     }
+  }
+
+  close = () => {
+    this.setState(defaultState)
+    this.props.onClose()
   }
 
   getMetadataComponent = () => (
@@ -59,15 +69,18 @@ class SaveOperation extends Component {
         value={this.state.accumulation}
         onChange={e => this.setState({ accumulation: e.target.value })}
       />
-
-    <br/><br/>
-    <p>Fields marked with * are mandatory.</p>
+      <br />
+      <br />
+      <p>Fields marked with * are mandatory.</p>
     </Segment>
   )
 
   getBreakpointsCSVComponent = () => (
     <Segment padded>
-      <h5>Enter parameters for saving breakpoints in Weather Types as CSV:</h5>
+      <h5>
+        Enter parameters for {this.props.mode === 'breakpoints' ? 'saving' : 'loading'}{' '}
+        breakpoints in Weather Types as CSV:
+      </h5>
       <Input
         label="Infinity value"
         value={this.state.inf}
@@ -89,7 +102,7 @@ class SaveOperation extends Component {
 
   getOutputPathComponent = () => (
     <Segment padded>
-      <h5>Select output path:</h5>
+      <h5>Select path:</h5>
       <Button
         as="div"
         labelPosition="right"
@@ -102,6 +115,8 @@ class SaveOperation extends Component {
             path = mainProcess.saveFile(`${this.props.error}.csv`) || null
           } else if (this.props.mode === 'breakpoints') {
             path = mainProcess.saveFile('BreakPointsWT.csv') || null
+          } else if (this.props.mode === 'breakpoints-upload') {
+            path = mainProcess.openFile() || null
           }
 
           path !== null && this.setState({ outPath: path })
@@ -120,13 +135,39 @@ class SaveOperation extends Component {
     </Segment>
   )
 
-  getHeader = () => (this.props.mode === 'all' ? 'Save Operation Files' : 'Save data')
+  getHeader = () => {
+    if (this.props.mode === 'mf') {
+      return 'Save Mapping Functions as CSV'
+    } else if (this.props.mode === 'breakpoints') {
+      return 'Save Breakpoints for Weather Types as CSV'
+    } else if (this.props.mode === 'breakpoints-upload') {
+      return 'Upload Breakpoints CSV'
+    } else if (this.props.mode === 'wt') {
+      return 'Save Weather Types as PNG'
+    }
+
+    return 'Save Operation Files'
+  }
 
   getBreakpointsCSV = () => {
     const rows = this.props.breakpoints
       .map(row => row.map(cell => cell.replace('inf', this.state.inf)).join(','))
       .join('\n')
     return [['WT code', ...this.props.labels], rows].join('\n')
+  }
+
+  setBreakpointsCSV = () => {
+    const csv = jetpack.read(this.state.outPath)
+    const data = csv.split('\n').map(row => row.split(','))
+    const matrix = data
+      .slice(1)
+      .map(row => row.slice(1))
+      .map(row => row.map(cell => cell.replace(this.state.inf, 'inf')))
+
+    this.props.setLoading('Generating and rendering decision tree.')
+    this.props.setBreakpoints(this.props.labels, matrix)
+    this.props.setLoading(false)
+    this.close()
   }
 
   save = () => {
@@ -164,18 +205,20 @@ class SaveOperation extends Component {
       })
       .then(() => {
         this.props.setLoading(false)
-        this.props.onClose()
+        this.close()
       })
   }
 
   render = () => {
     return (
       this.props.mode !== null && (
-        <Modal size={'large'} open={this.props.open} onClose={this.props.onClose}>
+        <Modal size={'large'} open={this.props.open} onClose={this.close}>
           <Modal.Header>{this.getHeader()}</Modal.Header>
           <Modal.Content>
             {this.props.mode === 'all' && this.getMetadataComponent()}
-            {(this.props.mode === 'all' || this.props.mode === 'breakpoints') &&
+            {(this.props.mode === 'all' ||
+              this.props.mode === 'breakpoints' ||
+              this.props.mode === 'breakpoints-upload') &&
               this.getBreakpointsCSVComponent()}
             {(this.props.mode === 'all' || this.props.mode === 'mf') &&
               this.getMFsCSVComponent()}
@@ -184,10 +227,14 @@ class SaveOperation extends Component {
           <Modal.Actions>
             <Button
               color="green"
-              icon="checkmark"
-              content="Save"
+              icon={this.props.mode === 'breakpoints-upload' ? 'upload' : 'download'}
+              content={this.props.mode === 'breakpoints-upload' ? 'Upload' : 'Save'}
               disabled={this.isEmpty()}
-              onClick={() => this.save()}
+              onClick={() =>
+                this.props.mode === 'breakpoints-upload'
+                  ? this.setBreakpointsCSV()
+                  : this.save()
+              }
             />
           </Modal.Actions>
         </Modal>

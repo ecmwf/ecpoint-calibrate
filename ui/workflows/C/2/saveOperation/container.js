@@ -2,6 +2,7 @@ import { connect } from 'react-redux'
 
 import SaveOperation from './component'
 import { onSaveOperationClosed, setLoading } from './actions'
+import { setBreakpoints } from '../breakpoints/actions'
 
 const mapStateToProps = state => ({
   open: state.postprocessing.saveOperationMode !== null,
@@ -19,6 +20,8 @@ const mapDispatchToProps = dispatch => ({
   onClose: () => dispatch(onSaveOperationClosed()),
 
   setLoading: value => dispatch(setLoading(value)),
+
+  setBreakpoints: (labels, matrix) => dispatch(setBreakpoints(labels, matrix)),
 })
 
 export default connect(

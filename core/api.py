@@ -339,18 +339,20 @@ def save_operation():
     if mode == "all":
         family = payload["family"]
         version = payload["version"]
+
         accumulation = payload["accumulation"]
+        accumulation = f", {accumulation}-hourly" if accumulation else ""
 
         with open(output_path / "README.txt", "w") as f:
-            f.write(
-                dedent(
-                    f"""
-                ecPoint-{family}, {accumulation}-hourly
+            text = dedent(
+                f"""
+                ecPoint-{family}{accumulation}
                 Version: {version}
                 Timestamp: {datetime.now()}
-                """.lstrip()
-                )
+                """
             )
+
+            f.write(text.lstrip())
 
     return Response(json.dumps({}), mimetype="application/json")
 

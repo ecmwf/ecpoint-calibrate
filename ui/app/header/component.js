@@ -33,6 +33,12 @@ const Header = props => (
               <>
                 <Dropdown.Item
                   disabled={props.page.activePageNumber !== 2}
+                  onClick={() => props.onSaveOperationClicked('breakpoints-upload')}
+                >
+                  Upload breakpoints CSV
+                </Dropdown.Item>
+                <Dropdown.Item
+                  disabled={props.page.activePageNumber !== 2}
                   onClick={() => props.onSaveOperationClicked('breakpoints')}
                 >
                   Save breakpoints as CSV
