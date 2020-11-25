@@ -1,6 +1,6 @@
 {
   "name": "ecpoint-calibrate",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "description": "GUI for ecPoint-Calibrate powered by Electron and React",
   "engines": {
     "node": "14.5.0"
@@ -91,6 +91,7 @@
     "save-svg-as-png": "^1.4.17",
     "semantic-ui-css": "^2.3.2",
     "semantic-ui-react": "0.81.3",
+    "semver": "^7.3.2",
     "style-loader": "0.21.0",
     "url-loader": "1.0.0",
     "webpack": "^4.39.2",

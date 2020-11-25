@@ -30,12 +30,32 @@ const Header = props => (
         <Dropdown text="Menu" icon="bars" floating labeled button className="icon">
           <Dropdown.Menu>
             {props.workflow === 'C' && (
-              <Dropdown.Item
-                disabled={props.page.activePageNumber !== 2}
-                onClick={props.onSaveOperationClicked}
-              >
-                Save Operation
-              </Dropdown.Item>
+              <>
+                <Dropdown.Item
+                  disabled={props.page.activePageNumber !== 2}
+                  onClick={() => props.onSaveOperationClicked('breakpoints')}
+                >
+                  Save breakpoints as CSV
+                </Dropdown.Item>
+                <Dropdown.Item
+                  disabled={props.page.activePageNumber !== 2}
+                  onClick={() => props.onSaveOperationClicked('mf')}
+                >
+                  Save MFs as CSV
+                </Dropdown.Item>
+                <Dropdown.Item
+                  disabled={props.page.activePageNumber !== 2}
+                  onClick={() => props.onSaveOperationClicked('wt')}
+                >
+                  Save WTs as PNG
+                </Dropdown.Item>
+                <Dropdown.Item
+                  disabled={props.page.activePageNumber !== 2}
+                  onClick={() => props.onSaveOperationClicked('all')}
+                >
+                  Save Operation
+                </Dropdown.Item>
+              </>
             )}
             <Dropdown.Item onClick={() => props.resetApp()}>Home</Dropdown.Item>
           </Dropdown.Menu>

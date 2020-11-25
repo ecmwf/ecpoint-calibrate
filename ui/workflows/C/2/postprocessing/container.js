@@ -19,6 +19,8 @@ const mapDispatchToProps = dispatch => ({
   onYLimChange: value => dispatch({ type: 'POSTPROCESSING.SET_Y_LIM', value }),
 
   setBreakpoints: (labels, matrix) => dispatch(setBreakpoints(labels, matrix)),
+
+  onSaveOperationClicked: mode => dispatch(onSaveOperationClicked(mode)),
 })
 
 export default connect(

@@ -9,7 +9,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  onSaveOperationClicked: () => dispatch(onSaveOperationClicked()),
+  onSaveOperationClicked: mode => dispatch(onSaveOperationClicked(mode)),
   resetApp: () => dispatch({ type: 'RESET_APP' }),
 })
 
