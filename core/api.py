@@ -1,8 +1,10 @@
 import json
 import os
+from datetime import datetime
 from functools import lru_cache
 from io import StringIO
 from pathlib import Path
+from textwrap import dedent
 
 import pandas
 from flask import Flask, Response, jsonify, request
@@ -242,13 +244,9 @@ def get_error_rep():
     )
 
     matrix = [[float(cell) for cell in row] for row in matrix]
-
     df = pandas.DataFrame.from_records(matrix, columns=labels)
-
     thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
-
     loader = load_point_data_by_path(path, cheaper=cheaper)
-
     rep = DecisionTree.cal_rep_error(
         loader, thrL_out=thrL, thrH_out=thrH, nBin=int(numCols)
     )
@@ -256,6 +254,105 @@ def get_error_rep():
     s = StringIO()
     rep.to_csv(s)
     return jsonify(s.getvalue())
+
+
+@app.route("/postprocessing/save", methods=("POST",))
+def save_operation():
+    payload = request.get_json()
+
+    labels = payload["labels"]
+    matrix = payload["matrix"]
+    pdt_path = sanitize_path(payload["pdtPath"])
+    mf_cols = payload["mfcols"]
+    cheaper = payload["cheaper"]
+    mode = payload["mode"]
+    output_path = Path(sanitize_path(payload["outPath"]))
+
+    if mode == "all":
+        version = payload["version"]
+        output_path = output_path / f"OperCalOuts_{version}"
+        os.makedirs(output_path, exist_ok=True)
+
+    if mode in ["breakpoints", "all"]:
+        csv = payload["breakpointsCSV"]
+        path = output_path
+        if mode == "all":
+            path = path / "BreakPointsWT.csv"
+
+        with open(path, "w") as f:
+            f.write(csv)
+
+    if mode in ["mf", "all"]:
+        matrix = [[float(cell) for cell in row] for row in matrix]
+        df = pandas.DataFrame.from_records(matrix, columns=labels)
+        thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
+        loader = load_point_data_by_path(pdt_path, cheaper=cheaper)
+        rep = DecisionTree.cal_rep_error(
+            loader, thrL_out=thrL, thrH_out=thrH, nBin=int(mf_cols)
+        )
+
+        path = output_path
+        if mode == "all":
+            path = path / f"{loader.error_type.name}.csv"
+
+        with open(path, "w") as f:
+            rep.to_csv(f)
+
+    if mode in ["wt", "all"]:
+        ylim = payload["yLim"]
+        bins = payload["bins"]
+        thrGridOut = payload["thrGridOut"]
+
+        matrix = [[float(cell) for cell in row[1:]] for row in thrGridOut]
+        df = pandas.DataFrame.from_records(matrix, columns=labels)
+
+        loader = load_point_data_by_path(pdt_path, cheaper=cheaper)
+        bins = [float(each) for each in bins]
+
+        thrL_out, thrH_out = df.iloc[:, ::2], df.iloc[:, 1::2]
+
+        path = output_path
+        if mode == "all":
+            path = path / "WTs"
+
+            os.makedirs(path, exist_ok=True)
+
+        for idx in range(len(thrL_out)):
+            thrL = thrL_out.iloc[idx]
+            thrH = thrH_out.iloc[idx]
+            wt = WeatherType(
+                thrL=thrL, thrH=thrH, thrL_labels=labels[::2], thrH_labels=labels[1::2]
+            )
+
+            dataframe, title = wt.evaluate(loader.error_type.name, loader=loader)
+            error = dataframe[loader.error_type.name]
+
+            wt_code = thrGridOut[idx][0]
+            wt.plot(
+                error,
+                bins,
+                title,
+                y_lim=int(ylim),
+                out_path=os.path.join(path, f"WT_{wt_code}.png"),
+            )
+
+    if mode == "all":
+        family = payload["family"]
+        version = payload["version"]
+        accumulation = payload["accumulation"]
+
+        with open(output_path / "README.txt", "w") as f:
+            f.write(
+                dedent(
+                    f"""
+                ecPoint-{family}, {accumulation}-hourly
+                Version: {version}
+                Timestamp: {datetime.now()}
+                """.lstrip()
+                )
+            )
+
+    return Response(json.dumps({}), mimetype="application/json")
 
 
 @app.route("/get-predictor-metadata", methods=("POST",))
