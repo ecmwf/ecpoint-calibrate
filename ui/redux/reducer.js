@@ -11,6 +11,7 @@ import appReducer from './appReducer'
 import preloaderReducer from './preloaderReducer'
 import binningReducer from './binningReducer'
 import workflowReducer from './workflowReducer'
+import processingReducer from './processingReducer'
 
 const reducer = combineReducers({
   predictors: predictorsReducer,
@@ -24,6 +25,7 @@ const reducer = combineReducers({
   binning: binningReducer,
   page: pageReducer,
   workflow: workflowReducer,
+  processing: processingReducer,
 })
 
 const rootReducer = (state, action) => {

@@ -10,7 +10,8 @@ class Processing extends Component {
   state = { status: 'initial' }
 
   runComputation() {
-    this.setState({ status: 'running' })
+    this.props.setProcessing(true)
+
     const parameters = {
       date_start: this.props.parameters.date_start,
       date_end: this.props.parameters.date_end,
@@ -47,7 +48,6 @@ class Processing extends Component {
         computations: this.props.computations.fields,
       })
       .then(() => {
-        this.setState({ status: 'completed' })
         this.props.completeSection()
       })
       .catch(e => {
@@ -59,6 +59,7 @@ class Processing extends Component {
           toast.error('Empty response from server')
         }
       })
+      .then(() => this.props.setProcessing(false))
   }
 
   render = () => (
@@ -67,7 +68,7 @@ class Processing extends Component {
         <Button
           content="Launch computation"
           onClick={() => this.runComputation()}
-          disabled={this.state.status == 'running' ? true : null}
+          disabled={this.props.running === true}
           icon="cog"
           labelPosition="left"
         />

@@ -5,6 +5,7 @@ import PredictandsComponent from './component'
 const mapStateToProps = state => ({
   page: state.page,
   workflow: state.workflow,
+  processing: state.processing,
 })
 
 const mapDispatchToProps = dispatch => ({

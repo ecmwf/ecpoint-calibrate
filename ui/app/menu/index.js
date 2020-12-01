@@ -9,11 +9,13 @@ const MenuFactory = config => props => (
       return (
         <Step
           active={props.page.activePageNumber === idx + 1}
-          disabled={_.some(
-            _.range(idx).map(
-              pageIdx => !_.every(_.values(props.page[props.workflow][pageIdx + 1]))
-            )
-          )}
+          disabled={
+            _.some(
+              _.range(idx).map(
+                pageIdx => !_.every(_.values(props.page[props.workflow][pageIdx + 1]))
+              )
+            ) || props.processing.running
+          }
           onClick={() => props.onPageChange(idx + 1)}
           key={idx + 1}
         >

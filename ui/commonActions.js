@@ -4,3 +4,8 @@ export const completeSection = (workflow, page, section) => ({
   page,
   section,
 })
+
+export const setProcessing = value => ({
+  type: 'PROCESSING.SET_RUNNING',
+  data: value,
+})
