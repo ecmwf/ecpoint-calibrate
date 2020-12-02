@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
 
+import client from '~/utils/client'
+import toast from '~/utils/toast'
+
 import {
   Grid,
   Card,
@@ -12,6 +15,7 @@ import {
   Checkbox,
   Message,
   Popup,
+  Modal,
 } from 'semantic-ui-react'
 
 import { isNotEmpty, isValid, patterns } from './index'
@@ -133,7 +137,8 @@ class Computation extends Component {
           ? this.props.fields.filter(x => x.shortname === input)[0].units
           : null,
         path: this.props.predictors.path + '/' + input,
-      }))
+      })),
+      this.props.overrides
     )
 
   render() {
@@ -305,6 +310,8 @@ class Computation extends Component {
 }
 
 class Computations extends Component {
+  state = { showOverride: false, overrides: {} }
+
   getComputationsTable() {
     return (
       <Table celled definition>
@@ -325,6 +332,7 @@ class Computations extends Component {
               {...each}
               key={each.index}
               fields={this.props.fields}
+              overrides={this.state.overrides}
               computedVariables={this.props.fields.map(field => field.shortname)}
               onShortNameChange={this.props.onComputationShortNameChange}
               onFullNameChange={this.props.onComputationFullNameChange}
@@ -374,7 +382,33 @@ class Computations extends Component {
 
   constructor(props) {
     super(props)
+
+    this.props.predictors.codes.map(code => this.populateInputMetadata(code))
     this.props.fields.length === 0 && this.addComputation()
+  }
+
+  populateInputMetadata = code => {
+    client
+      .post('/get-predictor-metadata', {
+        path: this.props.predictors.path + '/' + code,
+      })
+      .then(response =>
+        this.setState({
+          overrides: {
+            [code]: { code, ...response.data },
+            ...this.state.overrides,
+          },
+        })
+      )
+      .catch(e => {
+        console.error(e)
+        if (e.response !== undefined) {
+          console.error(`Error response: ${e.response}`)
+          toast.error(`${e.response.status} ${e.response.statusText}`)
+        } else {
+          toast.error('Empty response from server')
+        }
+      })
   }
 
   addComputation = () => {
@@ -394,10 +428,127 @@ class Computations extends Component {
       addScale: '0',
     })
 
-    this.props.fetchAndUpdateInputUnits(this.props.fields.length, input)
+    this.props.fetchAndUpdateInputUnits(
+      this.props.fields.length,
+      input,
+      this.state.overrides
+    )
+  }
+
+  getHeadline = () => {
+    return (
+      <>
+        <p>Variables available for computing predictors:</p>
+        {this.props.predictors.codes.map(e => (
+          <Label key={e}>{e}</Label>
+        ))}
+
+        <Button
+          size="mini"
+          floated="right"
+          onClick={() => this.setState({ showOverride: true })}
+        >
+          Override predictor metadata
+        </Button>
+      </>
+    )
+  }
+
+  getOverrideModal = () => {
+    return (
+      <Modal
+        size={'large'}
+        open={this.state.showOverride === true}
+        onClose={() => this.setState({ showOverride: false })}
+      >
+        <Modal.Header>Override metadata of predictors</Modal.Header>
+        <Modal.Content>
+          <Table size="small" compact="very" basic="very">
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell textAlign="left">
+                  <b>Variable</b>
+                </Table.HeaderCell>
+                <Table.HeaderCell textAlign="left">
+                  <b>Name</b>
+                </Table.HeaderCell>
+                <Table.HeaderCell textAlign="left">
+                  <b>Units</b>
+                </Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {this.props.predictors.codes.map(
+                code =>
+                  this.state.overrides[code] !== undefined && (
+                    <Table.Row key={code}>
+                      <Table.Cell>
+                        <Input
+                          fluid
+                          value={this.state.overrides[code].code}
+                          error={this.state.overrides[code].code === ''}
+                          disabled={true} // enabling this has consequences
+                          onChange={e =>
+                            this.setState({
+                              overrides: {
+                                ...this.state.overrides,
+                                [code]: {
+                                  ...this.state.overrides[code],
+                                  code: e.target.value,
+                                },
+                              },
+                            })
+                          }
+                        />
+                      </Table.Cell>
+                      <Table.Cell>
+                        <Input
+                          fluid
+                          value={this.state.overrides[code].name}
+                          error={this.state.overrides[code].name === ''}
+                          onChange={e =>
+                            this.setState({
+                              overrides: {
+                                ...this.state.overrides,
+                                [code]: {
+                                  ...this.state.overrides[code],
+                                  name: e.target.value,
+                                },
+                              },
+                            })
+                          }
+                        />
+                      </Table.Cell>
+                      <Table.Cell>
+                        <Input
+                          fluid
+                          value={this.state.overrides[code].units}
+                          error={this.state.overrides[code].units === ''}
+                          onChange={e =>
+                            this.setState({
+                              overrides: {
+                                ...this.state.overrides,
+                                [code]: {
+                                  ...this.state.overrides[code],
+                                  units: e.target.value,
+                                },
+                              },
+                            })
+                          }
+                        />
+                      </Table.Cell>
+                    </Table.Row>
+                  )
+              )}
+            </Table.Body>
+          </Table>
+        </Modal.Content>
+      </Modal>
+    )
   }
 
   render() {
+    console.log(this.state.overrides)
     return (
       <Grid container centered>
         <Grid.Column>
@@ -410,10 +561,8 @@ class Computations extends Component {
             </Card.Header>
             <Card.Content>
               <Card.Description>
-                <p>Variables available for computing predictors:</p>
-                {this.props.predictors.codes.map(e => (
-                  <Label key={e}>{e}</Label>
-                ))}
+                {this.getHeadline()}
+                {this.getOverrideModal()}
                 {this.getComputationsTable()}
               </Card.Description>
             </Card.Content>

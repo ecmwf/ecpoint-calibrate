@@ -35,16 +35,16 @@ const mapDispatchToProps = dispatch => ({
   onComputationFieldChange: (index, field) =>
     dispatch(updateComputationField(index, field)),
 
-  onComputationInputsChange: (index, inputs) => {
+  onComputationInputsChange: (index, inputs, overrides) => {
     dispatch(updateComputationInputs(index, inputs))
 
     inputs
       .filter(input => !input.units)
-      .map(input => dispatch(fetchAndUpdateInputUnits(index, input)))
+      .map(input => dispatch(fetchAndUpdateInputUnits(index, input, overrides)))
   },
 
-  fetchAndUpdateInputUnits: (index, input) =>
-    dispatch(fetchAndUpdateInputUnits(index, input)),
+  fetchAndUpdateInputUnits: (index, input, overrides) =>
+    dispatch(fetchAndUpdateInputUnits(index, input, overrides)),
 
   updateUnits: (index, value) =>
     dispatch({ type: 'COMPUTATIONS.SET_UNITS', index, value }),

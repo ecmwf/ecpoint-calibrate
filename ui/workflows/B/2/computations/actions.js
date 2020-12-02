@@ -30,26 +30,34 @@ export const updateComputationInputs = (index, inputs) => ({
   inputs,
 })
 
-export const fetchAndUpdateInputUnits = (index, input) => async dispatch => {
-  await client
-    .post('/get-predictor-metadata', { path: input.path })
-    .then(response =>
-      dispatch({
-        type: 'COMPUTATIONS.SET_INPUT_METADATA',
-        code: input.code,
-        index,
-        ...response.data,
-      })
-    )
-    .catch(e => {
-      console.error(e)
-      if (e.response !== undefined) {
-        console.error(`Error response: ${e.response}`)
-        toast.error(`${e.response.status} ${e.response.statusText}`)
-      } else {
-        toast.error('Empty response from server')
-      }
+export const fetchAndUpdateInputUnits = (index, input, overrides) => async dispatch => {
+  if (overrides[input.code] !== undefined) {
+    dispatch({
+      type: 'COMPUTATIONS.SET_INPUT_METADATA',
+      index,
+      ...overrides[input.code],
     })
+  } else {
+    await client
+      .post('/get-predictor-metadata', { path: input.path })
+      .then(response =>
+        dispatch({
+          type: 'COMPUTATIONS.SET_INPUT_METADATA',
+          code: input.code,
+          index,
+          ...response.data,
+        })
+      )
+      .catch(e => {
+        console.error(e)
+        if (e.response !== undefined) {
+          console.error(`Error response: ${e.response}`)
+          toast.error(`${e.response.status} ${e.response.statusText}`)
+        } else {
+          toast.error('Empty response from server')
+        }
+      })
+  }
 }
 
 export const removeComputation = index => ({
