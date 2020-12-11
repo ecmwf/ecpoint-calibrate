@@ -68,11 +68,11 @@ class SparseBreakpoints extends Component {
   render = () => {
     return (
       <Item>
-        <Item.Content>
+        <Item.Content style={{ display: 'grid' }}>
           <Item.Header>
             <h5>Input the threshold breakpoints in the following spreadsheet:</h5>
           </Item.Header>
-          <Item.Description>
+          <Item.Description style={{ overflowX: 'scroll' }}>
             <ReactDataSheet
               data={this.props.sparseBreakpoints}
               valueRenderer={cell => cell.value}

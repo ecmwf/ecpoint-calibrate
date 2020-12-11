@@ -91,3 +91,11 @@ code {
   padding-right: 180px !important;
   padding-left: 100px !important;
 }
+
+table.data-grid {
+  table-layout: auto !important;
+}
+
+.data-grid .cell {
+  padding: 0 10px !important;
+}

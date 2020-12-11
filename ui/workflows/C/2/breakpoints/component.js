@@ -122,7 +122,7 @@ class Breakpoints extends Component {
   }
 
   render = () => (
-    <Table definition>
+    <Table definition size="small" style={{ display: 'block', overflowX: 'scroll' }}>
       <Table.Header>
         <Table.Row>
           <Table.HeaderCell>WT code</Table.HeaderCell>
