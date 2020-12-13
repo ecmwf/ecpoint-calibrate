@@ -317,7 +317,17 @@ class WeatherType(object):
             else:
                 temp_pred: pd.Series = loader.dataframe[predictor_shortname]
 
-            mask = (temp_pred >= thrL_temp) & (temp_pred < thrH_temp)
+            if thrL_temp > thrH_temp:
+                # Case when predictor is periodic. For ex, Local Solar Time has
+                # a period of 24 hours. It's possible to have the following
+                # threshold splits:
+                #   21 - 3   <- handles this case
+                #    3 - 9
+                #    9 - 15
+                #   15 - 21
+                mask = (temp_pred >= thrL_temp) | (temp_pred < thrH_temp)
+            else:
+                mask = (temp_pred >= thrL_temp) & (temp_pred < thrH_temp)
 
             df = df.loc[mask]
 
