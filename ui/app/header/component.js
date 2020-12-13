@@ -57,6 +57,12 @@ const Header = props => (
                 </Dropdown.Item>
                 <Dropdown.Item
                   disabled={props.page.activePageNumber !== 2}
+                  onClick={() => props.onSaveOperationClicked('bias')}
+                >
+                  Save WT biases
+                </Dropdown.Item>
+                <Dropdown.Item
+                  disabled={props.page.activePageNumber !== 2}
                   onClick={() => props.onSaveOperationClicked('all')}
                 >
                   Save Operation

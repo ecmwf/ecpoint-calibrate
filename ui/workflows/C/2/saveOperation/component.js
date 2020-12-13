@@ -28,6 +28,8 @@ class SaveOperation extends Component {
       return !this.state.mfcols || !this.state.outPath
     } else if (this.props.mode === 'wt') {
       return !this.state.outPath
+    } else if (this.props.mode === 'bias') {
+      return !this.state.outPath
     } else if (
       this.props.mode === 'breakpoints' ||
       this.props.mode === 'breakpoints-upload'
@@ -117,6 +119,8 @@ class SaveOperation extends Component {
             path = mainProcess.saveFile('BreakPointsWT.csv') || null
           } else if (this.props.mode === 'breakpoints-upload') {
             path = mainProcess.openFile() || null
+          } else if (this.props.mode === 'bias') {
+            path = mainProcess.saveFile('BiasesWT.csv') || null
           }
 
           path !== null && this.setState({ outPath: path })
@@ -144,6 +148,8 @@ class SaveOperation extends Component {
       return 'Upload Breakpoints CSV'
     } else if (this.props.mode === 'wt') {
       return 'Save Weather Types as PNG'
+    } else if (this.props.mode === 'bias') {
+      return 'Save summary of Weather Type biases'
     }
 
     return 'Save Operation Files'

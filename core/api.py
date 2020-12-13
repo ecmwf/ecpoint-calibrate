@@ -336,6 +336,38 @@ def save_operation():
                 out_path=os.path.join(path, f"WT_{wt_code}.png"),
             )
 
+    if mode in ["bias", "all"]:
+        thrGridOut = payload["thrGridOut"]
+
+        matrix = [[float(cell) for cell in row[1:]] for row in thrGridOut]
+        df = pandas.DataFrame.from_records(matrix, columns=labels)
+
+        loader = load_point_data_by_path(pdt_path, cheaper=cheaper)
+
+        thrL_out, thrH_out = df.iloc[:, ::2], df.iloc[:, 1::2]
+
+        path = output_path
+        if mode == "all":
+            path = path / "BiasesWT.csv"
+
+        csv = []
+        for idx in range(len(thrL_out)):
+            thrL = thrL_out.iloc[idx]
+            thrH = thrH_out.iloc[idx]
+            wt = WeatherType(
+                thrL=thrL, thrH=thrH, thrL_labels=labels[::2], thrH_labels=labels[1::2]
+            )
+
+            dataframe, title = wt.evaluate(loader.error_type.name, loader=loader)
+            error = dataframe[loader.error_type.name]
+            bias = f"{1 + error.mean():.2f}"
+            wt_code = thrGridOut[idx][0]
+            csv += [(wt_code, bias)]
+
+        pandas.DataFrame.from_records(
+            csv, columns=['WT Code', 'Bias']
+        ).to_csv(path, index=False)
+
     if mode == "all":
         family = payload["family"]
         version = payload["version"]
