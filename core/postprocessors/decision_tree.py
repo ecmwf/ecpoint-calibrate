@@ -395,6 +395,15 @@ class WeatherType(object):
             bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.5),
         )
 
+        ax.text(
+            x=0.85,
+            y=0.95,
+            s=f"{1 + data.mean():.2f}",
+            transform=ax.transAxes,
+            fontsize=24,
+            verticalalignment="top",
+        )
+
         out = pd.cut(data, bins=bins, include_lowest=True)
         series = out.value_counts(normalize=True, sort=False) * 100
 
