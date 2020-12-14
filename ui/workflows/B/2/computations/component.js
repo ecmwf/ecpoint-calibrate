@@ -141,11 +141,14 @@ class Computation extends Component {
       this.props.overrides
     )
 
+  isImmutable = () =>
+    this.props.index === 0 && this.props.predictand.type === 'ACCUMULATED'
+
   render() {
     return (
       <Table.Row positive={this.isPositive()}>
         <Table.Cell width={4}>
-          {this.props.index === 0 && (
+          {this.isImmutable() && (
             <Label ribbon>Predictand variable (pre-computed)</Label>
           )}
           <p>Short name:</p>
@@ -179,7 +182,7 @@ class Computation extends Component {
             onChange={(e, { value }) =>
               this.props.onFieldChange(this.props.index, value)
             }
-            disabled={this.props.index === 0 ? true : null}
+            disabled={this.isImmutable()}
           />
         </Table.Cell>
         <Table.Cell width={4}>
@@ -191,11 +194,7 @@ class Computation extends Component {
             value={this.props.inputs.map(input => input.code)}
             options={this.getPredictors()}
             onChange={(e, { value }) => this.updateInputs(value)}
-            disabled={
-              this.props.index === 0 || this.props.field === 'LOCAL_SOLAR_TIME'
-                ? true
-                : null
-            }
+            disabled={this.isImmutable() || this.props.field === 'LOCAL_SOLAR_TIME'}
           />
 
           {this.props.inputs.length > 0 && (
@@ -291,7 +290,6 @@ class Computation extends Component {
           <Checkbox
             checked={this.props.isPostProcessed === true}
             onChange={() => this.props.togglePostProcess(this.props.index)}
-            disabled={this.props.index === 0 ? true : null}
           />
         </Table.Cell>
         <Table.Cell collapsing>
@@ -299,7 +297,7 @@ class Computation extends Component {
             icon
             circular
             onClick={() => this.props.onRemove(this.props.index)}
-            disabled={this.props.index === 0 ? true : null}
+            disabled={this.isImmutable()}
           >
             <Icon name="delete" />
           </Button>
@@ -384,7 +382,9 @@ class Computations extends Component {
     super(props)
 
     this.props.predictors.codes.map(code => this.populateInputMetadata(code))
-    this.props.fields.length === 0 && this.addComputation()
+    this.props.fields.length === 0 &&
+      this.props.predictand.type === 'ACCUMULATED' &&
+      this.addComputation()
   }
 
   populateInputMetadata = code => {
@@ -548,7 +548,6 @@ class Computations extends Component {
   }
 
   render() {
-    console.log(this.state.overrides)
     return (
       <Grid container centered>
         <Grid.Column>
