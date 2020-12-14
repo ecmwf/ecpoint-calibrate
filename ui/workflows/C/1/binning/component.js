@@ -45,18 +45,6 @@ class Binning extends Component {
             this.props.bins.map((bin, idx) => bin && <Label key={idx}>{bin}</Label>)
           )}
         </Item.Description>
-        <Item.Extra>
-          <p>
-            <b>Minimum {this.props.error} value:</b> <code>{this.props.minValue}</code>
-          </p>
-          <p>
-            <b>Maximum {this.props.error} value:</b> <code>{this.props.maxValue}</code>
-          </p>
-          <p>
-            <b>Total number of {this.props.error} values:</b>{' '}
-            <code>{this.props.count}</code>
-          </p>
-        </Item.Extra>
       </Item.Content>
     </Item>
   )

@@ -76,13 +76,32 @@ def get_fields_from_ascii_table():
         "FE",
     }
 
-    error = "FER" if "FER" in columns else "FE"
+    fields_summary = []
+    for field in fields:
+        df = loader.select(field)
+        fields_summary.append({
+            "name": field,
+            "min": f"{df.min():.2f}",
+            "max": f"{df.max():.2f}",
+            "mean": f"{df.mean():.2f}",
+            "median": f"{df.median():.2f}",
+        })
+
+    error = loader.error_type.name
     error_values = loader.select(error)
+    fields_summary.append({
+        "name": error,
+        "min": f"{error_values.min():.2f}",
+        "max": f"{error_values.max():.2f}",
+        "mean": f"{error_values.mean():.2f}",
+        "median": f"{error_values.median():.2f}",
+    })
 
     return Response(
         json.dumps(
             {
                 "fields": list(fields),
+                "summary": fields_summary,
                 "minValue": float(error_values.min()),
                 "maxValue": float(error_values.max()),
                 "count": int(error_values.count()),

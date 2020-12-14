@@ -4,6 +4,7 @@ const defaultState = {
   maxValue: null,
   count: null,
   error: null,
+  summary: null,
 }
 
 export default (state = defaultState, action) => {
@@ -20,6 +21,7 @@ export default (state = defaultState, action) => {
         count: action.count,
         error: action.error,
         bins: action.bins,
+        summary: action.summary,
       }
     }
 
