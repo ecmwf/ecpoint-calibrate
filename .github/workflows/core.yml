@@ -8,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ macos-latest, ubuntu-latest ]
+        os: [ macos-latest ]
 
     steps:
       - name: Check out Git repository
@@ -22,19 +22,18 @@ jobs:
         run: |
           conda install -y -c conda-forge metview-batch
 
-      - name: Activate conda environment
-        run: |
-          source /usr/share/miniconda/bin/activate
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
 
       - name: Install pipenv dependencies
         run: |
-          which pip
-          which python
-          python --version
           pip install wheel
           pip install pipenv pip setuptools
           pipenv sync --dev
 
       - name: Run core unit tests
         run: |
+          source $(conda info --base)/bin/activate
           pipenv run test
