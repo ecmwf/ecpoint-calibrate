@@ -24,7 +24,7 @@ jobs:
 
       - name: Activate conda environment
         run: |
-          source /usr/share/miniconda/envs/test/bin/activate
+          source /usr/share/miniconda/bin/activate
 
       - name: Install pipenv dependencies
         run: |
