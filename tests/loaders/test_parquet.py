@@ -26,7 +26,7 @@ def test_good_parquet_file():
         metadata = r.metadata
         df_pq = r.dataframe
 
-    assert metadata == {b"header": b"foo", b"footer": b"bar"}
+    assert metadata == {"header": "foo", "footer": "bar"}
     assert df.memory_usage(deep=True).sum() > df_pq.memory_usage(deep=True).sum()
 
     assert_frame_equal(df_pq, df, check_dtype=False, check_categorical=False)
