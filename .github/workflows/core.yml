@@ -1,0 +1,33 @@
+name: Core
+
+on: push
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ macos-latest, ubuntu-latest ]
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: 3.8
+
+      - name: Install metview-batch
+        run: |
+          conda install -y -c conda-forge metview-batch
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pipenv
+          pipenv sync --dev
+
+      - name: Run core unit tests
+        run: |
+          pipenv run test
