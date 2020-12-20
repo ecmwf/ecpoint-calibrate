@@ -87,14 +87,14 @@ class Split extends Component {
 
   customSplitHasError = () => {
     const value = this.state.customSplitValue
-    return value === '' || /^(\d+\.?\d*|\.\d+)$/.test(value) ? null : true
+    return value === '' || /^(-?\d+\.?\d*|\.\d+)$/.test(value) ? null : true
   }
 
   generatedSplitHasError = () =>
     this.state.breakpoints === null ||
     !_.every(
       this.state.breakpoints.map(row =>
-        row.slice(1).map(cell => /^(\d+\.?\d*|\.\d+)$/.test(cell.value))
+        row.slice(1).map(cell => /^(-?\d+\.?\d*|\.\d+)$/.test(cell.value))
       )
     )
 
