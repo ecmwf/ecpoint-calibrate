@@ -18,7 +18,6 @@ jobs:
         with:
           auto-update-conda: true
           miniconda-version: "latest"
-          auto-activate-base: true
           python-version: 3.8
 
       - name: Install core dependencies
@@ -27,6 +26,7 @@ jobs:
 
       - name: Install pipenv dependencies
         run: |
+          conda activate test
           pipenv sync --dev
 
       - name: Run core unit tests
