@@ -25,7 +25,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install --upgrade pipenv
+          pip install --upgrade pipenv setuptools pip wheel
           pipenv sync --dev
 
       - name: Run core unit tests
