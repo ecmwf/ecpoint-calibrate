@@ -19,14 +19,12 @@ jobs:
           auto-update-conda: true
           python-version: 3.8
 
-      - name: Install metview-batch
+      - name: Install core dependencies
         run: |
-          conda install -y -c conda-forge metview-batch
+          conda install -y -c conda-forge metview-batch pipenv
 
-      - name: Install dependencies
+      - name: Install pipenv dependencies
         run: |
-          pip install -U wheel
-          pip install --upgrade pipenv setuptools pip
           pipenv sync --dev
 
       - name: Run core unit tests
