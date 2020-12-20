@@ -21,11 +21,10 @@ jobs:
       - name: Install core dependencies
         run: |
           conda install -y -c conda-forge metview-batch
-          which metview
-          ls /usr/share/miniconda3
 
       - name: Activate conda environment
         run: |
+          ls /usr/share/miniconda3
           source /usr/share/miniconda3/bin/activate
 
       - name: Install pipenv dependencies
