@@ -24,9 +24,13 @@ jobs:
         run: |
           conda install -y -c conda-forge metview-batch pipenv
 
+      - name: Activate conda environment
+        run: |
+          conda init bash
+          conda activate test
+
       - name: Install pipenv dependencies
         run: |
-          conda activate test
           pipenv sync --dev
 
       - name: Run core unit tests
