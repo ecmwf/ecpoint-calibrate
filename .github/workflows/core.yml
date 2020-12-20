@@ -24,8 +24,9 @@ jobs:
 
       - name: Activate conda environment
         run: |
-          ls /usr/share/miniconda3
-          source /usr/share/miniconda3/bin/activate
+          ls /usr/share/miniconda
+          ls /usr/share/miniconda/test
+          source /usr/share/miniconda/bin/activate
 
       - name: Install pipenv dependencies
         run: |
