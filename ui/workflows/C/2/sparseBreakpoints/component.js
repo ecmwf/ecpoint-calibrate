@@ -8,6 +8,7 @@ import _ from 'lodash'
 
 import client from '~/utils/client'
 import toast from '~/utils/toast'
+import { realNumbers } from '~/utils/patterns'
 
 class SparseBreakpoints extends Component {
   componentDidMount() {
@@ -34,8 +35,7 @@ class SparseBreakpoints extends Component {
         _.every(
           row.slice(1),
           cell =>
-            ['', 'inf', '-inf'].includes(cell.value) ||
-            /^(\d+\.?\d*|\.\d+)$/.test(cell.value)
+            ['', 'inf', '-inf'].includes(cell.value) || realNumbers.test(cell.value)
         ) && !_.every(row.slice(1), cell => cell.value === '')
     )
   }

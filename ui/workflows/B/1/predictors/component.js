@@ -1,17 +1,7 @@
 import React, { Component } from 'react'
 import { remote } from 'electron'
 
-import {
-  Grid,
-  Card,
-  Button,
-  Radio,
-  Item,
-  Icon,
-  Label,
-  Input,
-  Popup,
-} from 'semantic-ui-react'
+import { Grid, Card, Button, Item, Icon, Label, Input, Popup } from 'semantic-ui-react'
 
 const mainProcess = remote.require('./server')
 

@@ -11,6 +11,8 @@ import {
   Message,
 } from 'semantic-ui-react'
 
+import { realNumbers } from '~/utils/patterns'
+
 import _ from 'lodash'
 
 class Binning extends Component {
@@ -33,9 +35,10 @@ class Binning extends Component {
           {this.hasError() ? (
             <Message negative>
               <p>
-                Invalid bin value(s) found. Bins must be real numbers, entered in
+                Invalid bin value(s) found. Bins must be real numbers, and entered in
                 ascending order.
               </p>
+              <p></p>
             </Message>
           ) : (
             <br />
@@ -54,7 +57,7 @@ class Binning extends Component {
   hasError = () =>
     !(
       this.props.bins.length > 0 &&
-      _.every(this.props.bins, bin => /^(-?\d+\.?\d*|\.\d+)$/.test(bin)) &&
+      _.every(this.props.bins, bin => realNumbers.test(bin)) &&
       this.arrayIsSorted(this.props.bins.map(bin => parseFloat(bin)))
     )
 

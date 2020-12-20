@@ -1,10 +1,11 @@
 import _ from 'lodash'
 
 export { default } from './container'
+import { realNumbers } from '~/utils/patterns'
 
 export const patterns = {
   mulScale: /^(\d+\.?\d*|\.\d+)$/,
-  addScale: /^(-?\d+\.?\d*|\.\d+)$/,
+  addScale: realNumbers,
 }
 
 export const isNotEmpty = state =>

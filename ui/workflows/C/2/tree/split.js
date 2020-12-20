@@ -25,6 +25,7 @@ import ReactDataSheet from 'react-datasheet'
 import 'react-datasheet/lib/react-datasheet.css'
 import client from '~/utils/client'
 import toast from '~/utils/toast'
+import { realNumbers } from '~/utils/patterns'
 
 const mainProcess = remote.require('./server')
 
@@ -87,14 +88,14 @@ class Split extends Component {
 
   customSplitHasError = () => {
     const value = this.state.customSplitValue
-    return value === '' || /^(-?\d+\.?\d*|\.\d+)$/.test(value) ? null : true
+    return value === '' || realNumbers.test(value) ? null : true
   }
 
   generatedSplitHasError = () =>
     this.state.breakpoints === null ||
     !_.every(
       this.state.breakpoints.map(row =>
-        row.slice(1).map(cell => /^(-?\d+\.?\d*|\.\d+)$/.test(cell.value))
+        row.slice(1).map(cell => realNumbers.test(cell.value))
       )
     )
 
