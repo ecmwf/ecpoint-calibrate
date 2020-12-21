@@ -22,10 +22,8 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: get-npm-version
-        id: package-version
-        uses: martinbeentjes/npm-get-version-action@master
-
+      - id: package-version
+        uses: action-get-npm-version@master
 
       - name: Build and push
         uses: docker/build-push-action@v2
@@ -33,6 +31,6 @@ jobs:
           file: ./Dockerfile.core
           pull: true
           push: ${{ startsWith(github.ref, 'refs/tags/v') }}
-          tags: onyb/ecpoint-calibrate-core:${{ steps.package-version.outputs.current-version }}
+          tags: onyb/ecpoint-calibrate-core:${{ steps.package-version.outputs.version }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
