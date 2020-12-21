@@ -5,6 +5,9 @@ jobs:
   docker-core:
     runs-on: ubuntu-latest
     steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
@@ -22,11 +25,9 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Get the version
-        id: get_version
-        run: |
-          echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
-          echo ::set-output name=VERSION_WITHOUT_V::${VERSION#v}
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@master
 
       - name: Build and push
         uses: docker/build-push-action@v2
@@ -34,6 +35,6 @@ jobs:
           file: ./Dockerfile.core
           pull: true
           push: ${{ startsWith(github.ref, 'refs/tags/v') }}
-          tags: onyb/ecpoint-calibrate-core:${{ steps.get_version.outputs.VERSION_WITHOUT_V }}
+          tags: onyb/ecpoint-calibrate-core:${{ steps.package-version.outputs.current-version }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
