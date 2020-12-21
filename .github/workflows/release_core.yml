@@ -23,7 +23,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - id: package-version
-        uses: action-get-npm-version@master
+        uses: pchynoweth/action-get-npm-version@master
 
       - name: Build and push
         uses: docker/build-push-action@v2
