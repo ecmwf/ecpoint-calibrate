@@ -36,4 +36,13 @@ jobs:
       - name: Run core unit tests
         run: |
           source $(conda info --base)/bin/activate
-          pipenv run test
+          pipenv run test --cov=./core --cov-report=xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./coverage.xml
+          env_vars: OS,PYTHON
+          name: codecov-umbrella
+          fail_ci_if_error: true
+          verbose: true
