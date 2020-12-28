@@ -144,6 +144,8 @@ class Computation extends Component {
   isImmutable = () =>
     this.props.index === 0 && this.props.predictand.type === 'ACCUMULATED'
 
+  shortNameHasError = () => this.props.predictors.codes.includes(this.props.shortname)
+
   render() {
     return (
       <Table.Row positive={this.isPositive()}>
@@ -159,8 +161,11 @@ class Computation extends Component {
             onChange={e =>
               this.props.onShortNameChange(this.props.index, e.target.value)
             }
-            error={this.props.predictors.codes.includes(this.props.shortname)}
+            error={this.shortNameHasError()}
           />
+          {this.shortNameHasError() && (
+            <Label pointing>Name collides with a predictor variable</Label>
+          )}
           <br />
           <p>Full name:</p>
           <Input
