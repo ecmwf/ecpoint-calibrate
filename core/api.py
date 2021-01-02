@@ -17,14 +17,21 @@ from core.models import Config
 from core.postprocessors.decision_tree import DecisionTree, WeatherType
 from core.postprocessors.ks_engine import KolmogorovSmirnovEngine
 from core.processor import run
+from core.svc import postprocessing as postprocessing_svc
 from core.utils import sanitize_path
 
 app = Flask(__name__)
-cors = CORS(app)
+CORS(app)
 
 # wrap the flask app and give a heathcheck url
 health = HealthCheck(app, "/healthcheck")
 envdump = EnvironmentDump(app, "/environment")
+
+
+@app.errorhandler(Exception)
+def handle_error(e):
+    code = getattr(e, "code", 500)
+    return str(e), code
 
 
 @app.route("/computation-logs", methods=("POST",))
@@ -53,64 +60,13 @@ def get_predictors():
     return Response(json.dumps(codes), mimetype="application/json")
 
 
-@app.route("/get-fields-from-ascii-table", methods=("POST",))
-def get_fields_from_ascii_table():
+@app.route("/postprocessing/pdt-tools/statistics", methods=("POST",))
+def get_pdt_statistics():
     payload = request.get_json()
-    path = sanitize_path(payload["path"])
+    path = payload["path"]
 
-    loader = load_point_data_by_path(path)
-
-    columns = loader.columns
-    fields = set(columns) - {
-        "BaseDate",
-        "BaseTime",
-        "StepF",
-        "Step",
-        "DateOBS",
-        "TimeOBS",
-        "LatOBS",
-        "LonOBS",
-        "OBS",
-        "Predictand",
-        "FER",
-        "FE",
-    }
-
-    fields_summary = []
-    for field in fields:
-        df = loader.select(field)
-        fields_summary.append({
-            "name": field,
-            "min": f"{df.min():.2f}",
-            "max": f"{df.max():.2f}",
-            "mean": f"{df.mean():.2f}",
-            "median": f"{df.median():.2f}",
-        })
-
-    error = loader.error_type.name
-    error_values = loader.select(error)
-    fields_summary.append({
-        "name": error,
-        "min": f"{error_values.min():.2f}",
-        "max": f"{error_values.max():.2f}",
-        "mean": f"{error_values.mean():.2f}",
-        "median": f"{error_values.median():.2f}",
-    })
-
-    return Response(
-        json.dumps(
-            {
-                "fields": list(fields),
-                "summary": fields_summary,
-                "minValue": float(error_values.min()),
-                "maxValue": float(error_values.max()),
-                "count": int(error_values.count()),
-                "error": error,
-                "bins": WeatherType.DEFAULT_FER_BINS if error == "FER" else [],
-            }
-        ),
-        mimetype="application/json",
-    )
+    resp = postprocessing_svc.get_pdt_statistics(path)
+    return Response(json.dumps(resp), mimetype="application/json")
 
 
 @app.route("/get-pdt-metadata", methods=("POST",))
@@ -383,9 +339,9 @@ def save_operation():
             wt_code = thrGridOut[idx][0]
             csv += [(wt_code, bias)]
 
-        pandas.DataFrame.from_records(
-            csv, columns=['WT Code', 'Bias']
-        ).to_csv(path, index=False)
+        pandas.DataFrame.from_records(csv, columns=["WT Code", "Bias"]).to_csv(
+            path, index=False
+        )
 
     if mode == "all":
         family = payload["family"]

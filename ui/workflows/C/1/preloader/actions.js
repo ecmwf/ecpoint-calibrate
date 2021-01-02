@@ -10,7 +10,7 @@ export const setPath = path => async dispatch => {
   await dispatch({ type: 'PRELOADER.SET_LOADING', data: true })
 
   client
-    .post('/get-fields-from-ascii-table', { path })
+    .post('/postprocessing/pdt-tools/statistics', { path })
     .then(response => {
       dispatch({ type: 'POSTPROCESSING.SET_FIELDS', data: response.data.fields })
       dispatch({
@@ -22,7 +22,7 @@ export const setPath = path => async dispatch => {
       console.error(e)
       if (e.response !== undefined) {
         console.error(`Error response: ${e.response}`)
-        toast.error(`${e.response.status} ${e.response.statusText}`)
+        toast.error(`${e.response.status} ${e.response.statusText}: ${e.response.data}`)
       } else {
         toast.error('Empty response from server')
       }

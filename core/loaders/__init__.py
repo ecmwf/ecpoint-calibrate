@@ -54,6 +54,25 @@ class BasePointDataReader(abc.ABC):
     def __next__(self) -> pd.DataFrame:
         raise NotImplementedError
 
+    @property
+    def predictors(self) -> List[str]:
+        fields = set(self.columns) - {
+            "BaseDate",
+            "BaseTime",
+            "StepF",
+            "Step",
+            "DateOBS",
+            "TimeOBS",
+            "LatOBS",
+            "LonOBS",
+            "OBS",
+            "Predictand",
+            "FER",
+            "FE",
+        }
+
+        return list(fields)
+
 
 def load_point_data_by_path(path: str, cheaper: bool = False) -> BasePointDataReader:
     from core.loaders.ascii import ASCIIDecoder
