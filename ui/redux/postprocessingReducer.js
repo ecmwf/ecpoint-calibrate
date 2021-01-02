@@ -5,6 +5,7 @@ const defaultState = {
   yLim: 100,
   tree: null,
   saveOperationMode: null,
+  fieldPeriods: null,
 }
 
 const getFirstRow = fields =>
@@ -60,6 +61,16 @@ export default (state = defaultState, action) => {
 
     case 'POSTPROCESSING.SET_SAVE_OPERATION_MODE': {
       return { ...state, saveOperationMode: action.data }
+    }
+
+    case 'POSTPROCESSING.SET_FIELD_PERIOD': {
+      return {
+        ...state,
+        fieldPeriods: {
+          ...state.fieldPeriods,
+          [action.data.field]: action.data.period,
+        },
+      }
     }
 
     default: {

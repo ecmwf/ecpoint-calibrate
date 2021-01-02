@@ -2,15 +2,13 @@ import { connect } from 'react-redux'
 
 import Levels from './component'
 
-import { setFields, onFieldsSortEnd } from './actions'
+import { onFieldsSortEnd } from './actions'
 
 const mapStateToProps = state => ({
   fields: state.postprocessing.fields,
 })
 
 const mapDispatchToProps = dispatch => ({
-  setFields: fields => dispatch(setFields(fields)),
-
   onFieldsSortEnd: (fields, oldIndex, newIndex) =>
     dispatch(onFieldsSortEnd(fields, oldIndex, newIndex)),
 })

@@ -5,6 +5,7 @@ import Preloader from './preloader'
 import Binning from './binning'
 import PDTViewer from './pdtViewer'
 import Summary from './summary'
+import Periods from './periods'
 
 const Page1 = () => (
   <>
@@ -12,6 +13,7 @@ const Page1 = () => (
     <Summary />
     <PDTViewer />
     <Binning />
+    <Periods />
     <Cheaper />
   </>
 )
