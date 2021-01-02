@@ -3,14 +3,14 @@ import { connect } from 'react-redux'
 import Periods from './component'
 
 const mapStateToProps = state => ({
-  periods: state.postprocessing.fieldPeriods,
+  ranges: state.postprocessing.fieldRanges,
 })
 
 const mapDispatchToProps = dispatch => ({
-  setPeriod: (field, period) =>
+  setPeriod: (field, range) =>
     dispatch({
-      type: 'POSTPROCESSING.SET_FIELD_PERIOD',
-      data: { field, period },
+      type: 'POSTPROCESSING.SET_FIELD_RANGE',
+      data: { field, range },
     }),
 })
 

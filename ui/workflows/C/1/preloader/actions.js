@@ -12,13 +12,15 @@ export const setPath = path => async dispatch => {
   client
     .post('/postprocessing/pdt-tools/statistics', { path })
     .then(response => {
+      response.data.fields.map(field =>
+        dispatch(setFieldPeriod(field, ['-inf', 'inf']))
+      )
+
       dispatch({ type: 'POSTPROCESSING.SET_FIELDS', data: response.data.fields })
       dispatch({
         type: 'BINNING.SET_POINT_DATA_META_FIELDS',
         ...response.data,
       })
-
-      response.data.fields.map(field => dispatch(setFieldPeriod(field, null)))
     })
     .catch(e => {
       console.error(e)
@@ -56,7 +58,7 @@ export const getMetadata = path => async dispatch => {
     .then(() => dispatch({ type: 'PRELOADER.SET_LOADING', data: false }))
 }
 
-export const setFieldPeriod = (field, period) => ({
-  type: 'POSTPROCESSING.SET_FIELD_PERIOD',
-  data: { field, period },
+export const setFieldPeriod = (field, range) => ({
+  type: 'POSTPROCESSING.SET_FIELD_RANGE',
+  data: { field, range },
 })

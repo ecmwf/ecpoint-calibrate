@@ -5,15 +5,18 @@ const defaultState = {
   yLim: 100,
   tree: null,
   saveOperationMode: null,
-  fieldPeriods: null,
+  fieldRanges: null,
 }
 
-const getFirstRow = fields =>
+const getFirstRow = (fields, ranges) =>
   [{ readOnly: true, value: 1 }].concat(
-    _.flatMap(fields, _ => [{ value: '-inf' }, { value: 'inf' }])
+    _.flatMap(fields, field => [
+      { value: ranges[field][0] },
+      { value: ranges[field][1] },
+    ])
   )
 
-const generateInitialGrid = fields => {
+const generateInitialGrid = (fields, ranges) => {
   const header = [{ readOnly: true, value: '' }].concat(
     _.flatMap(fields, field => [
       { readOnly: true, value: field + '_thrL' },
@@ -21,7 +24,7 @@ const generateInitialGrid = fields => {
     ])
   )
 
-  const firstRow = [getFirstRow(fields)]
+  const firstRow = [getFirstRow(fields, ranges)]
   return [header].concat(firstRow)
 }
 
@@ -31,7 +34,9 @@ export default (state = defaultState, action) => {
       return {
         ...state,
         thrGridIn:
-          action.grid.length > 0 ? action.grid : generateInitialGrid(state.fields),
+          action.grid.length > 0
+            ? action.grid
+            : generateInitialGrid(state.fields, state.fieldRanges),
       }
     }
 
@@ -47,7 +52,7 @@ export default (state = defaultState, action) => {
       return {
         ...state,
         fields: action.data,
-        thrGridIn: generateInitialGrid(action.data),
+        thrGridIn: generateInitialGrid(action.data, state.fieldRanges),
       }
     }
 
@@ -63,13 +68,23 @@ export default (state = defaultState, action) => {
       return { ...state, saveOperationMode: action.data }
     }
 
-    case 'POSTPROCESSING.SET_FIELD_PERIOD': {
+    case 'POSTPROCESSING.SET_FIELD_RANGE': {
+      const fieldRanges = {
+        ...state.fieldRanges,
+        [action.data.field]: [
+          action.data.range[0] !== undefined
+            ? action.data.range[0]
+            : state.fieldRanges[action.data.field][0],
+          action.data.range[1] !== undefined
+            ? action.data.range[1]
+            : state.fieldRanges[action.data.field][1],
+        ],
+      }
+
       return {
         ...state,
-        fieldPeriods: {
-          ...state.fieldPeriods,
-          [action.data.field]: action.data.period,
-        },
+        thrGridIn: generateInitialGrid(state.fields, fieldRanges),
+        fieldRanges,
       }
     }
 
