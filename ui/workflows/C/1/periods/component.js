@@ -50,11 +50,16 @@ class Periods extends Component {
               <Card.Content>
                 <Card.Description>
                   <p>
-                    Enter the period for circular/periodic predictors. Leave the input
-                    fields blank for non-periodic predictors.
+                    Enter the lower and upper bound for circular/periodic predictors.
+                    Leave the input fields unchanged (-inf and inf) for non-periodic
+                    predictors.
                   </p>
                   <br />
-                  <p>Values must be real numbers to be considered valid.</p>
+                  <p>Values are considered valid if:</p>
+                  <ul>
+                    <li>they are real numbers or -inf/inf.</li>
+                    <li>lower bound is less than upper bound.</li>
+                  </ul>
                 </Card.Description>
                 <Table celled compact definition>
                   <Table.Header>
@@ -90,7 +95,7 @@ class Periods extends Component {
                               ])
                             }
                             error={this.rangeHasError(this.props.ranges[predictor])[0]}
-                            placeholder="Enter period value..."
+                            placeholder="Enter lower bound..."
                           />
                           &nbsp;&nbsp;&nbsp;
                           <Input
@@ -103,7 +108,7 @@ class Periods extends Component {
                               ])
                             }
                             error={this.rangeHasError(this.props.ranges[predictor])[1]}
-                            placeholder="Enter period value..."
+                            placeholder="Enter upper bound..."
                           />
                         </Table.Cell>
                         <Table.Cell>
