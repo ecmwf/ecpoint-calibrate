@@ -2,7 +2,7 @@ name: Release Core
 on: push
 
 jobs:
-  docker-core:
+  release:
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository

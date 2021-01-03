@@ -3,7 +3,7 @@ name: Electron unit tests
 on: push
 
 jobs:
-  release:
+  build-and-test:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -19,6 +19,8 @@ jobs:
         with:
           node-version: '14.5.0'
 
-      - name: Run jest tests
-        run: |
-          yarn test
+      - name: Install dependencies
+        run: yarn --dev
+
+      - name: Run Jest tests
+        run: yarn test

@@ -3,7 +3,7 @@ name: Core unit tests
 on: push
 
 jobs:
-  release:
+  build-and-test:
     runs-on: ${{ matrix.os }}
 
     strategy:
