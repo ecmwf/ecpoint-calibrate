@@ -12,7 +12,8 @@
     "build": "webpack --progress --colors",
     "lint": "prettier --config ./.prettierrc --write 'ui/**/*.js' server.js",
     "dist": "electron-builder",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "electron-builder install-app-deps",
+    "test": "jest"
   },
   "build": {
     "appId": "com.ecmwf.ecpoint",
@@ -30,6 +31,13 @@
       "target": "AppImage",
       "vendor": "ECMWF",
       "category": "Science"
+    }
+  },
+  "jest": {
+    "moduleFileExtensions": ["js", "jsx"],
+    "moduleDirectories": ["node_modules"],
+    "moduleNameMapper": {
+      "^~/(.*)$": "<rootDir>/ui/$1"
     }
   },
   "author": "Anirudha Bose <anirudha.bose@alumni.cern>",
@@ -73,6 +81,7 @@
     "file-loader": "1.1.10",
     "frontail": "^4.6.0",
     "fs-jetpack": "^2.2.2",
+    "jest": "^26.6.3",
     "lodash": "^4.17.20",
     "prettier": "1.18.2",
     "react": "^16.13.1",
