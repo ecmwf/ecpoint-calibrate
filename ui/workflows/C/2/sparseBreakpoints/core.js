@@ -2,7 +2,7 @@ import _ from 'lodash'
 
 import { realNumbers } from '~/utils/patterns'
 
-export const validateThresholdSequence = sequence => {
+export const validateThresholdSequence = (sequence, range) => {
   /**
    * STEP 1: Define a helper to remove spaces from the end of the sequence.
    *
@@ -36,11 +36,13 @@ export const validateThresholdSequence = sequence => {
   const stack = []
   trimmedSequence.forEach(el => stack.push(el))
 
+  const isLinear = _.isEqual(range, ['-inf', 'inf'])
+
   /**
    * STEP 4: The first and last elements of the sequence should always be "-inf"
    * and "inf" respectively; the sequence is otherwise invalid.
    */
-  if (stack[0] !== '-inf' || stack.slice(-1)[0] !== 'inf') {
+  if (isLinear && (stack[0] !== '-inf' || stack.slice(-1)[0] !== 'inf')) {
     return false
   }
 
@@ -80,22 +82,30 @@ export const validateThresholdSequence = sequence => {
   }
 
   /**
-   * STEP 7: Stack based VM to evaluate the validity of the sequence.s
+   * STEP 7: Circular  predictors  must have the same first and last elements
+   * in order to cover the entire range.
+   */
+  let previousLow = stack.slice(-1)[0]
+  if (!isLinear && stack[0] !== previousLow) {
+    return false
+  }
+
+  /**
+   * STEP 8: Stack based computer to evaluate the validity of the sequence.
    *
    * We loop over the stack until no elements are remaining.
    */
 
-  let previousLow = 'inf'
   while (stack.length !== 0) {
     /**
-     * STEP7.1: Get the (low, high) pair from the end of the sequence.
+     * STEP 8.1: Get the (low, high) pair from the end of the sequence.
      *
      * NOTE: This mutates the stack.
      */
     const [high, low] = [stack.pop(), stack.pop()]
 
     /**
-     * STEP 7.2: If low or high are unrecognized tokens, the entire sequence
+     * STEP 8.2: If low or high are unrecognized tokens, the entire sequence
      * is invalid.
      */
     if (!isAllowedToken(high) || !isAllowedToken(low)) {
@@ -103,21 +113,37 @@ export const validateThresholdSequence = sequence => {
     }
 
     /**
-     * STEP 7.3: low can never be "inf" and high can never be "-inf".
+     * STEP 8.3: low can never be "inf" and high can never be "-inf".
      */
-    if (low === 'inf' || high === '-inf') {
+    if (isLinear && (low === 'inf' || high === '-inf')) {
       return false
     }
 
     /**
-     * STEP 7.4: low  should be  strictly less than high.
+     * STEP 8.4: low  should be  strictly less than high for linear
+     * predictors always, and only for the first row in case of circular
+     * predictors.
      */
-    if (!isLessThan(low, high)) {
-      return false
+    if (isLinear) {
+      if (!isLessThan(low, high)) {
+        return false
+      }
+    } else {
+      if (stack.length !== 0 && !isLessThan(low, high)) {
+        return false
+      }
+
+      if (isLessThan(low, range[0]) || isLessThan(high, range[0])) {
+        return false
+      }
+
+      if (!isLessThan(low, range[1]) || !isLessThan(high, range[1])) {
+        return false
+      }
     }
 
     /**
-     * STEP 7.5: the current high should be same as the previous high
+     * STEP 8.5: the current high should be same as the previous high
      * (in reverse stack order).
      */
     if (high !== previousLow) {
@@ -125,13 +151,13 @@ export const validateThresholdSequence = sequence => {
     }
 
     /**
-     * STEP 7.6: save the low value for use in the next iteration.
+     * STEP 8.6: save the low value for use in the next iteration.
      */
     previousLow = low
   }
 
   /**
-   * STEP 8: all KO cases exhausted. The sequence is valid.
+   * STEP 9: all KO cases exhausted. The sequence is valid.
    */
   return true
 }
