@@ -21,7 +21,7 @@ export default class TreeContainer extends Component {
     graph: null,
     nodeMeta: null,
     loading: false,
-    treeEditMode: false,
+    mode: 'simple',
     conditionalVerificationMode: false,
   }
 
@@ -104,10 +104,12 @@ export default class TreeContainer extends Component {
       return
     }
 
-    if (this.state.treeEditMode) {
+    if (this.state.mode === 'edit') {
       this.onNodeClickEditMode(node)
     } else if (this.state.conditionalVerificationMode) {
       this.onNodeClickConditionalVerificationMode(node)
+    } else if (this.state.mode === 'simple') {
+      this.onNodeClickExploreMode(node)
     } else {
       this.onNodeClickExploreMode(node)
     }
@@ -119,7 +121,7 @@ export default class TreeContainer extends Component {
     if (code === 69) {
       // 'e' key
       this.setState({
-        treeEditMode: !this.state.treeEditMode,
+        mode: 'edit',
         conditionalVerificationMode: false,
       })
     }
@@ -127,21 +129,21 @@ export default class TreeContainer extends Component {
     if (code === 65) {
       // 'a' key
       this.state.conditionalVerificationMode !== 'a'
-        ? this.setState({ treeEditMode: false, conditionalVerificationMode: 'a' })
+        ? this.setState({ mode: 'simple', conditionalVerificationMode: 'a' })
         : this.setState({ conditionalVerificationMode: false })
     }
 
     if (code === 66) {
       // 'b' key
       this.state.conditionalVerificationMode !== 'b'
-        ? this.setState({ treeEditMode: false, conditionalVerificationMode: 'b' })
+        ? this.setState({ mode: 'simple', conditionalVerificationMode: 'b' })
         : this.setState({ conditionalVerificationMode: false })
     }
 
     if (code === 67) {
       // 'c' key
       this.state.conditionalVerificationMode !== 'c'
-        ? this.setState({ treeEditMode: false, conditionalVerificationMode: 'c' })
+        ? this.setState({ mode: 'simple', conditionalVerificationMode: 'c' })
         : this.setState({ conditionalVerificationMode: false })
     }
   }
@@ -149,6 +151,47 @@ export default class TreeContainer extends Component {
   componentWillMount() {
     window.addEventListener('keydown', this.handleKeyboardInput.bind(this))
   }
+
+  getModeRadios = () => (
+    <Form.Group>
+      <Form.Field>
+        <Radio
+          label="Simple"
+          onChange={() =>
+            this.setState({
+              mode: 'simple',
+              conditionalVerificationMode: false,
+            })
+          }
+          checked={this.state.mode === 'simple'}
+        />
+      </Form.Field>
+      <Form.Field>
+        <Radio
+          label="Edit"
+          onChange={() =>
+            this.setState({
+              mode: 'edit',
+              conditionalVerificationMode: false,
+            })
+          }
+          checked={this.state.mode === 'edit'}
+        />
+      </Form.Field>
+      <Form.Field>
+        <Radio
+          label="Non-collapsible"
+          onChange={() =>
+            this.setState({
+              mode: 'non-collapsible',
+              conditionalVerificationMode: false,
+            })
+          }
+          checked={this.state.mode === 'non-collapsible'}
+        />
+      </Form.Field>
+    </Form.Group>
+  )
 
   render = () => {
     return (
@@ -162,20 +205,8 @@ export default class TreeContainer extends Component {
         <Grid>
           <Grid.Column floated="left" width={5}>
             <Form>
-              <p>General mode:</p>
-              <Form.Field>
-                <Radio
-                  toggle
-                  label="Edit mode"
-                  onChange={() =>
-                    this.setState({
-                      treeEditMode: !this.state.treeEditMode,
-                      conditionalVerificationMode: false,
-                    })
-                  }
-                  checked={this.state.treeEditMode}
-                />
-              </Form.Field>
+              <p>Modes:</p>
+              {this.getModeRadios()}
 
               <p>Conditional verification plots:</p>
               <Form.Group>
@@ -189,7 +220,7 @@ export default class TreeContainer extends Component {
                       this.state.conditionalVerificationMode !== 'a'
                         ? this.setState({
                             conditionalVerificationMode: 'a',
-                            treeEditMode: false,
+                            mode: 'simple',
                           })
                         : this.setState({ conditionalVerificationMode: false })
                     }
@@ -206,7 +237,7 @@ export default class TreeContainer extends Component {
                       this.state.conditionalVerificationMode !== 'b'
                         ? this.setState({
                             conditionalVerificationMode: 'b',
-                            treeEditMode: false,
+                            mode: 'simple',
                           })
                         : this.setState({ conditionalVerificationMode: false })
                     }
@@ -223,7 +254,7 @@ export default class TreeContainer extends Component {
                       this.state.conditionalVerificationMode !== 'c'
                         ? this.setState({
                             conditionalVerificationMode: 'c',
-                            treeEditMode: false,
+                            mode: 'simple',
                           })
                         : this.setState({ conditionalVerificationMode: false })
                     }
