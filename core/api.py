@@ -63,7 +63,7 @@ def get_predictors():
 @app.route("/postprocessing/pdt-tools/statistics", methods=("POST",))
 def get_pdt_statistics():
     payload = request.get_json()
-    path = payload["path"]
+    path = sanitize_path(payload["path"])
 
     resp = postprocessing_svc.get_pdt_statistics(path)
     return Response(json.dumps(resp), mimetype="application/json")
