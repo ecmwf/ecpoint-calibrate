@@ -10,6 +10,7 @@ const mapStateToProps = state => ({
   breakpoints: state.postprocessing.thrGridOut,
   labels: state.postprocessing.thrGridIn[0].slice(1).map(cell => cell.value),
   fields: state.postprocessing.fields,
+  fieldRanges: state.postprocessing.fieldRanges,
 })
 
 const mapDispatchToProps = dispatch => ({

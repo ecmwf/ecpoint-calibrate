@@ -30,6 +30,7 @@ const thresholdSequenceTestCases = [
   [['21', '3', '3', '9', '9', '20'], ['0', '24'], false], // circular sequence has distinct ends
   [['25', '3', '3', '9', '9', '25'], ['0', '24'], false], // out of range
   [['-1', '3', '3', '9', '9', '-1'], ['0', '24'], false], // out of range
+  [['-inf', '2', '2', '3', '3', 'inf'], ['0', '24'], false],
 ]
 
 test.each(thresholdSequenceTestCases)(

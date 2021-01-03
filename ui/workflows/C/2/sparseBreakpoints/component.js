@@ -9,6 +9,7 @@ import _ from 'lodash'
 import client from '~/utils/client'
 import toast from '~/utils/toast'
 import { realNumbers } from '~/utils/patterns'
+import { validateThresholdSequence } from './core'
 
 class SparseBreakpoints extends Component {
   componentDidMount() {
@@ -28,17 +29,28 @@ class SparseBreakpoints extends Component {
     this.props.setSparseBreakpoints(newGrid)
   }
 
-  hasError = () => {
-    return !_.every(
-      this.props.sparseBreakpoints.slice(1),
-      row =>
-        _.every(
-          row.slice(1),
-          cell =>
-            ['', 'inf', '-inf'].includes(cell.value) || realNumbers.test(cell.value)
-        ) && !_.every(row.slice(1), cell => cell.value === '')
+  getThresholdSequences() {
+    const records = this.props.sparseBreakpoints
+      .slice(1)
+      .map(row => _.flatMap(row.slice(1), cell => cell.value))
+
+    const chunkedRecords = records.map(row => _.chunk(row, 2))
+    const transposedChunkedRecords = chunkedRecords[0].map((_, colIndex) =>
+      chunkedRecords.map(row => row[colIndex])
     )
+
+    return transposedChunkedRecords.map(row => _.flatten(row))
   }
+
+  validateThresholdSequences = () =>
+    this.getThresholdSequences().map((sequence, idx) =>
+      validateThresholdSequence(
+        sequence,
+        this.props.fieldRanges[this.props.fields[idx]]
+      )
+    )
+
+  hasError = () => !_.every(this.validateThresholdSequences())
 
   postThrGridIn = () => {
     this.setState({ loading: 'Generating weather types.' })
@@ -104,6 +116,19 @@ class SparseBreakpoints extends Component {
                   )}
                 </tr>
               )}
+              cellRenderer={props => {
+                const predictorIdx = parseInt((props.col - 1) / 2)
+                return (
+                  <td
+                    {...props}
+                    style={{
+                      backgroundColor: !this.validateThresholdSequences()[predictorIdx]
+                        ? '#FEF6F6'
+                        : null,
+                    }}
+                  />
+                )
+              }}
             />
           </Item.Description>
           <Item.Extra>
