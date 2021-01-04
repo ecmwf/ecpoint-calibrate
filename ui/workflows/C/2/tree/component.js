@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 
 import { remote } from 'electron'
-import _, { merge } from 'lodash'
 
 import Tree from 'react-d3-tree'
 import { saveSvgAsPng } from 'save-svg-as-png'
