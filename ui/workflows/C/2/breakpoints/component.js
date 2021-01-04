@@ -7,79 +7,14 @@ import client from '~/utils/client'
 import toast from '~/utils/toast'
 import download from '~/utils/download'
 
+import { isMergeableToPreviousRow, mergeToPreviousRow } from './core'
+
 import { remote } from 'electron'
 const mainProcess = remote.require('./server')
 const jetpack = require('fs-jetpack')
 
 class Breakpoints extends Component {
   state = { numColsMFs: '' }
-  isMergeableToPreviousRow = row => {
-    if (row === 0) {
-      return false
-    }
-
-    const matrix = this.props.breakpoints.map(row => _.flatMap(row.slice(1)))
-
-    /* B is being merged to A */
-    const [A, B] = [
-      _.slice(matrix[row - 1], 1).reverse(),
-      _.slice(matrix[row], 1).reverse(),
-    ]
-
-    const zipped_columns = _.zip(_.chunk(A, 2), _.chunk(B, 2))
-
-    let index = 0
-
-    while (index !== zipped_columns.length) {
-      const [[aHigh, aLow], [bHigh, bLow]] = zipped_columns[index]
-      if (aLow !== '-inf' || bLow !== '-inf' || aHigh !== 'inf' || bHigh !== 'inf') {
-        break
-      }
-      index += 1
-    }
-
-    const [
-      [[aHighFirst, aLowFirst], [bHighFirst, bLowFirst]],
-      ...rest
-    ] = zipped_columns.slice(index)
-
-    return aHighFirst === bLowFirst
-  }
-
-  mergeToPreviousRow = row => {
-    const matrix = this.props.breakpoints.map(row => _.flatMap(row.slice(1)))
-
-    /* B is being merged to A */
-    const [A, B] = [[...matrix[row - 1]].reverse(), [...matrix[row]].reverse()]
-
-    const zipped_columns = _.zip(_.chunk(A, 2), _.chunk(B, 2))
-
-    let index = 0
-
-    while (index !== zipped_columns.length) {
-      const [[aHigh, aLow], [bHigh, bLow]] = zipped_columns[index]
-      if (aLow !== '-inf' || bLow !== '-inf' || aHigh !== 'inf' || bHigh !== 'inf') {
-        break
-      }
-      index += 1
-    }
-
-    const unbounded_leaves = _.flatten(_.times(index, _.constant(['-inf', 'inf'])))
-    const [
-      [[aHighFirst, aLowFirst], [bHighFirst, bLowFirst]],
-      ...rest
-    ] = zipped_columns.slice(index)
-
-    rest.reverse()
-
-    const newRow = [
-      ...rest.flatMap(([[aHigh, aLow], [bHigh, bLow]]) => [aLow, aHigh]),
-      ...[aLowFirst, bHighFirst],
-      ...unbounded_leaves,
-    ]
-
-    return [..._.slice(matrix, 0, row - 1), newRow, ..._.slice(matrix, row + 1)]
-  }
 
   numColsMFsHasError = () =>
     this.state.numColsMFs !== '' && !/^\d+$/.test(this.state.numColsMFs)
@@ -141,7 +76,10 @@ class Breakpoints extends Component {
             ))}
 
             <Table.Cell>
-              {this.isMergeableToPreviousRow(rowIdx) && (
+              {isMergeableToPreviousRow(
+                rowIdx,
+                this.props.breakpoints.map(row => _.flatMap(row.slice(1)))
+              ) && (
                 <Popup
                   content="Merge with the Weather Type above"
                   trigger={
@@ -149,7 +87,10 @@ class Breakpoints extends Component {
                       icon="arrow up"
                       circular
                       onClick={() => {
-                        const matrix = this.mergeToPreviousRow(rowIdx)
+                        const matrix = mergeToPreviousRow(
+                          rowIdx,
+                          this.props.breakpoints.map(row => _.flatMap(row.slice(1)))
+                        )
                         this.props.setBreakpoints(this.props.labels, matrix)
                       }}
                       size="mini"

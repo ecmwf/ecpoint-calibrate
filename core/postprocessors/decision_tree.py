@@ -145,7 +145,6 @@ class DecisionTree(object):
 
             curr = root
             for level, (low, predictor, high) in enumerate(zip(thrL, predictors, thrH)):
-
                 text = "{low} < {predictor} < {high}".format(
                     low=int_or_float(low), predictor=predictor, high=int_or_float(high)
                 )
@@ -161,6 +160,9 @@ class DecisionTree(object):
                     maybe_child = Node(text)
                     maybe_child.meta["predictor"] = predictor
                     maybe_child.meta["level"] = level
+                    curr.meta["idxWT"] = i
+                    curr.meta["code"] = cls.wt_code(thrL_out, thrH_out)[i]
+
                     # For a path in the decision tree that has been resolved, we want
                     # to add only those nodes to the tree that have a decision, i.e.
                     # a bounded range.
@@ -170,8 +172,7 @@ class DecisionTree(object):
 
             if not curr.children:
                 curr.meta["idxWT"] = i
-                code = cls.wt_code(thrL_out, thrH_out)[i]
-                curr.meta["code"] = code
+                curr.meta["code"] = cls.wt_code(thrL_out, thrH_out)[i]
                 curr.nodeSvgShape = {
                     "shape": "circle",
                     "shapeProps": {

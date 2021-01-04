@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 import { remote } from 'electron'
-import _ from 'lodash'
+import _, { merge } from 'lodash'
 
 import Tree from 'react-d3-tree'
 import { saveSvgAsPng } from 'save-svg-as-png'
@@ -11,6 +11,7 @@ import client from '~/utils/client'
 import toast from '~/utils/toast'
 import MappingFunction from './mappingFunction'
 import Split from './split'
+import { mergeToPreviousRow, isMergeableToPreviousRow } from '../breakpoints/core'
 
 const mainProcess = remote.require('./server')
 
@@ -37,12 +38,28 @@ export default class TreeContainer extends Component {
 
   onNodeClickExploreMode = node => {
     this.setState({ openMappingFunction: true, nodeMeta: node.meta })
+
+    let matrix = this.props.breakpoints.map(row => _.flatMap(row.slice(1)))
+
+    const getRightSubtreeIdx = node =>
+      !node.children ? node.meta.idxWT : getRightSubtreeIdx(node.children.slice(-1)[0])
+
+    const getLeftSubtreeIdx = node =>
+      !node.children ? node.meta.idxWT : getLeftSubtreeIdx(node.children[0])
+
+    let from = getRightSubtreeIdx(node)
+    let to = getLeftSubtreeIdx(node)
+
+    for (; from > to; from--) {
+      while (from < matrix.length && isMergeableToPreviousRow(from, matrix)) {
+        matrix = mergeToPreviousRow(from, matrix)
+      }
+    }
+
     client
       .post('/postprocessing/generate-wt-histogram', {
         labels: this.props.labels,
-        thrWT: this.props.breakpoints.map(row => _.flatMap(row.slice(1)))[
-          node.meta.idxWT
-        ],
+        thrWT: undefined, //matrix[from],
         path: this.props.path,
         yLim: this.props.yLim,
         bins: this.props.bins,
@@ -54,8 +71,10 @@ export default class TreeContainer extends Component {
       .catch(e => {
         console.error(e)
         if (e.response !== undefined) {
-          console.error(`Error response: ${e.response}`)
-          toast.error(`${e.response.status} ${e.response.statusText}`)
+          console.error(`Error response: ${e.response.data}`)
+          toast.error(
+            `${e.response.status} ${e.response.statusText} ${e.response.data}`
+          )
         } else {
           toast.error('Empty response from server')
         }
@@ -100,7 +119,7 @@ export default class TreeContainer extends Component {
   }
 
   onNodeClick = (node, event) => {
-    if (!!node._children) {
+    if (!!node._children && this.state.mode !== 'non-collapsible') {
       return
     }
 
@@ -110,7 +129,7 @@ export default class TreeContainer extends Component {
       this.onNodeClickConditionalVerificationMode(node)
     } else if (this.state.mode === 'simple') {
       this.onNodeClickExploreMode(node)
-    } else {
+    } else if (this.state.mode === 'non-collapsible') {
       this.onNodeClickExploreMode(node)
     }
   }
@@ -327,6 +346,7 @@ export default class TreeContainer extends Component {
           nodeLabelComponent={{
             render: <NodeLabel />,
           }}
+          collapsible={this.state.mode !== 'non-collapsible'}
         />
 
         <MappingFunction
