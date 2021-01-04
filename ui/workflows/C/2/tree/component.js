@@ -59,7 +59,7 @@ export default class TreeContainer extends Component {
     client
       .post('/postprocessing/generate-wt-histogram', {
         labels: this.props.labels,
-        thrWT: undefined, //matrix[from],
+        thrWT: matrix[from],
         path: this.props.path,
         yLim: this.props.yLim,
         bins: this.props.bins,
