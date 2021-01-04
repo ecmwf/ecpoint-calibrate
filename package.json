@@ -1,6 +1,6 @@
 {
   "name": "ecpoint-calibrate",
-  "version": "0.18.0",
+  "version": "0.19.0",
   "description": "GUI for ecPoint-Calibrate powered by Electron and React",
   "engines": {
     "node": "14.5.0"
@@ -34,8 +34,13 @@
     }
   },
   "jest": {
-    "moduleFileExtensions": ["js", "jsx"],
-    "moduleDirectories": ["node_modules"],
+    "moduleFileExtensions": [
+      "js",
+      "jsx"
+    ],
+    "moduleDirectories": [
+      "node_modules"
+    ],
     "moduleNameMapper": {
       "^~/(.*)$": "<rootDir>/ui/$1"
     }
