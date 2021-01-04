@@ -1,5 +1,6 @@
 import json
 import os
+import traceback
 from datetime import datetime
 from functools import lru_cache
 from io import StringIO
@@ -31,7 +32,9 @@ envdump = EnvironmentDump(app, "/environment")
 @app.errorhandler(Exception)
 def handle_error(e):
     code = getattr(e, "code", 500)
-    return str(e), code
+
+    tb = traceback.format_exception_only(type(e), e) or [str(e)]
+    return '\n'.join(tb), code
 
 
 @app.route("/computation-logs", methods=("POST",))
