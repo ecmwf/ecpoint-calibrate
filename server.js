@@ -198,7 +198,7 @@ const loggerSvc = containerFactory({
 })
 
 app.on('ready', async () => {
-  if (!process.env.DEV) {
+  if (!process.env.DEV && !process.argv.includes('--fork')) {
     // Stop all stale containers left running from a previous ungraceful shutdown.
     await findAndStopStaleContainers()
 
@@ -214,7 +214,7 @@ app.on('ready', async () => {
 })
 
 app.on('window-all-closed', async () => {
-  if (!process.env.DEV) {
+  if (!process.env.DEV && !process.argv.includes('--fork')) {
     await stopContainers(containers)
   }
 
