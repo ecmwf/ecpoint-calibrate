@@ -35,6 +35,10 @@ jobs:
           pip install pipenv pip setuptools
           pipenv sync --dev
 
+      - name: Set pythonpath
+        run: |
+          echo "PYTHONPATH=`pwd`" >> $GITHUB_ENV
+
       - name: Run core unit/functional tests
         run: |
           source $(conda info --base)/bin/activate
