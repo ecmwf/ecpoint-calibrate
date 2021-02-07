@@ -1,4 +1,4 @@
-name: Core unit tests
+name: Core unit/functional tests
 
 on: push
 
@@ -35,7 +35,7 @@ jobs:
           pip install pipenv pip setuptools
           pipenv sync --dev
 
-      - name: Run core unit tests
+      - name: Run core unit/functional tests
         run: |
           source $(conda info --base)/bin/activate
           pipenv run test --cov=./core --cov-report=xml
