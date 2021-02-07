@@ -1,6 +1,3 @@
-#GEO
-# lat   lon     height  date            time    value
-# Missing values represented by 3e+38 (not user-changeable)
-#DATA
- -10.05 143.07  94182   20150610        4       0
- -11.4  130.42  94119   20150610        19      0
+version https://git-lfs.github.com/spec/v1
+oid sha256:28b04506bef5ae681889a02c28cfb9bf9c02544d4868ff9c036746221684f018
+size 225
