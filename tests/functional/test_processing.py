@@ -1,13 +1,15 @@
 import tempfile
 
+import pytest
 from pandas.testing import assert_frame_equal
 
 from core.loaders import ErrorType, load_point_data_by_path
 
 
-def test_alfa_ascii(client, alfa_cassette, alfa_loader):
-    with tempfile.NamedTemporaryFile("w", suffix=".ascii", delete=True) as f:
-        request = alfa_cassette(output_path=f.name, fmt="ASCII")
+@pytest.mark.parametrize("fmt", ("ASCII", "PARQUET"))
+def test_alfa(client, alfa_cassette, alfa_loader, fmt):
+    with tempfile.NamedTemporaryFile("w", suffix=f".{fmt.lower()}", delete=True) as f:
+        request = alfa_cassette(output_path=f.name, fmt=fmt)
         response = client.post("/computation-logs", json=request)
         assert response.status_code == 200
 
