@@ -3,6 +3,10 @@ import React from 'react'
 import { Image, Dropdown } from 'semantic-ui-react'
 import logo from '~/assets/img/ECMWF_logo.png'
 
+import { remote } from 'electron'
+const mainProcess = remote.require('./server')
+const jetpack = require('fs-jetpack')
+
 const Header = props => (
   <div
     style={{
@@ -66,6 +70,37 @@ const Header = props => (
                   onClick={() => props.onSaveOperationClicked('all')}
                 >
                   Save Operation
+                </Dropdown.Item>
+              </>
+            )}
+            {props.workflow === 'B' && (
+              <>
+                <Dropdown.Item
+                  disabled={props.page.activePageNumber === 3}
+                  onClick={() => {
+                    const path = mainProcess.openFile() || null
+                    if (path === null) {
+                      return
+                    }
+
+                    const state = JSON.parse(jetpack.read(path))
+                    props.loadWorkflow(state)
+                  }}
+                >
+                  Load workflow
+                </Dropdown.Item>
+                <Dropdown.Item
+                  disabled={props.page.activePageNumber !== 3}
+                  onClick={() => {
+                    const path = mainProcess.saveFile('workflow.json') || null
+                    if (path === null) {
+                      return
+                    }
+
+                    jetpack.write(path, props.reduxState)
+                  }}
+                >
+                  Save workflow
                 </Dropdown.Item>
               </>
             )}

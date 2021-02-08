@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import PostProcessing from './component'
 
 import { setBreakpoints } from '../breakpoints/actions'
+import { onSaveOperationClicked } from './actions'
 
 const mapStateToProps = state => ({
   thrGridIn: state.postprocessing.thrGridIn,

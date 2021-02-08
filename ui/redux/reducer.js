@@ -33,6 +33,10 @@ const rootReducer = (state, action) => {
     state = undefined
   }
 
+  if (action.type === 'LOAD_WORKFLOW') {
+    state = action.data
+  }
+
   return reducer(state, action)
 }
 
