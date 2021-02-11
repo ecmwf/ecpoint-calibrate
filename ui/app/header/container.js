@@ -2,6 +2,7 @@ import { connect } from 'react-redux'
 
 import Header from './component'
 import { onSaveOperationClicked } from './actions'
+import { setPath as warmupPredictorMetadataCache } from '../../workflows/B/1/predictors/actions'
 
 const mapStateToProps = state => ({
   workflow: state.workflow,
@@ -19,6 +20,8 @@ const mapDispatchToProps = dispatch => ({
       page: 1,
     })
   },
+
+  warmupPredictorMetadataCache: path => dispatch(warmupPredictorMetadataCache(path)),
 })
 
 export default connect(

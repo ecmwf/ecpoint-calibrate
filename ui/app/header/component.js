@@ -85,6 +85,7 @@ const Header = props => (
 
                     const state = JSON.parse(jetpack.read(path))
                     props.loadWorkflow(state)
+                    props.warmupPredictorMetadataCache(state.predictors.path)
                   }}
                 >
                   Load workflow
