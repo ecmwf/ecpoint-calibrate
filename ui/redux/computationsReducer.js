@@ -28,7 +28,9 @@ export default (state = defaultState, action) => {
     case 'COMPUTATIONS.REMOVE': {
       return {
         ...state,
-        fields: state.fields.filter(item => item.index !== action.index),
+        fields: state.fields
+          .filter(item => item.index !== action.index)
+          .map((el, idx) => ({ ...el, index: idx })),
       }
     }
 
