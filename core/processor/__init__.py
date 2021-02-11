@@ -278,13 +278,22 @@ def run(config: Config):
                             steps = [step_s + acc - 24, step_s + acc]
                 elif computation.field in [
                     "WEIGHTED_AVERAGE_FIELD",
-                    "MAXIMUM_FIELD",
-                    "MINIMUM_FIELD",
                     "AVERAGE_FIELD",
                 ]:
                     steps = list(
                         range(
                             step_s,
+                            step_s + acc + 1,
+                            config.predictors.sampling_interval,
+                        )
+                    )
+                elif computation.field in [
+                    "MAXIMUM_FIELD",
+                    "MINIMUM_FIELD",
+                ]:
+                    steps = list(
+                        range(
+                            step_s + config.predictors.sampling_interval,
                             step_s + acc + 1,
                             config.predictors.sampling_interval,
                         )
