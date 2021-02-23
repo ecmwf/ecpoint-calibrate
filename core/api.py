@@ -12,6 +12,7 @@ from flask import Flask, Response, jsonify, request
 from flask_cors import CORS
 from healthcheck import EnvironmentDump, HealthCheck
 
+from core.loaders import geopoints as geopoints_loader
 from core.loaders import load_point_data_by_path
 from core.loaders.fieldset import Fieldset
 from core.models import Config
@@ -34,7 +35,7 @@ def handle_error(e):
     code = getattr(e, "code", 500)
 
     tb = traceback.format_exception_only(type(e), e) or [str(e)]
-    return '\n'.join(tb), code
+    return "\n".join(tb), code
 
 
 @app.route("/computation-logs", methods=("POST",))
@@ -61,6 +62,15 @@ def get_predictors():
         get_metadata(os.path.join(path, code))
 
     return Response(json.dumps(codes), mimetype="application/json")
+
+
+@app.route("/loaders/observations/metadata", methods=("POST",))
+def get_obs_metadata():
+    payload = request.get_json()
+    path = sanitize_path(payload["path"])
+
+    units = geopoints_loader.read_units(Path(path))
+    return Response(json.dumps({"units": units}), mimetype="application/json")
 
 
 @app.route("/postprocessing/pdt-tools/statistics", methods=("POST",))
