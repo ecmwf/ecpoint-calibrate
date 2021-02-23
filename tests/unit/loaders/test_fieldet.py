@@ -4,8 +4,8 @@ import numpy as np
 import pandas
 import pytest
 
+from core.loaders import geopoints as geopoints_loader
 from core.loaders.fieldset import Fieldset
-from core.loaders.geopoints import get_geopoints_values, read_geopoints
 from tests.conf import TEST_DATA_DIR
 
 
@@ -119,26 +119,28 @@ def test_complex_math_operations():
 def test_nearest_gridpoint():
     fieldset = Fieldset.from_path(path=TEST_DATA_DIR / "cape_20150601_00_03.grib")
 
-    geopoints_in = read_geopoints(path=TEST_DATA_DIR / "good_geo_file.geo")
+    geopoints_in = geopoints_loader.read(path=TEST_DATA_DIR / "good_geo_file.geo")
     geopoints_out = fieldset.nearest_gridpoint(geopoints_in)
 
     assert (geopoints_in.latitudes() == geopoints_out.latitudes()).all()
     assert (geopoints_in.longitudes() == geopoints_out.longitudes()).all()
     assert (
-        get_geopoints_values(geopoints_in) != get_geopoints_values(geopoints_out)
+        geopoints_loader.get_values(geopoints_in)
+        != geopoints_loader.get_values(geopoints_out)
     ).all()
-    assert get_geopoints_values(geopoints_out).tolist() == [304.375, 1.25]
+    assert geopoints_loader.get_values(geopoints_out).tolist() == [304.375, 1.25]
 
 
 def test_nearest_gridpoint_new_geofile_format():
     fieldset = Fieldset.from_path(path=TEST_DATA_DIR / "cape_20150601_00_03.grib")
 
-    geopoints_in = read_geopoints(path=TEST_DATA_DIR / "new_geo_file_format.geo")
+    geopoints_in = geopoints_loader.read(path=TEST_DATA_DIR / "new_geo_file_format.geo")
     geopoints_out = fieldset.nearest_gridpoint(geopoints_in)
 
     assert (geopoints_in.latitudes() == geopoints_out.latitudes()).all()
     assert (geopoints_in.longitudes() == geopoints_out.longitudes()).all()
     assert (
-        get_geopoints_values(geopoints_in) != get_geopoints_values(geopoints_out)
+        geopoints_loader.get_values(geopoints_in)
+        != geopoints_loader.get_values(geopoints_out)
     ).all()
-    assert get_geopoints_values(geopoints_out).tolist() == [0.25, 24.25, 0, 17.5]
+    assert geopoints_loader.get_values(geopoints_out).tolist() == [0.25, 24.25, 0, 17.5]

@@ -8,7 +8,7 @@ import numpy as np
 from core.loaders.ascii import ASCIIEncoder
 from core.loaders.parquet import ParquetPointDataTableWriter
 from core.loaders.fieldset import Fieldset
-from core.loaders.geopoints import get_geopoints_values, read_geopoints
+from core.loaders import geopoints as geopoints_loader
 from core.models import Config
 
 from ..computations.models import Computer
@@ -199,7 +199,7 @@ def run(config: Config):
         # Reading Rainfall Observations
         logging.info(f"  Read observation file: {os.path.basename(obs_path)}")
         try:
-            obs = read_geopoints(path=obs_path)
+            obs = geopoints_loader.read(path=obs_path)
         except IOError:
             logging.warning(f"  Observation file not found in DB: {obs_path}.")
             continue
@@ -367,7 +367,7 @@ def run(config: Config):
                 computations_result.append(
                     (
                         computation.shortname,
-                        np.around(get_geopoints_values(ref_geopoints), decimals=3),
+                        np.around(geopoints_loader.get_values(ref_geopoints), decimals=3),
                     )
                 )
             else:
@@ -375,7 +375,7 @@ def run(config: Config):
                     geopoints = geopoints.filter(mask)
 
                 computations_result.append(
-                    (computation.shortname, np.around(get_geopoints_values(geopoints), decimals=3))
+                    (computation.shortname, np.around(geopoints_loader.get_values(geopoints), decimals=3))
                 )
 
             logging.info("")
@@ -400,11 +400,11 @@ def run(config: Config):
                 dividend, divisor = steps
                 if config.predictand.is_accumulated:
                     computed_value = computer.run(
-                        get_geopoints_values(dividend.nearest_gridpoint(obs).filter(mask)),
-                        get_geopoints_values(divisor.nearest_gridpoint(obs).filter(mask)),
+                        geopoints_loader.get_values(dividend.nearest_gridpoint(obs).filter(mask)),
+                        geopoints_loader.get_values(divisor.nearest_gridpoint(obs).filter(mask)),
                     )
                 else:
-                    computed_value = get_geopoints_values(
+                    computed_value = geopoints_loader.get_values(
                         computer.run(dividend.values, divisor.values)
                         .nearest_gridpoint(obs)
                     )
@@ -417,9 +417,9 @@ def run(config: Config):
                     (
                         computation.shortname,
                         np.around(
-                            get_geopoints_values(computed_value.nearest_gridpoint(obs).filter(mask))
+                            geopoints_loader.get_values(computed_value.nearest_gridpoint(obs).filter(mask))
                             if config.predictand.is_accumulated
-                            else get_geopoints_values(computed_value.nearest_gridpoint(obs)),
+                            else geopoints_loader.get_values(computed_value.nearest_gridpoint(obs)),
                             decimals=3,
                         ),
                     )
@@ -436,11 +436,11 @@ def run(config: Config):
 
         logging.info(f"  Computing the {config.predictand.error}.")
         if config.predictand.error == "FER":
-            FER = get_geopoints_values((obs - ref_geopoints) / ref_geopoints)
+            FER = geopoints_loader.get_values((obs - ref_geopoints) / ref_geopoints)
             vals_errors.append(("FER", np.around(FER, decimals=3)))
 
         if config.predictand.error == "FE":
-            FE = get_geopoints_values(obs - ref_geopoints)
+            FE = geopoints_loader.get_values(obs - ref_geopoints)
             vals_errors.append(("FE", np.around(FE, decimals=3)))
 
         LST_computation = next(
@@ -485,8 +485,8 @@ def run(config: Config):
             + [
                 ("LatOBS", latObs),
                 ("LonOBS", lonObs),
-                ("OBS", get_geopoints_values(obs)),
-                ("Predictand", np.around(get_geopoints_values(ref_geopoints), decimals=3)),
+                ("OBS", geopoints_loader.get_values(obs)),
+                ("Predictand", np.around(geopoints_loader.get_values(ref_geopoints), decimals=3)),
             ]
             + vals_errors
             + vals_LST
