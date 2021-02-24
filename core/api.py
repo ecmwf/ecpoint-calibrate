@@ -67,9 +67,15 @@ def get_predictors():
 @app.route("/loaders/observations/metadata", methods=("POST",))
 def get_obs_metadata():
     payload = request.get_json()
-    path = sanitize_path(payload["path"])
+    path = Path(sanitize_path(payload["path"]))
 
-    units = geopoints_loader.read_units(Path(path))
+    first_geo_file = next(path.glob("**/*.geo"))
+
+    try:
+        units = geopoints_loader.read_units(first_geo_file)
+    except ValueError:
+        units = None
+
     return Response(json.dumps({"units": units}), mimetype="application/json")
 
 

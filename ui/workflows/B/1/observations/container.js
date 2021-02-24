@@ -2,7 +2,7 @@ import { connect } from 'react-redux'
 
 import Observation from './component'
 
-import { setPath } from './actions'
+import { setPath, setUnits } from './actions'
 
 import { completeSection } from '~/commonActions'
 
@@ -13,7 +13,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   onPathChange: path => dispatch(setPath(path)),
 
-  onUnitsChange: value => dispatch({ type: 'OBSERVATIONS.SET_UNITS', value }),
+  onUnitsChange: value => dispatch(setUnits(value)),
 
   completeSection: () => dispatch(completeSection('B', 1, 'observations')),
 })
