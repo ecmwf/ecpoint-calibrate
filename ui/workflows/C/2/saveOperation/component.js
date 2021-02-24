@@ -201,10 +201,15 @@ class SaveOperation extends Component {
         this.props.setLoading(false)
       })
       .catch(e => {
-        console.error(e)
         if (e.response !== undefined) {
-          console.error(`Error response: ${e.response}`)
-          toast.error(`${e.response.status} ${e.response.statusText}`)
+          const error = `(${
+            e.response.status
+          }) ${e.response.config.method.toUpperCase()} ${e.response.config.url}: ${
+            e.response.data
+          }`
+
+          console.error(error)
+          toast.error(error)
         } else {
           toast.error('Empty response from server')
         }

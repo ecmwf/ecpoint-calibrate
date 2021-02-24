@@ -21,8 +21,14 @@ export const setPath = path => async dispatch => {
     .then(response => dispatch(setUnits(response.data.units || '')))
     .catch(e => {
       if (e.response !== undefined) {
-        console.error(e.response.data)
-        toast.error(e.response.data)
+        const error = `(${
+          e.response.status
+        }) ${e.response.config.method.toUpperCase()} ${e.response.config.url}: ${
+          e.response.data
+        }`
+
+        console.error(error)
+        toast.error(error)
       } else {
         toast.error('Empty response from server')
       }

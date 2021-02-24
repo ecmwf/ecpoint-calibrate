@@ -11,9 +11,12 @@ export const setBreakpoints = (labels, matrix) => async dispatch => {
       })
     )
     .catch(e => {
-      console.error(e)
-      console.error(`Error response: ${e.response}`)
-      toast.error(`${e.response.status} ${e.response.statusText}`)
+      if (e.response !== undefined) {
+        console.error(e.response.data)
+        toast.error(e.response.data)
+      } else {
+        toast.error('Empty response from server')
+      }
     })
 
   await client
@@ -22,10 +25,15 @@ export const setBreakpoints = (labels, matrix) => async dispatch => {
       dispatch({ type: 'POSTPROCESSING.SET_TREE', data: response.data })
     )
     .catch(e => {
-      console.error(e)
       if (e.response !== undefined) {
-        console.error(`Error response: ${e.response}`)
-        toast.error(`${e.response.status} ${e.response.statusText}`)
+        const error = `(${
+          e.response.status
+        }) ${e.response.config.method.toUpperCase()} ${e.response.config.url}: ${
+          e.response.data
+        }`
+
+        console.error(error)
+        toast.error(error)
       } else {
         toast.error('Empty response from server')
       }

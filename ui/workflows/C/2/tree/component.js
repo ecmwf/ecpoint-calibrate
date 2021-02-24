@@ -68,12 +68,15 @@ export default class TreeContainer extends Component {
         this.setState({ graph: response.data.histogram })
       })
       .catch(e => {
-        console.error(e)
         if (e.response !== undefined) {
-          console.error(`Error response: ${e.response.data}`)
-          toast.error(
-            `${e.response.status} ${e.response.statusText} ${e.response.data}`
-          )
+          const error = `(${
+            e.response.status
+          }) ${e.response.config.method.toUpperCase()} ${e.response.config.url}: ${
+            e.response.data
+          }`
+
+          console.error(error)
+          toast.error(error)
         } else {
           toast.error('Empty response from server')
         }
@@ -103,10 +106,15 @@ export default class TreeContainer extends Component {
         mainProcess.openPDF(response.data.pdf, `WT_${node.meta.code}`)
       })
       .catch(e => {
-        console.error(e)
         if (e.response !== undefined) {
-          console.error(`Error response: ${e.response}`)
-          toast.error(`${e.response.status} ${e.response.statusText}`)
+          const error = `(${
+            e.response.status
+          }) ${e.response.config.method.toUpperCase()} ${e.response.config.url}: ${
+            e.response.data
+          }`
+
+          console.error(error)
+          toast.error(error)
         } else {
           toast.error('Empty response from server')
         }
@@ -310,10 +318,15 @@ export default class TreeContainer extends Component {
                   })
                   .then(() => this.setState({ loading: false }))
                   .catch(e => {
-                    console.error(e)
                     if (e.response !== undefined) {
-                      console.error(`Error response: ${e.response}`)
-                      toast.error(`${e.response.status} ${e.response.statusText}`)
+                      const error = `(${
+                        e.response.status
+                      }) ${e.response.config.method.toUpperCase()} ${
+                        e.response.config.url
+                      }: ${e.response.data}`
+
+                      console.error(error)
+                      toast.error(error)
                     } else {
                       toast.error('Empty response from server')
                     }
