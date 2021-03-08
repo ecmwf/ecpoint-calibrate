@@ -17,7 +17,7 @@ from core.loaders import load_point_data_by_path
 from core.loaders.fieldset import Fieldset
 from core.models import Config
 from core.postprocessors.decision_tree import DecisionTree, WeatherType
-from core.postprocessors.ks_engine import KolmogorovSmirnovEngine
+from core.postprocessors.ks_test import ks_test_engine
 from core.processor import run
 from core.svc import postprocessing as postprocessing_svc
 from core.utils import sanitize_path
@@ -392,17 +392,18 @@ def get_predictor_units():
     return Response(json.dumps(metadata), mimetype="application/json")
 
 
-@app.route("/postprocessing/get-breakpoints-suggestions", methods=("POST",))
+@app.route("/postprocessing/breakpoints/suggest", methods=("POST",))
 def get_breakpoints_suggestions():
     payload = request.get_json()
 
-    labels, thrWT, path, predictor, minNumCases, numSubSamples, cheaper = (
+    labels, thrWT, path, predictor, num_bp, lower_bound, upper_bound, cheaper = (
         payload["labels"],
         payload["thrWT"],
         sanitize_path(payload["path"]),
         payload["predictor"],
-        int(payload["minNumCases"]),
-        int(payload["numSubSamples"]),
+        int(payload["numBreakpoints"]),
+        payload.get("lowerBound"),
+        payload.get("upperBound"),
         payload["cheaper"],
     )
 
@@ -417,23 +418,19 @@ def get_breakpoints_suggestions():
     )
 
     df, title = wt.evaluate(loader.error_type.name, predictor, loader=loader)
-    error = df[loader.error_type.name].to_numpy()
-    predictor = df[predictor]
 
-    sort_indices = predictor.argsort()
-    error = error[sort_indices]
-    predictor = predictor[::]
-    predictor.sort_values(inplace=True)
-
-    PosAll = pandas.Series(range(len(predictor)))
-    PosBP = pandas.Series(
-        list(range(0, len(predictor), len(predictor) // numSubSamples))
-        + [len(predictor)]
+    df_breakpoints = ks_test_engine(
+        df=df,
+        predictor_name=predictor,
+        error_name=loader.error_type.name,
+        breakpoints_num=num_bp,
+        lower_bound=lower_bound and float(lower_bound),
+        upper_bound=upper_bound and float(upper_bound),
     )
-    breakpoints = KolmogorovSmirnovEngine().run(predictor, error, PosAll, PosBP)
 
     return Response(
-        json.dumps({"breakpoints": breakpoints}), mimetype="application/json"
+        json.dumps(df_breakpoints.to_dict("records")),
+        mimetype="application/json"
     )
 
 
