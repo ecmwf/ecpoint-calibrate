@@ -17,7 +17,7 @@ from core.loaders import load_point_data_by_path
 from core.loaders.fieldset import Fieldset
 from core.models import Config
 from core.postprocessors.decision_tree import DecisionTree, WeatherType
-from core.postprocessors.ks_test import ks_test_engine
+from core.postprocessors.ks_test import format_ks_stats, ks_test_engine, plot_ks_stats
 from core.processor import run
 from core.svc import postprocessing as postprocessing_svc
 from core.utils import sanitize_path
@@ -428,9 +428,12 @@ def get_breakpoints_suggestions():
         upper_bound=upper_bound and float(upper_bound),
     )
 
+    plot = plot_ks_stats(df_breakpoints)
+    df_breakpoints = format_ks_stats(df_breakpoints)
+
     return Response(
-        json.dumps(df_breakpoints.to_dict("records")),
-        mimetype="application/json"
+        json.dumps({"records": df_breakpoints.to_dict("records"), "figure": plot}),
+        mimetype="application/json",
     )
 
 

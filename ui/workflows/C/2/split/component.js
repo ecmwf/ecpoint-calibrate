@@ -42,6 +42,7 @@ const defaultState = {
   selectedDefinitiveBreakpointIdx: null,
   iteration: 0,
   loading: false,
+  graph: null,
 }
 
 class Split extends Component {
@@ -130,11 +131,12 @@ class Split extends Component {
       })
       .then(response => {
         this.setState({
-          primaryBreakpoints: response.data,
+          primaryBreakpoints: response.data.records,
           definitiveBreakpoints:
             lowerBound || upperBound ? this.state.definitiveBreakpoints : [],
           selectedPrimaryBreakpointIdx: null,
           selectedDefinitiveBreakpointIdx: null,
+          graph: response.data.figure,
         })
       })
       .catch(e => {
@@ -319,7 +321,7 @@ class Split extends Component {
                     <Table.Row>
                       <Table.HeaderCell />
                       <Table.HeaderCell>Breakpoint</Table.HeaderCell>
-                      <Table.HeaderCell>p-value</Table.HeaderCell>
+                      <Table.HeaderCell>ln(p-value)</Table.HeaderCell>
                       <Table.HeaderCell>D-stat</Table.HeaderCell>
                     </Table.Row>
                   </Table.Header>
@@ -362,10 +364,9 @@ class Split extends Component {
               </Grid.Column>
 
               <Grid.Column>
-                <Image
-                  src="https://visme.co/blog/wp-content/uploads/2017/03/Dogs-vs-Cats-How-much-they-miss-you-relative-to-the-time-you-are-gone.png"
-                  fluid
-                />
+                {this.state.graph !== null && (
+                  <Image src={`data:image/jpeg;base64,${this.state.graph}`} fluid />
+                )}
               </Grid.Column>
             </Grid.Row>
           </Grid>

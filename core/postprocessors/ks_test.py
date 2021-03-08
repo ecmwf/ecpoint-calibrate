@@ -1,3 +1,7 @@
+from base64 import b64encode
+from io import BytesIO
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.stats import ks_2samp
@@ -43,8 +47,36 @@ def ks_test_engine(
             df_result.at[idx, "pValue"] = -1 * np.log(pvalue)
             df_result.at[idx, "dStatValue"] = statistic
 
-    df_result["breakpoint"] = df_result["breakpoint"].apply(lambda x: f"{x:0.4f}")
-    df_result["pValue"] = df_result["pValue"].apply(lambda x: f"{x:0.4f}")
-    df_result["dStatValue"] = df_result["dStatValue"].apply(lambda x: f"{x:0.4f}")
-
     return df_result
+
+
+def format_ks_stats(df: pd.DataFrame) -> pd.DataFrame:
+    df["breakpoint"] = df["breakpoint"].apply(lambda x: f"{x:0.4f}")
+    df["pValue"] = df["pValue"].apply(lambda x: f"{x:0.4f}")
+    df["dStatValue"] = df["dStatValue"].apply(lambda x: f"{x:0.4f}")
+
+    return df
+
+
+def plot_ks_stats(df: pd.DataFrame):
+    fig, ax1 = plt.subplots()
+
+    color = "tab:red"
+    ax1.set_xlabel("breakpoints")
+    ax1.set_ylabel("K-S DStat", color=color)
+    ax1.plot(df["breakpoint"], df["dStatValue"], color=color)
+    ax1.tick_params(axis="y", labelcolor=color)
+
+    ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
+
+    color = "tab:blue"
+    ax2.set_ylabel("ln(pValue)", color=color)  # we already handled the x-label with ax1
+    ax2.plot(df["breakpoint"], df["pValue"], color=color)
+    ax2.tick_params(axis="y", labelcolor=color)
+
+    fig.tight_layout()  # otherwise the right y-label is slightly clipped
+
+    img = BytesIO()
+    fig.savefig(img, format="png")
+    img.seek(0)
+    return b64encode(img.read()).decode()
