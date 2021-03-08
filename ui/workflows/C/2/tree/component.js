@@ -9,7 +9,7 @@ import { Button, Dimmer, Loader, Radio, Form, Grid } from 'semantic-ui-react'
 import client from '~/utils/client'
 import toast from '~/utils/toast'
 import MappingFunction from './mappingFunction'
-import Split from './split'
+import Split from '../split'
 import { mergeToPreviousRow, isMergeableToPreviousRow } from '../breakpoints/core'
 
 const mainProcess = remote.require('./server')
