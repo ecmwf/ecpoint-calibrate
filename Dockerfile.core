@@ -1,12 +1,7 @@
 FROM continuumio/miniconda3 as build
 
-RUN conda install -y -c conda-forge metview-batch
+RUN conda install -y -c conda-forge metview-batch python=3.8
 
-FROM python:3.8-slim
-
-COPY --from=build /opt/conda/ /opt/conda/
-
-ENV PATH /usr/local/bin:/opt/conda/bin:$PATH
 ENV PYTHONPATH /app:$PYTHONPATH
 ENV PIPENV_VENV_IN_PROJECT=1
 ENV ECCODES_DEFINITION_PATH /opt/conda/share/eccodes/definitions
