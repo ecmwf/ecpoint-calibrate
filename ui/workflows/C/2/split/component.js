@@ -80,7 +80,6 @@ class Split extends Component {
 
     const values = this.state.auto
       ? flow(
-          map(each => each.breakpoint),
           sortBy(_.identity),
           reverse
         )(this.state.definitiveBreakpoints)
@@ -332,24 +331,28 @@ class Split extends Component {
                         <Table.Cell collapsing>
                           <Radio
                             checked={this.state.selectedPrimaryBreakpointIdx === idx}
-                            disabled={this.state.definitiveBreakpoints
-                              .map(b => parseFloat(b.breakpoint))
-                              .includes(parseFloat(each.breakpoint))}
+                            disabled={this.state.definitiveBreakpoints.includes(
+                              parseFloat(each.breakpoint)
+                            )}
                             onChange={() =>
                               this.setState({
                                 selectedPrimaryBreakpointIdx: idx,
+                                selectedDefinitiveBreakpointIdx: null,
                                 definitiveBreakpoints:
                                   this.state.definitiveBreakpoints.length ===
                                   this.state.iteration
-                                    ? [...this.state.definitiveBreakpoints, each]
-                                    : [
+                                    ? _.sortBy([
+                                        ...this.state.definitiveBreakpoints,
+                                        parseFloat(each.breakpoint),
+                                      ])
+                                    : _.sortBy([
                                         ..._.slice(
                                           this.state.definitiveBreakpoints,
                                           0,
                                           this.state.iteration
                                         ),
-                                        each,
-                                      ],
+                                        parseFloat(each.breakpoint),
+                                      ]),
                               })
                             }
                           />
@@ -395,11 +398,7 @@ class Split extends Component {
                   </Table.Header>
 
                   <Table.Body>
-                    {_.sortBy(
-                      this.state.definitiveBreakpoints.map(each =>
-                        parseFloat(each.breakpoint)
-                      )
-                    ).map((each, idx) => (
+                    {this.state.definitiveBreakpoints.map((each, idx) => (
                       <Table.Row key={idx}>
                         <Table.Cell collapsing>
                           <Radio
@@ -433,7 +432,7 @@ class Split extends Component {
                         undefined,
                         this.state.definitiveBreakpoints[
                           this.state.selectedDefinitiveBreakpointIdx
-                        ].breakpoint
+                        ]
                       )
                     }}
                   >
@@ -453,7 +452,7 @@ class Split extends Component {
                       this.launchKS_test(
                         this.state.definitiveBreakpoints[
                           this.state.selectedDefinitiveBreakpointIdx
-                        ].breakpoint
+                        ]
                       )
                     }}
                   >
