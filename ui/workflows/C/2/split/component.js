@@ -146,7 +146,7 @@ class Split extends Component {
       })
   }
 
-  getSimulatedMFs = () =>
+  getSimulatedMFsButton = () =>
     this.state.definitiveBreakpoints.length > 0 && (
       <Button
         content="Save suggested MFs"
@@ -390,34 +390,48 @@ class Split extends Component {
             <Grid.Row verticalAlign="middle">
               <Divider vertical>=&gt;</Divider>
               <Grid.Column>
-                <Container textAlign="left">
-                  <h4>Definitive breakpoints:</h4>
-                </Container>
-                <Table celled compact definition>
-                  <Table.Header fullWidth>
-                    <Table.Row>
-                      <Table.HeaderCell />
-                      <Table.HeaderCell textAlign="center">Breakpoint</Table.HeaderCell>
-                    </Table.Row>
-                  </Table.Header>
-
-                  <Table.Body>
-                    {this.state.definitiveBreakpoints.map((each, idx) => (
-                      <Table.Row key={idx}>
-                        <Table.Cell collapsing>
-                          <Radio
-                            checked={this.state.selectedDefinitiveBreakpointIdx === idx}
-                            onChange={() =>
-                              this.setState({ selectedDefinitiveBreakpointIdx: idx })
-                            }
-                          />
-                        </Table.Cell>
-
-                        <Table.Cell textAlign="center">{each}</Table.Cell>
+                <Grid.Row>
+                  <Container textAlign="left">
+                    <h4>Definitive breakpoints:</h4>
+                  </Container>
+                  <Table celled compact definition>
+                    <Table.Header fullWidth>
+                      <Table.Row>
+                        <Table.HeaderCell />
+                        <Table.HeaderCell textAlign="center">
+                          Breakpoint
+                        </Table.HeaderCell>
                       </Table.Row>
-                    ))}
-                  </Table.Body>
-                </Table>
+                    </Table.Header>
+
+                    <Table.Body>
+                      {this.state.definitiveBreakpoints.map((each, idx) => (
+                        <Table.Row key={idx}>
+                          <Table.Cell collapsing>
+                            <Radio
+                              checked={
+                                this.state.selectedDefinitiveBreakpointIdx === idx
+                              }
+                              onChange={() =>
+                                this.setState({ selectedDefinitiveBreakpointIdx: idx })
+                              }
+                            />
+                          </Table.Cell>
+
+                          <Table.Cell textAlign="center">{each}</Table.Cell>
+                        </Table.Row>
+                      ))}
+                    </Table.Body>
+                  </Table>
+                </Grid.Row>
+                <Grid.Row>
+                  <Grid padded>
+                    <Grid.Row columns={2}>
+                      <Grid.Column>{this.getSimulatedMFsButton()}</Grid.Column>
+                      <Grid.Column>{this.getSplitButton()}</Grid.Column>
+                    </Grid.Row>
+                  </Grid>
+                </Grid.Row>
               </Grid.Column>
 
               <Grid.Column>
@@ -463,9 +477,6 @@ class Split extends Component {
                     &gt;
                   </Button>
                 </Button.Group>
-                <br />
-                <br />
-                {this.getSimulatedMFs()}
               </Grid.Column>
             </Grid.Row>
           </Grid>
@@ -538,7 +549,6 @@ class Split extends Component {
               </Loader>
             </Dimmer>
           </Modal.Content>
-          <Modal.Actions>{this.getSplitButton()}</Modal.Actions>
         </Modal>
       )
     )
