@@ -146,15 +146,6 @@ class Split extends Component {
       })
   }
 
-  getAutoSplitToggler = () => (
-    <Radio
-      toggle
-      label="Suggest breakpoints"
-      onChange={() => this.setState({ auto: !this.state.auto })}
-      defaultChecked={this.state.auto}
-    />
-  )
-
   getSimulatedMFs = () =>
     this.state.definitiveBreakpoints.length > 0 && (
       <Button
@@ -201,28 +192,7 @@ class Split extends Component {
       />
     )
 
-  getCustomSplitInput = () => (
-    <Segment padded>
-      <Input
-        error={this.numberValueHasError(this.state.customSplitValue)}
-        value={this.state.customSplitValue}
-        onChange={e => this.setState({ customSplitValue: e.target.value })}
-        label={
-          <Dropdown
-            options={this.getLevelOptions()}
-            onChange={(e, { value }) => {
-              this.setState({ customSplitLevel: value })
-            }}
-            value={this.state.customSplitLevel}
-          />
-        }
-        labelPosition="right"
-        placeholder="Enter split value"
-      />
-    </Segment>
-  )
-
-  getHeader() {
+  getSwitcher() {
     return (
       this.state.primaryBreakpoints.length === 0 && (
         <Segment>
@@ -510,7 +480,7 @@ class Split extends Component {
         >
           <Modal.Header>{this.getTitle()}</Modal.Header>
           <Modal.Content>
-            {this.getHeader()}
+            {this.getSwitcher()}
             {this.state.auto && this.getPrimaryStats()}
             {this.state.auto && this.getSecondaryStats()}
             <Dimmer active={this.state.loading}>
