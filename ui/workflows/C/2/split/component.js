@@ -35,7 +35,7 @@ const defaultState = {
   customSplitValue: '',
   customSplitLevel: '',
   auto: false,
-  numBreakpoints: 20,
+  numBreakpoints: '',
   definitiveBreakpoints: [],
   primaryBreakpoints: [],
   selectedPrimaryBreakpointIdx: null,
@@ -224,47 +224,87 @@ class Split extends Component {
 
   getHeader() {
     return (
-      <Segment>
-        <Grid columns={3} stackable textAlign="center">
-          <Grid.Row verticalAlign="middle">
-            <Grid.Column>
-              <Header as="h4" icon>
-                Consider variable
-              </Header>{' '}
-              {/* use the icon trick to reduce vertical spacing */}
-              <br />
-              <Dropdown
-                selection
-                options={this.getLevelOptions()}
-                onChange={(e, { value }) => this.setState({ customSplitLevel: value })}
-                value={this.state.customSplitLevel}
-              />
-            </Grid.Column>
-            <Grid.Column>
-              <Header as="h4" icon>
-                Number of breakpoints
-              </Header>
-              <br />
-              <Input
-                error={this.numberValueHasError(this.state.numBreakpoints)}
-                value={this.state.numBreakpoints}
-                onChange={e => this.setState({ numBreakpoints: e.target.value })}
-              />
-            </Grid.Column>
-            <Grid.Column>
-              <Button
-                content="Run K-S test"
-                positive
-                disabled={
-                  !this.state.numBreakpoints ||
-                  this.numberValueHasError(this.state.numBreakpoints)
-                }
-                onClick={() => this.launchKS_test()}
-              />
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </Segment>
+      this.state.primaryBreakpoints.length === 0 && (
+        <Segment>
+          <Grid columns={3} stackable textAlign="center">
+            <Grid.Row verticalAlign="middle">
+              <Grid.Column textAlign="left">
+                <Radio
+                  toggle
+                  label="Run K-S test"
+                  onChange={() => this.setState({ auto: !this.state.auto })}
+                  checked={this.state.auto}
+                />
+              </Grid.Column>
+              <Grid.Column>
+                <Input
+                  disabled={!this.state.auto}
+                  error={this.numberValueHasError(this.state.numBreakpoints)}
+                  value={this.state.numBreakpoints}
+                  onChange={e => this.setState({ numBreakpoints: e.target.value })}
+                  label={
+                    <Dropdown
+                      disabled={!this.state.auto}
+                      options={this.getLevelOptions()}
+                      onChange={(e, { value }) =>
+                        this.setState({ customSplitLevel: value })
+                      }
+                      value={this.state.customSplitLevel}
+                    />
+                  }
+                  labelPosition="right"
+                  placeholder="Enter no. of BPs"
+                />
+              </Grid.Column>
+              <Grid.Column width={3}>
+                <Button
+                  fluid
+                  content="Run K-S test"
+                  positive
+                  disabled={
+                    !this.state.auto ||
+                    !this.state.numBreakpoints ||
+                    this.numberValueHasError(this.state.numBreakpoints)
+                  }
+                  onClick={() => this.launchKS_test()}
+                />
+              </Grid.Column>
+            </Grid.Row>
+
+            <Grid.Row verticalAlign="middle">
+              <Grid.Column textAlign="left">
+                <Radio
+                  toggle
+                  label="Enter Breakpoint"
+                  onChange={() => this.setState({ auto: !this.state.auto })}
+                  checked={!this.state.auto}
+                />
+              </Grid.Column>
+              <Grid.Column>
+                <Input
+                  disabled={this.state.auto}
+                  error={this.numberValueHasError(this.state.customSplitValue)}
+                  value={this.state.customSplitValue}
+                  onChange={e => this.setState({ customSplitValue: e.target.value })}
+                  label={
+                    <Dropdown
+                      disabled={this.state.auto}
+                      options={this.getLevelOptions()}
+                      onChange={(e, { value }) => {
+                        this.setState({ customSplitLevel: value })
+                      }}
+                      value={this.state.customSplitLevel}
+                    />
+                  }
+                  labelPosition="right"
+                  placeholder="Enter BP value"
+                />
+              </Grid.Column>
+              <Grid.Column width={3}>{this.getSplitButton()}</Grid.Column>
+            </Grid.Row>
+          </Grid>
+        </Segment>
+      )
     )
   }
 
@@ -431,6 +471,32 @@ class Split extends Component {
     )
   }
 
+  getTitle = () =>
+    this.state.auto === true && this.state.primaryBreakpoints.length
+      ? `K-S test for WT${this.props.nodeMeta.code}`
+      : `Computing Breakpoints for WT${this.props.nodeMeta.code}`
+
+  getSplitButton = () => (
+    <Button
+      fluid
+      color="green"
+      content="Split"
+      disabled={
+        this.state.auto
+          ? this.state.definitiveBreakpoints.length === 0
+          : this.state.customSplitValue === '' ||
+            this.state.customSplitLevel === '' ||
+            this.numberValueHasError(this.state.customSplitValue)
+      }
+      onClick={() => {
+        const [matrix, nSplits] = this.getMatrixAfterSplit()
+        this.props.setBreakpoints(this.props.labels, matrix)
+        this.setState(defaultState)
+        this.props.onClose()
+      }}
+    />
+  )
+
   render = () => {
     return (
       !_.isEmpty(this.props.nodeMeta) && (
@@ -442,11 +508,9 @@ class Split extends Component {
             this.props.onClose()
           }}
         >
-          <Modal.Header>Running K-S test for WT{this.props.nodeMeta.code}</Modal.Header>
+          <Modal.Header>{this.getTitle()}</Modal.Header>
           <Modal.Content>
-            {this.getAutoSplitToggler()}
-            {!this.state.auto && this.getCustomSplitInput()}
-            {this.state.auto && this.getHeader()}
+            {this.getHeader()}
             {this.state.auto && this.getPrimaryStats()}
             {this.state.auto && this.getSecondaryStats()}
             <Dimmer active={this.state.loading}>
@@ -455,26 +519,7 @@ class Split extends Component {
               </Loader>
             </Dimmer>
           </Modal.Content>
-          <Modal.Actions>
-            <Button
-              color="green"
-              icon="checkmark"
-              content="Split"
-              disabled={
-                this.state.auto
-                  ? this.state.definitiveBreakpoints.length === 0
-                  : this.state.customSplitValue === '' ||
-                    this.state.customSplitLevel === '' ||
-                    this.numberValueHasError(this.state.customSplitValue)
-              }
-              onClick={() => {
-                const [matrix, nSplits] = this.getMatrixAfterSplit()
-                this.props.setBreakpoints(this.props.labels, matrix)
-                this.setState(defaultState)
-                this.props.onClose()
-              }}
-            />
-          </Modal.Actions>
+          <Modal.Actions>{this.getSplitButton()}</Modal.Actions>
         </Modal>
       )
     )
