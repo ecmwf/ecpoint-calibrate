@@ -10,6 +10,10 @@ class ErrorType(Enum):
     FE = 1
     FER = 2
 
+    def bias(self, error: pd.Series) -> float:
+        mean = error.mean()
+        return (1 + mean) if self == self.FER else mean
+
 
 @dataclass
 class BasePointDataReader(abc.ABC):

@@ -354,7 +354,10 @@ def save_operation():
 
             dataframe, title = wt.evaluate(loader.error_type.name, loader=loader)
             error = dataframe[loader.error_type.name]
-            bias = f"{1 + error.mean():.2f}"
+
+            bias = loader.error_type.bias(error=error)
+            bias = f"{bias:.2f}"
+
             wt_code = thrGridOut[idx][0]
             csv += [(wt_code, bias)]
 
