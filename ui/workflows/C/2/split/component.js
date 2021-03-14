@@ -280,72 +280,70 @@ class Split extends Component {
 
   getPrimaryStats() {
     return (
-      this.state.primaryBreakpoints.length > 0 && (
-        <Segment>
-          <Grid columns={2} stackable textAlign="center">
-            <Grid.Row verticalAlign="middle">
-              <Divider vertical>=&gt;</Divider>
-              <Grid.Column>
-                <Table celled compact definition>
-                  <Table.Header fullWidth>
-                    <Table.Row>
-                      <Table.HeaderCell />
-                      <Table.HeaderCell>Breakpoint</Table.HeaderCell>
-                      <Table.HeaderCell>ln(p-value)</Table.HeaderCell>
-                      <Table.HeaderCell>D-stat</Table.HeaderCell>
+      <Segment>
+        <Grid columns={2} stackable textAlign="center">
+          <Grid.Row verticalAlign="middle">
+            <Divider vertical>=&gt;</Divider>
+            <Grid.Column>
+              <Table celled compact definition>
+                <Table.Header fullWidth>
+                  <Table.Row>
+                    <Table.HeaderCell />
+                    <Table.HeaderCell>Breakpoint</Table.HeaderCell>
+                    <Table.HeaderCell>ln(p-value)</Table.HeaderCell>
+                    <Table.HeaderCell>D-stat</Table.HeaderCell>
+                  </Table.Row>
+                </Table.Header>
+
+                <Table.Body>
+                  {this.state.primaryBreakpoints.map((each, idx) => (
+                    <Table.Row key={idx}>
+                      <Table.Cell collapsing>
+                        <Radio
+                          checked={this.state.selectedPrimaryBreakpointIdx === idx}
+                          disabled={this.state.definitiveBreakpoints.includes(
+                            parseFloat(each.breakpoint)
+                          )}
+                          onChange={() =>
+                            this.setState({
+                              selectedPrimaryBreakpointIdx: idx,
+                              selectedDefinitiveBreakpointIdx: null,
+                              definitiveBreakpoints:
+                                this.state.definitiveBreakpoints.length ===
+                                this.state.iteration
+                                  ? _.sortBy([
+                                      ...this.state.definitiveBreakpoints,
+                                      parseFloat(each.breakpoint),
+                                    ])
+                                  : _.sortBy([
+                                      ..._.slice(
+                                        this.state.definitiveBreakpoints,
+                                        0,
+                                        this.state.iteration
+                                      ),
+                                      parseFloat(each.breakpoint),
+                                    ]),
+                            })
+                          }
+                        />
+                      </Table.Cell>
+                      <Table.Cell>{each.breakpoint}</Table.Cell>
+                      <Table.Cell>{each.pValue}</Table.Cell>
+                      <Table.Cell>{each.dStatValue}</Table.Cell>
                     </Table.Row>
-                  </Table.Header>
+                  ))}
+                </Table.Body>
+              </Table>
+            </Grid.Column>
 
-                  <Table.Body>
-                    {this.state.primaryBreakpoints.map((each, idx) => (
-                      <Table.Row key={idx}>
-                        <Table.Cell collapsing>
-                          <Radio
-                            checked={this.state.selectedPrimaryBreakpointIdx === idx}
-                            disabled={this.state.definitiveBreakpoints.includes(
-                              parseFloat(each.breakpoint)
-                            )}
-                            onChange={() =>
-                              this.setState({
-                                selectedPrimaryBreakpointIdx: idx,
-                                selectedDefinitiveBreakpointIdx: null,
-                                definitiveBreakpoints:
-                                  this.state.definitiveBreakpoints.length ===
-                                  this.state.iteration
-                                    ? _.sortBy([
-                                        ...this.state.definitiveBreakpoints,
-                                        parseFloat(each.breakpoint),
-                                      ])
-                                    : _.sortBy([
-                                        ..._.slice(
-                                          this.state.definitiveBreakpoints,
-                                          0,
-                                          this.state.iteration
-                                        ),
-                                        parseFloat(each.breakpoint),
-                                      ]),
-                              })
-                            }
-                          />
-                        </Table.Cell>
-                        <Table.Cell>{each.breakpoint}</Table.Cell>
-                        <Table.Cell>{each.pValue}</Table.Cell>
-                        <Table.Cell>{each.dStatValue}</Table.Cell>
-                      </Table.Row>
-                    ))}
-                  </Table.Body>
-                </Table>
-              </Grid.Column>
-
-              <Grid.Column>
-                {this.state.graph !== null && (
-                  <Image src={`data:image/jpeg;base64,${this.state.graph}`} fluid />
-                )}
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
-        </Segment>
-      )
+            <Grid.Column>
+              {this.state.graph !== null && (
+                <Image src={`data:image/jpeg;base64,${this.state.graph}`} fluid />
+              )}
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      </Segment>
     )
   }
 
@@ -442,7 +440,7 @@ class Split extends Component {
   }
 
   getTitle = () =>
-    this.state.auto === true && this.state.primaryBreakpoints.length
+    this.isKSTestMode()
       ? `K-S test for WT${this.props.nodeMeta.code}`
       : `Computing Breakpoints for WT${this.props.nodeMeta.code}`
 
@@ -467,6 +465,8 @@ class Split extends Component {
     />
   )
 
+  isKSTestMode = () => this.state.auto && this.state.primaryBreakpoints.length > 0
+
   render = () => {
     return (
       !_.isEmpty(this.props.nodeMeta) && (
@@ -481,8 +481,8 @@ class Split extends Component {
           <Modal.Header>{this.getTitle()}</Modal.Header>
           <Modal.Content>
             {this.getSwitcher()}
-            {this.state.auto && this.getPrimaryStats()}
-            {this.state.auto && this.getSecondaryStats()}
+            {this.isKSTestMode() && this.getPrimaryStats()}
+            {this.isKSTestMode() && this.getSecondaryStats()}
             <Dimmer active={this.state.loading}>
               <Loader indeterminate>
                 Running Kolmogorov-Smirnov test. Please wait.
