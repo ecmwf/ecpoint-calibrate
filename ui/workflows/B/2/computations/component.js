@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 import client from '~/utils/client'
-import toast from '~/utils/toast'
+import { errorHandler } from '~/utils/toast'
 
 import {
   Grid,
@@ -405,20 +405,7 @@ class Computations extends Component {
           },
         })
       )
-      .catch(e => {
-        if (e.response !== undefined) {
-          const error = `(${
-            e.response.status
-          }) ${e.response.config.method.toUpperCase()} ${e.response.config.url}: ${
-            e.response.data
-          }`
-
-          console.error(error)
-          toast.error(error)
-        } else {
-          toast.error('Empty response from server')
-        }
-      })
+      .catch(errorHandler)
   }
 
   addComputation = () => {

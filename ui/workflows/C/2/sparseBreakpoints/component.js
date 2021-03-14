@@ -7,7 +7,7 @@ import { Button, Item, Label } from 'semantic-ui-react'
 import _ from 'lodash'
 
 import client from '~/utils/client'
-import toast from '~/utils/toast'
+import { errorHandler } from '~/utils/toast'
 import { realNumbers } from '~/utils/patterns'
 import { validateThresholdSequence } from './core'
 
@@ -66,20 +66,7 @@ class SparseBreakpoints extends Component {
         this.props.setBreakpoints(labels, response.data.matrix)
         this.setState({ loading: false })
       })
-      .catch(e => {
-        if (e.response !== undefined) {
-          const error = `(${
-            e.response.status
-          }) ${e.response.config.method.toUpperCase()} ${e.response.config.url}: ${
-            e.response.data
-          }`
-
-          console.error(error)
-          toast.error(error)
-        } else {
-          toast.error('Empty response from server')
-        }
-      })
+      .catch(errorHandler)
   }
 
   render = () => {

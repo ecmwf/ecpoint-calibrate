@@ -1,5 +1,5 @@
 import client from '~/utils/client'
-import toast from '~/utils/toast'
+import { errorHandler } from '~/utils/toast'
 
 export const setPath = path => async dispatch => {
   if (path === null) {
@@ -22,20 +22,7 @@ export const setPath = path => async dispatch => {
         ...response.data,
       })
     })
-    .catch(e => {
-      if (e.response !== undefined) {
-        const error = `(${
-          e.response.status
-        }) ${e.response.config.method.toUpperCase()} ${e.response.config.url}: ${
-          e.response.data
-        }`
-
-        console.error(error)
-        toast.error(error)
-      } else {
-        toast.error('Empty response from server')
-      }
-    })
+    .catch(errorHandler)
     .then(() => dispatch({ type: 'PRELOADER.SET_LOADING', data: false }))
 }
 
@@ -51,20 +38,7 @@ export const getMetadata = path => async dispatch => {
     .then(response => {
       dispatch({ type: 'PRELOADER.SET_METADATA', data: response.data })
     })
-    .catch(e => {
-      if (e.response !== undefined) {
-        const error = `(${
-          e.response.status
-        }) ${e.response.config.method.toUpperCase()} ${e.response.config.url}: ${
-          e.response.data
-        }`
-
-        console.error(error)
-        toast.error(error)
-      } else {
-        toast.error('Empty response from server')
-      }
-    })
+    .catch(errorHandler)
     .then(() => dispatch({ type: 'PRELOADER.SET_LOADING', data: false }))
 }
 

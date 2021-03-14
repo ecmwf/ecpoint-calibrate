@@ -1,5 +1,5 @@
 import client from '~/utils/client'
-import toast from '~/utils/toast'
+import { errorHandler } from '~/utils/toast'
 
 export const setUnits = units => ({
   type: 'OBSERVATIONS.SET_UNITS',
@@ -19,18 +19,5 @@ export const setPath = path => async dispatch => {
   await client
     .post('/loaders/observations/metadata', { path })
     .then(response => dispatch(setUnits(response.data.units || '')))
-    .catch(e => {
-      if (e.response !== undefined) {
-        const error = `(${
-          e.response.status
-        }) ${e.response.config.method.toUpperCase()} ${e.response.config.url}: ${
-          e.response.data
-        }`
-
-        console.error(error)
-        toast.error(error)
-      } else {
-        toast.error('Empty response from server')
-      }
-    })
+    .catch(errorHandler)
 }

@@ -7,7 +7,7 @@ import { saveSvgAsPng } from 'save-svg-as-png'
 
 import { Button, Dimmer, Loader, Radio, Form, Grid } from 'semantic-ui-react'
 import client from '~/utils/client'
-import toast from '~/utils/toast'
+import { errorHandler } from '~/utils/toast'
 import MappingFunction from './mappingFunction'
 import Split from '../split'
 import { mergeToPreviousRow, isMergeableToPreviousRow } from '../breakpoints/core'
@@ -67,20 +67,7 @@ export default class TreeContainer extends Component {
       .then(response => {
         this.setState({ graph: response.data.histogram })
       })
-      .catch(e => {
-        if (e.response !== undefined) {
-          const error = `(${
-            e.response.status
-          }) ${e.response.config.method.toUpperCase()} ${e.response.config.url}: ${
-            e.response.data
-          }`
-
-          console.error(error)
-          toast.error(error)
-        } else {
-          toast.error('Empty response from server')
-        }
-      })
+      .catch(errorHandler)
   }
 
   onNodeClickConditionalVerificationMode = node => {
@@ -105,20 +92,7 @@ export default class TreeContainer extends Component {
 
         mainProcess.openPDF(response.data.pdf, `WT_${node.meta.code}`)
       })
-      .catch(e => {
-        if (e.response !== undefined) {
-          const error = `(${
-            e.response.status
-          }) ${e.response.config.method.toUpperCase()} ${e.response.config.url}: ${
-            e.response.data
-          }`
-
-          console.error(error)
-          toast.error(error)
-        } else {
-          toast.error('Empty response from server')
-        }
-      })
+      .catch(errorHandler)
   }
 
   onNodeClickEditMode = node => {
@@ -317,20 +291,7 @@ export default class TreeContainer extends Component {
                     cheaper: this.props.cheaper,
                   })
                   .then(() => this.setState({ loading: false }))
-                  .catch(e => {
-                    if (e.response !== undefined) {
-                      const error = `(${
-                        e.response.status
-                      }) ${e.response.config.method.toUpperCase()} ${
-                        e.response.config.url
-                      }: ${e.response.data}`
-
-                      console.error(error)
-                      toast.error(error)
-                    } else {
-                      toast.error('Empty response from server')
-                    }
-                  })
+                  .catch(errorHandler)
                   .then(() => this.setState({ loading: false }))
               }}
             />

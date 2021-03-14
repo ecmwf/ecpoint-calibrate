@@ -10,11 +10,22 @@ const config = {
   progress: undefined,
 }
 
-const toast = {
+export const toast = {
   info: msg => toastOriginal.info(msg, config),
   success: msg => toastOriginal.success(msg, config),
   warn: msg => toastOriginal.warn(msg, config),
   error: msg => toastOriginal.error(msg, config),
 }
 
-export default toast
+export const errorHandler = e => {
+  if (e.response !== undefined) {
+    const error = `(${e.response.status}) ${e.response.config.method.toUpperCase()} ${
+      e.response.config.url
+    }: ${e.response.data}`
+
+    console.error(error)
+    toast.error(error)
+  } else {
+    toast.error('Empty response from server')
+  }
+}

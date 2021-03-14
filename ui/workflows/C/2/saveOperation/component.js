@@ -6,7 +6,7 @@ import semver from 'semver'
 import { remote } from 'electron'
 
 import client from '~/utils/client'
-import toast from '~/utils/toast'
+import { errorHandler } from '~/utils/toast'
 const jetpack = require('fs-jetpack')
 
 const mainProcess = remote.require('./server')
@@ -200,20 +200,7 @@ class SaveOperation extends Component {
         toast.success('Successfully saved operation files')
         this.props.setLoading(false)
       })
-      .catch(e => {
-        if (e.response !== undefined) {
-          const error = `(${
-            e.response.status
-          }) ${e.response.config.method.toUpperCase()} ${e.response.config.url}: ${
-            e.response.data
-          }`
-
-          console.error(error)
-          toast.error(error)
-        } else {
-          toast.error('Empty response from server')
-        }
-      })
+      .catch(errorHandler)
       .then(() => {
         this.props.setLoading(false)
         this.close()

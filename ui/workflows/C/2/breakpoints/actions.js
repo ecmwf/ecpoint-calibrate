@@ -1,5 +1,5 @@
 import client from '~/utils/client'
-import toast from '~/utils/toast'
+import { errorHandler } from '~/utils/toast'
 
 export const setBreakpoints = (labels, matrix) => async dispatch => {
   await client
@@ -10,34 +10,14 @@ export const setBreakpoints = (labels, matrix) => async dispatch => {
         grid: matrix.map((row, idx) => [`${response.data.codes[idx]}`].concat(row)),
       })
     )
-    .catch(e => {
-      if (e.response !== undefined) {
-        console.error(e.response.data)
-        toast.error(e.response.data)
-      } else {
-        toast.error('Empty response from server')
-      }
-    })
+    .catch(errorHandler)
 
   await client
     .post('/postprocessing/create-decision-tree', { labels, matrix })
     .then(response =>
       dispatch({ type: 'POSTPROCESSING.SET_TREE', data: response.data })
     )
-    .catch(e => {
-      if (e.response !== undefined) {
-        const error = `(${
-          e.response.status
-        }) ${e.response.config.method.toUpperCase()} ${e.response.config.url}: ${
-          e.response.data
-        }`
-
-        console.error(error)
-        toast.error(error)
-      } else {
-        toast.error('Empty response from server')
-      }
-    })
+    .catch(errorHandler)
 }
 
 export const setLoading = value => ({

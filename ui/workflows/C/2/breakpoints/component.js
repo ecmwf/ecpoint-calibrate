@@ -4,7 +4,7 @@ import { Button, Table, Popup, Input } from 'semantic-ui-react'
 import _ from 'lodash'
 
 import client from '~/utils/client'
-import toast from '~/utils/toast'
+import { errorHandler } from '~/utils/toast'
 import download from '~/utils/download'
 
 import { isMergeableToPreviousRow, mergeToPreviousRow } from './core'
@@ -36,20 +36,7 @@ class Breakpoints extends Component {
         this.props.setLoading(false)
         download(`${this.props.error}.csv`, response.data)
       })
-      .catch(e => {
-        if (e.response !== undefined) {
-          const error = `(${
-            e.response.status
-          }) ${e.response.config.method.toUpperCase()} ${e.response.config.url}: ${
-            e.response.data
-          }`
-
-          console.error(error)
-          toast.error(error)
-        } else {
-          toast.error('Empty response from server')
-        }
-      })
+      .catch(errorHandler)
   }
 
   saveBreakPoints() {

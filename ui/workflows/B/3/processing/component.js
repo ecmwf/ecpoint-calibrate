@@ -4,7 +4,7 @@ import { Grid, Button } from 'semantic-ui-react'
 import Iframe from 'react-iframe'
 
 import client from '~/utils/client'
-import toast from '~/utils/toast'
+import { errorHandler } from '~/utils/toast'
 
 class Processing extends Component {
   state = { status: 'initial' }
@@ -50,20 +50,7 @@ class Processing extends Component {
       .then(() => {
         this.props.completeSection()
       })
-      .catch(e => {
-        if (e.response !== undefined) {
-          const error = `(${
-            e.response.status
-          }) ${e.response.config.method.toUpperCase()} ${e.response.config.url}: ${
-            e.response.data
-          }`
-
-          console.error(error)
-          toast.error(error)
-        } else {
-          toast.error('Empty response from server')
-        }
-      })
+      .catch(errorHandler)
       .then(() => this.props.setProcessing(false))
   }
 
