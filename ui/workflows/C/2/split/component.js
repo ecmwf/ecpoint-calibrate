@@ -226,19 +226,7 @@ class Split extends Component {
                   placeholder="Enter no. of BPs"
                 />
               </Grid.Column>
-              <Grid.Column width={3}>
-                <Button
-                  fluid
-                  content="Run K-S test"
-                  positive
-                  disabled={
-                    !this.state.auto ||
-                    !this.state.numBreakpoints ||
-                    this.numberValueHasError(this.state.numBreakpoints)
-                  }
-                  onClick={() => this.launchKS_test()}
-                />
-              </Grid.Column>
+              <Grid.Column width={3}>{this.getKSTestButton(true)()}</Grid.Column>
             </Grid.Row>
 
             <Grid.Row verticalAlign="middle">
@@ -285,6 +273,8 @@ class Split extends Component {
           <Grid.Row verticalAlign="middle">
             <Divider vertical>=&gt;</Divider>
             <Grid.Column>
+              <p align="left">Select one of the BPi suggested by the K-S test:</p>
+
               <Table celled compact definition>
                 <Table.Header fullWidth>
                   <Table.Row>
@@ -337,9 +327,54 @@ class Split extends Component {
             </Grid.Column>
 
             <Grid.Column>
-              {this.state.graph !== null && (
-                <Image src={`data:image/jpeg;base64,${this.state.graph}`} fluid />
-              )}
+              <Grid divided="vertically">
+                <Grid.Row>
+                  <Grid.Column>Visualizer for min and max BPs TBA</Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                  {this.state.graph !== null && (
+                    <Image src={`data:image/jpeg;base64,${this.state.graph}`} fluid />
+                  )}
+                </Grid.Row>
+                <Grid.Row>
+                  <Grid columns={3} stackable textAlign="center">
+                    <Grid.Row>
+                      <Grid.Column>
+                        <Header as="h4" icon>
+                          Consider variable
+                        </Header>
+                        <br />
+                        <Dropdown
+                          selection
+                          fluid
+                          options={this.getLevelOptions()}
+                          onChange={(e, { value }) =>
+                            this.setState({ customSplitLevel: value })
+                          }
+                          value={this.state.customSplitLevel}
+                        />
+                      </Grid.Column>
+                      <Grid.Column>
+                        <Header as="h4" icon>
+                          No. of BPs
+                        </Header>
+                        <br />
+                        <Input
+                          fluid
+                          error={this.numberValueHasError(this.state.numBreakpoints)}
+                          value={this.state.numBreakpoints}
+                          onChange={e =>
+                            this.setState({ numBreakpoints: e.target.value })
+                          }
+                        />
+                      </Grid.Column>
+                      <Grid.Column style={{ marginTop: '30px' }}>
+                        {this.getKSTestButton(false)()}
+                      </Grid.Column>
+                    </Grid.Row>
+                  </Grid>
+                </Grid.Row>
+              </Grid>
             </Grid.Column>
           </Grid.Row>
         </Grid>
@@ -462,6 +497,20 @@ class Split extends Component {
         this.setState(defaultState)
         this.props.onClose()
       }}
+    />
+  )
+
+  getKSTestButton = fluid => (lowerBound, upperBound) => (
+    <Button
+      fluid={fluid}
+      content="Run K-S test"
+      positive
+      disabled={
+        !this.state.auto ||
+        !this.state.numBreakpoints ||
+        this.numberValueHasError(this.state.numBreakpoints)
+      }
+      onClick={() => this.launchKS_test(lowerBound, upperBound)}
     />
   )
 
