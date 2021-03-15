@@ -17,8 +17,6 @@ from core.utils import int_or_float
 from .conditional_verification import plot_avg, plot_obs_freq, plot_std
 from .generics import Node
 
-matplotlib.style.use("seaborn")
-
 
 @attr.s(slots=True)
 class DecisionTree(object):
@@ -373,6 +371,7 @@ class WeatherType(object):
         return error.to_list(), predictors_matrix, title_pred
 
     def plot(self, data, bins: list, title, y_lim, out_path=None):
+        matplotlib.style.use("seaborn")
         fig, ax = plt.subplots()
         plt.tight_layout(pad=5)
 

@@ -1,9 +1,11 @@
 from base64 import b64encode
 from io import BytesIO
 
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib.ticker import AutoMinorLocator
 from scipy.stats import ks_2samp
 
 
@@ -59,20 +61,26 @@ def format_ks_stats(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def plot_ks_stats(df: pd.DataFrame):
+    matplotlib.style.use("default")
     fig, ax1 = plt.subplots()
 
     color = "tab:red"
     ax1.set_xlabel("breakpoints")
     ax1.set_ylabel("K-S DStat", color=color)
-    ax1.plot(df["breakpoint"], df["dStatValue"], color=color)
+    ax1.plot(df["breakpoint"], df["dStatValue"], color=color, marker="o", markersize=4)
     ax1.tick_params(axis="y", labelcolor=color)
 
     ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
 
     color = "tab:blue"
     ax2.set_ylabel("ln(pValue)", color=color)  # we already handled the x-label with ax1
-    ax2.plot(df["breakpoint"], df["pValue"], color=color)
+    ax2.plot(df["breakpoint"], df["pValue"], color=color, marker="o", markersize=4)
     ax2.tick_params(axis="y", labelcolor=color)
+
+    # Set minor ticks
+    ax1.xaxis.set_minor_locator(AutoMinorLocator())
+    ax1.yaxis.set_minor_locator(AutoMinorLocator())
+    ax2.yaxis.set_minor_locator(AutoMinorLocator())
 
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
 
