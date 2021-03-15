@@ -431,7 +431,7 @@ def get_breakpoints_suggestions():
         upper_bound=upper_bound and float(upper_bound),
     )
 
-    plot = plot_ks_stats(df_breakpoints)
+    plot = plot_ks_stats(df=df_breakpoints, node=title, predictor=predictor)
     df_breakpoints = format_ks_stats(df_breakpoints)
 
     return Response(

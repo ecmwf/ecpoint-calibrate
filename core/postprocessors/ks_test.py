@@ -60,12 +60,12 @@ def format_ks_stats(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def plot_ks_stats(df: pd.DataFrame):
+def plot_ks_stats(df: pd.DataFrame, node: str, predictor: str):
     matplotlib.style.use("default")
     fig, ax1 = plt.subplots()
 
     color = "tab:red"
-    ax1.set_xlabel("breakpoints")
+    ax1.set_xlabel(f"Breakpoints for {predictor}")
     ax1.set_ylabel("K-S DStat", color=color)
     ax1.plot(df["breakpoint"], df["dStatValue"], color=color, marker="o", markersize=4)
     ax1.tick_params(axis="y", labelcolor=color)
@@ -81,6 +81,9 @@ def plot_ks_stats(df: pd.DataFrame):
     ax1.xaxis.set_minor_locator(AutoMinorLocator())
     ax1.yaxis.set_minor_locator(AutoMinorLocator())
     ax2.yaxis.set_minor_locator(AutoMinorLocator())
+
+    # Set main title of graph
+    ax1.set_title(node, fontsize=8)
 
     fig.tight_layout()  # otherwise the right y-label is slightly clipped
 
