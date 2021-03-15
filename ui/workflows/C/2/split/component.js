@@ -338,6 +338,7 @@ class Split extends Component {
                 </Grid.Row>
                 <Grid.Row>
                   <Grid columns={3} stackable textAlign="center">
+                    <h4>Re-run the K-S test from scratch</h4>
                     <Grid.Row>
                       <Grid.Column>
                         <Header as="h4" icon>
