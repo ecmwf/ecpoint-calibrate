@@ -369,7 +369,7 @@ class Split extends Component {
                           }
                         />
                       </Grid.Column>
-                      <Grid.Column style={{ marginTop: '30px' }}>
+                      <Grid.Column style={{ marginTop: '34px' }}>
                         {this.getKSTestButton(false)()}
                       </Grid.Column>
                     </Grid.Row>
