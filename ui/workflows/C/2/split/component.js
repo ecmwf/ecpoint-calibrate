@@ -531,7 +531,7 @@ class Split extends Component {
     return (
       !_.isEmpty(this.props.nodeMeta) && (
         <Modal
-          size={'large'}
+          size={this.isKSTestMode() ? 'fullscreen' : 'large'}
           open={this.props.open}
           onClose={() => {
             this.setState(defaultState)

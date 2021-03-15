@@ -99,3 +99,12 @@ table.data-grid {
 .data-grid .cell {
   padding: 0 10px !important;
 }
+
+/*
+ * Trick to make sure the fullscreen modal has equal and correct spacing
+ * on both sides of the modal.
+ */
+.ui.fullscreen.scrolling.modal {
+  left: 0 !important;
+  right: 0 !important;
+}
