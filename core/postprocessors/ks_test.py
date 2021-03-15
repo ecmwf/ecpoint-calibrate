@@ -26,7 +26,9 @@ def ks_test_engine(
     df = df.sort_values(by=predictor_name)
     predictor = df[predictor_name]
 
-    breakpoints_idx = np.round(np.linspace(0, len(df) - 1, breakpoints_num)).astype(int)
+    breakpoints_idx = np.round(np.linspace(0, len(df) - 1, breakpoints_num + 2)).astype(
+        int
+    )[1:-1]
     breakpoints: np.ndarray = np.unique(predictor.to_numpy().take(breakpoints_idx))
 
     df_result = pd.DataFrame(breakpoints, columns=["breakpoint"])
