@@ -332,6 +332,8 @@ def save_operation():
 
     if mode in ["bias", "all"]:
         thrGridOut = payload["thrGridOut"]
+        bins = payload["bins"]
+        bins = [float(each) for each in bins]
 
         matrix = [[float(cell) for cell in row[1:]] for row in thrGridOut]
         df = pandas.DataFrame.from_records(matrix, columns=labels)
@@ -355,7 +357,7 @@ def save_operation():
             dataframe, title = wt.evaluate(loader.error_type.name, loader=loader)
             error = dataframe[loader.error_type.name]
 
-            bias = loader.error_type.bias(error=error)
+            bias = loader.error_type.bias(error=error, low=bins[0], high=bins[-1])
             bias = f"{bias:.2f}"
 
             wt_code = thrGridOut[idx][0]

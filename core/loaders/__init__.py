@@ -10,7 +10,10 @@ class ErrorType(Enum):
     FE = 1
     FER = 2
 
-    def bias(self, error: pd.Series) -> float:
+    def bias(self, error: pd.Series, low: float, high: float) -> float:
+        mask = error.between(low, high, inclusive=True)
+        error = error[mask]
+
         mean = error.mean()
         return (1 + mean) if self == self.FER else mean
 
