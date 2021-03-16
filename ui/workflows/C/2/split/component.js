@@ -446,13 +446,13 @@ class Split extends Component {
                         iteration: this.state.iteration + 1,
                       })
 
+                      const idx = this.state.selectedDefinitiveBreakpointIdx
+                      const breakpoints = this.state.definitiveBreakpoints
+
+                      const lowerBound = idx === 0 ? '-inf' : breakpoints[idx - 1]
+
                       // Set the Upper Bound here.
-                      this.launchKS_test(
-                        undefined,
-                        this.state.definitiveBreakpoints[
-                          this.state.selectedDefinitiveBreakpointIdx
-                        ]
-                      )
+                      this.launchKS_test(lowerBound, breakpoints[idx])
                     }}
                   >
                     &lt;
@@ -467,12 +467,14 @@ class Split extends Component {
                         iteration: this.state.iteration + 1,
                       })
 
+                      const idx = this.state.selectedDefinitiveBreakpointIdx
+                      const breakpoints = this.state.definitiveBreakpoints
+
+                      const upperBound =
+                        idx === breakpoints.length - 1 ? 'inf' : breakpoints[idx + 1]
+
                       // Set the Lower Bound here.
-                      this.launchKS_test(
-                        this.state.definitiveBreakpoints[
-                          this.state.selectedDefinitiveBreakpointIdx
-                        ]
-                      )
+                      this.launchKS_test(breakpoints[idx], upperBound)
                     }}
                   >
                     &gt;
