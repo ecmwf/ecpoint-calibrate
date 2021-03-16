@@ -11,7 +11,7 @@ import pandas as pd
 from colour import Color
 from numpy import inf
 
-from core.loaders import BasePointDataReader
+from core.loaders import BasePointDataReader, ErrorType
 from core.utils import int_or_float
 
 from .conditional_verification import plot_avg, plot_obs_freq, plot_std
@@ -271,7 +271,7 @@ class WeatherType(object):
     thrL_labels = attr.ib()
     thrH_labels = attr.ib()
 
-    error_type = attr.ib(default=None)
+    error_type: ErrorType = attr.ib(default=None)
 
     DEFAULT_FER_BINS = [
         -1.1,
@@ -296,7 +296,7 @@ class WeatherType(object):
     def evaluate(
         self, *cols: str, loader: BasePointDataReader
     ) -> Tuple[pd.DataFrame, str]:
-        self.error_type = loader.error_type.name
+        self.error_type = loader.error_type
 
         if loader.cheaper:
             df: pd.DataFrame = loader.select(*cols, series=False)
@@ -344,9 +344,13 @@ class WeatherType(object):
 
         Algorithm is very similar to evaluate() with loader.cheaper=False.
         """
-        self.error_type = "FER" if "FER" in predictors_matrix else "FE"
+        self.error_type = (
+            ErrorType.FER
+            if ErrorType.FER.name in predictors_matrix
+            else ErrorType.FE
+        )
 
-        error = predictors_matrix[self.error_type]
+        error = predictors_matrix[self.error_type.name]
         title_pred = ""
 
         for thrL_label, thrH_label in zip(self.thrL_labels, self.thrH_labels):
@@ -376,7 +380,7 @@ class WeatherType(object):
         plt.tight_layout(pad=5)
 
         ax.set_xlabel(
-            f"{self.error_type} Bins {'[-]' if self.error_type == 'FER' else ''}",
+            f"{self.error_type.name} Bins {'[-]' if self.error_type == ErrorType.FER else ''}",
             fontsize=8,
         )
         ax.set_ylabel("Frequencies [%]", fontsize=8)
@@ -395,10 +399,12 @@ class WeatherType(object):
             bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.5),
         )
 
+        # Add bias computation
+        bias = self.error_type.bias(error=data, low=bins[0], high=bins[-1])
         ax.text(
             x=0.85,
             y=0.95,
-            s=f"{1 + data.mean():.2f}",
+            s=f"{bias:.2f}",
             transform=ax.transAxes,
             fontsize=24,
             verticalalignment="top",
@@ -465,8 +471,8 @@ def human_format(num):
     return f'{num}{["", "K", "M", "G", "T", "P"][magnitude]}'
 
 
-def colorize_patches(patches, bins, error_type):
-    if error_type == "FER":
+def colorize_patches(patches, bins, error_type: ErrorType):
+    if error_type == ErrorType.FER:
         green = [i for i in bins if i < 0][:-1]
         yellow = [i for i in bins if (0 < i <= 2)][1:]
 
@@ -489,7 +495,7 @@ def colorize_patches(patches, bins, error_type):
 
         for patch in red_patches:
             patch.set_facecolor("#d64541")
-    elif error_type == "FE":
+    elif error_type == ErrorType.FE:
         blue = [i for i in bins if i < 0][:-1]
         blue_patches, white_patches, red_patches = (
             patches[: len(blue)],
