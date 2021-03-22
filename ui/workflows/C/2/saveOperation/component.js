@@ -6,7 +6,7 @@ import semver from 'semver'
 import { remote } from 'electron'
 
 import client from '~/utils/client'
-import { errorHandler } from '~/utils/toast'
+import { errorHandler, toast } from '~/utils/toast'
 const jetpack = require('fs-jetpack')
 
 const mainProcess = remote.require('./server')
@@ -198,10 +198,9 @@ class SaveOperation extends Component {
       })
       .then(response => {
         toast.success('Successfully saved operation files')
-        this.props.setLoading(false)
       })
       .catch(errorHandler)
-      .then(() => {
+      .finally(() => {
         this.props.setLoading(false)
         this.close()
       })
