@@ -214,6 +214,7 @@ class Split extends Component {
                   onChange={e => this.setState({ numBreakpoints: e.target.value })}
                   label={
                     <Dropdown
+                      scrolling
                       disabled={!this.state.auto}
                       options={this.getLevelOptions()}
                       onChange={(e, { value }) =>
@@ -246,6 +247,7 @@ class Split extends Component {
                   onChange={e => this.setState({ customSplitValue: e.target.value })}
                   label={
                     <Dropdown
+                      scrolling
                       disabled={this.state.auto}
                       options={this.getLevelOptions()}
                       onChange={(e, { value }) => {
@@ -346,6 +348,7 @@ class Split extends Component {
                         </Header>
                         <br />
                         <Dropdown
+                          scrolling
                           selection
                           fluid
                           options={this.getLevelOptions()}
