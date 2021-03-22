@@ -81,7 +81,8 @@ class Split extends Component {
     const values = this.state.auto
       ? flow(
           sortBy(_.identity),
-          reverse
+          reverse,
+          map(el => el.toString())
         )(this.state.definitiveBreakpoints)
       : [this.state.customSplitValue]
 
