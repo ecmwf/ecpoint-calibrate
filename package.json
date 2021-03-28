@@ -52,7 +52,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "dockerode": "^3.2.1"
+    "dockerode": "^3.2.1",
+    "rc-slider": "^9.7.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.5",

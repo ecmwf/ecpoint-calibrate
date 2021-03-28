@@ -25,6 +25,9 @@ import sortBy from 'lodash/fp/sortBy'
 import reverse from 'lodash/fp/reverse'
 import flow from 'lodash/fp/flow'
 
+import Slider, { Range } from 'rc-slider'
+import 'rc-slider/assets/index.css'
+
 import client from '~/utils/client'
 import { errorHandler } from '~/utils/toast'
 import { realNumbers } from '~/utils/patterns'
@@ -269,6 +272,52 @@ class Split extends Component {
     )
   }
 
+  getPrimaryStatsSlider() {
+    const breakpoints = this.state.primaryBreakpoints.map(e => parseFloat(e.breakpoint))
+    const [min, max] = [Math.min(...breakpoints), Math.max(...breakpoints)]
+
+    const marks = Object.fromEntries(
+      breakpoints.map((each, idx) => [
+        each,
+        idx === this.state.selectedPrimaryBreakpointIdx
+          ? {
+              label: <strong>{each}</strong>,
+            }
+          : idx === 0
+          ? {
+              style: {
+                color: 'red',
+              },
+              label: <strong>{each}</strong>,
+            }
+          : idx === breakpoints.length - 1
+          ? {
+              style: {
+                color: 'red',
+              },
+              label: <strong>{each}</strong>,
+            }
+          : '',
+      ])
+    )
+
+    const selectedBP =
+      this.state.selectedPrimaryBreakpointIdx !== null
+        ? breakpoints[this.state.selectedPrimaryBreakpointIdx].toString()
+        : null
+
+    return (
+      <Slider
+        min={min}
+        max={max}
+        marks={marks}
+        included={false}
+        step={null}
+        value={selectedBP}
+      />
+    )
+  }
+
   getPrimaryStats() {
     return (
       <Segment>
@@ -332,7 +381,7 @@ class Split extends Component {
             <Grid.Column>
               <Grid divided="vertically">
                 <Grid.Row>
-                  <Grid.Column>Visualizer for min and max BPs TBA</Grid.Column>
+                  <Grid.Column>{this.getPrimaryStatsSlider()}</Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
                   {this.state.graph !== null && (
