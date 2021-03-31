@@ -4,6 +4,7 @@ const path = require('path')
 const Docker = require('dockerode')
 
 const { app, BrowserWindow, dialog } = require('electron')
+require('@electron/remote/main').initialize()
 
 /*
  * Electron Window Management.
@@ -18,6 +19,7 @@ const createWindow = () => {
       allowRunningInsecureContent: true,
       enableRemoteModule: true,
       devTools: true,
+      contextIsolation: false,
     },
   })
 

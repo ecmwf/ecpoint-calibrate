@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { remote } from 'electron'
 
 import {
   Grid,
@@ -13,7 +12,7 @@ import {
   Popup,
 } from 'semantic-ui-react'
 
-const mainProcess = remote.require('./server')
+const mainProcess = require('@electron/remote').require('./server')
 
 class Predictand extends Component {
   getField = () => (

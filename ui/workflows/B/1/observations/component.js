@@ -1,21 +1,10 @@
 import React, { Component } from 'react'
-import { remote } from 'electron'
 
-import {
-  Grid,
-  Input,
-  Card,
-  Button,
-  Radio,
-  Item,
-  Icon,
-  Label,
-  Popup,
-} from 'semantic-ui-react'
+import { Grid, Input, Card, Button, Item, Icon } from 'semantic-ui-react'
 
 import { isEmpty } from './index'
 
-const mainProcess = remote.require('./server')
+const mainProcess = require('@electron/remote').require('./server')
 
 class Observation extends Component {
   getObsPathField = () => (

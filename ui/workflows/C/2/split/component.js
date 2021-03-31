@@ -17,7 +17,6 @@ import {
   Container,
 } from 'semantic-ui-react'
 
-import { remote } from 'electron'
 import _ from 'lodash'
 
 import map from 'lodash/fp/map'
@@ -25,14 +24,14 @@ import sortBy from 'lodash/fp/sortBy'
 import reverse from 'lodash/fp/reverse'
 import flow from 'lodash/fp/flow'
 
-import Slider, { Range } from 'rc-slider'
+import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
 
 import client from '~/utils/client'
 import { errorHandler } from '~/utils/toast'
 import { realNumbers } from '~/utils/patterns'
 
-const mainProcess = remote.require('./server')
+const mainProcess = require('@electron/remote').require('./server')
 
 const defaultState = {
   customSplitValue: '',

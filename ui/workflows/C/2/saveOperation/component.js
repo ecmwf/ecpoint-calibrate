@@ -3,13 +3,12 @@ import React, { Component } from 'react'
 import { Modal, Input, Button, Segment, Label, Icon } from 'semantic-ui-react'
 
 import semver from 'semver'
-import { remote } from 'electron'
 
 import client from '~/utils/client'
 import { errorHandler, toast } from '~/utils/toast'
 const jetpack = require('fs-jetpack')
 
-const mainProcess = remote.require('./server')
+const mainProcess = require('@electron/remote').require('./server')
 
 const defaultState = {
   family: null,

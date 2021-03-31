@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
-import { remote } from 'electron'
 
 import { Grid, Card, Button, Item, Icon, Dimmer, Loader } from 'semantic-ui-react'
 
 import PDTViewer from '../pdtViewer'
 
-const mainProcess = remote.require('./server')
+const mainProcess = require('@electron/remote').require('./server')
 
 class Preloader extends Component {
   getField = () => (

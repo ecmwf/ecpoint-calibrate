@@ -3,8 +3,7 @@ import React from 'react'
 import { Image, Dropdown } from 'semantic-ui-react'
 import logo from '~/assets/img/ECMWF_logo.png'
 
-import { remote } from 'electron'
-const mainProcess = remote.require('./server')
+const mainProcess = require('@electron/remote').require('./server')
 const jetpack = require('fs-jetpack')
 
 const Header = props => (

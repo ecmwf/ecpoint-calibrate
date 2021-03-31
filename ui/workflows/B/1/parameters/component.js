@@ -1,16 +1,11 @@
 import React, { Component } from 'react'
 
-import { Grid, Card, Button, Input, Item, Icon, Radio, Popup } from 'semantic-ui-react'
+import { Grid, Card, Input, Item, Icon, Radio, Popup } from 'semantic-ui-react'
 
 import DatePicker from 'react-datepicker'
-
 import 'react-datepicker/dist/react-datepicker.css'
 
-import { remote } from 'electron'
-
 import { isEmpty } from './index'
-
-const mainProcess = remote.require('./server')
 
 class Parameters extends Component {
   getTypeField = () => (

@@ -1,12 +1,10 @@
 import React, { Component } from 'react'
 
-import { Grid, Card, Button, Input, Item, Icon, Radio, Popup } from 'semantic-ui-react'
-
-import { remote } from 'electron'
+import { Grid, Card, Button, Item, Icon, Radio, Popup } from 'semantic-ui-react'
 
 import { isEmpty } from './index'
 
-const mainProcess = remote.require('./server')
+const mainProcess = require('@electron/remote').require('./server')
 
 class Output extends Component {
   getPathOutField = () => (

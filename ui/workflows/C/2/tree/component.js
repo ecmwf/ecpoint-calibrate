@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
 
-import { remote } from 'electron'
-
 import Tree from 'react-d3-tree'
 import { saveSvgAsPng } from 'save-svg-as-png'
 
@@ -12,7 +10,7 @@ import MappingFunction from './mappingFunction'
 import Split from '../split'
 import { mergeToPreviousRow, isMergeableToPreviousRow } from '../breakpoints/core'
 
-const mainProcess = remote.require('./server')
+const mainProcess = require('@electron/remote').require('./server')
 
 export default class TreeContainer extends Component {
   state = {

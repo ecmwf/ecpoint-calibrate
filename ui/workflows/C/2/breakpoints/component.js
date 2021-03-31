@@ -9,8 +9,8 @@ import download from '~/utils/download'
 
 import { isMergeableToPreviousRow, mergeToPreviousRow } from './core'
 
-import { remote } from 'electron'
-const mainProcess = remote.require('./server')
+const mainProcess = require('@electron/remote').require('./server')
+
 const jetpack = require('fs-jetpack')
 
 class Breakpoints extends Component {
