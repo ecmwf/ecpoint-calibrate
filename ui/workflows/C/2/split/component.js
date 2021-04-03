@@ -38,10 +38,12 @@ const defaultState = {
   customSplitLevel: '',
   auto: false,
   numBreakpoints: '',
+  numBreakpointsDefinitive: '',
   definitiveBreakpoints: [],
   primaryBreakpoints: [],
   selectedPrimaryBreakpointIdx: null,
   selectedDefinitiveBreakpointIdx: null,
+  definitiveBreakpointRange: null,
   iteration: 0,
   loading: false,
   graph: null,
@@ -214,7 +216,12 @@ class Split extends Component {
                   disabled={!this.state.auto}
                   error={this.numberValueHasError(this.state.numBreakpoints)}
                   value={this.state.numBreakpoints}
-                  onChange={e => this.setState({ numBreakpoints: e.target.value })}
+                  onChange={e =>
+                    this.setState({
+                      numBreakpoints: e.target.value,
+                      numBreakpointsDefinitive: e.target.value,
+                    })
+                  }
                   label={
                     <Dropdown
                       scrolling
@@ -435,6 +442,50 @@ class Split extends Component {
     )
   }
 
+  getDefinitiveBounds() {
+    const idx = this.state.selectedDefinitiveBreakpointIdx
+    const breakpoints = this.state.definitiveBreakpoints
+
+    const lowerBound =
+      this.state.definitiveBreakpointRange === '<'
+        ? idx === 0
+          ? '-inf'
+          : breakpoints[idx - 1]
+        : this.state.definitiveBreakpointRange === '>'
+        ? breakpoints[idx]
+        : undefined
+    const upperBound =
+      this.state.definitiveBreakpointRange === '<'
+        ? breakpoints[idx]
+        : this.state.definitiveBreakpointRange === '>'
+        ? idx === breakpoints.length - 1
+          ? 'inf'
+          : breakpoints[idx + 1]
+        : undefined
+
+    return [lowerBound, upperBound]
+  }
+
+  getDefinitiveRangeText() {
+    if (
+      this.state.selectedDefinitiveBreakpointIdx === null ||
+      this.state.definitiveBreakpointRange === null
+    ) {
+      return null
+    }
+
+    const [lowerBound, upperBound] = this.getDefinitiveBounds()
+
+    return (
+      <Header as="h4" icon>
+        {lowerBound}
+        &lt; {this.getLevelOptions()[this.state.customSplitLevel].text}
+        &lt;
+        {upperBound}
+      </Header>
+    )
+  }
+
   getSecondaryStats() {
     return (
       this.state.definitiveBreakpoints.length > 0 && (
@@ -491,47 +542,71 @@ class Split extends Component {
                 <Button.Group>
                   <Button
                     disabled={this.state.selectedDefinitiveBreakpointIdx === null}
-                    onClick={() => {
-                      this.setState({
-                        selectedPrimaryBreakpointIdx: null,
-                        selectedDefinitiveBreakpointIdx: null,
-                        iteration: this.state.iteration + 1,
-                      })
-
-                      const idx = this.state.selectedDefinitiveBreakpointIdx
-                      const breakpoints = this.state.definitiveBreakpoints
-
-                      const lowerBound = idx === 0 ? '-inf' : breakpoints[idx - 1]
-
-                      // Set the Upper Bound here.
-                      this.launchKS_test(lowerBound, breakpoints[idx])
-                    }}
+                    onClick={() => this.setState({ definitiveBreakpointRange: '<' })}
+                    positive={this.state.definitiveBreakpointRange === '<'}
                   >
                     &lt;
                   </Button>
                   <Button.Or text="or" />
                   <Button
                     disabled={this.state.selectedDefinitiveBreakpointIdx === null}
-                    onClick={() => {
-                      this.setState({
-                        selectedPrimaryBreakpointIdx: null,
-                        selectedDefinitiveBreakpointIdx: null,
-                        iteration: this.state.iteration + 1,
-                      })
-
-                      const idx = this.state.selectedDefinitiveBreakpointIdx
-                      const breakpoints = this.state.definitiveBreakpoints
-
-                      const upperBound =
-                        idx === breakpoints.length - 1 ? 'inf' : breakpoints[idx + 1]
-
-                      // Set the Lower Bound here.
-                      this.launchKS_test(breakpoints[idx], upperBound)
-                    }}
+                    onClick={() => this.setState({ definitiveBreakpointRange: '>' })}
+                    positive={this.state.definitiveBreakpointRange === '>'}
                   >
                     &gt;
                   </Button>
                 </Button.Group>
+                <br />
+
+                {this.getDefinitiveRangeText()}
+
+                <Grid columns={3} centered stackable textAlign="center">
+                  <Grid.Row>
+                    <Grid.Column>
+                      <Header as="h4" icon>
+                        No. of BPs
+                      </Header>
+                      <br />
+                      <Input
+                        disabled={this.state.definitiveBreakpointRange === null}
+                        error={this.numberValueHasError(
+                          this.state.numBreakpointsDefinitive
+                        )}
+                        value={this.state.numBreakpointsDefinitive}
+                        onChange={e =>
+                          this.setState({ numBreakpointsDefinitive: e.target.value })
+                        }
+                      />
+                    </Grid.Column>
+                    <Grid.Column style={{ marginTop: '34px' }}>
+                      {
+                        <Button
+                          content="Run K-S test"
+                          positive
+                          disabled={
+                            !this.state.definitiveBreakpointRange ||
+                            !this.state.numBreakpointsDefinitive ||
+                            this.numberValueHasError(
+                              this.state.numBreakpointsDefinitive
+                            )
+                          }
+                          onClick={() => {
+                            const [lowerBound, upperBound] = this.getDefinitiveBounds()
+
+                            this.launchKS_test(lowerBound, upperBound)
+
+                            this.setState({
+                              selectedPrimaryBreakpointIdx: null,
+                              selectedDefinitiveBreakpointIdx: null,
+                              definitiveBreakpointRange: null,
+                              iteration: this.state.iteration + 1,
+                            })
+                          }}
+                        />
+                      }
+                    </Grid.Column>
+                  </Grid.Row>
+                </Grid>
               </Grid.Column>
             </Grid.Row>
           </Grid>
