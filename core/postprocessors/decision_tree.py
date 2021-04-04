@@ -1,7 +1,7 @@
 import math
 from base64 import b64encode
 from io import BytesIO
-from typing import Tuple
+from typing import List, Tuple
 
 import attr
 import matplotlib
@@ -20,55 +20,93 @@ from .generics import Node
 
 @attr.s(slots=True)
 class DecisionTree(object):
-    thrL_in = attr.ib()
-    thrH_in = attr.ib()
-    num_wt = attr.ib(default=None)
+    threshold_low = attr.ib()
+    threshold_high = attr.ib()
 
     @property
-    def num_predictors(self):
-        return len(self.thrL_in.columns)
+    def predictors(self):
+        return [
+            predictor.replace("_thrL", "") for predictor in self.threshold_low.keys()
+        ]
 
-    def get_threshold_counts(self):
-        thresholds_num = np.zeros(self.num_predictors, dtype=int)
-        thresholds_num_acc = np.zeros(self.num_predictors, dtype=int)
+    @property
+    def num_predictors(self) -> int:
+        return len(self.predictors)
+
+    @property
+    def num_wt(self) -> int:
+        return len(self.threshold_low)
+
+    @property
+    def leaf_color_codes(self) -> List[str]:
+        colors = [
+            Color("#f278f6"),
+            Color("#d10330"),
+            Color("#ea9826"),
+            Color("#d0c912"),
+            Color("#88c927"),
+            Color("#359761"),
+            Color("#2ad0ba"),
+            Color("#4b8bab"),
+            Color("#9797f4"),
+            Color("#4d4ffa"),
+        ]
+
+        if self.num_predictors > 10:
+            colors += Color("#af0fff").range_to(
+                Color("#cb94ff"), self.num_predictors - 10
+            )
+
+        colors += [Color("black")]
+        return [color.hex for color in colors]
+
+    @classmethod
+    def _get_threshold_counts(cls, sparse_thresholds):
+        num_predictors = len(sparse_thresholds.keys())
+
+        thresholds_num = np.zeros(num_predictors, dtype=int)
+        thresholds_num_acc = np.zeros(num_predictors, dtype=int)
         acc = 1
 
-        for i in range(self.num_predictors):
-            temp = self.thrL_in.iloc[:, i].dropna()
+        for i in range(num_predictors):
+            temp = sparse_thresholds.iloc[:, i].dropna()
             temp = temp[temp != ""]
             thresholds_num[i] = len(temp)
             acc = acc * len(temp)
             thresholds_num_acc[i] = acc
 
-        return thresholds_num, thresholds_num_acc
+        return thresholds_num, thresholds_num_acc, num_predictors
 
-    def create(self):
-        thresholds_num, thresholds_num_acc = self.get_threshold_counts()
-        self.num_wt = thresholds_num_acc[-1]
+    @classmethod
+    def create_from_sparse_thresholds(cls, low, high) -> "DecisionTree":
+        thresholds_num, thresholds_num_acc, num_predictors = cls._get_threshold_counts(
+            low
+        )
+        num_wt = thresholds_num_acc[-1]
 
-        dim = (self.num_wt, self.num_predictors)
+        dim = (num_wt, num_predictors)
         thrL_matrix = np.zeros(dim)
         thrH_matrix = np.zeros(dim)
 
-        tempL = self.thrL_in.iloc[:, -1].dropna()
+        tempL = low.iloc[:, -1].dropna()
         tempL = tempL[tempL != ""]
-        tempH = self.thrH_in.iloc[:, -1].dropna()
+        tempH = high.iloc[:, -1].dropna()
         tempH = tempH[tempH != ""]
 
         m = len(tempL)
 
         # Last column
-        for i in range(0, self.num_wt, m):
+        for i in range(0, num_wt, m):
             j = i + m
             thrL_matrix[i:j, -1] = tempL
             thrH_matrix[i:j, -1] = tempH
 
         # All left columns
         rep = 1
-        for i in range(self.num_predictors - 2, -1, -1):
-            tempL1 = self.thrL_in.iloc[:, i].dropna()
+        for i in range(num_predictors - 2, -1, -1):
+            tempL1 = low.iloc[:, i].dropna()
             tempL1 = tempL1[tempL1 != ""]
-            tempH1 = self.thrH_in.iloc[:, i].dropna()
+            tempH1 = high.iloc[:, i].dropna()
             tempH1 = tempH1[tempH1 != ""]
             m = len(tempL1)
 
@@ -96,53 +134,24 @@ class DecisionTree(object):
                         thrH_matrix[ind_i:ind_f, i] = tempH2
                         counter = ind_f
 
-        return (
-            pd.DataFrame(data=thrL_matrix, columns=self.thrL_in.columns),
-            pd.DataFrame(data=thrH_matrix, columns=self.thrH_in.columns),
+        return cls(
+            threshold_low=pd.DataFrame(data=thrL_matrix, columns=low.columns),
+            threshold_high=pd.DataFrame(data=thrH_matrix, columns=high.columns),
         )
 
-    @classmethod
-    def construct_tree(cls, thrL_out, thrH_out):
-        predictors = [predictor.replace("_thrL", "") for predictor in thrL_out.keys()]
-
+    @property
+    def tree(self) -> Node:
         root = Node("Root")
         root.meta["level"] = -1
 
-        num_wt = len(thrL_out)
-
-        num_predictors = len(thrL_out.columns)
-
-        leaf_color_codes = [
-            color.hex
-            for color in (
-                Color("#f278f6"),
-                Color("#d10330"),
-                Color("#ea9826"),
-                Color("#d0c912"),
-                Color("#88c927"),
-                Color("#359761"),
-                Color("#2ad0ba"),
-                Color("#4b8bab"),
-                Color("#9797f4"),
-                Color("#4d4ffa"),
-            )
-        ]
-
-        if num_predictors > 10:
-            leaf_color_codes += [
-                color.hex
-                for color in Color("#af0fff").range_to(
-                    Color("#cb94ff"), num_predictors - 10
-                )
-            ]
-        leaf_color_codes += [Color("black").hex]
-
-        for i in range(num_wt):
-            thrL = thrL_out.iloc[i, :]
-            thrH = thrH_out.iloc[i, :]
+        for i in range(self.num_wt):
+            thrL = self.threshold_low.iloc[i, :]
+            thrH = self.threshold_high.iloc[i, :]
 
             curr = root
-            for level, (low, predictor, high) in enumerate(zip(thrL, predictors, thrH)):
+            for level, (low, predictor, high) in enumerate(
+                zip(thrL, self.predictors, thrH)
+            ):
                 text = "{low} < {predictor} < {high}".format(
                     low=int_or_float(low), predictor=predictor, high=int_or_float(high)
                 )
@@ -173,7 +182,7 @@ class DecisionTree(object):
                     "shape": "circle",
                     "shapeProps": {
                         "r": 10,
-                        "stroke": leaf_color_codes[curr.meta["level"]],
+                        "stroke": self.leaf_color_codes[curr.meta["level"]],
                     },
                 }
 
@@ -181,10 +190,10 @@ class DecisionTree(object):
             node.meta["code"] = code
             for idx, child in enumerate(node.children):
                 lvl = child.meta["level"]
-                codegen(node=child, code=code[:lvl] + str(idx + 1) + code[lvl + 1:])
+                codegen(node=child, code=code[:lvl] + str(idx + 1) + code[lvl + 1 :])
             return node
 
-        return codegen(node=root, code="0" * num_predictors)
+        return codegen(node=root, code="0" * self.num_predictors)
 
     @classmethod
     def cal_rep_error(
@@ -350,9 +359,7 @@ class WeatherType(object):
         Algorithm is very similar to evaluate() with loader.cheaper=False.
         """
         self.error_type = (
-            ErrorType.FER
-            if ErrorType.FER.name in predictors_matrix
-            else ErrorType.FE
+            ErrorType.FER if ErrorType.FER.name in predictors_matrix else ErrorType.FE
         )
 
         error = predictors_matrix[self.error_type.name]

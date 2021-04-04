@@ -92,13 +92,12 @@ def breakpoints():
 
 
 def test_decision_tree_with_predefined_threshold_splits(sparse_breakpoints):
-    thrL, thrH = sparse_breakpoints
-    dt = DecisionTree(thrL_in=thrL, thrH_in=thrH)
-    thrL_out, thrH_out = dt.create()
+    sparse_thresholds_low, sparse_thresholds_high = sparse_breakpoints
+    dt = DecisionTree.create_from_sparse_thresholds(
+        low=sparse_thresholds_low, high=sparse_thresholds_high
+    )
 
-    # root = dt.construct_tree()
-
-    expected_thrL_matrix = [
+    expected_threshold_low_matrix = [
         [float("-inf"), float("-inf"), 5.0, float("-inf"), float("-inf")],
         [float("-inf"), float("-inf"), 5.0, float("-inf"), 70.0],
         [float("-inf"), float("-inf"), 5.0, float("-inf"), 275.0],
@@ -106,9 +105,9 @@ def test_decision_tree_with_predefined_threshold_splits(sparse_breakpoints):
         [float("-inf"), float("-inf"), 20.0, float("-inf"), 70.0],
         [float("-inf"), float("-inf"), 20.0, float("-inf"), 275.0],
     ]
-    assert np.array_equal(thrL_out, expected_thrL_matrix)
+    assert np.array_equal(dt.threshold_low, expected_threshold_low_matrix)
 
-    expected_thrH_matrix = [
+    expected_threshold_high_matrix = [
         [0.25, 2.0, 20.0, float("inf"), 70.0],
         [0.25, 2.0, 20.0, float("inf"), 275.0],
         [0.25, 2.0, 20.0, float("inf"), float("inf")],
@@ -116,12 +115,13 @@ def test_decision_tree_with_predefined_threshold_splits(sparse_breakpoints):
         [0.25, 2.0, float("inf"), float("inf"), 275.0],
         [0.25, 2.0, float("inf"), float("inf"), float("inf")],
     ]
-    assert np.array_equal(thrH_out, expected_thrH_matrix)
+    assert np.array_equal(dt.threshold_high, expected_threshold_high_matrix)
 
 
 def test_decision_tree_construction(breakpoints):
-    thrL, thrH = breakpoints
-    tree = DecisionTree.construct_tree(thrL_out=thrL, thrH_out=thrH)
+    low, high = breakpoints
+
+    dt = DecisionTree(threshold_low=low, threshold_high=high)
 
     expected = {
         "name": "Root",
@@ -733,4 +733,4 @@ def test_decision_tree_construction(breakpoints):
         "meta": {"level": -1, "idxWT": 18, "code": "00000"},
     }
 
-    assert strip_node_shape(tree.json) == expected
+    assert strip_node_shape(dt.tree.json) == expected

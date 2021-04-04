@@ -105,10 +105,9 @@ def create_weather_types_matrix():
 
     df = pandas.DataFrame.from_records(records, columns=labels)
     thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
-    dt = DecisionTree(thrL_in=thrL, thrH_in=thrH)
-    thrL, thrH = dt.create()
+    dt = DecisionTree.create_from_sparse_thresholds(low=thrL, high=thrH)
 
-    df_out = pandas.concat([thrL, thrH], axis=1)
+    df_out = pandas.concat([dt.threshold_low, dt.threshold_high], axis=1)
     df_out = df_out[labels]
 
     matrix = [[str(cell) for cell in row] for row in df_out.values]
@@ -144,9 +143,8 @@ def get_decision_tree():
 
     thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
 
-    tree = DecisionTree.construct_tree(thrL_out=thrL, thrH_out=thrH)
-
-    return jsonify([tree.json])
+    dt = DecisionTree(threshold_low=thrL, threshold_high=thrH)
+    return jsonify([dt.tree.json])
 
 
 @app.route("/postprocessing/generate-wt-histogram", methods=("POST",))
