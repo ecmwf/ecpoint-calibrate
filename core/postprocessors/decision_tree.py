@@ -103,6 +103,8 @@ class DecisionTree(object):
 
     @classmethod
     def construct_tree(cls, thrL_out, thrH_out):
+        predictors = [predictor.replace("_thrL", "") for predictor in thrL_out.keys()]
+
         root = Node("Root")
         root.meta["level"] = -1
 
@@ -139,8 +141,6 @@ class DecisionTree(object):
             thrL = thrL_out.iloc[i, :]
             thrH = thrH_out.iloc[i, :]
 
-            predictors = [predictor.replace("_thrL", "") for predictor in thrL.keys()]
-
             curr = root
             for level, (low, predictor, high) in enumerate(zip(thrL, predictors, thrH)):
                 text = "{low} < {predictor} < {high}".format(
@@ -159,7 +159,6 @@ class DecisionTree(object):
                     maybe_child.meta["predictor"] = predictor
                     maybe_child.meta["level"] = level
                     curr.meta["idxWT"] = i
-                    curr.meta["code"] = cls.wt_code(thrL_out, thrH_out)[i]
 
                     # For a path in the decision tree that has been resolved, we want
                     # to add only those nodes to the tree that have a decision, i.e.
@@ -170,7 +169,6 @@ class DecisionTree(object):
 
             if not curr.children:
                 curr.meta["idxWT"] = i
-                curr.meta["code"] = cls.wt_code(thrL_out, thrH_out)[i]
                 curr.nodeSvgShape = {
                     "shape": "circle",
                     "shapeProps": {
@@ -179,7 +177,14 @@ class DecisionTree(object):
                     },
                 }
 
-        return root
+        def codegen(node: Node, code: str):
+            node.meta["code"] = code
+            for idx, child in enumerate(node.children):
+                lvl = child.meta["level"]
+                codegen(node=child, code=code[:lvl] + str(idx + 1) + code[lvl + 1:])
+            return node
+
+        return codegen(node=root, code="0" * num_predictors)
 
     @classmethod
     def cal_rep_error(
