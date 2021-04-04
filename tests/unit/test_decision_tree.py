@@ -3,6 +3,7 @@ import pandas
 import pytest
 
 from core.postprocessors.decision_tree import DecisionTree
+from tests.unit.utils import strip_node_shape
 
 inf = float("inf")
 
@@ -144,13 +145,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 0,
                                             "code": "11101",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                     {
                                         "name": "70 < sr24h < 275",
@@ -161,13 +155,6 @@ def test_decision_tree_construction(breakpoints):
                                             "level": 4,
                                             "idxWT": 1,
                                             "code": "11102",
-                                        },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
                                         },
                                     },
                                     {
@@ -180,13 +167,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 2,
                                             "code": "11103",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                 ],
                                 "parent": None,
@@ -196,7 +176,6 @@ def test_decision_tree_construction(breakpoints):
                                     "idxWT": 2,
                                     "code": "11103",
                                 },
-                                "nodeSvgShape": {},
                             },
                             {
                                 "name": "5 < cp_acc < 20",
@@ -211,13 +190,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 3,
                                             "code": "11201",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                     {
                                         "name": "70 < sr24h < 275",
@@ -228,13 +200,6 @@ def test_decision_tree_construction(breakpoints):
                                             "level": 4,
                                             "idxWT": 4,
                                             "code": "11202",
-                                        },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
                                         },
                                     },
                                     {
@@ -247,13 +212,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 5,
                                             "code": "11203",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                 ],
                                 "parent": None,
@@ -263,7 +221,6 @@ def test_decision_tree_construction(breakpoints):
                                     "idxWT": 5,
                                     "code": "11203",
                                 },
-                                "nodeSvgShape": {},
                             },
                             {
                                 "name": "20 < cp_acc < inf",
@@ -278,13 +235,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 6,
                                             "code": "11301",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                     {
                                         "name": "70 < sr24h < 275",
@@ -295,13 +245,6 @@ def test_decision_tree_construction(breakpoints):
                                             "level": 4,
                                             "idxWT": 7,
                                             "code": "11302",
-                                        },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
                                         },
                                     },
                                     {
@@ -314,13 +257,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 8,
                                             "code": "11303",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                 ],
                                 "parent": None,
@@ -330,7 +266,6 @@ def test_decision_tree_construction(breakpoints):
                                     "idxWT": 8,
                                     "code": "11303",
                                 },
-                                "nodeSvgShape": {},
                             },
                         ],
                         "parent": None,
@@ -340,7 +275,6 @@ def test_decision_tree_construction(breakpoints):
                             "idxWT": 6,
                             "code": "11301",
                         },
-                        "nodeSvgShape": {},
                     },
                     {
                         "name": "2 < tp_acc < inf",
@@ -358,13 +292,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 9,
                                             "code": "12101",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                     {
                                         "name": "70 < sr24h < 275",
@@ -375,13 +302,6 @@ def test_decision_tree_construction(breakpoints):
                                             "level": 4,
                                             "idxWT": 10,
                                             "code": "12102",
-                                        },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
                                         },
                                     },
                                     {
@@ -394,13 +314,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 11,
                                             "code": "12103",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                 ],
                                 "parent": None,
@@ -410,7 +323,6 @@ def test_decision_tree_construction(breakpoints):
                                     "idxWT": 11,
                                     "code": "12103",
                                 },
-                                "nodeSvgShape": {},
                             },
                             {
                                 "name": "5 < cp_acc < 20",
@@ -425,13 +337,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 12,
                                             "code": "12201",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                     {
                                         "name": "70 < sr24h < 275",
@@ -442,13 +347,6 @@ def test_decision_tree_construction(breakpoints):
                                             "level": 4,
                                             "idxWT": 13,
                                             "code": "12202",
-                                        },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
                                         },
                                     },
                                     {
@@ -461,13 +359,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 14,
                                             "code": "12203",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                 ],
                                 "parent": None,
@@ -477,7 +368,6 @@ def test_decision_tree_construction(breakpoints):
                                     "idxWT": 14,
                                     "code": "12203",
                                 },
-                                "nodeSvgShape": {},
                             },
                             {
                                 "name": "20 < cp_acc < inf",
@@ -492,13 +382,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 15,
                                             "code": "12301",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                     {
                                         "name": "70 < sr24h < 275",
@@ -509,13 +392,6 @@ def test_decision_tree_construction(breakpoints):
                                             "level": 4,
                                             "idxWT": 16,
                                             "code": "12302",
-                                        },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
                                         },
                                     },
                                     {
@@ -528,13 +404,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 17,
                                             "code": "12303",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                 ],
                                 "parent": None,
@@ -544,7 +413,6 @@ def test_decision_tree_construction(breakpoints):
                                     "idxWT": 17,
                                     "code": "12303",
                                 },
-                                "nodeSvgShape": {},
                             },
                         ],
                         "parent": None,
@@ -554,12 +422,10 @@ def test_decision_tree_construction(breakpoints):
                             "idxWT": 15,
                             "code": "12301",
                         },
-                        "nodeSvgShape": {},
                     },
                 ],
                 "parent": None,
                 "meta": {"predictor": "cpr", "level": 0, "idxWT": 9, "code": "12101"},
-                "nodeSvgShape": {},
             },
             {
                 "name": "0.25 < cpr < inf",
@@ -580,13 +446,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 18,
                                             "code": "21101",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                     {
                                         "name": "70 < sr24h < 275",
@@ -597,13 +456,6 @@ def test_decision_tree_construction(breakpoints):
                                             "level": 4,
                                             "idxWT": 19,
                                             "code": "21102",
-                                        },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
                                         },
                                     },
                                     {
@@ -616,13 +468,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 20,
                                             "code": "21103",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                 ],
                                 "parent": None,
@@ -632,7 +477,6 @@ def test_decision_tree_construction(breakpoints):
                                     "idxWT": 20,
                                     "code": "21103",
                                 },
-                                "nodeSvgShape": {},
                             },
                             {
                                 "name": "5 < cp_acc < 20",
@@ -647,13 +491,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 21,
                                             "code": "21201",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                     {
                                         "name": "70 < sr24h < 275",
@@ -664,13 +501,6 @@ def test_decision_tree_construction(breakpoints):
                                             "level": 4,
                                             "idxWT": 22,
                                             "code": "21202",
-                                        },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
                                         },
                                     },
                                     {
@@ -683,13 +513,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 23,
                                             "code": "21203",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                 ],
                                 "parent": None,
@@ -699,7 +522,6 @@ def test_decision_tree_construction(breakpoints):
                                     "idxWT": 23,
                                     "code": "21203",
                                 },
-                                "nodeSvgShape": {},
                             },
                             {
                                 "name": "20 < cp_acc < inf",
@@ -714,13 +536,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 24,
                                             "code": "21301",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                     {
                                         "name": "70 < sr24h < 275",
@@ -731,13 +546,6 @@ def test_decision_tree_construction(breakpoints):
                                             "level": 4,
                                             "idxWT": 25,
                                             "code": "21302",
-                                        },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
                                         },
                                     },
                                     {
@@ -750,13 +558,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 26,
                                             "code": "21303",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                 ],
                                 "parent": None,
@@ -766,7 +567,6 @@ def test_decision_tree_construction(breakpoints):
                                     "idxWT": 26,
                                     "code": "21303",
                                 },
-                                "nodeSvgShape": {},
                             },
                         ],
                         "parent": None,
@@ -776,7 +576,6 @@ def test_decision_tree_construction(breakpoints):
                             "idxWT": 24,
                             "code": "21301",
                         },
-                        "nodeSvgShape": {},
                     },
                     {
                         "name": "2 < tp_acc < inf",
@@ -794,13 +593,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 27,
                                             "code": "22101",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                     {
                                         "name": "70 < sr24h < 275",
@@ -811,13 +603,6 @@ def test_decision_tree_construction(breakpoints):
                                             "level": 4,
                                             "idxWT": 28,
                                             "code": "22102",
-                                        },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
                                         },
                                     },
                                     {
@@ -830,13 +615,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 29,
                                             "code": "22103",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                 ],
                                 "parent": None,
@@ -846,7 +624,6 @@ def test_decision_tree_construction(breakpoints):
                                     "idxWT": 29,
                                     "code": "22103",
                                 },
-                                "nodeSvgShape": {},
                             },
                             {
                                 "name": "5 < cp_acc < 20",
@@ -861,13 +638,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 30,
                                             "code": "22201",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                     {
                                         "name": "70 < sr24h < 275",
@@ -878,13 +648,6 @@ def test_decision_tree_construction(breakpoints):
                                             "level": 4,
                                             "idxWT": 31,
                                             "code": "22202",
-                                        },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
                                         },
                                     },
                                     {
@@ -897,13 +660,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 32,
                                             "code": "22203",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                 ],
                                 "parent": None,
@@ -913,7 +669,6 @@ def test_decision_tree_construction(breakpoints):
                                     "idxWT": 32,
                                     "code": "22203",
                                 },
-                                "nodeSvgShape": {},
                             },
                             {
                                 "name": "20 < cp_acc < inf",
@@ -928,13 +683,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 33,
                                             "code": "22301",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                     {
                                         "name": "70 < sr24h < 275",
@@ -945,13 +693,6 @@ def test_decision_tree_construction(breakpoints):
                                             "level": 4,
                                             "idxWT": 34,
                                             "code": "22302",
-                                        },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
                                         },
                                     },
                                     {
@@ -964,13 +705,6 @@ def test_decision_tree_construction(breakpoints):
                                             "idxWT": 35,
                                             "code": "22303",
                                         },
-                                        "nodeSvgShape": {
-                                            "shape": "circle",
-                                            "shapeProps": {
-                                                "r": 10,
-                                                "stroke": "#88c927",
-                                            },
-                                        },
                                     },
                                 ],
                                 "parent": None,
@@ -980,7 +714,6 @@ def test_decision_tree_construction(breakpoints):
                                     "idxWT": 35,
                                     "code": "22303",
                                 },
-                                "nodeSvgShape": {},
                             },
                         ],
                         "parent": None,
@@ -990,17 +723,14 @@ def test_decision_tree_construction(breakpoints):
                             "idxWT": 33,
                             "code": "22301",
                         },
-                        "nodeSvgShape": {},
                     },
                 ],
                 "parent": None,
                 "meta": {"predictor": "cpr", "level": 0, "idxWT": 27, "code": "22101"},
-                "nodeSvgShape": {},
             },
         ],
         "parent": None,
         "meta": {"level": -1, "idxWT": 18, "code": "21101"},
-        "nodeSvgShape": {},
     }
 
-    assert tree.json == expected
+    assert strip_node_shape(tree.json) == expected
