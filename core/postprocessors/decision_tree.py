@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from colour import Color
-from numpy import inf
 
 from core.loaders import BasePointDataReader, ErrorType
 from core.utils import int_or_float
@@ -24,7 +23,7 @@ class DecisionTree(object):
     threshold_high = attr.ib()
 
     @property
-    def predictors(self):
+    def predictors(self) -> List[str]:
         return [
             predictor.replace("_thrL", "") for predictor in self.threshold_low.keys()
         ]
@@ -39,7 +38,7 @@ class DecisionTree(object):
 
     @property
     def leaf_codes(self) -> List[str]:
-        def g(node: Node):
+        def g(node: Node) -> Generator[str, None, None]:
             if not node.children:
                 yield node.meta["code"]
 
