@@ -127,9 +127,8 @@ def get_wt_codes():
 
     thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
 
-    codes = DecisionTree.wt_code(thrL, thrH)
-
-    return jsonify({"codes": codes})
+    dt = DecisionTree(threshold_low=thrL, threshold_high=thrH)
+    return jsonify({"codes": dt.leaf_codes})
 
 
 @app.route("/postprocessing/create-decision-tree", methods=("POST",))
@@ -239,9 +238,9 @@ def get_error_rep():
     df = pandas.DataFrame.from_records(matrix, columns=labels)
     thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
     loader = load_point_data_by_path(path, cheaper=cheaper)
-    rep = DecisionTree.cal_rep_error(
-        loader, thrL_out=thrL, thrH_out=thrH, nBin=int(numCols)
-    )
+
+    dt = DecisionTree(threshold_low=thrL, threshold_high=thrH)
+    rep = dt.cal_rep_error(loader, nBin=int(numCols))
 
     s = StringIO()
     rep.to_csv(s)
@@ -279,9 +278,9 @@ def save_operation():
         df = pandas.DataFrame.from_records(matrix, columns=labels)
         thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
         loader = load_point_data_by_path(pdt_path, cheaper=cheaper)
-        rep = DecisionTree.cal_rep_error(
-            loader, thrL_out=thrL, thrH_out=thrH, nBin=int(mf_cols)
-        )
+
+        dt = DecisionTree(threshold_low=thrL, threshold_high=thrH)
+        rep = dt.cal_rep_error(loader, nBin=int(mf_cols))
 
         path = output_path
         if mode == "all":

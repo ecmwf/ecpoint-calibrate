@@ -1,7 +1,7 @@
 import math
 from base64 import b64encode
 from io import BytesIO
-from typing import List, Tuple
+from typing import Generator, List, Tuple
 
 import attr
 import matplotlib
@@ -38,7 +38,18 @@ class DecisionTree(object):
         return len(self.threshold_low)
 
     @property
-    def leaf_color_codes(self) -> List[str]:
+    def leaf_codes(self) -> List[str]:
+        def g(node: Node):
+            if not node.children:
+                yield node.meta["code"]
+
+            for child in node.children:
+                yield from g(node=child)
+
+        return list(g(node=self.tree))
+
+    @property
+    def leaf_colors(self) -> List[str]:
         colors = [
             Color("#f278f6"),
             Color("#d10330"),
@@ -182,7 +193,7 @@ class DecisionTree(object):
                     "shape": "circle",
                     "shapeProps": {
                         "r": 10,
-                        "stroke": self.leaf_color_codes[curr.meta["level"]],
+                        "stroke": self.leaf_colors[curr.meta["level"]],
                     },
                 }
 
@@ -195,21 +206,16 @@ class DecisionTree(object):
 
         return codegen(node=root, code="0" * self.num_predictors)
 
-    @classmethod
-    def cal_rep_error(
-        cls, loader: BasePointDataReader, thrL_out, thrH_out, nBin
-    ) -> pd.DataFrame:
-        num_wt = len(thrL_out)
-        codes = cls.wt_code(thrL_out, thrH_out)
-        rep_error = np.zeros((num_wt, nBin))
+    def cal_rep_error(self, loader: BasePointDataReader, nBin) -> pd.DataFrame:
+        rep_error = np.zeros((self.num_wt, nBin))
         a = np.arange(nBin)
 
-        for i in range(num_wt):
+        for i in range(self.num_wt):
             wt = WeatherType(
-                thrL=thrL_out.iloc[i, :],
-                thrH=thrH_out.iloc[i, :],
-                thrL_labels=thrL_out.columns.tolist(),
-                thrH_labels=thrH_out.columns.tolist(),
+                thrL=self.threshold_low.iloc[i, :],
+                thrH=self.threshold_high.iloc[i, :],
+                thrL_labels=self.threshold_low.columns.tolist(),
+                thrH_labels=self.threshold_high.columns.tolist(),
             )
 
             df, title = wt.evaluate(loader.error_type.name, loader=loader)
@@ -236,45 +242,8 @@ class DecisionTree(object):
 
                 rep_error[i][k] = ((low_val * w_low) + (up_val * w_up)) / (w_low + w_up)
 
-        df = pd.DataFrame(data=rep_error, index=codes)
+        df = pd.DataFrame(data=rep_error, index=self.leaf_codes)
         return df.round(3)
-
-    @classmethod
-    def wt_code(cls, thrL_out, thrH_out):
-        num_wt = len(thrL_out)
-        num_pred = len(thrL_out.columns)
-        wt = np.zeros((num_wt, num_pred))
-        wt_arr = []
-        wt_temp = ""
-        for j in range(num_pred):
-            if thrL_out.iloc[0, j] == -inf and thrH_out.iloc[0, j] == inf:
-                wt[0][j] = 0
-            elif thrL_out.iloc[0, j] == -inf and thrH_out.iloc[0, j] != inf:
-                wt[0][j] = 1
-
-            wt_temp += str(int(wt[0][j]))
-
-        wt_arr.append(wt_temp)
-
-        for i in range(1, num_wt):
-            wt_temp = ""
-            for j in range(num_pred):
-                if thrL_out.iloc[i, j] == -inf and thrH_out.iloc[i, j] == inf:
-                    wt[i][j] = 0
-                elif thrL_out.iloc[i, j] == -inf and thrH_out.iloc[i, j] != inf:
-                    wt[i][j] = 1
-                else:
-                    if (
-                        thrL_out.iloc[i, j] == thrL_out.iloc[i - 1, j]
-                        and thrH_out.iloc[i, j] == thrH_out.iloc[i - 1, j]
-                    ):
-                        wt[i][j] = wt[i - 1][j]
-                    else:
-                        wt[i][j] = wt[i - 1][j] + 1
-                wt_temp += str(int(wt[i][j]))
-            wt_arr.append(wt_temp)
-
-        return wt_arr
 
 
 @attr.s(slots=True)
