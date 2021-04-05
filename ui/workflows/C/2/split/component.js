@@ -19,6 +19,9 @@ import {
 
 import _ from 'lodash'
 
+import ReactDataSheet from 'react-datasheet'
+import 'react-datasheet/lib/react-datasheet.css'
+
 import map from 'lodash/fp/map'
 import sortBy from 'lodash/fp/sortBy'
 import reverse from 'lodash/fp/reverse'
@@ -196,6 +199,67 @@ class Split extends Component {
         }}
       />
     )
+
+  renderDefintiveBreakpoints = breakpoints => {
+    return (
+      <ReactDataSheet
+        data={breakpoints.map(el => [el])}
+        valueRenderer={cell => cell}
+        onCellsChanged={changes => {
+          const grid = breakpoints.map(el => [el])
+          changes.forEach(({ cell, row, col, value }) => {
+            grid[row][col] = parseFloat(value)
+          })
+          this.setState({ definitiveBreakpoints: _.sortBy(grid.flat()) })
+        }}
+        sheetRenderer={props => (
+          <Table celled compact definition>
+            <Table.Header fullWidth>
+              <Table.Row>
+                <Table.HeaderCell />
+                <Table.HeaderCell>Select?</Table.HeaderCell>
+                <Table.HeaderCell textAlign="center">Breakpoint</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>{props.children}</Table.Body>
+          </Table>
+        )}
+        rowRenderer={props => (
+          <Table.Row key={props.row}>
+            {
+              <Table.Cell collapsing>
+                <Button
+                  icon="delete"
+                  circular
+                  onClick={() => {
+                    const items = [...breakpoints]
+                    items.splice(props.row, 1)
+                    this.setState({
+                      definitiveBreakpoints: _.sortBy(items),
+                      selectedDefinitiveBreakpointIdx: null,
+                    })
+                  }}
+                  size="mini"
+                  disabled={props.row === 0 && breakpoints.length === 1}
+                />
+              </Table.Cell>
+            }
+            {
+              <Table.Cell collapsing>
+                <Radio
+                  checked={this.state.selectedDefinitiveBreakpointIdx === props.row}
+                  onChange={() =>
+                    this.setState({ selectedDefinitiveBreakpointIdx: props.row })
+                  }
+                />
+              </Table.Cell>
+            }
+            {props.children}
+          </Table.Row>
+        )}
+      />
+    )
+  }
 
   getSwitcher() {
     return (
@@ -498,35 +562,7 @@ class Split extends Component {
                   <Container textAlign="left">
                     <h4>Definitive breakpoints:</h4>
                   </Container>
-                  <Table celled compact definition>
-                    <Table.Header fullWidth>
-                      <Table.Row>
-                        <Table.HeaderCell />
-                        <Table.HeaderCell textAlign="center">
-                          Breakpoint
-                        </Table.HeaderCell>
-                      </Table.Row>
-                    </Table.Header>
-
-                    <Table.Body>
-                      {this.state.definitiveBreakpoints.map((each, idx) => (
-                        <Table.Row key={idx}>
-                          <Table.Cell collapsing>
-                            <Radio
-                              checked={
-                                this.state.selectedDefinitiveBreakpointIdx === idx
-                              }
-                              onChange={() =>
-                                this.setState({ selectedDefinitiveBreakpointIdx: idx })
-                              }
-                            />
-                          </Table.Cell>
-
-                          <Table.Cell textAlign="center">{each}</Table.Cell>
-                        </Table.Row>
-                      ))}
-                    </Table.Body>
-                  </Table>
+                  {this.renderDefintiveBreakpoints(this.state.definitiveBreakpoints)}
                 </Grid.Row>
                 <Grid.Row>
                   <Grid padded>
