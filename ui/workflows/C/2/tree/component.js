@@ -9,6 +9,7 @@ import { errorHandler } from '~/utils/toast'
 import MappingFunction from './mappingFunction'
 import Split from '../split'
 import { mergeToPreviousRow, isMergeableToPreviousRow } from '../breakpoints/core'
+import _ from 'lodash'
 
 const mainProcess = require('@electron/remote').require('./server')
 
@@ -33,10 +34,14 @@ export default class TreeContainer extends Component {
     })
   }
 
-  onNodeClickExploreMode = node => {
-    this.setState({ openMappingFunction: true, nodeMeta: node.meta })
+  getMergedMatrix(node) {
+    const matrix = this.props.breakpoints
+      .map(row => _.flatMap(row.slice(1)))
+      .map(inner => inner.slice())
 
-    let matrix = this.props.breakpoints.map(row => _.flatMap(row.slice(1)))
+    if (!node.children) {
+      return [_.uniqWith(matrix, _.isEqual), node.meta.idxWT]
+    }
 
     const getRightSubtreeIdx = node =>
       !node.children ? node.meta.idxWT : getRightSubtreeIdx(node.children.slice(-1)[0])
@@ -44,14 +49,21 @@ export default class TreeContainer extends Component {
     const getLeftSubtreeIdx = node =>
       !node.children ? node.meta.idxWT : getLeftSubtreeIdx(node.children[0])
 
-    let from = getRightSubtreeIdx(node)
-    let to = getLeftSubtreeIdx(node)
-
-    for (; from > to; from--) {
-      while (from < matrix.length && isMergeableToPreviousRow(from, matrix)) {
-        matrix = mergeToPreviousRow(from, matrix)
+    for (var i = getLeftSubtreeIdx(node); i <= getRightSubtreeIdx(node); i++) {
+      var row = matrix[i]
+      for (var j = (node.meta.level + 1) * 2; j < row.length; j += 2) {
+        matrix[i][j] = '-inf'
+        matrix[i][j + 1] = 'inf'
       }
     }
+
+    return [_.uniqWith(matrix, _.isEqual), getRightSubtreeIdx(node)]
+  }
+
+  onNodeClickExploreMode = node => {
+    this.setState({ openMappingFunction: true, nodeMeta: node.meta })
+
+    const [matrix, from] = this.getMergedMatrix(node)
 
     client
       .post('/postprocessing/generate-wt-histogram', {
@@ -66,6 +78,11 @@ export default class TreeContainer extends Component {
         this.setState({ graph: response.data.histogram })
       })
       .catch(errorHandler)
+  }
+
+  onNodeClickMergeChildrenMode = node => {
+    const [matrix, _] = this.getMergedMatrix(node)
+    this.props.setBreakpoints(this.props.labels, matrix)
   }
 
   onNodeClickConditionalVerificationMode = node => {
@@ -98,7 +115,10 @@ export default class TreeContainer extends Component {
   }
 
   onNodeClick = (node, event) => {
-    if (!!node._children && this.state.mode !== 'non-collapsible') {
+    if (
+      !!node._children &&
+      !['non-collapsible', 'merge-children'].includes(this.state.mode)
+    ) {
       return
     }
 
@@ -110,6 +130,8 @@ export default class TreeContainer extends Component {
       this.onNodeClickExploreMode(node)
     } else if (this.state.mode === 'non-collapsible') {
       this.onNodeClickExploreMode(node)
+    } else if (this.state.mode === 'merge-children') {
+      this.onNodeClickMergeChildrenMode(node)
     }
   }
 
@@ -186,6 +208,18 @@ export default class TreeContainer extends Component {
             })
           }
           checked={this.state.mode === 'non-collapsible'}
+        />
+      </Form.Field>
+      <Form.Field>
+        <Radio
+          label="Merge children"
+          onChange={() =>
+            this.setState({
+              mode: 'merge-children',
+              conditionalVerificationMode: false,
+            })
+          }
+          checked={this.state.mode === 'merge-children'}
         />
       </Form.Field>
     </Form.Group>
@@ -317,7 +351,7 @@ export default class TreeContainer extends Component {
           nodeLabelComponent={{
             render: <NodeLabel />,
           }}
-          collapsible={this.state.mode !== 'non-collapsible'}
+          collapsible={!['non-collapsible', 'merge-children'].includes(this.state.mode)}
         />
 
         <MappingFunction
