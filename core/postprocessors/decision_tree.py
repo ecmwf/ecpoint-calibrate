@@ -285,7 +285,7 @@ class WeatherType(object):
         else:
             df: pd.DataFrame = loader.dataframe[list(cols)]
 
-        title_pred = ""
+        title_pred = ()
 
         for thrL_label, thrH_label in zip(self.thrL_labels, self.thrH_labels):
             thrL_temp = self.thrL[thrL_label]
@@ -312,13 +312,19 @@ class WeatherType(object):
 
             df = df.loc[mask]
 
-            title_pred += "({low} <= {pred} < {high}) ".format(
-                low=int_or_float(thrL_temp),
-                pred=predictor_shortname,
-                high=int_or_float(thrH_temp),
+            title_pred += (
+                "({low} <= {pred} < {high})".format(
+                    low=int_or_float(thrL_temp),
+                    pred=predictor_shortname,
+                    high=int_or_float(thrH_temp),
+                ),
             )
 
-        return df, title_pred
+        # Chunk predictor titles in groups of 6 (practically chosen), and join
+        # them by new-line character.
+        chunks = [title_pred[i:i + 6] for i in range(0, len(title_pred), 6)]
+        title = "\n".join(" ".join(chunk) for chunk in chunks)
+        return df, title
 
     def _evaluate(self, predictors_matrix):
         """
