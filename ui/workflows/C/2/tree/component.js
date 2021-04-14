@@ -40,7 +40,7 @@ export default class TreeContainer extends Component {
       .map(inner => inner.slice())
 
     if (!node.children) {
-      return [_.uniqWith(matrix, _.isEqual), node.meta.idxWT]
+      return [matrix, node.meta.idxWT]
     }
 
     const getRightSubtreeIdx = node =>
@@ -57,7 +57,7 @@ export default class TreeContainer extends Component {
       }
     }
 
-    return [_.uniqWith(matrix, _.isEqual), getRightSubtreeIdx(node)]
+    return [matrix, getRightSubtreeIdx(node)]
   }
 
   onNodeClickExploreMode = node => {
@@ -81,8 +81,8 @@ export default class TreeContainer extends Component {
   }
 
   onNodeClickMergeChildrenMode = node => {
-    const [matrix, _] = this.getMergedMatrix(node)
-    this.props.setBreakpoints(this.props.labels, matrix)
+    const [matrix, from] = this.getMergedMatrix(node)
+    this.props.setBreakpoints(this.props.labels, _.uniqWith(matrix, _.isEqual))
   }
 
   onNodeClickConditionalVerificationMode = node => {
