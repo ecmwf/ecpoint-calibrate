@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 
 import Tree from 'react-d3-tree'
+import PureSvgNodeElement from './nodeElement'
 import { saveSvgAsPng } from 'save-svg-as-png'
 
 import { Button, Dimmer, Loader, Radio, Form, Grid } from 'semantic-ui-react'
@@ -8,7 +9,6 @@ import client from '~/utils/client'
 import { errorHandler } from '~/utils/toast'
 import MappingFunction from './mappingFunction'
 import Split from '../split'
-import { mergeToPreviousRow, isMergeableToPreviousRow } from '../breakpoints/core'
 import _ from 'lodash'
 
 const mainProcess = require('@electron/remote').require('./server')
@@ -39,15 +39,17 @@ export default class TreeContainer extends Component {
       .map(row => _.flatMap(row.slice(1)))
       .map(inner => inner.slice())
 
-    if (!node.children) {
+    if (node.children.length === 0) {
       return [matrix, node.meta.idxWT]
     }
 
     const getRightSubtreeIdx = node =>
-      !node.children ? node.meta.idxWT : getRightSubtreeIdx(node.children.slice(-1)[0])
+      node.children.length === 0
+        ? node.meta.idxWT
+        : getRightSubtreeIdx(node.children.slice(-1)[0])
 
     const getLeftSubtreeIdx = node =>
-      !node.children ? node.meta.idxWT : getLeftSubtreeIdx(node.children[0])
+      node.children.length === 0 ? node.meta.idxWT : getLeftSubtreeIdx(node.children[0])
 
     for (var i = getLeftSubtreeIdx(node); i <= getRightSubtreeIdx(node); i++) {
       var row = matrix[i]
@@ -115,10 +117,7 @@ export default class TreeContainer extends Component {
   }
 
   onNodeClick = (node, event) => {
-    if (
-      !!node._children &&
-      !['non-collapsible', 'merge-children'].includes(this.state.mode)
-    ) {
+    if (node.children.length !== 0 && this.shouldCollapseNode()) {
       return
     }
 
@@ -134,6 +133,9 @@ export default class TreeContainer extends Component {
       this.onNodeClickMergeChildrenMode(node)
     }
   }
+
+  shouldCollapseNode = () =>
+    !['non-collapsible', 'merge-children'].includes(this.state.mode)
 
   handleKeyboardInput = e => {
     const code = e.keyCode ? e.keyCode : e.which
@@ -346,12 +348,11 @@ export default class TreeContainer extends Component {
           data={this.props.data}
           translate={this.state.translate}
           orientation={'vertical'}
-          onClick={(node, event) => this.onNodeClick(node, event)}
+          onNodeClick={(node, event) => this.onNodeClick(node, event)}
           allowForeignObjects
-          nodeLabelComponent={{
-            render: <NodeLabel />,
-          }}
-          collapsible={!['non-collapsible', 'merge-children'].includes(this.state.mode)}
+          renderCustomNodeElement={nodeProps => <PureSvgNodeElement {...nodeProps} />}
+          collapsible={this.shouldCollapseNode()}
+          separation={{ siblings: 2, nonSiblings: 2 }}
         />
 
         <MappingFunction
@@ -388,12 +389,3 @@ export default class TreeContainer extends Component {
     )
   }
 }
-
-const NodeLabel = ({ nodeData }) => (
-  <div
-    style={{ fontSize: '12px', paddingLeft: '15px', width: '200px', fontWeight: 700 }}
-  >
-    <p>{nodeData.name}</p>
-    {nodeData.meta.code && <p>WT {nodeData.meta.code}</p>}
-  </div>
-)

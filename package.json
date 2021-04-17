@@ -92,7 +92,7 @@
     "lodash": "^4.17.20",
     "prettier": "1.18.2",
     "react": "^16.13.1",
-    "react-d3-tree": "1.11.0",
+    "react-d3-tree": "^2.0.1",
     "react-datasheet": "^1.4.8",
     "react-datepicker": "^3.3.0",
     "react-dom": "^16.13.1",
