@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 import Tree from 'react-d3-tree'
-import PureSvgNodeElement from './nodeElement'
+import NodeLabel from './nodeElement'
 import { saveSvgAsPng } from 'save-svg-as-png'
 
 import { Button, Dimmer, Loader, Radio, Form, Grid } from 'semantic-ui-react'
@@ -116,8 +116,9 @@ export default class TreeContainer extends Component {
     this.setState({ openSplit: true, nodeMeta: node.meta })
   }
 
-  onNodeClick = (node, event) => {
+  onNodeClick = (node, toggleNode) => {
     if (node.children.length !== 0 && this.shouldCollapseNode()) {
+      toggleNode()
       return
     }
 
@@ -347,10 +348,14 @@ export default class TreeContainer extends Component {
         <Tree
           data={this.props.data}
           translate={this.state.translate}
-          orientation={'vertical'}
-          onNodeClick={(node, event) => this.onNodeClick(node, event)}
+          orientation="vertical"
           allowForeignObjects
-          renderCustomNodeElement={nodeProps => <PureSvgNodeElement {...nodeProps} />}
+          renderCustomNodeElement={nodeProps => (
+            <NodeLabel
+              {...nodeProps}
+              onNodeClick={(node, toggleNode) => this.onNodeClick(node, toggleNode)}
+            />
+          )}
           collapsible={this.shouldCollapseNode()}
           separation={{ siblings: 2, nonSiblings: 2 }}
         />

@@ -189,9 +189,7 @@ class DecisionTree(object):
             if not curr.children:
                 curr.meta["idxWT"] = i
                 curr.nodeSvgShape = {
-                    "shape": "circle",
                     "shapeProps": {
-                        "r": 10,
                         "stroke": self.leaf_colors[curr.meta["level"]],
                     },
                 }
