@@ -56,7 +56,7 @@ class BasePointDataReader(abc.ABC):
 
         return {
             "predictors": {
-                k: v.replace("NoUnit", "") or None for k, v in predictors.items()
+                k: v.replace("NoUnit", "-") for k, v in predictors.items()
             },
             "observations": obs,
             "predictand": predictand,

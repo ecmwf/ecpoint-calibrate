@@ -85,7 +85,9 @@ class Periods extends Component {
                           />
                         </Table.Cell>
                         <Table.Cell>{predictor}</Table.Cell>
-                        <Table.Cell>{this.props.units[predictor]}</Table.Cell>
+                        <Table.Cell>
+                          {this.props.units?.predictors[predictor]}
+                        </Table.Cell>
                         <Table.Cell>
                           <Input
                             label="lower"
