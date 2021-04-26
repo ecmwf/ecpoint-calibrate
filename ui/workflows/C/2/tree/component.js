@@ -252,12 +252,16 @@ export default class TreeContainer extends Component {
                     value="a"
                     checked={this.state.conditionalVerificationMode === 'a'}
                     onChange={() =>
-                      this.state.conditionalVerificationMode !== 'a'
+                      this.state.conditionalVerificationMode === 'a'
+                        ? this.setState({ conditionalVerificationMode: false })
+                        : ['simple', 'non-collapsible'].includes(this.state.mode)
                         ? this.setState({
+                            conditionalVerificationMode: 'a',
+                          })
+                        : this.setState({
                             conditionalVerificationMode: 'a',
                             mode: 'simple',
                           })
-                        : this.setState({ conditionalVerificationMode: false })
                     }
                     toggle
                   />
@@ -269,12 +273,16 @@ export default class TreeContainer extends Component {
                     value="b"
                     checked={this.state.conditionalVerificationMode === 'b'}
                     onChange={() =>
-                      this.state.conditionalVerificationMode !== 'b'
+                      this.state.conditionalVerificationMode === 'b'
+                        ? this.setState({ conditionalVerificationMode: false })
+                        : ['simple', 'non-collapsible'].includes(this.state.mode)
                         ? this.setState({
+                            conditionalVerificationMode: 'b',
+                          })
+                        : this.setState({
                             conditionalVerificationMode: 'b',
                             mode: 'simple',
                           })
-                        : this.setState({ conditionalVerificationMode: false })
                     }
                     toggle
                   />
@@ -286,12 +294,16 @@ export default class TreeContainer extends Component {
                     value="c"
                     checked={this.state.conditionalVerificationMode === 'c'}
                     onChange={() =>
-                      this.state.conditionalVerificationMode !== 'c'
+                      this.state.conditionalVerificationMode === 'c'
+                        ? this.setState({ conditionalVerificationMode: false })
+                        : ['simple', 'non-collapsible'].includes(this.state.mode)
                         ? this.setState({
+                            conditionalVerificationMode: 'c',
+                          })
+                        : this.setState({
                             conditionalVerificationMode: 'c',
                             mode: 'simple',
                           })
-                        : this.setState({ conditionalVerificationMode: false })
                     }
                     toggle
                   />
