@@ -27,6 +27,7 @@ def get_pdt_statistics(path: str) -> dict:
     return dict(
         fields=fields,
         summary=summary,
+        units=loader.units,
         count=error_count,
         error=loader.error_type.name,
         bins=WeatherType.DEFAULT_FER_BINS if loader.error_type == ErrorType.FER else [],
