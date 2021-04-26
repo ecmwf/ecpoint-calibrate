@@ -1,4 +1,5 @@
 import abc
+import re
 from dataclasses import dataclass
 from enum import Enum
 from typing import List, Union
@@ -32,6 +33,28 @@ class BasePointDataReader(abc.ABC):
     @abc.abstractmethod
     def metadata(self) -> dict:
         raise NotImplementedError
+
+    @property
+    def units(self) -> dict:
+        header = self.metadata["header"]
+
+        predictand_idx = header.find("# PREDICTAND")
+        predictors_idx = header.find("# PREDICTORS")
+        obs_idx = header.find("# OBSERVATIONS")
+
+        predictand_text = header[predictand_idx:predictors_idx]
+        predictors_text = header[predictors_idx:obs_idx]
+        obs_text = header[obs_idx:]
+
+        m = re.search(r"Variable\W+= (.*) \(in (.*)\)", predictand_text)
+        predictand = {m.group(1): m.group(2)} if m else {}
+
+        predictors = dict(re.findall(r", (.*) \[(.*)]", predictors_text))
+
+        m = re.search(r"Parameter\W+= (.*) \(in (.*)\)", obs_text)
+        obs = {m.group(1): m.group(2)} if m else {}
+
+        return {"predictors": predictors, "observations": obs, "predictand": predictand}
 
     @property
     @abc.abstractmethod
