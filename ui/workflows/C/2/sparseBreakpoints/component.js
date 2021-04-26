@@ -8,7 +8,6 @@ import _ from 'lodash'
 
 import client from '~/utils/client'
 import { errorHandler } from '~/utils/toast'
-import { realNumbers } from '~/utils/patterns'
 import { validateThresholdSequence } from './core'
 
 class SparseBreakpoints extends Component {

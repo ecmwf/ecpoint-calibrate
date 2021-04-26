@@ -6,11 +6,13 @@ import { onFieldsSortEnd } from './actions'
 
 const mapStateToProps = state => ({
   fields: state.postprocessing.fields,
+  thrGridIn: state.postprocessing.thrGridIn,
+  thrGridOut: state.postprocessing.thrGridOut,
 })
 
 const mapDispatchToProps = dispatch => ({
-  onFieldsSortEnd: (fields, oldIndex, newIndex) =>
-    dispatch(onFieldsSortEnd(fields, oldIndex, newIndex)),
+  onFieldsSortEnd: (fields, thrGridIn, thrGridOut, oldIndex, newIndex) =>
+    dispatch(onFieldsSortEnd(fields, thrGridIn, thrGridOut, oldIndex, newIndex)),
 })
 
 export default connect(

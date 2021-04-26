@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
+import React from 'react'
 
-import { Grid, Card, Button, Icon, Segment, Item, Input } from 'semantic-ui-react'
+import { Segment } from 'semantic-ui-react'
 
 import { SortableContainer, SortableElement } from 'react-sortable-hoc'
 
@@ -25,12 +25,18 @@ const Levels = props => (
     <SortableList
       items={props.fields}
       onSortEnd={({ oldIndex, newIndex }) =>
-        props.onFieldsSortEnd(props.fields, oldIndex, newIndex)
+        props.onFieldsSortEnd(
+          props.fields,
+          props.thrGridIn,
+          props.thrGridOut,
+          oldIndex,
+          newIndex
+        )
       }
     />
     <small>
-      <b>Note:</b> Modifying the current arrangement will clear the threshold
-      breakpoints in the sheet below.
+      <b>⚠️ Caution:</b> Modifying the current arrangement will partially clear the
+      threshold breakpoints in the sheet below.
     </small>
   </>
 )
