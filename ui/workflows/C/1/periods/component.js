@@ -66,6 +66,7 @@ class Periods extends Component {
                     <Table.Row>
                       <Table.HeaderCell>Circular?</Table.HeaderCell>
                       <Table.HeaderCell>Predictor</Table.HeaderCell>
+                      <Table.HeaderCell>Units</Table.HeaderCell>
                       <Table.HeaderCell>Range</Table.HeaderCell>
                       <Table.HeaderCell>Period</Table.HeaderCell>
                     </Table.Row>
@@ -84,6 +85,7 @@ class Periods extends Component {
                           />
                         </Table.Cell>
                         <Table.Cell>{predictor}</Table.Cell>
+                        <Table.Cell>{this.props.units[predictor]}</Table.Cell>
                         <Table.Cell>
                           <Input
                             label="lower"

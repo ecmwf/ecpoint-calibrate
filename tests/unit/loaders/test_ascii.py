@@ -23,7 +23,7 @@ def test_alfa_units():
         "predictors": {
             "TP": "mm",
             "CP": "mm",
-            "CPR": "NoUnit",
+            "CPR": None,
             "CAPE": "J kg**-1",
             "WSPD": "m s**-1",
             "SR24H": "W m**-2",

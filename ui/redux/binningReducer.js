@@ -5,6 +5,7 @@ const defaultState = {
   count: null,
   error: null,
   summary: null,
+  units: null,
 }
 
 export default (state = defaultState, action) => {
@@ -22,6 +23,7 @@ export default (state = defaultState, action) => {
         error: action.error,
         bins: action.bins,
         summary: action.summary,
+        units: action.units,
       }
     }
 

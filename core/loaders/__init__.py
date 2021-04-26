@@ -54,7 +54,13 @@ class BasePointDataReader(abc.ABC):
         m = re.search(r"Parameter\W+= (.*) \(in (.*)\)", obs_text)
         obs = {m.group(1): m.group(2)} if m else {}
 
-        return {"predictors": predictors, "observations": obs, "predictand": predictand}
+        return {
+            "predictors": {
+                k: v.replace("NoUnit", "") or None for k, v in predictors.items()
+            },
+            "observations": obs,
+            "predictand": predictand,
+        }
 
     @property
     @abc.abstractmethod
