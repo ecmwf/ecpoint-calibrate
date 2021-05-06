@@ -46,6 +46,10 @@ export const validateThresholdSequence = (sequence, range) => {
     return false
   }
 
+  if (!isLinear && _.isEqual(range, trimmedSequence)) {
+    return true
+  }
+
   /**
    * STEP 5: Define a helper to check if a given string is a valid element of
    * the sequence.
@@ -86,7 +90,14 @@ export const validateThresholdSequence = (sequence, range) => {
    * in order to cover the entire range.
    */
   let previousLow = stack.slice(-1)[0]
-  if (!isLinear && stack[0] !== previousLow) {
+  const firstElement = stack[0]
+
+  if (
+    !isLinear &&
+    firstElement !== previousLow &&
+    firstElement !== range[0] &&
+    previousLow !== range[1]
+  ) {
     return false
   }
 
@@ -137,7 +148,11 @@ export const validateThresholdSequence = (sequence, range) => {
         return false
       }
 
-      if (!isLessThan(low, range[1]) || !isLessThan(high, range[1])) {
+      if (firstElement === range[0]) {
+        if (!isLessThan(low, range[1]) && !isLessThan(high, range[1])) {
+          return false
+        }
+      } else if (!isLessThan(low, range[1]) || !isLessThan(high, range[1])) {
         return false
       }
     }

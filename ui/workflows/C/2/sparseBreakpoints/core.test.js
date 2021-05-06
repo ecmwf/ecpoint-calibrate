@@ -11,6 +11,8 @@ const thresholdSequenceTestCases = [
   [['-inf', '1', '1', '2', '2', 'inf'], ['-inf', 'inf'], true],
   [['-inf', '-1', '-1', '2.1', '2.1', 'inf'], ['-inf', 'inf'], true],
   [['21', '3', '3', '9', '9', '21'], ['0', '24'], true],
+  [['0', '24'], ['0', '24'], true],
+  [['0', '10', '10', '24'], ['0', '24'], true],
 
   /**
    * KO cases.
@@ -30,7 +32,8 @@ const thresholdSequenceTestCases = [
   [['21', '3', '3', '9', '9', '20'], ['0', '24'], false], // circular sequence has distinct ends
   [['25', '3', '3', '9', '9', '25'], ['0', '24'], false], // out of range
   [['-1', '3', '3', '9', '9', '-1'], ['0', '24'], false], // out of range
-  [['-inf', '2', '2', '3', '3', 'inf'], ['0', '24'], false],
+  [['-inf', '2', '2', '3', '3', 'inf'], ['0', '24'], false], // out of range
+  [['0', '2', '3', '4', '4', '24'], ['0', '24'], false], // non-continuous sequence
 ]
 
 test.each(thresholdSequenceTestCases)(
