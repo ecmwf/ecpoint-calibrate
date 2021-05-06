@@ -70,7 +70,20 @@ class Split extends Component {
   }
 
   split = (value, level, matrix) => {
-    const idx = this.props.nodeMeta.idxWT
+    for (var idx = 0; idx < matrix.length; idx++) {
+      let low = matrix[idx][level * 2]
+      let high = matrix[idx][level * 2 + 1]
+
+      low = low === '-inf' ? -Infinity : low
+      high = high === 'inf' ? Infinity : high
+
+      if (
+        parseFloat(value) >= parseFloat(low) &&
+        parseFloat(value) <= parseFloat(high)
+      ) {
+        break
+      }
+    }
 
     const source = [...matrix[idx]]
     const newWt = [...matrix[idx]]

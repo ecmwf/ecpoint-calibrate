@@ -29,10 +29,16 @@ export const isMergeableToPreviousRow = (row, matrix) => {
     index += 1
   }
 
-  const [
-    [[aHighFirst, aLowFirst], [bHighFirst, bLowFirst]],
-    ...rest
-  ] = zipped_columns.slice(index)
+  const pruned_columns = zipped_columns.slice(index)
+
+  if (
+    pruned_columns.length === 1 &&
+    pruned_columns.map(row => row.every(cell => cell.length === 1)).every(e => e)
+  ) {
+    return true
+  }
+
+  const [[[aHighFirst, aLowFirst], [bHighFirst, bLowFirst]], ...rest] = pruned_columns
 
   return aHighFirst === bLowFirst
 }
