@@ -12,7 +12,8 @@ export const onFieldsSortEnd = (
   thrGridIn,
   thrGridOut,
   oldIndex,
-  newIndex
+  newIndex,
+  fieldRanges
 ) => async dispatch => {
   await dispatch(setFields(arrayMove(fields, oldIndex, newIndex)))
 
@@ -47,7 +48,7 @@ export const onFieldsSortEnd = (
   const minIndex = oldIndex < newIndex ? oldIndex : newIndex
 
   client
-    .post('/postprocessing/create-wt-matrix', { labels, records })
+    .post('/postprocessing/create-wt-matrix', { labels, records, fieldRanges })
     .then(response => {
       const sortedThrGridOut = sortGrid(thrGridOut)
       const fullThrGridOut = response.data.matrix

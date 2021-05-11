@@ -8,13 +8,15 @@ const mapStateToProps = state => ({
   breakpoints: state.postprocessing.thrGridOut,
   path: state.preloader.path,
   labels: state.postprocessing.thrGridIn[0].slice(1).map(cell => cell.value),
+  fieldRanges: state.postprocessing.fieldRanges,
   cheaper: state.preloader.cheaper,
   error: state.binning.error,
 })
 
 const mapDispatchToProps = dispatch => ({
   setLoading: value => dispatch(setLoading(value)),
-  setBreakpoints: (labels, matrix) => dispatch(setBreakpoints(labels, matrix)),
+  setBreakpoints: (labels, matrix, fieldRanges) =>
+    dispatch(setBreakpoints(labels, matrix, fieldRanges)),
 })
 
 export default connect(

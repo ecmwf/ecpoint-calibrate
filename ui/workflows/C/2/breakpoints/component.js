@@ -31,6 +31,7 @@ class Breakpoints extends Component {
         path: this.props.path,
         numCols: this.state.numColsMFs,
         cheaper: this.props.cheaper,
+        fieldRanges: this.props.fieldRanges,
       })
       .then(response => {
         this.props.setLoading(false)
@@ -83,7 +84,11 @@ class Breakpoints extends Component {
                           rowIdx,
                           this.props.breakpoints.map(row => _.flatMap(row.slice(1)))
                         )
-                        this.props.setBreakpoints(this.props.labels, matrix)
+                        this.props.setBreakpoints(
+                          this.props.labels,
+                          matrix,
+                          this.props.fieldRanges
+                        )
                       }}
                       size="mini"
                     />
@@ -113,7 +118,11 @@ class Breakpoints extends Component {
                 const data = csv.split('\n').map(row => row.split(','))
                 const matrix = data.slice(1).map(row => row.slice(1))
                 this.props.setLoading('Generating and rendering decision tree.')
-                this.props.setBreakpoints(this.props.labels, matrix)
+                this.props.setBreakpoints(
+                  this.props.labels,
+                  matrix,
+                  this.props.fieldRanges
+                )
                 this.props.setLoading(false)
               }}
             />

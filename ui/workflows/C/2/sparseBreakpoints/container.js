@@ -15,7 +15,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   setSparseBreakpoints: grid => dispatch(setSparseBreakpoints(grid)),
-  setBreakpoints: (labels, matrix) => dispatch(setBreakpoints(labels, matrix)),
+  setBreakpoints: (labels, matrix, fieldRanges) =>
+    dispatch(setBreakpoints(labels, matrix, fieldRanges)),
 })
 
 export default connect(

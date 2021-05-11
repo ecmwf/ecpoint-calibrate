@@ -30,7 +30,8 @@ const Levels = props => (
           props.thrGridIn,
           props.thrGridOut,
           oldIndex,
-          newIndex
+          newIndex,
+          props.fieldRanges
         )
       }
     />

@@ -21,6 +21,7 @@ from .generics import Node
 class DecisionTree(object):
     threshold_low = attr.ib()
     threshold_high = attr.ib()
+    ranges = attr.ib()
 
     @property
     def predictors(self) -> List[str]:
@@ -88,7 +89,7 @@ class DecisionTree(object):
         return thresholds_num, thresholds_num_acc, num_predictors
 
     @classmethod
-    def create_from_sparse_thresholds(cls, low, high) -> "DecisionTree":
+    def create_from_sparse_thresholds(cls, low, high, ranges) -> "DecisionTree":
         thresholds_num, thresholds_num_acc, num_predictors = cls._get_threshold_counts(
             low
         )
@@ -147,6 +148,7 @@ class DecisionTree(object):
         return cls(
             threshold_low=pd.DataFrame(data=thrL_matrix, columns=low.columns),
             threshold_high=pd.DataFrame(data=thrH_matrix, columns=high.columns),
+            ranges=ranges
         )
 
     @property
@@ -174,7 +176,7 @@ class DecisionTree(object):
                     curr = matched_node
                     continue
                 else:
-                    maybe_child = Node(text)
+                    maybe_child = Node(text, range=self.ranges[predictor])
                     maybe_child.meta["predictor"] = predictor
                     maybe_child.meta["level"] = level
                     curr.meta["idxWT"] = i

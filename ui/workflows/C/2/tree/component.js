@@ -86,7 +86,11 @@ export default class TreeContainer extends Component {
 
   onNodeClickMergeChildrenMode = node => {
     const [matrix, from] = this.getMergedMatrix(node)
-    this.props.setBreakpoints(this.props.labels, _.uniqWith(matrix, _.isEqual))
+    this.props.setBreakpoints(
+      this.props.labels,
+      _.uniqWith(matrix, _.isEqual),
+      this.props.fieldRanges
+    )
   }
 
   onNodeClickMergeLeafNode = node => {
@@ -106,7 +110,7 @@ export default class TreeContainer extends Component {
       from,
       this.props.breakpoints.map(row => _.flatMap(row.slice(1)))
     )
-    this.props.setBreakpoints(this.props.labels, matrix)
+    this.props.setBreakpoints(this.props.labels, matrix, this.props.fieldRanges)
   }
 
   onNodeClickConditionalVerificationMode = node => {
@@ -427,6 +431,7 @@ export default class TreeContainer extends Component {
           nodeMeta={this.state.nodeMeta}
           breakpoints={this.props.breakpoints}
           setBreakpoints={this.props.setBreakpoints}
+          fieldRanges={this.props.fieldRanges}
           fields={this.props.fields}
           path={this.props.path}
           labels={this.props.labels}

@@ -6,6 +6,7 @@ import attr
 @attr.s(slots=True)
 class Node(object):
     name = attr.ib()
+    range = attr.ib(default=None)
     children = attr.ib(default=attr.Factory(list))
     parent = attr.ib(default=None)
     meta = attr.ib(default=attr.Factory(dict))
@@ -24,7 +25,9 @@ class Node(object):
         if self.is_root:
             return True
 
-        m = re.match(r"-inf < .* < inf", self.name)
+        (low, high) = self.range
+
+        m = re.match(rf"{low} < .* < {high}", self.name)
         return bool(m)
 
     def add_child(self, node: "Node"):

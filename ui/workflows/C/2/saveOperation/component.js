@@ -170,7 +170,7 @@ class SaveOperation extends Component {
       .map(row => row.map(cell => cell.replace(this.state.inf, 'inf')))
 
     this.props.setLoading('Generating and rendering decision tree.')
-    this.props.setBreakpoints(this.props.labels, matrix)
+    this.props.setBreakpoints(this.props.labels, matrix, this.props.fieldRanges)
     this.props.setLoading(false)
     this.close()
   }
@@ -189,6 +189,7 @@ class SaveOperation extends Component {
         pdtPath: this.props.path,
         cheaper: this.props.cheaper,
         mode: this.props.mode,
+        fieldRanges: this.props.fieldRanges,
         breakpointsCSV:
           this.props.mode === 'breakpoints' || this.props.mode === 'all'
             ? this.getBreakpointsCSV()

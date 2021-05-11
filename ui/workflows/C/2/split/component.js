@@ -183,6 +183,7 @@ class Split extends Component {
           client
             .post('/postprocessing/get-wt-codes', {
               labels: this.props.labels,
+              fieldRanges: this.props.fieldRanges,
               matrix,
             })
             .then(response => {
@@ -683,7 +684,7 @@ class Split extends Component {
       }
       onClick={() => {
         const [matrix, nSplits] = this.getMatrixAfterSplit()
-        this.props.setBreakpoints(this.props.labels, matrix)
+        this.props.setBreakpoints(this.props.labels, matrix, this.props.fieldRanges)
         this.setState(defaultState)
         this.props.onClose()
       }}

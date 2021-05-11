@@ -1,9 +1,9 @@
 import client from '~/utils/client'
 import { errorHandler } from '~/utils/toast'
 
-export const setBreakpoints = (labels, matrix) => async dispatch => {
+export const setBreakpoints = (labels, matrix, fieldRanges) => async dispatch => {
   await client
-    .post('/postprocessing/get-wt-codes', { labels, matrix })
+    .post('/postprocessing/get-wt-codes', { labels, matrix, fieldRanges })
     .then(response =>
       dispatch({
         type: 'POSTPROCESSING.SET_WT_MATRIX',
@@ -13,7 +13,7 @@ export const setBreakpoints = (labels, matrix) => async dispatch => {
     .catch(errorHandler)
 
   await client
-    .post('/postprocessing/create-decision-tree', { labels, matrix })
+    .post('/postprocessing/create-decision-tree', { labels, matrix, fieldRanges })
     .then(response =>
       dispatch({ type: 'POSTPROCESSING.SET_TREE', data: response.data })
     )

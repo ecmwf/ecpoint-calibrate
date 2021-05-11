@@ -101,11 +101,15 @@ def get_pdt_metadata():
 @app.route("/postprocessing/create-wt-matrix", methods=("POST",))
 def create_weather_types_matrix():
     payload = request.get_json()
-    labels, records = payload["labels"], payload["records"]
+    labels, records, ranges = (
+        payload["labels"],
+        payload["records"],
+        payload["fieldRanges"],
+    )
 
     df = pandas.DataFrame.from_records(records, columns=labels)
     thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
-    dt = DecisionTree.create_from_sparse_thresholds(low=thrL, high=thrH)
+    dt = DecisionTree.create_from_sparse_thresholds(low=thrL, high=thrH, ranges=ranges)
 
     df_out = pandas.concat([dt.threshold_low, dt.threshold_high], axis=1)
     df_out = df_out[labels]
@@ -119,7 +123,11 @@ def create_weather_types_matrix():
 def get_wt_codes():
     payload = request.get_json()
 
-    labels, records = payload["labels"], payload["matrix"]
+    labels, records, ranges = (
+        payload["labels"],
+        payload["matrix"],
+        payload["fieldRanges"],
+    )
 
     records = [[float(cell) for cell in row] for row in records]
 
@@ -127,14 +135,18 @@ def get_wt_codes():
 
     thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
 
-    dt = DecisionTree(threshold_low=thrL, threshold_high=thrH)
+    dt = DecisionTree(threshold_low=thrL, threshold_high=thrH, ranges=ranges)
     return jsonify({"codes": dt.leaf_codes})
 
 
 @app.route("/postprocessing/create-decision-tree", methods=("POST",))
 def get_decision_tree():
     payload = request.get_json()
-    labels, matrix = payload["labels"], payload["matrix"]
+    labels, matrix, ranges = (
+        payload["labels"],
+        payload["matrix"],
+        payload["fieldRanges"],
+    )
 
     matrix = [[float(cell) for cell in row] for row in matrix]
 
@@ -142,7 +154,7 @@ def get_decision_tree():
 
     thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
 
-    dt = DecisionTree(threshold_low=thrL, threshold_high=thrH)
+    dt = DecisionTree(threshold_low=thrL, threshold_high=thrH, ranges=ranges)
     return jsonify([dt.tree.json])
 
 
@@ -226,12 +238,13 @@ def save_wt_histograms():
 @app.route("/postprocessing/create-error-rep", methods=("POST",))
 def get_error_rep():
     payload = request.get_json()
-    labels, matrix, path, numCols, cheaper = (
+    labels, matrix, path, numCols, cheaper, ranges = (
         payload["labels"],
         payload["matrix"],
         sanitize_path(payload["path"]),
         payload["numCols"],
         payload["cheaper"],
+        payload["ranges"],
     )
 
     matrix = [[float(cell) for cell in row] for row in matrix]
@@ -239,7 +252,7 @@ def get_error_rep():
     thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
     loader = load_point_data_by_path(path, cheaper=cheaper)
 
-    dt = DecisionTree(threshold_low=thrL, threshold_high=thrH)
+    dt = DecisionTree(threshold_low=thrL, threshold_high=thrH, ranges=ranges)
     rep = dt.cal_rep_error(loader, nBin=int(numCols))
 
     s = StringIO()
@@ -253,6 +266,7 @@ def save_operation():
 
     labels = payload["labels"]
     matrix = payload["matrix"]
+    ranges = payload["fieldRanges"]
     pdt_path = sanitize_path(payload["pdtPath"])
     mf_cols = payload["mfcols"]
     cheaper = payload["cheaper"]
@@ -279,7 +293,7 @@ def save_operation():
         thrL, thrH = df.iloc[:, ::2], df.iloc[:, 1::2]
         loader = load_point_data_by_path(pdt_path, cheaper=cheaper)
 
-        dt = DecisionTree(threshold_low=thrL, threshold_high=thrH)
+        dt = DecisionTree(threshold_low=thrL, threshold_high=thrH, ranges=ranges)
         rep = dt.cal_rep_error(loader, nBin=int(mf_cols))
 
         path = output_path

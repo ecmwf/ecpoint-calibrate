@@ -29,8 +29,16 @@ def sparse_breakpoints():
         "SR_thrH",
     ]
 
+    ranges = {
+        "CPR": ["-inf", "inf"],
+        "TP": ["-inf", "inf"],
+        "WSPD": ["-inf", "inf"],
+        "CAPE": ["-inf", "inf"],
+        "SR": ["-inf", "inf"],
+    }
+
     df = pandas.DataFrame.from_records(records, columns=labels)
-    return df.iloc[:, ::2], df.iloc[:, 1::2]
+    return df.iloc[:, ::2], df.iloc[:, 1::2], ranges
 
 
 @pytest.fixture
@@ -92,9 +100,9 @@ def breakpoints():
 
 
 def test_decision_tree_with_predefined_threshold_splits(sparse_breakpoints):
-    sparse_thresholds_low, sparse_thresholds_high = sparse_breakpoints
+    sparse_thresholds_low, sparse_thresholds_high, ranges = sparse_breakpoints
     dt = DecisionTree.create_from_sparse_thresholds(
-        low=sparse_thresholds_low, high=sparse_thresholds_high
+        low=sparse_thresholds_low, high=sparse_thresholds_high, ranges=ranges
     )
 
     expected_threshold_low_matrix = [
@@ -120,8 +128,15 @@ def test_decision_tree_with_predefined_threshold_splits(sparse_breakpoints):
 
 def test_decision_tree_construction(breakpoints):
     low, high = breakpoints
+    ranges = {
+        "cpr": ["-inf", "inf"],
+        "tp_acc": ["-inf", "inf"],
+        "cp_acc": ["-inf", "inf"],
+        "sr24h": ["-inf", "inf"],
+        "cape_wa": ["-inf", "inf"],
+    }
 
-    dt = DecisionTree(threshold_low=low, threshold_high=high)
+    dt = DecisionTree(threshold_low=low, threshold_high=high, ranges=ranges)
 
     expected = {
         "name": "Root",

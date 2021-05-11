@@ -60,9 +60,13 @@ class SparseBreakpoints extends Component {
       .map(row => _.flatMap(row.slice(1), cell => cell.value))
 
     client
-      .post('/postprocessing/create-wt-matrix', { labels, records })
+      .post('/postprocessing/create-wt-matrix', {
+        labels,
+        records,
+        fieldRanges: this.props.fieldRanges,
+      })
       .then(response => {
-        this.props.setBreakpoints(labels, response.data.matrix)
+        this.props.setBreakpoints(labels, response.data.matrix, this.props.fieldRanges)
         this.setState({ loading: false })
       })
       .catch(errorHandler)
