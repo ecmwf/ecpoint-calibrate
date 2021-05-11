@@ -9,6 +9,8 @@ import client from '~/utils/client'
 import { errorHandler } from '~/utils/toast'
 import MappingFunction from './mappingFunction'
 import Split from '../split'
+import { isMergeableToPreviousRow, mergeToPreviousRow } from '../breakpoints/core'
+
 import _ from 'lodash'
 
 const mainProcess = require('@electron/remote').require('./server')
@@ -87,6 +89,26 @@ export default class TreeContainer extends Component {
     this.props.setBreakpoints(this.props.labels, _.uniqWith(matrix, _.isEqual))
   }
 
+  onNodeClickMergeLeafNode = node => {
+    let [matrix, from] = this.getMergedMatrix(node)
+
+    if (
+      !isMergeableToPreviousRow(
+        from,
+        this.props.breakpoints.map(row => _.flatMap(row.slice(1)))
+      )
+    ) {
+      alert('First node in the group. Merge only to the left.')
+      return
+    }
+
+    matrix = mergeToPreviousRow(
+      from,
+      this.props.breakpoints.map(row => _.flatMap(row.slice(1)))
+    )
+    this.props.setBreakpoints(this.props.labels, matrix)
+  }
+
   onNodeClickConditionalVerificationMode = node => {
     this.setState({
       loading: 'Generating conditional verification map. Please wait.',
@@ -132,6 +154,8 @@ export default class TreeContainer extends Component {
       this.onNodeClickExploreMode(node)
     } else if (this.state.mode === 'merge-children') {
       this.onNodeClickMergeChildrenMode(node)
+    } else if (this.state.mode === 'merge-leaf') {
+      this.onNodeClickMergeLeafNode(node)
     }
   }
 
@@ -223,6 +247,18 @@ export default class TreeContainer extends Component {
             })
           }
           checked={this.state.mode === 'merge-children'}
+        />
+      </Form.Field>
+      <Form.Field>
+        <Radio
+          label="Merge leaf"
+          onChange={() =>
+            this.setState({
+              mode: 'merge-leaf',
+              conditionalVerificationMode: false,
+            })
+          }
+          checked={this.state.mode === 'merge-leaf'}
         />
       </Form.Field>
     </Form.Group>
