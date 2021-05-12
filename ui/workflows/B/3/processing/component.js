@@ -6,6 +6,8 @@ import Iframe from 'react-iframe'
 import client from '~/utils/client'
 import { errorHandler } from '~/utils/toast'
 
+const shell = require('electron').shell
+
 class Processing extends Component {
   state = { status: 'initial' }
 
@@ -76,6 +78,13 @@ class Processing extends Component {
           onClick={() => this.runComputation()}
           disabled={this.props.running === true}
           icon="cog"
+          labelPosition="left"
+        />
+
+        <Button
+          content="Open log file"
+          onClick={() => shell.openPath(`/var/tmp/ecpoint.logs`)}
+          icon="file"
           labelPosition="left"
         />
       </Grid.Row>
