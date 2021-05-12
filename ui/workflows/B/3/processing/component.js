@@ -9,6 +9,14 @@ import { errorHandler } from '~/utils/toast'
 class Processing extends Component {
   state = { status: 'initial' }
 
+  componentDidMount() {
+    this.interval = setInterval(this.updateComputationsStatus, 7000)
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval)
+  }
+
   runComputation() {
     this.props.setProcessing(true)
 
@@ -40,7 +48,7 @@ class Processing extends Component {
     }
 
     client
-      .post('/computation-logs', {
+      .post('/computations/start', {
         parameters,
         predictand,
         predictors,
@@ -53,6 +61,12 @@ class Processing extends Component {
       .catch(errorHandler)
       .then(() => this.props.setProcessing(false))
   }
+
+  updateComputationsStatus = () =>
+    client
+      .get('/computations/status')
+      .then(response => this.props.setProcessing(response.data.isRunning))
+      .catch(errorHandler)
 
   render = () => (
     <Grid centered container>

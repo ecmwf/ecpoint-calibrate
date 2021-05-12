@@ -38,12 +38,26 @@ def handle_error(e):
     return "\n".join(tb), code
 
 
-@app.route("/computation-logs", methods=("POST",))
-def stream_computation_logs():
+is_computation_running = False
+
+
+@app.route("/computations/start", methods=("POST",))
+def start_computation():
     payload = request.get_json()
     config = Config.from_dict(payload)
+
+    global is_computation_running
+    is_computation_running = True
     run(config)
+    is_computation_running = False
+
     return Response()
+
+
+@app.route("/computations/status", methods=("GET",))
+def get_computation_status():
+    global is_computation_running
+    return jsonify({"isRunning": is_computation_running})
 
 
 @app.route("/predictors", methods=("POST",))
