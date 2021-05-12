@@ -1,22 +1,53 @@
 import React from 'react'
 
-import { Segment } from 'semantic-ui-react'
+import { Segment, Button, Icon } from 'semantic-ui-react'
 
-import { SortableContainer, SortableElement } from 'react-sortable-hoc'
+import { SortableContainer, SortableElement, sortableHandle } from 'react-sortable-hoc'
 
-const SortableItem = SortableElement(({ value }) => (
-  <Segment secondary textAlign="center">
+const DragHandle = sortableHandle(() => <Icon name="bars" style={{ cursor: 'move' }} />)
+
+const SortableItem = SortableElement(({ value, showDelete, onDelete }) => (
+  <Segment secondary>
+    <DragHandle />
     {value}
+    {
+      <Button
+        circular
+        icon="close"
+        floated="right"
+        size="mini"
+        style={{ transform: 'translate(0, -15%)' }}
+        disabled={!showDelete}
+        onClick={onDelete}
+      />
+    }
   </Segment>
 ))
 
-const SortableList = SortableContainer(({ items }) => (
-  <Segment.Group raised size="mini">
-    {items.map((value, index) => (
-      <SortableItem key={`item-${index}`} index={index} value={value} />
-    ))}
-  </Segment.Group>
-))
+const SortableList = SortableContainer(
+  ({ items, breakpoints, labels, fieldRanges, setFields, setBreakpoints }) => (
+    <Segment.Group raised size="mini" style={{ width: '20%' }}>
+      {items.map((value, index) => (
+        <SortableItem
+          key={`item-${index}`}
+          index={index}
+          value={value}
+          showDelete={index === items.length - 1}
+          onDelete={() => {
+            setFields(items.slice(0, -1))
+
+            const matrix = breakpoints
+              .map(row => _.flatMap(row.slice(1)))
+              .map(row => row.slice(0, -2))
+            const newLabels = labels.slice(0, -2)
+
+            setBreakpoints(newLabels, matrix, fieldRanges)
+          }}
+        />
+      ))}
+    </Segment.Group>
+  )
+)
 
 const Levels = props => (
   <>
@@ -24,6 +55,11 @@ const Levels = props => (
 
     <SortableList
       items={props.fields}
+      setFields={props.setFields}
+      setBreakpoints={props.setBreakpoints}
+      fieldRanges={props.fieldRanges}
+      breakpoints={props.thrGridOut}
+      labels={props.labels}
       onSortEnd={({ oldIndex, newIndex }) =>
         props.onFieldsSortEnd(
           props.fields,
@@ -34,6 +70,7 @@ const Levels = props => (
           props.fieldRanges
         )
       }
+      useDragHandle
     />
     <small>
       <b>⚠️ Caution:</b> Modifying the current arrangement will partially clear the
