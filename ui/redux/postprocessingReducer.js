@@ -6,6 +6,7 @@ const defaultState = {
   tree: null,
   saveOperationMode: null,
   fieldRanges: null,
+  excludedPredictors: [],
 }
 
 const getFirstRow = (fields, ranges) =>
@@ -56,8 +57,11 @@ export default (state = defaultState, action) => {
       }
     }
 
-    case 'POSTPROCESSING.SET_EXCLUDED_PREDICTORS': {
-      return { ...state, excludedPredictors: action.data }
+    case 'POSTPROCESSING.ADD_EXCLUDED_PREDICTOR': {
+      return {
+        ...state,
+        excludedPredictors: [...state.excludedPredictors, action.data],
+      }
     }
 
     case 'POSTPROCESSING.SET_Y_LIM': {

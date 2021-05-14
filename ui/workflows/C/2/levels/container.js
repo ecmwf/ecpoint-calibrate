@@ -2,7 +2,7 @@ import { connect } from 'react-redux'
 
 import Levels from './component'
 
-import { onFieldsSortEnd, setFields, setExcludedPredictors } from './actions'
+import { onFieldsSortEnd, setFields, addExcludedPredictor } from './actions'
 import { setBreakpoints } from '../breakpoints/actions'
 
 const mapStateToProps = state => ({
@@ -24,7 +24,7 @@ const mapDispatchToProps = dispatch => ({
   setBreakpoints: (labels, matrix, fieldRanges) =>
     dispatch(setBreakpoints(labels, matrix, fieldRanges)),
 
-  setExcludedPredictors: items => dispatch(setExcludedPredictors(items)),
+  addExcludedPredictor: item => dispatch(addExcludedPredictor(item)),
 })
 
 export default connect(

@@ -32,7 +32,7 @@ const SortableList = SortableContainer(
     fieldRanges,
     setFields,
     setBreakpoints,
-    setExcludedPredictors,
+    addExcludedPredictor,
   }) => (
     <Segment.Group raised size="mini" style={{ width: '20%' }}>
       {items.map((value, index) => (
@@ -49,8 +49,8 @@ const SortableList = SortableContainer(
               .map(row => row.slice(0, -2))
             const newLabels = labels.slice(0, -2)
 
-            const excludePredictors = labels.slice(-2)[0].replace('_thrL', '')
-            setExcludedPredictors(excludePredictors)
+            const excludePredictor = labels.slice(-2)[0].replace('_thrL', '')
+            addExcludedPredictor(excludePredictor)
             setBreakpoints(newLabels, matrix, fieldRanges)
           }}
         />
@@ -59,35 +59,37 @@ const SortableList = SortableContainer(
   )
 )
 
-const Levels = props => (
-  <>
-    <h5>Rearrange the levels of the decision tree below:</h5>
+const Levels = props => {
+  return (
+    <>
+      <h5>Rearrange the levels of the decision tree below:</h5>
 
-    <SortableList
-      items={props.fields}
-      setFields={props.setFields}
-      setBreakpoints={props.setBreakpoints}
-      setExcludedPredictors={props.setExcludedPredictors}
-      fieldRanges={props.fieldRanges}
-      breakpoints={props.thrGridOut}
-      labels={props.labels}
-      onSortEnd={({ oldIndex, newIndex }) =>
-        props.onFieldsSortEnd(
-          props.fields,
-          props.thrGridIn,
-          props.thrGridOut,
-          oldIndex,
-          newIndex,
-          props.fieldRanges
-        )
-      }
-      useDragHandle
-    />
-    <small>
-      <b>⚠️ Caution:</b> Modifying the current arrangement will partially clear the
-      threshold breakpoints in the sheet below.
-    </small>
-  </>
-)
+      <SortableList
+        items={props.fields}
+        setFields={props.setFields}
+        setBreakpoints={props.setBreakpoints}
+        addExcludedPredictor={props.addExcludedPredictor}
+        fieldRanges={props.fieldRanges}
+        breakpoints={props.thrGridOut}
+        labels={props.labels}
+        onSortEnd={({ oldIndex, newIndex }) =>
+          props.onFieldsSortEnd(
+            props.fields,
+            props.thrGridIn,
+            props.thrGridOut,
+            oldIndex,
+            newIndex,
+            props.fieldRanges
+          )
+        }
+        useDragHandle
+      />
+      <small>
+        <b>⚠️ Caution:</b> Modifying the current arrangement will partially clear the
+        threshold breakpoints in the sheet below.
+      </small>
+    </>
+  )
+}
 
 export default Levels

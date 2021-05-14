@@ -7,9 +7,9 @@ export const setFields = fields => ({
   data: fields,
 })
 
-export const setExcludedPredictors = items => ({
-  type: 'POSTPROCESSING.SET_EXCLUDED_PREDICTORS',
-  data: items,
+export const addExcludedPredictor = item => ({
+  type: 'POSTPROCESSING.ADD_EXCLUDED_PREDICTOR',
+  data: item,
 })
 
 export const onFieldsSortEnd = (

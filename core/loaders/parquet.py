@@ -100,7 +100,10 @@ class ParquetPointDataTableReader(BasePointDataReader):
     def columns(self) -> List[str]:
         if not self._columns:
             pq_reader = pq.ParquetFile(self.path)
-            self._columns = pq_reader.schema.names
+            self._columns = pq_reader.schema.names.copy()
+
+            if "__index_level_0__" in self._columns:
+                self._columns.remove("__index_level_0__")
 
         return self._columns
 
