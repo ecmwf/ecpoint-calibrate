@@ -56,6 +56,10 @@ export default (state = defaultState, action) => {
       }
     }
 
+    case 'POSTPROCESSING.SET_EXCLUDED_PREDICTORS': {
+      return { ...state, excludedPredictors: action.data }
+    }
+
     case 'POSTPROCESSING.SET_Y_LIM': {
       return { ...state, yLim: action.value }
     }

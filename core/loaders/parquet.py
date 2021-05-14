@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import List, Optional, Union
 
 import attr
@@ -107,6 +108,8 @@ class ParquetPointDataTableReader(BasePointDataReader):
     def dataframe(self) -> pd.DataFrame:
         if self._dataframe is None:
             self._dataframe = pd.read_parquet(self.path, engine="pyarrow")
+            if "__index_level_0__" in self._dataframe:
+                self._dataframe = self._dataframe.drop(["__index_level_0__"], axis=1)
 
         return self._dataframe
 
@@ -126,6 +129,16 @@ class ParquetPointDataTableReader(BasePointDataReader):
             (col,) = args
             result = result[col]
         return result
+
+    def clone(self, *args: str, path: Path):
+        encoder = ParquetPointDataTableWriter(path=path)
+        encoder.add_header(self.metadata.get("header", ""))
+
+        for chunk in self:
+            filtered_chunk = chunk[list(args)]
+            encoder.add_columns_chunk(filtered_chunk.to_dict())
+
+        encoder.add_footer(self.metadata.get("footer", ""))
 
     def __iter__(self) -> "ParquetPointDataTableReader":
         self._current_row_group = 0

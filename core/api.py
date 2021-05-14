@@ -410,6 +410,20 @@ def save_operation():
 
             f.write(text.lstrip())
 
+        loader = load_point_data_by_path(pdt_path, cheaper=cheaper)
+
+        if pdt_path.endswith(".ascii"):
+            ext = "ascii"
+        elif pdt_path.endswith(".parquet"):
+            ext = "parquet"
+        else:
+            ext = "ascii"
+
+        exclude_cols = payload["excludePredictors"]
+        cols = [col for col in loader.columns if col not in exclude_cols]
+
+        loader.clone(*cols, path=output_path / f"PDT.{ext}")
+
     return Response(json.dumps({}), mimetype="application/json")
 
 

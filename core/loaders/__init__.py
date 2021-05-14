@@ -2,6 +2,7 @@ import abc
 import re
 from dataclasses import dataclass
 from enum import Enum
+from pathlib import Path
 from typing import List, Union
 
 import pandas as pd
@@ -55,9 +56,7 @@ class BasePointDataReader(abc.ABC):
         obs = {m.group(1): m.group(2)} if m else {}
 
         return {
-            "predictors": {
-                k: v.replace("NoUnit", "-") for k, v in predictors.items()
-            },
+            "predictors": {k: v.replace("NoUnit", "-") for k, v in predictors.items()},
             "observations": obs,
             "predictand": predictand,
         }
@@ -69,6 +68,10 @@ class BasePointDataReader(abc.ABC):
 
     @abc.abstractmethod
     def select(self, *args: str, series: bool = True) -> Union[pd.DataFrame, pd.Series]:
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def clone(self, *args: str, path: Path):
         raise NotImplementedError
 
     @property

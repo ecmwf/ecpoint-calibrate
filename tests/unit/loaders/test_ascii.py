@@ -1,4 +1,5 @@
 import numpy
+from pandas.testing import assert_frame_equal
 
 from core.loaders.ascii import ASCIIDecoder
 from tests.conf import TEST_DATA_DIR
@@ -31,3 +32,16 @@ def test_alfa_units():
         },
         "observations": {"tp": "mm"},
     }
+
+
+def test_good_ascii_file_clone(tmp_path):
+    path = TEST_DATA_DIR / "good_ascii_file.ascii"
+    data = ASCIIDecoder(path=path)
+
+    exclude_cols = ["TP", "CAPE"]
+    cloned_path = tmp_path / "good_ascii_file.ascii"
+    cols = [col for col in data.columns if col not in exclude_cols]
+    data.clone(*cols, path=cloned_path)
+    cloned_data = ASCIIDecoder(path=cloned_path)
+
+    assert_frame_equal(cloned_data.dataframe, data.dataframe.drop(exclude_cols, axis=1))

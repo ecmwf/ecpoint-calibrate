@@ -2,6 +2,7 @@ from collections import OrderedDict
 from dataclasses import dataclass, field
 from functools import partial
 from itertools import takewhile
+from pathlib import Path
 from typing import List, Optional, Union
 
 import attr
@@ -85,6 +86,14 @@ class ASCIIDecoder(BasePointDataReader):
             (col,) = args
             result = result[col]
         return result
+
+    def clone(self, *args: str, path: Path):
+        encoder = ASCIIEncoder(path=path)
+        encoder.add_header(self.metadata.get("header", ""))
+
+        for chunk in self:
+            filtered_chunk = chunk[list(args)]
+            encoder.add_columns_chunk(filtered_chunk.to_dict())
 
     def __iter__(self) -> "ASCIIDecoder":
         self._current_csv_offset = 0

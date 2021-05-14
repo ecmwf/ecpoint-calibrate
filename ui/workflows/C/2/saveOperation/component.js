@@ -190,6 +190,7 @@ class SaveOperation extends Component {
         cheaper: this.props.cheaper,
         mode: this.props.mode,
         fieldRanges: this.props.fieldRanges,
+        excludePredictors: this.props.excludedPredictors,
         breakpointsCSV:
           this.props.mode === 'breakpoints' || this.props.mode === 'all'
             ? this.getBreakpointsCSV()

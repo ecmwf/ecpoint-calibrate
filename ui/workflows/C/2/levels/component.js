@@ -25,7 +25,15 @@ const SortableItem = SortableElement(({ value, showDelete, onDelete }) => (
 ))
 
 const SortableList = SortableContainer(
-  ({ items, breakpoints, labels, fieldRanges, setFields, setBreakpoints }) => (
+  ({
+    items,
+    breakpoints,
+    labels,
+    fieldRanges,
+    setFields,
+    setBreakpoints,
+    setExcludedPredictors,
+  }) => (
     <Segment.Group raised size="mini" style={{ width: '20%' }}>
       {items.map((value, index) => (
         <SortableItem
@@ -41,6 +49,8 @@ const SortableList = SortableContainer(
               .map(row => row.slice(0, -2))
             const newLabels = labels.slice(0, -2)
 
+            const excludePredictors = labels.slice(-2)[0].replace('_thrL', '')
+            setExcludedPredictors(excludePredictors)
             setBreakpoints(newLabels, matrix, fieldRanges)
           }}
         />
@@ -57,6 +67,7 @@ const Levels = props => (
       items={props.fields}
       setFields={props.setFields}
       setBreakpoints={props.setBreakpoints}
+      setExcludedPredictors={props.setExcludedPredictors}
       fieldRanges={props.fieldRanges}
       breakpoints={props.thrGridOut}
       labels={props.labels}

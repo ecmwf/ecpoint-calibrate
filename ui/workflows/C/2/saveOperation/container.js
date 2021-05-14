@@ -10,6 +10,7 @@ const mapStateToProps = state => ({
   yLim: state.postprocessing.yLim,
   cheaper: state.preloader.cheaper,
   breakpoints: state.postprocessing.thrGridOut,
+  excludedPredictors: state.postprocessing.excludedPredictors,
   path: state.preloader.path,
   labels: state.postprocessing.thrGridIn[0].slice(1).map(cell => cell.value),
   error: state.binning.error,

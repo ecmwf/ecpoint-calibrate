@@ -8,7 +8,7 @@ from core.loaders import ErrorType, load_point_data_by_path
 def test_alfa(client, alfa_cassette, alfa_loader, fmt, tmp_path):
     path = tmp_path / f"pdt.{fmt.lower()}"
     request = alfa_cassette(output_path=str(path), fmt=fmt)
-    response = client.post("/computation-logs", json=request)
+    response = client.post("/computations/start", json=request)
     assert response.status_code == 200
 
     got_loader = load_point_data_by_path(path=str(path))
