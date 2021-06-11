@@ -4,7 +4,7 @@ import Tree from 'react-d3-tree'
 import NodeLabel from './nodeElement'
 import { saveSvgAsPng } from 'save-svg-as-png'
 
-import { Button, Dimmer, Loader, Radio, Form, Grid } from 'semantic-ui-react'
+import { Button, Dimmer, Dropdown, Form, Grid, Loader, Radio } from 'semantic-ui-react'
 import client from '~/utils/client'
 import { errorHandler } from '~/utils/toast'
 import MappingFunction from './mappingFunction'
@@ -15,6 +15,20 @@ import _ from 'lodash'
 
 const mainProcess = require('@electron/remote').require('./server')
 
+const MODES_MAP = {
+  VISUALIZE_LEAF_MF: 1,
+  VISUALIZE_NODE_MF: 2,
+  SPLIT_LEAF: 3,
+  MERGE_NODE: 4,
+  MERGE_LEAF: 5,
+}
+
+const CV_MODES_MAP = {
+  OBS_FREQUENCY: 'a',
+  MEAN: 'b',
+  STD_DEV: 'c',
+}
+
 export default class TreeContainer extends Component {
   state = {
     openMappingFunction: false,
@@ -22,8 +36,8 @@ export default class TreeContainer extends Component {
     graph: null,
     nodeMeta: null,
     loading: false,
-    mode: 'simple',
-    conditionalVerificationMode: false,
+    mode: MODES_MAP.VISUALIZE_LEAF_MF,
+    conditionalVerificationMode: null,
   }
 
   componentDidMount() {
@@ -148,23 +162,25 @@ export default class TreeContainer extends Component {
       return
     }
 
-    if (this.state.mode === 'edit') {
+    if (this.state.mode === MODES_MAP.SPLIT_LEAF) {
       this.onNodeClickEditMode(node)
     } else if (this.state.conditionalVerificationMode) {
       this.onNodeClickConditionalVerificationMode(node)
-    } else if (this.state.mode === 'simple') {
+    } else if (this.state.mode === MODES_MAP.VISUALIZE_LEAF_MF) {
       this.onNodeClickExploreMode(node)
-    } else if (this.state.mode === 'non-collapsible') {
+    } else if (this.state.mode === MODES_MAP.VISUALIZE_NODE_MF) {
       this.onNodeClickExploreMode(node)
-    } else if (this.state.mode === 'merge-children') {
+    } else if (this.state.mode === MODES_MAP.MERGE_NODE) {
       this.onNodeClickMergeChildrenMode(node)
-    } else if (this.state.mode === 'merge-leaf') {
+    } else if (this.state.mode === MODES_MAP.MERGE_LEAF) {
       this.onNodeClickMergeLeafNode(node)
     }
   }
 
   shouldCollapseNode = () =>
-    !['non-collapsible', 'merge-children'].includes(this.state.mode)
+    ![MODES_MAP.VISUALIZE_LEAF_MF, MODES_MAP.VISUALIZE_NODE_MF].includes(
+      this.state.mode
+    )
 
   handleKeyboardInput = e => {
     const code = e.keyCode ? e.keyCode : e.which
@@ -172,30 +188,39 @@ export default class TreeContainer extends Component {
     if (code === 69) {
       // 'e' key
       this.setState({
-        mode: 'edit',
-        conditionalVerificationMode: false,
+        mode: MODES_MAP.SPLIT_LEAF,
+        conditionalVerificationMode: null,
       })
     }
 
     if (code === 65) {
       // 'a' key
-      this.state.conditionalVerificationMode !== 'a'
-        ? this.setState({ mode: 'simple', conditionalVerificationMode: 'a' })
-        : this.setState({ conditionalVerificationMode: false })
+      this.state.conditionalVerificationMode !== CV_MODES_MAP.OBS_FREQUENCY
+        ? this.setState({
+            mode: MODES_MAP.VISUALIZE_LEAF_MF,
+            conditionalVerificationMode: CV_MODES_MAP.OBS_FREQUENCY,
+          })
+        : this.setState({ conditionalVerificationMode: null })
     }
 
     if (code === 66) {
       // 'b' key
-      this.state.conditionalVerificationMode !== 'b'
-        ? this.setState({ mode: 'simple', conditionalVerificationMode: 'b' })
-        : this.setState({ conditionalVerificationMode: false })
+      this.state.conditionalVerificationMode !== CV_MODES_MAP.MEAN
+        ? this.setState({
+            mode: MODES_MAP.VISUALIZE_LEAF_MF,
+            conditionalVerificationMode: CV_MODES_MAP.MEAN,
+          })
+        : this.setState({ conditionalVerificationMode: null })
     }
 
     if (code === 67) {
       // 'c' key
-      this.state.conditionalVerificationMode !== 'c'
-        ? this.setState({ mode: 'simple', conditionalVerificationMode: 'c' })
-        : this.setState({ conditionalVerificationMode: false })
+      this.state.conditionalVerificationMode !== CV_MODES_MAP.STD_DEV
+        ? this.setState({
+            mode: MODES_MAP.VISUALIZE_LEAF_MF,
+            conditionalVerificationMode: CV_MODES_MAP.STD_DEV,
+          })
+        : this.setState({ conditionalVerificationMode: null })
     }
   }
 
@@ -203,69 +228,25 @@ export default class TreeContainer extends Component {
     window.addEventListener('keydown', this.handleKeyboardInput.bind(this))
   }
 
-  getModeRadios = () => (
-    <Form.Group>
-      <Form.Field>
-        <Radio
-          label="Simple"
-          onChange={() =>
-            this.setState({
-              mode: 'simple',
-              conditionalVerificationMode: false,
-            })
-          }
-          checked={this.state.mode === 'simple'}
-        />
-      </Form.Field>
-      <Form.Field>
-        <Radio
-          label="Edit"
-          onChange={() =>
-            this.setState({
-              mode: 'edit',
-              conditionalVerificationMode: false,
-            })
-          }
-          checked={this.state.mode === 'edit'}
-        />
-      </Form.Field>
-      <Form.Field>
-        <Radio
-          label="Non-collapsible"
-          onChange={() =>
-            this.setState({
-              mode: 'non-collapsible',
-              conditionalVerificationMode: false,
-            })
-          }
-          checked={this.state.mode === 'non-collapsible'}
-        />
-      </Form.Field>
-      <Form.Field>
-        <Radio
-          label="Merge children"
-          onChange={() =>
-            this.setState({
-              mode: 'merge-children',
-              conditionalVerificationMode: false,
-            })
-          }
-          checked={this.state.mode === 'merge-children'}
-        />
-      </Form.Field>
-      <Form.Field>
-        <Radio
-          label="Merge leaf"
-          onChange={() =>
-            this.setState({
-              mode: 'merge-leaf',
-              conditionalVerificationMode: false,
-            })
-          }
-          checked={this.state.mode === 'merge-leaf'}
-        />
-      </Form.Field>
-    </Form.Group>
+  getModeDropdown = () => (
+    <Dropdown
+      placeholder="Select a mode"
+      options={[
+        { key: 1, text: 'Visualize leaf MF', value: MODES_MAP.VISUALIZE_LEAF_MF },
+        { key: 2, text: 'Visualize node MF', value: MODES_MAP.VISUALIZE_NODE_MF },
+        { key: 3, text: 'Split leaf', value: MODES_MAP.SPLIT_LEAF },
+        { key: 4, text: 'Merge Node', value: MODES_MAP.MERGE_NODE },
+        { key: 5, text: 'Merge leaf (no change)', value: MODES_MAP.MERGE_LEAF },
+      ]}
+      selection
+      value={this.state.mode}
+      onChange={(e, { value }) =>
+        this.setState({
+          mode: value,
+          conditionalVerificationMode: null,
+        })
+      }
+    />
   )
 
   render = () => {
@@ -280,27 +261,30 @@ export default class TreeContainer extends Component {
         <Grid>
           <Grid.Column floated="left" width={5}>
             <Form>
-              <p>Modes:</p>
-              {this.getModeRadios()}
-
+              Mode:&nbsp;&nbsp;
+              {this.getModeDropdown()}
               <p>Conditional verification plots:</p>
               <Form.Group>
                 <Form.Field>
                   <Radio
                     label="Observation frequency"
                     name="radioGroup"
-                    value="a"
-                    checked={this.state.conditionalVerificationMode === 'a'}
+                    value={CV_MODES_MAP.OBS_FREQUENCY}
+                    checked={
+                      this.state.conditionalVerificationMode ===
+                      CV_MODES_MAP.OBS_FREQUENCY
+                    }
                     onChange={() =>
-                      this.state.conditionalVerificationMode === 'a'
-                        ? this.setState({ conditionalVerificationMode: false })
-                        : ['simple', 'non-collapsible'].includes(this.state.mode)
+                      this.state.conditionalVerificationMode ===
+                      CV_MODES_MAP.OBS_FREQUENCY
+                        ? this.setState({ conditionalVerificationMode: null })
+                        : !this.shouldCollapseNode()
                         ? this.setState({
-                            conditionalVerificationMode: 'a',
+                            conditionalVerificationMode: CV_MODES_MAP.OBS_FREQUENCY,
                           })
                         : this.setState({
-                            conditionalVerificationMode: 'a',
-                            mode: 'simple',
+                            conditionalVerificationMode: CV_MODES_MAP.OBS_FREQUENCY,
+                            mode: MODES_MAP.VISUALIZE_LEAF_MF,
                           })
                     }
                     toggle
@@ -310,18 +294,20 @@ export default class TreeContainer extends Component {
                   <Radio
                     label="Mean"
                     name="radioGroup"
-                    value="b"
-                    checked={this.state.conditionalVerificationMode === 'b'}
+                    value={CV_MODES_MAP.MEAN}
+                    checked={
+                      this.state.conditionalVerificationMode === CV_MODES_MAP.MEAN
+                    }
                     onChange={() =>
-                      this.state.conditionalVerificationMode === 'b'
-                        ? this.setState({ conditionalVerificationMode: false })
-                        : ['simple', 'non-collapsible'].includes(this.state.mode)
+                      this.state.conditionalVerificationMode === CV_MODES_MAP.MEAN
+                        ? this.setState({ conditionalVerificationMode: null })
+                        : !this.shouldCollapseNode()
                         ? this.setState({
-                            conditionalVerificationMode: 'b',
+                            conditionalVerificationMode: CV_MODES_MAP.MEAN,
                           })
                         : this.setState({
-                            conditionalVerificationMode: 'b',
-                            mode: 'simple',
+                            conditionalVerificationMode: CV_MODES_MAP.MEAN,
+                            mode: MODES_MAP.VISUALIZE_LEAF_MF,
                           })
                     }
                     toggle
@@ -331,18 +317,20 @@ export default class TreeContainer extends Component {
                   <Radio
                     label="Standard Deviation"
                     name="radioGroup"
-                    value="c"
-                    checked={this.state.conditionalVerificationMode === 'c'}
+                    value={CV_MODES_MAP.STD_DEV}
+                    checked={
+                      this.state.conditionalVerificationMode === CV_MODES_MAP.STD_DEV
+                    }
                     onChange={() =>
-                      this.state.conditionalVerificationMode === 'c'
-                        ? this.setState({ conditionalVerificationMode: false })
-                        : ['simple', 'non-collapsible'].includes(this.state.mode)
+                      this.state.conditionalVerificationMode === CV_MODES_MAP.STD_DEV
+                        ? this.setState({ conditionalVerificationMode: null })
+                        : !this.shouldCollapseNode()
                         ? this.setState({
-                            conditionalVerificationMode: 'c',
+                            conditionalVerificationMode: CV_MODES_MAP.STD_DEV,
                           })
                         : this.setState({
-                            conditionalVerificationMode: 'c',
-                            mode: 'simple',
+                            conditionalVerificationMode: CV_MODES_MAP.STD_DEV,
+                            mode: MODES_MAP.VISUALIZE_LEAF_MF,
                           })
                     }
                     toggle
