@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { Modal, Input, Button, Segment, Label, Icon } from 'semantic-ui-react'
+import { Modal, Input, Button, Segment, Label, Icon, Divider } from 'semantic-ui-react'
 
 import semver from 'semver'
 
@@ -11,6 +11,7 @@ const jetpack = require('fs-jetpack')
 const mainProcess = require('@electron/remote').require('./server')
 
 const defaultState = {
+  datasetName: null,
   family: null,
   version: null,
   accumulation: null,
@@ -18,6 +19,13 @@ const defaultState = {
   mfcols: null,
   outPath: null,
 }
+
+const SecondaryText = ({ text, divider }) => (
+  <>
+    <p style={{ color: 'grey', paddingTop: '5px' }}>{text}</p>
+    {divider && <Divider />}
+  </>
+)
 
 class SaveOperation extends Component {
   state = defaultState
@@ -37,6 +45,7 @@ class SaveOperation extends Component {
     } else {
       return (
         !this.state.family ||
+        !this.state.datasetName ||
         !this.state.version ||
         !this.state.inf ||
         !this.state.mfcols ||
@@ -53,25 +62,40 @@ class SaveOperation extends Component {
   getMetadataComponent = () => (
     <Segment padded>
       <h5>Enter operation metadata:</h5>
+
+      <Input
+        label="Dataset Name*"
+        value={this.state.datasetName}
+        onChange={e => this.setState({ datasetName: e.target.value })}
+      />
+      <SecondaryText text="Name of the post-processed dataset" divider />
+
       <Input
         label="Family*"
         placeholder="rainfall"
         value={this.state.family}
         onChange={e => this.setState({ family: e.target.value })}
-      />{' '}
+      />
+      <SecondaryText text="ecPoint family, e.g. Rainfall, Temperature" divider />
+
       <Input
         label="Version*"
         error={this.state.version && semver.valid(this.state.version) === null}
         value={this.state.version}
         onChange={e => this.setState({ version: e.target.value })}
-      />{' '}
+      />
+      <SecondaryText text="Calibration version (in SemVer 2.0.0 format)" divider />
+
       <Input
         label="Accumulation (in hours)"
         value={this.state.accumulation}
         onChange={e => this.setState({ accumulation: e.target.value })}
       />
-      <br />
-      <br />
+      <SecondaryText
+        text="Accumulation period for the post-processed variable, e.g. Rainfall"
+        divider
+      />
+
       <p>Fields marked with * are mandatory.</p>
     </Segment>
   )
@@ -82,22 +106,26 @@ class SaveOperation extends Component {
         Enter parameters for {this.props.mode === 'breakpoints' ? 'saving' : 'loading'}{' '}
         breakpoints in Weather Types as CSV:
       </h5>
+
       <Input
         label="Infinity value"
         value={this.state.inf}
         onChange={e => this.setState({ inf: e.target.value })}
       />
+      <SecondaryText text={`Numerical value to substitute the "Infinity" value`} />
     </Segment>
   )
 
   getMFsCSVComponent = () => (
     <Segment padded>
-      <h5>Enter parameters for saving MFs as CSV:</h5>
+      <h5>Enter parameters for saving Mapping Functions as CSV:</h5>
+
       <Input
-        label="No. of columns"
+        label="No. of post-processed members*"
         value={this.state.mfcols}
         onChange={e => this.setState({ mfcols: e.target.value })}
       />
+      <SecondaryText text="Number of post-processed members to create for each raw member" />
     </Segment>
   )
 
@@ -151,7 +179,7 @@ class SaveOperation extends Component {
       return 'Save summary of Weather Type biases'
     }
 
-    return 'Save Operation Files'
+    return 'Save Operational Calibration Files'
   }
 
   getBreakpointsCSV = () => {
