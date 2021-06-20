@@ -321,7 +321,11 @@ def save_operation():
             path = path / f"{loader.error_type.name}.csv"
 
         with open(path, "w") as f:
-            rep.to_csv(f)
+            rep.to_csv(
+                f,
+                header=[str(i + 1) for i in range(int(mf_cols))],
+                index_label="WT Code"
+            )
 
     if mode in ["wt", "all"]:
         ylim = payload["yLim"]
