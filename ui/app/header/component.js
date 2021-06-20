@@ -36,7 +36,7 @@ const Header = props => (
                   disabled={props.page.activePageNumber !== 2}
                   onClick={() => props.onSaveOperationClicked('breakpoints-upload')}
                 >
-                  Breakpoints CSV
+                  Breakpoints (CSV)
                 </Dropdown.Item>
               )}
 
@@ -68,31 +68,31 @@ const Header = props => (
                     disabled={props.page.activePageNumber !== 2}
                     onClick={() => props.onSaveOperationClicked('breakpoints')}
                   >
-                    Breakpoints as CSV
+                    Breakpoints (CSV)
                   </Dropdown.Item>
                   <Dropdown.Item
                     disabled={props.page.activePageNumber !== 2}
                     onClick={() => props.onSaveOperationClicked('mf')}
                   >
-                    MFs as CSV
+                    Mapping Functions (CSV)
                   </Dropdown.Item>
                   <Dropdown.Item
                     disabled={props.page.activePageNumber !== 2}
                     onClick={() => props.onSaveOperationClicked('wt')}
                   >
-                    WTs as PNG
+                    Weather Types (PNG)
                   </Dropdown.Item>
                   <Dropdown.Item
                     disabled={props.page.activePageNumber !== 2}
                     onClick={() => props.onSaveOperationClicked('bias')}
                   >
-                    WT biases
+                    Weather Type biases
                   </Dropdown.Item>
                   <Dropdown.Item
                     disabled={props.page.activePageNumber !== 2}
                     onClick={() => props.onSaveOperationClicked('all')}
                   >
-                    Operation
+                    Operational calibration files
                   </Dropdown.Item>
                 </>
               )}
