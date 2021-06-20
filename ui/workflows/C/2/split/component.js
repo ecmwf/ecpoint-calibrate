@@ -56,16 +56,12 @@ class Split extends Component {
   state = defaultState
 
   static getDerivedStateFromProps(props, state) {
+    const nodeLevel = props.nodeMeta?.level || 0
+    const selectedLevel = state.customSplitLevel || 0
+
     return {
       ...state,
-      customSplitLevel:
-        !_.isEmpty(props.nodeMeta) && state.customSplitLevel === ''
-          ? props.nodeMeta.level === props.fields.length - 1
-            ? props.nodeMeta.level
-            : props.nodeMeta.level === -1
-            ? 0
-            : props.nodeMeta.level
-          : state.customSplitLevel,
+      customSplitLevel: Math.max(nodeLevel, selectedLevel),
     }
   }
 
