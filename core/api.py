@@ -289,7 +289,13 @@ def save_operation():
 
     if mode == "all":
         version = payload["version"]
-        output_path = output_path / f"OperCalOuts_{version}"
+        family = payload["family"]
+        accumulation = payload["accumulation"]
+        accumulation = f"{accumulation}h" if accumulation else ""
+        dataset_name = payload["datasetName"]
+
+        output_path = output_path / f"{family}{accumulation}{dataset_name}_{version}"
+
         os.makedirs(output_path, exist_ok=True)
 
     if mode in ["breakpoints", "all"]:
