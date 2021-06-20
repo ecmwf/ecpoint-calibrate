@@ -302,7 +302,7 @@ def save_operation():
         csv = payload["breakpointsCSV"]
         path = output_path
         if mode == "all":
-            path = path / "BreakPointsWT.csv"
+            path = path / "BP.csv"
 
         with open(path, "w") as f:
             f.write(csv)
@@ -375,7 +375,7 @@ def save_operation():
 
         path = output_path
         if mode == "all":
-            path = path / "BiasesWT.csv"
+            path = path / "Bias.csv"
 
         csv = []
         for idx in range(len(thrL_out)):
