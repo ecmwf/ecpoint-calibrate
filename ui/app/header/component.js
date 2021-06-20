@@ -1,79 +1,46 @@
 import React from 'react'
 
-import { Image, Dropdown } from 'semantic-ui-react'
+import { Image, Dropdown, Menu, Divider } from 'semantic-ui-react'
 import logo from '~/assets/img/ECMWF_logo.png'
 
 const mainProcess = require('@electron/remote').require('./server')
 const jetpack = require('fs-jetpack')
 
+const MenuFragment = ({ title, children, divider }) => (
+  <>
+    <Dropdown.Header>{title}</Dropdown.Header>
+    {children}
+    {divider && <Divider />}
+  </>
+)
+
 const Header = props => (
-  <div
-    style={{
-      paddingLeft: '20px',
-      paddingBottom: '10px',
-      paddingTop: '20px',
-      backgroundColor: '#24252a',
-    }}
-  >
-    <Image src={logo} size="small" verticalAlign="bottom" />
-    <span style={{ paddingLeft: '40px', color: 'white', fontSize: '18px' }}>
-      ecPoint-Calibrate
-    </span>
-    <span style={{ paddingLeft: '10px', color: 'white' }}>
-      v{window.require('electron').remote.app.getVersion()}
-    </span>
-    {props.workflow !== null && (
-      <div
-        style={{
-          float: 'right',
-          paddingRight: '10px',
-          marginTop: '-10px',
-        }}
-      >
-        <Dropdown text="Menu" icon="bars" floating labeled button className="icon">
-          <Dropdown.Menu>
-            {props.workflow === 'C' && (
-              <>
+  <Menu borderless inverted style={{ borderRadius: '0', margin: '0' }}>
+    <Menu.Item>
+      <Image src={logo} size="small" />
+    </Menu.Item>
+
+    <Menu.Item>
+      <span style={{ color: 'white' }}>
+        v{window.require('electron').remote.app.getVersion()}
+      </span>
+    </Menu.Item>
+
+    <Menu.Menu position="right">
+      <Dropdown item text="Menu">
+        <Dropdown.Menu>
+          {['B', 'C'].includes(props.workflow) && (
+            <MenuFragment title="Import">
+              {props.workflow === 'C' && (
                 <Dropdown.Item
                   disabled={props.page.activePageNumber !== 2}
                   onClick={() => props.onSaveOperationClicked('breakpoints-upload')}
                 >
-                  Upload breakpoints CSV
+                  Breakpoints CSV
                 </Dropdown.Item>
-                <Dropdown.Item
-                  disabled={props.page.activePageNumber !== 2}
-                  onClick={() => props.onSaveOperationClicked('breakpoints')}
-                >
-                  Save breakpoints as CSV
-                </Dropdown.Item>
-                <Dropdown.Item
-                  disabled={props.page.activePageNumber !== 2}
-                  onClick={() => props.onSaveOperationClicked('mf')}
-                >
-                  Save MFs as CSV
-                </Dropdown.Item>
-                <Dropdown.Item
-                  disabled={props.page.activePageNumber !== 2}
-                  onClick={() => props.onSaveOperationClicked('wt')}
-                >
-                  Save WTs as PNG
-                </Dropdown.Item>
-                <Dropdown.Item
-                  disabled={props.page.activePageNumber !== 2}
-                  onClick={() => props.onSaveOperationClicked('bias')}
-                >
-                  Save WT biases
-                </Dropdown.Item>
-                <Dropdown.Item
-                  disabled={props.page.activePageNumber !== 2}
-                  onClick={() => props.onSaveOperationClicked('all')}
-                >
-                  Save Operation
-                </Dropdown.Item>
-              </>
-            )}
-            {props.workflow === 'B' && (
-              <>
+              )}
+
+              {props.workflow === 'B' && (
                 <Dropdown.Item
                   disabled={props.page.activePageNumber === 3}
                   onClick={() => {
@@ -87,8 +54,49 @@ const Header = props => (
                     props.warmupPredictorMetadataCache(state.predictors.path)
                   }}
                 >
-                  Load workflow
+                  Workflow
                 </Dropdown.Item>
+              )}
+            </MenuFragment>
+          )}
+
+          {['B', 'C'].includes(props.workflow) && (
+            <MenuFragment title="Export">
+              {props.workflow === 'C' && (
+                <>
+                  <Dropdown.Item
+                    disabled={props.page.activePageNumber !== 2}
+                    onClick={() => props.onSaveOperationClicked('breakpoints')}
+                  >
+                    Breakpoints as CSV
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    disabled={props.page.activePageNumber !== 2}
+                    onClick={() => props.onSaveOperationClicked('mf')}
+                  >
+                    MFs as CSV
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    disabled={props.page.activePageNumber !== 2}
+                    onClick={() => props.onSaveOperationClicked('wt')}
+                  >
+                    WTs as PNG
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    disabled={props.page.activePageNumber !== 2}
+                    onClick={() => props.onSaveOperationClicked('bias')}
+                  >
+                    WT biases
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    disabled={props.page.activePageNumber !== 2}
+                    onClick={() => props.onSaveOperationClicked('all')}
+                  >
+                    Operation
+                  </Dropdown.Item>
+                </>
+              )}
+              {props.workflow === 'B' && (
                 <Dropdown.Item
                   disabled={props.page.activePageNumber !== 3}
                   onClick={() => {
@@ -100,16 +108,19 @@ const Header = props => (
                     jetpack.write(path, props.reduxState)
                   }}
                 >
-                  Save workflow
+                  Workflow
                 </Dropdown.Item>
-              </>
-            )}
+              )}
+            </MenuFragment>
+          )}
+
+          <MenuFragment title="Navigation" divider={false}>
             <Dropdown.Item onClick={() => props.resetApp()}>Home</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      </div>
-    )}
-  </div>
+          </MenuFragment>
+        </Dropdown.Menu>
+      </Dropdown>
+    </Menu.Menu>
+  </Menu>
 )
 
 export default Header
