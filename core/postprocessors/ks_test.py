@@ -51,7 +51,7 @@ def ks_test_engine(
             df_result.at[idx, "pValue"] = -1 * np.log(pvalue)
             df_result.at[idx, "dStatValue"] = statistic
 
-    return df_result
+    return df_result, len(df)
 
 
 def format_ks_stats(df: pd.DataFrame) -> pd.DataFrame:

@@ -488,7 +488,7 @@ def get_breakpoints_suggestions():
     ]
     title_ks = wrap_title(title_tokens, chunk_size=4)
 
-    df_breakpoints = ks_test_engine(
+    df_breakpoints, df_size = ks_test_engine(
         df=df,
         predictor_name=predictor,
         error_name=loader.error_type.name,
@@ -499,14 +499,20 @@ def get_breakpoints_suggestions():
 
     plot = plot_ks_stats(
         df=df_breakpoints,
-        node=title_ks,
+        node=title_ks + f"\n\nNo. of points: {df_size}",
         predictor=predictor,
         unit=loader.units["predictors"][predictor],
     )
     df_breakpoints = format_ks_stats(df_breakpoints)
 
     return Response(
-        json.dumps({"records": df_breakpoints.to_dict("records"), "figure": plot}),
+        json.dumps(
+            {
+                "records": df_breakpoints.to_dict("records"),
+                "figure": plot,
+                "count": df_size,
+            }
+        ),
         mimetype="application/json",
     )
 
