@@ -15,6 +15,7 @@ from core.utils import int_or_float
 
 from .conditional_verification import plot_avg, plot_obs_freq, plot_std
 from .generics import Node
+from ..utils import wrap_title
 
 
 @attr.s(slots=True)
@@ -277,7 +278,7 @@ class WeatherType(object):
 
     def evaluate(
         self, *cols: str, loader: BasePointDataReader
-    ) -> Tuple[pd.DataFrame, str]:
+    ) -> Tuple[pd.DataFrame, Tuple]:
         self.error_type = loader.error_type
 
         if loader.cheaper:
@@ -320,11 +321,7 @@ class WeatherType(object):
                 ),
             )
 
-        # Chunk predictor titles in groups of 6 (practically chosen), and join
-        # them by new-line character.
-        chunks = [title_pred[i:i + 6] for i in range(0, len(title_pred), 6)]
-        title = "\n".join(" ".join(chunk) for chunk in chunks)
-        return df, title
+        return df, title_pred
 
     def _evaluate(self, predictors_matrix):
         """

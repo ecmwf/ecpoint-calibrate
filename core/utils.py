@@ -1,6 +1,6 @@
 import os
 from datetime import date
-from typing import Union
+from typing import Union, Sequence
 
 import dateutil.parser
 from numpy import inf
@@ -36,3 +36,11 @@ def sanitize_path(path: str) -> str:
 
 def format_date(value: str) -> date:
     return dateutil.parser.isoparse(value).date()
+
+
+def wrap_title(title: Sequence, chunk_size: int):
+    """
+    Chunk titles in groups of, and join them by new-line character.
+    """
+    chunks = [title[i:i + chunk_size] for i in range(0, len(title), chunk_size)]
+    return "\n".join(" ".join(chunk) for chunk in chunks)

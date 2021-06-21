@@ -20,7 +20,7 @@ from core.postprocessors.decision_tree import DecisionTree, WeatherType
 from core.postprocessors.ks_test import format_ks_stats, ks_test_engine, plot_ks_stats
 from core.processor import run
 from core.svc import postprocessing as postprocessing_svc
-from core.utils import sanitize_path
+from core.utils import inf, sanitize_path, wrap_title
 
 app = Flask(__name__)
 CORS(app)
@@ -196,7 +196,9 @@ def get_wt_histogram():
         thrL=thrL, thrH=thrH, thrL_labels=labels[::2], thrH_labels=labels[1::2]
     )
 
-    df, title = wt.evaluate(loader.error_type.name, loader=loader)
+    df, title_tokens = wt.evaluate(loader.error_type.name, loader=loader)
+    title = wrap_title(title=title_tokens, chunk_size=6)
+
     error = df[loader.error_type.name]
 
     plot = wt.plot(error, bins, title, int(y_lim))
@@ -234,7 +236,8 @@ def save_wt_histograms():
             thrL=thrL, thrH=thrH, thrL_labels=labels[::2], thrH_labels=labels[1::2]
         )
 
-        dataframe, title = wt.evaluate(loader.error_type.name, loader=loader)
+        dataframe, title_tokens = wt.evaluate(loader.error_type.name, loader=loader)
+        title = wrap_title(title=title_tokens, chunk_size=6)
         error = dataframe[loader.error_type.name]
 
         wt_code = thrGridOut[idx][0]
@@ -324,7 +327,7 @@ def save_operation():
             rep.to_csv(
                 f,
                 header=[str(i + 1) for i in range(int(mf_cols))],
-                index_label="WT Code"
+                index_label="WT Code",
             )
 
     if mode in ["wt", "all"]:
@@ -353,7 +356,8 @@ def save_operation():
                 thrL=thrL, thrH=thrH, thrL_labels=labels[::2], thrH_labels=labels[1::2]
             )
 
-            dataframe, title = wt.evaluate(loader.error_type.name, loader=loader)
+            dataframe, title_tokens = wt.evaluate(loader.error_type.name, loader=loader)
+            title = wrap_title(title=title_tokens, chunk_size=6)
             error = dataframe[loader.error_type.name]
 
             wt_code = thrGridOut[idx][0]
@@ -389,7 +393,8 @@ def save_operation():
                 thrL=thrL, thrH=thrH, thrL_labels=labels[::2], thrH_labels=labels[1::2]
             )
 
-            dataframe, title = wt.evaluate(loader.error_type.name, loader=loader)
+            dataframe, title_tokens = wt.evaluate(loader.error_type.name, loader=loader)
+            title = wrap_title(title=title_tokens, chunk_size=6)
             error = dataframe[loader.error_type.name]
 
             bias = loader.error_type.bias(error=error, low=bins[0], high=bins[-1])
@@ -467,24 +472,34 @@ def get_breakpoints_suggestions():
     series = pandas.Series(dict(zip(labels, thrWT)))
     thrL, thrH = series.iloc[::2], series.iloc[1::2]
 
+    lower_bound = float(lower_bound) if lower_bound else -inf
+    upper_bound = float(upper_bound) if upper_bound else inf
+
     wt = WeatherType(
         thrL=thrL, thrH=thrH, thrL_labels=labels[::2], thrH_labels=labels[1::2]
     )
 
-    df, title = wt.evaluate(loader.error_type.name, predictor, loader=loader)
+    df, title_tokens = wt.evaluate(loader.error_type.name, predictor, loader=loader)
+    title_tokens = [
+        f"({lower_bound} <= {predictor} < {upper_bound})"
+        if predictor in token
+        else token
+        for token in title_tokens
+    ]
+    title_ks = wrap_title(title_tokens, chunk_size=4)
 
     df_breakpoints = ks_test_engine(
         df=df,
         predictor_name=predictor,
         error_name=loader.error_type.name,
         breakpoints_num=num_bp,
-        lower_bound=lower_bound and float(lower_bound),
-        upper_bound=upper_bound and float(upper_bound),
+        lower_bound=lower_bound,
+        upper_bound=upper_bound,
     )
 
     plot = plot_ks_stats(
         df=df_breakpoints,
-        node=title,
+        node=title_ks,
         predictor=predictor,
         unit=loader.units["predictors"][predictor],
     )
