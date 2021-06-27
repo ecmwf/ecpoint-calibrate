@@ -33,48 +33,26 @@ const WorkflowC_Menu = MenuFactory([
   },
 ])
 
-const Page = props => {
+export default function Page(props) {
   if (props.workflow === 'B' && props.page.activePageNumber === 1) {
-    return (
-      <>
-        <WorkflowB_Menu {...props} />
-        <WorkflowB_Page1 />
-      </>
-    )
+    return [<WorkflowB_Menu {...props} />, <WorkflowB_Page1 />]
   }
+
   if (props.workflow === 'B' && props.page.activePageNumber === 2) {
-    return (
-      <>
-        <WorkflowB_Menu {...props} />
-        <WorkflowB_Page2 />
-      </>
-    )
+    return [<WorkflowB_Menu {...props} />, <WorkflowB_Page2 />]
   }
+
   if (props.workflow === 'B' && props.page.activePageNumber === 3) {
-    return (
-      <>
-        <WorkflowB_Menu {...props} />
-        <WorkflowB_Page3 />
-      </>
-    )
+    return [<WorkflowB_Menu {...props} />, <WorkflowB_Page3 />]
   }
+
   if (props.workflow === 'C' && props.page.activePageNumber === 1) {
-    return (
-      <>
-        <WorkflowC_Menu {...props} />
-        <WorkflowC_Page1 />
-      </>
-    )
+    return [<WorkflowC_Menu {...props} />, <WorkflowC_Page1 />]
   }
 
   if (props.workflow === 'C' && props.page.activePageNumber === 2) {
-    return (
-      <>
-        <WorkflowC_Menu {...props} />
-        <WorkflowC_Page2 />
-      </>
-    )
+    return [<WorkflowC_Menu {...props} />, <WorkflowC_Page2 />]
   }
-}
 
-export default Page
+  return null
+}

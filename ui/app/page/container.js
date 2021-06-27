@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 
-import PredictandsComponent from './component'
+import Page from './component'
 
 const mapStateToProps = state => ({
   page: state.page,
@@ -20,4 +20,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(PredictandsComponent)
+)(Page)

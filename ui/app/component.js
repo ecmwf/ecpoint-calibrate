@@ -1,34 +1,33 @@
 import React, { Component } from 'react'
-
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import { Button, Image, Grid, Icon, Popup } from 'semantic-ui-react'
 
 import Header from './header'
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
 import Page from './page'
-
 import ring from '~/assets/img/ring.png'
 
 const { shell } = require('electron')
 
+function Content({ children }) {
+  return <div style={{ paddingTop: '52px', height: '100%' }}>{children}</div>
+}
+
 class App extends Component {
-  getApp = () => (
-    <>
-      <Header />
-      <Page />
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick={false}
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-    </>
-  )
+  getApp = () => [
+    <Page />,
+    <ToastContainer
+      position="top-right"
+      autoClose={5000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick={false}
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+    />,
+  ]
 
   getSpashIntro = () => <Image src={ring} size="big" verticalAlign="middle" />
 
@@ -140,26 +139,32 @@ class App extends Component {
   )
 
   getSplashScreen = () => (
-    <>
-      <Header />
-      <Grid columns={2} padded="vertically" className="background">
-        <Grid.Row>
-          <Grid.Column textAlign="center" verticalAlign="middle">
-            {this.getSpashIntro()}
-          </Grid.Column>
-          <Grid.Column
-            textAlign="center"
-            verticalAlign="middle"
-            className="right-splash-grid"
-          >
-            {this.getSplashRightGrid()}
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
-    </>
+    <Grid columns={2} padded="vertically" className="background">
+      <Grid.Row>
+        <Grid.Column textAlign="center" verticalAlign="middle">
+          {this.getSpashIntro()}
+        </Grid.Column>
+        <Grid.Column
+          textAlign="center"
+          verticalAlign="middle"
+          className="right-splash-grid"
+        >
+          {this.getSplashRightGrid()}
+        </Grid.Column>
+      </Grid.Row>
+    </Grid>
   )
 
-  render = () => (this.props.workflow === null ? this.getSplashScreen() : this.getApp())
+  render() {
+    return (
+      <>
+        <Header />
+        <Content>
+          {this.props.workflow === null ? this.getSplashScreen() : this.getApp()}
+        </Content>
+      </>
+    )
+  }
 }
 
 export default App

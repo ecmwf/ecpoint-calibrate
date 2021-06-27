@@ -15,7 +15,7 @@ body {
 }
 
 .background {
-  background: #fff2cc;
+  height: inherit;
   background-image: url("../img/background.jpg");
   background-position: center; /* Center the image */
   background-repeat: no-repeat; /* Do not repeat the image */
