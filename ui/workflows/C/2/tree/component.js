@@ -341,37 +341,6 @@ export default class TreeContainer extends Component {
           </Grid.Column>
           <Grid.Column floated="right" width={5}>
             <Button
-              content="Save WTs as PNG"
-              icon="download"
-              labelPosition="left"
-              floated="right"
-              size="tiny"
-              onClick={() => {
-                const path = mainProcess.selectDirectory()
-                if (path === null) {
-                  return
-                }
-
-                this.setState({
-                  loading: 'Saving all Mapping Functions as PNGs. Please wait.',
-                })
-                client
-                  .post('/postprocessing/save-wt-histograms', {
-                    labels: this.props.labels,
-                    thrGridOut: this.props.breakpoints,
-                    path: this.props.path,
-                    yLim: this.props.yLim,
-                    destinationDir: path,
-                    bins: this.props.bins,
-                    cheaper: this.props.cheaper,
-                  })
-                  .then(() => this.setState({ loading: false }))
-                  .catch(errorHandler)
-                  .then(() => this.setState({ loading: false }))
-              }}
-            />
-
-            <Button
               content="Save tree as PNG"
               icon="download"
               labelPosition="left"
