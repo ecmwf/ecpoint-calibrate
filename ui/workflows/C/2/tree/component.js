@@ -178,9 +178,7 @@ export default class TreeContainer extends Component {
   }
 
   shouldCollapseNode = () =>
-    ![MODES_MAP.VISUALIZE_LEAF_MF, MODES_MAP.VISUALIZE_NODE_MF].includes(
-      this.state.mode
-    )
+    ![MODES_MAP.VISUALIZE_NODE_MF, MODES_MAP.MERGE_NODE].includes(this.state.mode)
 
   handleKeyboardInput = e => {
     const code = e.keyCode ? e.keyCode : e.which
