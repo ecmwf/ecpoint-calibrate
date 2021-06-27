@@ -131,15 +131,15 @@ def run(config: Config):
         logging.info(f"  {forecast}")
 
         if forecast in counter_used_FC:
-            logging.warning(
-                f"  The above forecast was already considered for computation in Case {counter_used_FC[forecast]}"
+            logging.info(
+                f"  Forecast already used: case {counter_used_FC[forecast]}"
             )
             continue
 
         # Reading the forecasts
         if curr_date < BaseDateS or curr_date > BaseDateF:
-            logging.warning(
-                f"  Forecast out of the calibration period {BaseDateSSTR} - {BaseDateFSTR}. Forecast not considered."
+            logging.info(
+                f"  Forecast not considered: outside calibration period {BaseDateSSTR} - {BaseDateFSTR}."
             )
             continue
 
