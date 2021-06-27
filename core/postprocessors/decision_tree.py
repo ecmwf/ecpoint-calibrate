@@ -15,7 +15,6 @@ from core.utils import int_or_float
 
 from .conditional_verification import plot_avg, plot_obs_freq, plot_std
 from .generics import Node
-from ..utils import wrap_title
 
 
 @attr.s(slots=True)
@@ -149,7 +148,7 @@ class DecisionTree(object):
         return cls(
             threshold_low=pd.DataFrame(data=thrL_matrix, columns=low.columns),
             threshold_high=pd.DataFrame(data=thrH_matrix, columns=high.columns),
-            ranges=ranges
+            ranges=ranges,
         )
 
     @property
@@ -192,9 +191,7 @@ class DecisionTree(object):
             if not curr.children:
                 curr.meta["idxWT"] = i
                 curr.nodeSvgShape = {
-                    "shapeProps": {
-                        "stroke": self.leaf_colors[curr.meta["level"]],
-                    },
+                    "shapeProps": {"stroke": self.leaf_colors[curr.meta["level"]]}
                 }
 
         def codegen(node: Node, code: str):
@@ -208,7 +205,6 @@ class DecisionTree(object):
 
     def cal_rep_error(self, loader: BasePointDataReader, nBin) -> pd.DataFrame:
         rep_error = np.zeros((self.num_wt, nBin))
-        a = np.arange(nBin)
 
         for i in range(self.num_wt):
             wt = WeatherType(
@@ -219,28 +215,8 @@ class DecisionTree(object):
             )
 
             df, title = wt.evaluate(loader.error_type.name, loader=loader)
-            error = df[loader.error_type.name].sort_values().to_numpy()
-
-            centre_bin = (((2.0 * a) + 1) / (2.0 * nBin)) * len(error)
-
-            for k in range(nBin):
-                val = centre_bin[k]
-                low, up = math.floor(val), math.ceil(val)
-
-                if len(error) == 0:
-                    rep_error[i][k] = -1
-                    continue
-                elif len(error) == 1:
-                    low = up = 0
-                elif up >= len(error):
-                    up = len(error) - 1
-                    low = up - 1
-
-                low_val = error[low]
-                up_val = error[up]
-                w_low, w_up = 1 - abs(val - low), 1 - abs(val - up)
-
-                rep_error[i][k] = ((low_val * w_low) + (up_val * w_up)) / (w_low + w_up)
+            error = df[loader.error_type.name]
+            rep_error[i] = self.discretize_error(error=error, n=nBin)
 
         df = pd.DataFrame(data=rep_error, index=self.leaf_codes)
         return df.round(3)
@@ -357,7 +333,35 @@ class WeatherType(object):
 
         return error.to_list(), predictors_matrix, title_pred
 
-    def plot(self, data, bins: list, title, y_lim, out_path=None):
+    @staticmethod
+    def discretize_error(error, num_bins: int) -> pd.Series:
+        error = error.sort_values().to_numpy()
+
+        rep_error = np.zeros(num_bins)
+        a = np.arange(num_bins)
+        centre_bin = (((2.0 * a) + 1) / (2.0 * num_bins)) * len(error)
+        for k in range(num_bins):
+            val = centre_bin[k]
+            low, up = math.floor(val), math.ceil(val)
+
+            if len(error) == 0:
+                rep_error[k] = -1
+                continue
+            elif len(error) == 1:
+                low = up = 0
+            elif up >= len(error):
+                up = len(error) - 1
+                low = up - 1
+
+            low_val = error[low]
+            up_val = error[up]
+            w_low, w_up = 1 - abs(val - low), 1 - abs(val - up)
+
+            rep_error[k] = ((low_val * w_low) + (up_val * w_up)) / (w_low + w_up)
+
+        return pd.Series(rep_error)
+
+    def plot(self, data, bins: list, title, y_lim: int, num_bins: int, out_path=None):
         matplotlib.style.use("seaborn")
         fig, ax = plt.subplots()
         plt.tight_layout(pad=5)
@@ -383,7 +387,8 @@ class WeatherType(object):
         )
 
         # Add bias computation
-        bias = self.error_type.bias(error=data, low=bins[0], high=bins[-1])
+        discretized_error = self.discretize_error(error=data, num_bins=num_bins)
+        bias = self.error_type.bias(error=discretized_error, low=bins[0], high=bins[-1])
         ax.text(
             x=0.85,
             y=0.95,

@@ -175,12 +175,13 @@ def get_decision_tree():
 @app.route("/postprocessing/generate-wt-histogram", methods=("POST",))
 def get_wt_histogram():
     payload = request.get_json()
-    labels, thrWT, path, y_lim, bins, cheaper = (
+    labels, thrWT, path, y_lim, bins, num_bins, cheaper = (
         payload["labels"],
         payload["thrWT"],
         sanitize_path(payload["path"]),
         payload["yLim"],
         payload["bins"],
+        payload["numBins"],
         payload["cheaper"],
     )
 
@@ -200,8 +201,7 @@ def get_wt_histogram():
     title = wrap_title(title=title_tokens, chunk_size=6)
 
     error = df[loader.error_type.name]
-
-    plot = wt.plot(error, bins, title, int(y_lim))
+    plot = wt.plot(error, bins, title, y_lim=int(y_lim), num_bins=int(num_bins))
 
     return jsonify({"histogram": plot})
 
@@ -209,13 +209,14 @@ def get_wt_histogram():
 @app.route("/postprocessing/save-wt-histograms", methods=("POST",))
 def save_wt_histograms():
     payload = request.get_json()
-    labels, thrGridOut, path, y_lim, destination, bins, cheaper = (
+    labels, thrGridOut, path, y_lim, destination, bins, num_bins, cheaper = (
         payload["labels"],
         payload["thrGridOut"],
         sanitize_path(payload["path"]),
         payload["yLim"],
         payload["destinationDir"],
         payload["bins"],
+        payload["numBins"],
         payload["cheaper"],
     )
     destination = sanitize_path(destination)
@@ -246,6 +247,7 @@ def save_wt_histograms():
             bins,
             title,
             y_lim=int(y_lim),
+            num_bins=int(num_bins),
             out_path=os.path.join(destination, f"WT_{wt_code}.png"),
         )
 
@@ -333,6 +335,7 @@ def save_operation():
     if mode in ["wt", "all"]:
         ylim = payload["yLim"]
         bins = payload["bins"]
+        num_bins = payload["numBins"]
         thrGridOut = payload["thrGridOut"]
 
         matrix = [[float(cell) for cell in row[1:]] for row in thrGridOut]
@@ -366,6 +369,7 @@ def save_operation():
                 bins,
                 title,
                 y_lim=int(ylim),
+                num_bins=int(num_bins),
                 out_path=os.path.join(path, f"WT_{wt_code}.png"),
             )
 
@@ -394,10 +398,12 @@ def save_operation():
             )
 
             dataframe, title_tokens = wt.evaluate(loader.error_type.name, loader=loader)
-            title = wrap_title(title=title_tokens, chunk_size=6)
             error = dataframe[loader.error_type.name]
+            discretized_error = DecisionTree.discretize_error(error=error, n=100)
 
-            bias = loader.error_type.bias(error=error, low=bins[0], high=bins[-1])
+            bias = loader.error_type.bias(
+                error=discretized_error, low=bins[0], high=bins[-1]
+            )
             bias = f"{bias:.2f}"
 
             wt_code = thrGridOut[idx][0]
