@@ -376,6 +376,7 @@ def save_operation():
     if mode in ["bias", "all"]:
         thrGridOut = payload["thrGridOut"]
         bins = payload["bins"]
+        num_bins = payload["numBins"]
         bins = [float(each) for each in bins]
 
         matrix = [[float(cell) for cell in row[1:]] for row in thrGridOut]
@@ -399,7 +400,7 @@ def save_operation():
 
             dataframe, title_tokens = wt.evaluate(loader.error_type.name, loader=loader)
             error = dataframe[loader.error_type.name]
-            discretized_error = DecisionTree.discretize_error(error=error, n=100)
+            discretized_error = wt.discretize_error(error=error, num_bins=int(num_bins))
 
             bias = loader.error_type.bias(
                 error=discretized_error, low=bins[0], high=bins[-1]

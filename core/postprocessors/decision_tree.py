@@ -216,7 +216,7 @@ class DecisionTree(object):
 
             df, title = wt.evaluate(loader.error_type.name, loader=loader)
             error = df[loader.error_type.name]
-            rep_error[i] = self.discretize_error(error=error, n=nBin)
+            rep_error[i] = wt.discretize_error(error=error, num_bins=nBin)
 
         df = pd.DataFrame(data=rep_error, index=self.leaf_codes)
         return df.round(3)
