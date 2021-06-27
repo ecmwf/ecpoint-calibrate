@@ -38,7 +38,7 @@ class Binning extends Component {
                 Invalid bin value(s) found. Bins must be real numbers, and entered in
                 ascending order.
               </p>
-              <p></p>
+              <p />
             </Message>
           ) : (
             <br />

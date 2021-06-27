@@ -37,7 +37,7 @@ import { realNumbers } from '~/utils/patterns'
 const mainProcess = require('@electron/remote').require('./server')
 
 const defaultState = {
-  customSplitValue: '',
+  customSplitValues: [],
   customSplitLevel: '',
   auto: false,
   numBreakpoints: '',
@@ -81,13 +81,12 @@ class Split extends Component {
   getMatrixAfterSplit = () => {
     let matrix = [...this.props.breakpoints.map(row => [..._.flatMap(row.slice(1))])]
 
-    const values = this.state.auto
-      ? flow(
-          sortBy(_.identity),
-          reverse,
-          map(el => el.toString())
-        )(this.state.definitiveBreakpoints)
-      : [this.state.customSplitValue]
+    const values = flow(
+      map(parseFloat),
+      sortBy(_.identity),
+      reverse,
+      map(el => el.toString())
+    )(this.state.auto ? this.state.definitiveBreakpoints : this.state.customSplitValues)
 
     values.forEach(value => {
       matrix = this.split(value, this.state.customSplitLevel, matrix)
@@ -258,6 +257,15 @@ class Split extends Component {
     )
   }
 
+  arrayIsSorted = arr => arr.every((v, i, a) => !i || a[i - 1] < v)
+
+  numberArrayHasError = values =>
+    values.length > 0 &&
+    !(
+      values.every(value => value && realNumbers.test(value)) &&
+      this.arrayIsSorted(values.map(value => parseFloat(value)))
+    )
+
   getSwitcher() {
     return (
       this.state.primaryBreakpoints.length === 0 && (
@@ -313,9 +321,13 @@ class Split extends Component {
               <Grid.Column>
                 <Input
                   disabled={this.state.auto}
-                  error={this.numberValueHasError(this.state.customSplitValue)}
-                  value={this.state.customSplitValue}
-                  onChange={e => this.setState({ customSplitValue: e.target.value })}
+                  error={this.numberArrayHasError(this.state.customSplitValues)}
+                  value={this.state.customSplitValues}
+                  onChange={e =>
+                    this.setState({
+                      customSplitValues: e.target.value.split(',').map(v => v.trim()),
+                    })
+                  }
                   label={
                     <Dropdown
                       scrolling
@@ -661,9 +673,9 @@ class Split extends Component {
       disabled={
         this.state.auto
           ? this.state.definitiveBreakpoints.length === 0
-          : this.state.customSplitValue === '' ||
+          : this.state.customSplitValues.length === 0 ||
             this.state.customSplitLevel === '' ||
-            this.numberValueHasError(this.state.customSplitValue)
+            this.numberArrayHasError(this.state.customSplitValues)
       }
       onClick={() => {
         const [matrix, nSplits] = this.getMatrixAfterSplit()
