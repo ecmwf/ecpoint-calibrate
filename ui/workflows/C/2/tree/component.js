@@ -89,7 +89,7 @@ export default class TreeContainer extends Component {
         thrWT: matrix[from],
         path: this.props.path,
         yLim: this.props.yLim,
-        numBins: 100,
+        numBins: this.props.numBins,
         bins: this.props.bins,
         cheaper: this.props.cheaper,
       })
@@ -392,6 +392,7 @@ export default class TreeContainer extends Component {
           path={this.props.path}
           labels={this.props.labels}
           yLim={this.props.yLim}
+          numBins={this.props.numBins}
           bins={this.props.bins}
           count={this.props.count}
           cheaper={this.props.cheaper}

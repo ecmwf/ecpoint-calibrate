@@ -184,7 +184,7 @@ class Split extends Component {
                   thrGridOut: patches,
                   path: this.props.path,
                   yLim: this.props.yLim,
-                  numBins: 100,
+                  numBins: this.props.numBins,
                   bins: this.props.bins,
                   destinationDir: path,
                   cheaper: this.props.cheaper,

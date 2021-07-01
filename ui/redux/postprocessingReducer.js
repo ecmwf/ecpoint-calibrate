@@ -3,6 +3,7 @@ const defaultState = {
   thrGridOut: [],
   fields: [],
   yLim: 100,
+  numBins: 100,
   tree: null,
   saveOperationMode: null,
   fieldRanges: null,
@@ -66,6 +67,10 @@ export default (state = defaultState, action) => {
 
     case 'POSTPROCESSING.SET_Y_LIM': {
       return { ...state, yLim: action.value }
+    }
+
+    case 'POSTPROCESSING.SET_NUM_BINS': {
+      return { ...state, numBins: action.value }
     }
 
     case 'POSTPROCESSING.SET_LOADING': {

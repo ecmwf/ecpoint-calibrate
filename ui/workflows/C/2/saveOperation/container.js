@@ -8,6 +8,7 @@ const mapStateToProps = state => ({
   open: state.postprocessing.saveOperationMode !== null,
   mode: state.postprocessing.saveOperationMode,
   yLim: state.postprocessing.yLim,
+  numBins: state.postprocessing.numBins,
   cheaper: state.preloader.cheaper,
   breakpoints: state.postprocessing.thrGridOut,
   excludedPredictors: state.postprocessing.excludedPredictors,

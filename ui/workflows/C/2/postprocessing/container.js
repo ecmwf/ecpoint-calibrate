@@ -10,6 +10,7 @@ const mapStateToProps = state => ({
   path: state.preloader.path,
   fields: state.postprocessing.fields,
   yLim: state.postprocessing.yLim,
+  numBins: state.postprocessing.numBins,
   tree: state.postprocessing.tree,
   loading: state.postprocessing.loading,
   ...state.binning,
@@ -17,6 +18,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   onYLimChange: value => dispatch({ type: 'POSTPROCESSING.SET_Y_LIM', value }),
+  onNumBinsChange: value => dispatch({ type: 'POSTPROCESSING.SET_NUM_BINS', value }),
   onSaveOperationClicked: mode => dispatch(onSaveOperationClicked(mode)),
 })
 

@@ -40,11 +40,36 @@ class PostProcessing extends Component {
       </Item>
     )
 
+  numBinsHasError = () =>
+    this.props.numBins === '' ||
+    (/^\d+$/.test(this.props.numBins) && parseInt(this.props.numBins) > 0 ? null : true)
+
+  getNumBinsField = () =>
+    this.props.thrGridOut.length > 0 && (
+      <Item>
+        <Item.Content>
+          <Item.Header>
+            <h5>Enter the number of bins to use for bias computation:</h5>
+          </Item.Header>
+          <Item.Description>
+            <Input
+              value={this.props.numBins || ''}
+              error={this.numBinsHasError()}
+              onChange={e => this.props.onNumBinsChange(e.target.value)}
+            />
+          </Item.Description>
+          <Item.Extra>Only positive integers are considered valid values.</Item.Extra>
+        </Item.Content>
+      </Item>
+    )
+
   getDecisionTree = () => (
     <Item>
       <Item.Content>
         <br />
-        {!this.yLimHasError() && this.props.tree !== null && <Tree />}
+        {!this.yLimHasError() &&
+          !this.numBinsHasError() &&
+          this.props.tree !== null && <Tree />}
       </Item.Content>
     </Item>
   )
@@ -77,6 +102,7 @@ class PostProcessing extends Component {
                     {!this.props.loading && (
                       <>
                         {this.getYLimitField()}
+                        {this.getNumBinsField()}
                         {this.getDecisionTree()}
                         {this.getSaveOperation()}
                       </>

@@ -210,7 +210,7 @@ class SaveOperation extends Component {
     client
       .post('/postprocessing/save', {
         labels: this.props.labels,
-        numBins: 100, // for mode === "wt"
+        numBins: this.props.numBins, // for mode === "wt"
         yLim: this.props.yLim, // for mode === "wt"
         bins: this.props.bins, // for mode === "wt"
         thrGridOut: this.props.breakpoints,
