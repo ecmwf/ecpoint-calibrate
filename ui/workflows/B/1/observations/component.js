@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { Grid, Input, Card, Button, Item, Icon } from 'semantic-ui-react'
+import { Grid, Input, Card, Button, Item, Icon, Message } from 'semantic-ui-react'
 
 import { isEmpty } from './index'
 
@@ -32,6 +32,18 @@ class Observation extends Component {
     </Item>
   )
 
+  getObsFormatWarning() {
+    console.log(this.props.observations.displayWarning)
+    return (
+      this.props.observations.displayWarning && (
+        <Message attached="bottom" warning>
+          <Icon name="warning" />
+          Unable to detect units from observational data. Please enter manually.
+        </Message>
+      )
+    )
+  }
+
   getObsUnitsField = () => (
     <Item>
       <Item.Content>
@@ -41,7 +53,10 @@ class Observation extends Component {
 
         <Item.Description>
           <Input
-            onChange={e => this.props.onUnitsChange(e.target.value)}
+            onChange={e => {
+              this.props.onUnitsChange(e.target.value)
+              this.props.setWarning(false)
+            }}
             value={this.props.observations.units || ''}
           />
         </Item.Description>
@@ -75,6 +90,7 @@ class Observation extends Component {
               {this.getObsPathField()}
               {this.getObsUnitsField()}
             </Item.Group>
+            {this.getObsFormatWarning()}
           </Card.Content>
         </Card>
       </Grid.Column>

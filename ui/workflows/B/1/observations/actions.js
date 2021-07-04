@@ -6,6 +6,11 @@ export const setUnits = units => ({
   value: units,
 })
 
+export const setWarning = toggle => ({
+  type: 'OBSERVATIONS.SET_WARNING',
+  value: toggle,
+})
+
 export const setPath = path => async dispatch => {
   if (path === null) {
     return
@@ -18,6 +23,10 @@ export const setPath = path => async dispatch => {
 
   await client
     .post('/loaders/observations/metadata', { path })
-    .then(response => dispatch(setUnits(response.data.units || '')))
+    .then(response => {
+      const units = response.data.units || ''
+      units === '' && dispatch(setWarning(true))
+      dispatch(setUnits(units))
+    })
     .catch(errorHandler)
 }

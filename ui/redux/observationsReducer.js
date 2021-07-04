@@ -1,6 +1,7 @@
 const defaultState = {
   path: null,
   units: '',
+  displayWarning: false,
 }
 
 export default (state = defaultState, action) => {
@@ -11,6 +12,10 @@ export default (state = defaultState, action) => {
 
     case 'OBSERVATIONS.SET_UNITS': {
       return { ...state, units: action.value }
+    }
+
+    case 'OBSERVATIONS.SET_WARNING': {
+      return { ...state, displayWarning: action.value }
     }
 
     default: {
