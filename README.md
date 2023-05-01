@@ -26,10 +26,6 @@ conda activate ecpoint_calibrate_env
 poetry install
 ```
 
-⚠️ `poetry` is not very happy running within a conda env and the `poetry install` command can
-intermittently fail. Running it multiple times in a row should eventually end up with a correct
-install.
-
 ### Activating the environment
 
 ```
