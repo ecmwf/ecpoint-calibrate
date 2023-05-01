@@ -1,0 +1,12 @@
+name: ecpoint_calibrate
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.10.*
+  - mamba
+  - pip
+  - poetry=1.*
+  - metview-batch
+platforms:
+  - linux-64
