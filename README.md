@@ -13,6 +13,11 @@ The development of this project was sponsored by the project "ECMWF Summer of We
 [@esowc_ecmwf](https://twitter.com/esowc_ecmwf?lang=en)
 [ECMWF](https://www.ecmwf.int).
 
+## Build with Docker
+
+```
+docker build -f Dockerfile.core -t ecmwf/ecpoint-calibrate-core:dev .
+```
 
 ## Python Backend
 
@@ -51,6 +56,3 @@ conda-lock -k explicit --conda mamba
 mamba update --file conda-linux-64.lock
 poetry update
 ```
-
-
-

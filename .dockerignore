@@ -2,8 +2,10 @@
 **
 
 # Allow files and directories
-!/Pipfile
-!/Pipfile.lock
+!/conda-linux-64.lock
+!/pyproject.toml
+!/poetry.lock
+!/README.md
 !/core/**
 !/start_log_agent.sh
 # Ignore unnecessary files inside allowed directories

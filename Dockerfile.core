@@ -1,6 +1,9 @@
 FROM continuumio/miniconda3 as build
 
-RUN conda install -y -c conda-forge metview-batch python=3.8
+
+COPY conda-linux-64.lock .
+RUN conda create --name ecpoint_calibrate_env --file conda-linux-64.lock
+ENV PATH /opt/conda/envs/ecpoint_calibrate_env/bin:$PATH
 
 ENV PYTHONPATH /app:$PYTHONPATH
 ENV PIPENV_VENV_IN_PROJECT=1
@@ -14,13 +17,12 @@ RUN apt-get update && apt-get install -y  --no-install-recommends \
 
 RUN rm -rf /root/* /tmp/* /var/cache/apt/archives/*.deb /var/lib/apt/lists/*
 
-RUN pip install -U pip wheel setuptools pipenv
-
 WORKDIR /app
 
-COPY Pipfile Pipfile.lock ./
-RUN pipenv sync
-
 COPY core core/
+COPY poetry.lock .
+COPY pyproject.toml .
+COPY README.md .
+RUN poetry install
 
-CMD [ "pipenv", "run", "server" ]
+CMD [ "python", "-m", "core.api" ]
