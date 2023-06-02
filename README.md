@@ -25,6 +25,31 @@ docker build -f Dockerfile.core -t ecmwf/ecpoint-calibrate-core:dev .
 yarn dist
 ```
 
+The appimage won't work on modern machines without manually adding the `--no-sandbox` electron
+option and re-packaging.
+
+### Install `appimagetool`
+
+```
+sudo wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -O /usr/local/bin/appimagetool
+sudo chmod +x /usr/local/bin/appimagetool
+```
+
+### Repackage the AppImage
+
+```
+cd pkg
+./ecPoint-Calibrate-0.30.0.AppImage --appimage-extract
+```
+
+This will extract the image into the `squashfs-root` directory.
+Open `squashfs-root/AppRun` and change the `exec` lines to have the `--no-sandbox` argument.
+
+Then repackage:
+```
+appimagetool squashfs-root ecPoint-Calibrate-0.30.0.AppImage
+```
+
 ## Python Backend
 
 We need `metview-batch` from conda-forge so unfortunately need to use `conda` with `poetry`.
