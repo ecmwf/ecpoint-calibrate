@@ -19,6 +19,12 @@ The development of this project was sponsored by the project "ECMWF Summer of We
 docker build -f Dockerfile.core -t ecmwf/ecpoint-calibrate-core:dev .
 ```
 
+## Create a production AppImage
+
+```
+yarn dist
+```
+
 ## Python Backend
 
 We need `metview-batch` from conda-forge so unfortunately need to use `conda` with `poetry`.
@@ -55,4 +61,31 @@ You should very rarely need to add a new conda dep.
 conda-lock -k explicit --conda mamba
 mamba update --file conda-linux-64.lock
 poetry update
+```
+
+
+### Run tests
+
+First activate the conda env, then run `pytest`.
+
+## Electron Frontend
+
+You'll need node v 14.5.0.
+
+### Installing deps
+
+```
+yarn
+```
+
+### Run the app
+
+```
+yarn start
+```
+
+### Run tests
+
+```
+npm run test
 ```
