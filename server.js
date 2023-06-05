@@ -78,8 +78,8 @@ const bindings = [
 console.log(`Detected volume bindings: ${bindings}`)
 
 // Docker image names
-const backendImage = `onyb/ecpoint-calibrate-core:${app.getVersion()}`
-const loggerImage = `onyb/ecpoint-calibrate-logger:${app.getVersion()}`
+const backendImage = `oldreliabletech/ecpoint-calibrate-core:${app.getVersion()}`
+const loggerImage = `oldreliabletech/ecpoint-calibrate-logger:${app.getVersion()}`
 
 // Initialize Docker to communicate with the Docker Engine.
 const docker = new Docker({
