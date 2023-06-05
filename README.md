@@ -44,6 +44,7 @@ cd pkg
 
 This will extract the image into the `squashfs-root` directory.
 Open `squashfs-root/AppRun` and change the `exec` lines to have the `--no-sandbox` argument.
+e.g. `exec "$BIN" --no-sandbox`
 
 Then repackage:
 ```

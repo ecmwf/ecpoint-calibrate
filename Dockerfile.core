@@ -25,4 +25,4 @@ COPY pyproject.toml .
 COPY README.md .
 RUN poetry install
 
-CMD [ "python", "-m", "core.api" ]
+CMD [ "poetry", "run", "python", "-m", "core.api" ]
