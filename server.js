@@ -3,7 +3,11 @@ const url = require('url')
 const path = require('path')
 const Docker = require('dockerode')
 
-const { app, BrowserWindow, dialog } = require('electron')
+const {
+  app,
+  BrowserWindow,
+  dialog
+} = require('electron')
 require('@electron/remote/main').initialize()
 
 /*
@@ -63,6 +67,8 @@ const media = process.platform === 'darwin' ? '/Volumes' : '/media'
 const bindings = [
   pathExists(home) ? `${home}:/home` : null,
   pathExists(media) ? `${media}:/media` : null,
+  pathExists('/ec/vol/ecpoint') ? '/ec/vol/ecpoint:/ec/vol/ecpoint' : null,
+  pathExists('/mnt') ? '/mnt:/mnt' : null,
   pathExists('/vol') ? '/vol:/vol' : null,
   pathExists('/tmp') ? '/tmp:/tmp' : null,
   pathExists('/var/tmp') ? '/var/tmp:/var/tmp' : null,
@@ -104,8 +110,7 @@ const stopContainers = async containers =>
 const findAndStopStaleContainers = async () =>
   new Promise(
     async (resolve, reject) =>
-      await docker.listContainers(
-        {
+      await docker.listContainers({
           filters: {
             ancestor: [backendImage, loggerImage],
           },
@@ -174,11 +179,9 @@ const backendSvc = containerFactory({
   Hostconfig: {
     Binds: bindings,
     PortBindings: {
-      '8888/tcp': [
-        {
-          HostPort: '8888',
-        },
-      ],
+      '8888/tcp': [{
+        HostPort: '8888',
+      }, ],
     },
   },
 })
@@ -190,11 +193,9 @@ const loggerSvc = containerFactory({
   Hostconfig: {
     Binds: ['/var/tmp:/var/tmp'],
     PortBindings: {
-      '9001/tcp': [
-        {
-          HostPort: '9001',
-        },
-      ],
+      '9001/tcp': [{
+        HostPort: '9001',
+      }, ],
     },
   },
 })
