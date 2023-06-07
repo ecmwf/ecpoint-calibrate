@@ -72,8 +72,8 @@ def get_predictors():
     ]
 
     # Warming up the LRU cache for fetching units
-    for code in codes:
-        get_metadata(os.path.join(path, code))
+    # for code in codes:
+    # get_metadata(os.path.join(path, code))
 
     return Response(json.dumps(codes), mimetype="application/json")
 
