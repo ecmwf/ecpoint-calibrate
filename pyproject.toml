@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ecpoint-calibrate"
-version = "0.31.5"
+version = "0.31.6"
 description = ""
 authors = ["Your Name <you@example.com>"]
 license = "GPL-3.0"
