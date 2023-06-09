@@ -2,6 +2,9 @@
 **
 
 # Allow files and directories
+!/Pipfile
+!/Pipfile.lock
+!/environment.yml
 !/conda-linux-64.lock
 !/pyproject.toml
 !/poetry.lock
