@@ -70,8 +70,6 @@ class Observations(object):
 
     units = attr.ib(converter=str)
 
-    displayWarning = attr.ib(converter=str)
-
 
 @attr.s
 class Predictors(object):
