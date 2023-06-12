@@ -189,11 +189,11 @@ def run(config: Config):
                 PathOBS
                 / f"Acc{acc:02}h"
                 / DateVF
-                / f"{config.predictand.code}{acc:02d}_{DateVF}{HourVF}.geo"
+                / f"{config.predictand.code}{acc:02d}_obs_{DateVF}{HourVF}.geo"
             )
         else:
             obs_path = (
-                PathOBS / DateVF / f"{config.predictand.code}_{DateVF}{HourVF}.geo"
+                PathOBS / DateVF / f"{config.predictand.code}_obs_{DateVF}{HourVF}.geo"
             )
 
         # Reading Rainfall Observations
