@@ -1,6 +1,6 @@
 {
   "name": "ecpoint-calibrate",
-  "version": "0.31.8",
+  "version": "0.31.9",
   "description": "GUI for ecPoint-Calibrate powered by Electron and React",
   "engines": {
     "node": "14.5.0"
