@@ -123,26 +123,8 @@
       "version": "==0.10.0"
     },
     "ecmwflibs": {
-      "hashes": [
-        "sha256:0019675a57d1822d9fe0c172106287e02077673230d394f7fff7e630b8227652",
-        "sha256:0db686f789328035b56a8319516fb2bce7466f3ad13c9ffce5d4f8ff355a8931",
-        "sha256:1ea09ceab8a8b7909e0bbdaaf7fb140e0f9b84be5efa03b7045a02f41f5bc49d",
-        "sha256:1f9dd04fac273b518a5114b252271deef859bbbae6bced2887cc39217ceae3c3",
-        "sha256:205c852b298434217ac16c493a578ff7b305c0a4a3996612bf397b80da845725",
-        "sha256:302b88918dc4d458a9ddd2afbd9b3232f40c81b8339b6739e4219e143bb44b9d",
-        "sha256:40d3604ea625d7f2754b1235223cd7f4292d4021e5f6b42f7fe4c1ca374894e5",
-        "sha256:4d8c2adbd723d3108ddf852859cddd23a181a61828f18478dc451f4085a90efb",
-        "sha256:89df7fb017fecb4ce9c4dde5608363ecb1cf520ef4866b8d080c96554a027245",
-        "sha256:adf380d07ae819b1c2ebbae37eccff58f104c55fb26b7b9120b696e33738c49f",
-        "sha256:aea236cae55e4e4700048d23230b25b2fda1db759ebbaa5eddb5076917729f79",
-        "sha256:b0dd7f7479af0030d87547bcdfe5324dd8dde227d2774d823c8b92249c5ff27f",
-        "sha256:b42ebcb1be9e9c96467212d7a3f1523d57c600a2ee938438d87958556c59eb5e",
-        "sha256:bd3740ee2479d869f8dc4a0de419a03554a8a77df5f8af35fde77b73a65d5d81",
-        "sha256:c582d302c02084559bb35e84da44d4b47be1439eabafef38d08326a4b30c1e9f",
-        "sha256:f016e629633ef1438f11f53d9aa28b127893f59bf9dbb259d76a3708eb2cd32b"
-      ],
-      "index": "pypi",
-      "version": "==0.0.94"
+      "git": "https://github.com/ecmwf/ecmwflibs.git",
+      "ref": "0.0.94"
     },
     "flask": {
       "hashes": [

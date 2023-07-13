@@ -6,34 +6,112 @@
 [![codecov](https://codecov.io/gh/esowc/ecPoint-Calibrate/branch/master/graph/badge.svg?token=x1SGIykSpy)](https://codecov.io/gh/esowc/ecPoint-Calibrate)
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python3.8-1f425f.svg)](https://www.python.org/)
 
-ecPoint-Calibrate is a software that uses conditional verification tools to compare numerical weather prediction (NWP) model outputs against point observations and, in this way, anticipate sub-grid variability and identify biases at grid scale. 
+ecPoint-Calibrate is a software that uses conditional verification tools to compare numerical weather prediction (NWP) model outputs against point observations and, in this way, anticipate sub-grid variability and identify biases at grid scale.
 It provides a dynamic and user-friendly environment to post-process NWP model parameters (such as precipitation, wind, temperature, etc.) and produce probabilistic products for geographical locations (everywhere in the world, and up to medium-range forecasts).
 
-The development of this project was sponsored by the project "ECMWF Summer of Weather Code (ESoWC)" 
+The development of this project was sponsored by the project "ECMWF Summer of Weather Code (ESoWC)"
 [@esowc_ecmwf](https://twitter.com/esowc_ecmwf?lang=en)
 [ECMWF](https://www.ecmwf.int).
 
+## Build with Docker
 
-### Requirements
+```
+docker build -f Dockerfile.core -t ecmwf/ecpoint-calibrate-core:dev .
+```
 
-- [Docker](https://docs.docker.com/install/)
+## Create a production AppImage
 
-### Usage
+```
+yarn dist
+```
 
-1. Download the latest release (AppImage file) from the [Releases](https://github.com/esowc/ecPoint-Calibrate/releases) page. Currently, only Linux is supported.
-2. Navigate to the folder where the package was downloaded.
-3. Run it like: `./ecPoint-Calibrate-0.9.0.AppImage`
-4. Wait for the GUI window to launch.
+The appimage won't work on modern machines without manually adding the `--no-sandbox` electron
+option and re-packaging.
 
-### Software Architecture  (OUTDATED!)
+### Install `appimagetool`
 
-![](/share/architecture.png)
+```
+sudo wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -O /usr/local/bin/appimagetool
+sudo chmod +x /usr/local/bin/appimagetool
+```
+
+### Repackage the AppImage
+
+```
+cd pkg
+./ecPoint-Calibrate-0.30.0.AppImage --appimage-extract
+```
+
+This will extract the image into the `squashfs-root` directory.
+Open `squashfs-root/AppRun` and change the `exec` lines to have the `--no-sandbox` argument.
+e.g. `exec "$BIN" --no-sandbox`
+
+Then repackage:
+```
+appimagetool squashfs-root ecPoint-Calibrate-0.30.0.AppImage
+```
+
+## Python Backend
+
+We need `metview-batch` from conda-forge so unfortunately need to use `conda` with `poetry`.
+
+### Creating the environment
+
+```
+conda create --name ecpoint_calibrate_env --file conda-linux-64.lock
+conda activate ecpoint_calibrate_env
+poetry install
+```
+
+### Activating the environment
+
+```
+conda activate ecpoint_calibrate_env
+```
+
+### Updating the environment
+
+#### Poetry (strongly preferred)
+
+Installing a new package with poetry will update the poetry lockfile.
+
+```
+poetry install $DEP
+```
+
+#### Conda
+
+You should very rarely need to add a new conda dep.
+
+```
+conda-lock -k explicit --conda mamba
+mamba update --file conda-linux-64.lock
+poetry update
+```
 
 
-### Collaborators
+### Run tests
 
-|      Name      |          Position         |               Affiliation               |
-|----------------|---------------------------|-----------------------------------------|
-| Anirudha Bose  |     Software Engineer     |          Ledger (Paris, France)         |
-| Fatima Pillosu | Scientist & PhD Candidate | ECMWF & Reading University (Reading, UK)|
-| Timothy Hewson |    Principal Scientist    |           ECMWF (Reading, UK)           |
+First activate the conda env, then run `pytest`.
+
+## Electron Frontend
+
+You'll need node v 14.5.0.
+
+### Installing deps
+
+```
+yarn
+```
+
+### Run the app
+
+```
+yarn start
+```
+
+### Run tests
+
+```
+npm run test
+```

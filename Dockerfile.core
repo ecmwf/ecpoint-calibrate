@@ -1,6 +1,10 @@
 FROM continuumio/miniconda3 as build
 
-RUN conda install -y -c conda-forge metview-batch python=3.8
+
+COPY environment.yml ./
+RUN conda install mamba -c conda-forge
+RUN mamba env create -f environment.yml
+ENV PATH /opt/conda/envs/ecpoint_calibrate/bin:$PATH
 
 ENV PYTHONPATH /app:$PYTHONPATH
 ENV PIPENV_VENV_IN_PROJECT=1
@@ -14,11 +18,14 @@ RUN apt-get update && apt-get install -y  --no-install-recommends \
 
 RUN rm -rf /root/* /tmp/* /var/cache/apt/archives/*.deb /var/lib/apt/lists/*
 
-RUN pip install -U pip wheel setuptools pipenv
-
 WORKDIR /app
 
 COPY Pipfile Pipfile.lock ./
+
+# so ecmwflibs can find eccodes.h
+ENV CPLUS_INCLUDE_PATH /opt/conda/envs/ecpoint_calibrate/include:$CPLUS_INCLUDE_PATH
+# so ecmwflibs can find magics headers
+ENV CPLUS_INCLUDE_PATH /opt/conda/envs/ecpoint_calibrate/include/magics:$CPLUS_INCLUDE_PATH
 RUN pipenv sync
 
 COPY core core/

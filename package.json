@@ -1,6 +1,6 @@
 {
   "name": "ecpoint-calibrate",
-  "version": "0.30.0",
+  "version": "0.31.9",
   "description": "GUI for ecPoint-Calibrate powered by Electron and React",
   "engines": {
     "node": "14.5.0"
@@ -8,7 +8,7 @@
   "main": "server.js",
   "scripts": {
     "preinstall": "rm -rvf node_modules/*/.git",
-    "start": "electron .",
+    "start": "electron . --no-sandbox",
     "build": "webpack --progress --colors",
     "lint": "prettier --config ./.prettierrc --write 'ui/**/*.js' server.js",
     "dist": "electron-builder",
