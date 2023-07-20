@@ -19,6 +19,12 @@ The development of this project was sponsored by the project "ECMWF Summer of We
 docker build -f Dockerfile.core -t ecmwf/ecpoint-calibrate-core:dev .
 ```
 
+## Deploy new versions of the Docker containers
+
+```
+./deploy.sh
+```
+
 ## Create a production AppImage
 
 ```
